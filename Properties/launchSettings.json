@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "CroomsBellScheduleC# (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "CroomsBellScheduleC# (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
