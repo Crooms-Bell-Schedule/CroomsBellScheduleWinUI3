@@ -26,7 +26,7 @@ namespace CroomsBellScheduleC_
         {
             InitializeComponent();
             
-            AppWindow appWindow = GetAppWindow();
+            Microsoft.UI.Windowing.AppWindow appWindow = GetAppWindow();
             appWindow.Resize(new SizeInt32(300, 50));
 
             MakeWindowDraggable();
@@ -34,11 +34,11 @@ namespace CroomsBellScheduleC_
         }
 
         // Helper method to get AppWindow
-        private AppWindow GetAppWindow()
+        private Microsoft.UI.Windowing.AppWindow GetAppWindow()
         {
             IntPtr hWnd = WindowNative.GetWindowHandle(this);
             WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-            return AppWindow.GetFromWindowId(windowId);
+            return Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
         }
         
         // Remove title bar and make full window draggable
