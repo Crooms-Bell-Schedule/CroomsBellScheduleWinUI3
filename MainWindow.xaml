@@ -6,10 +6,37 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="Crooms Bell Schedule">
-    
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
-        <TextBlock x:Name="DayInfo">Schedule is loading...</TextBlock>
-        <TextBlock x:Name="Schedule">Please wait...</TextBlock>
-    </StackPanel>
+    Title="Crooms Bell Schedule" >
+
+    <Grid Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Button Grid.Row="0" Grid.Column="1" Width="32" Background="Transparent" BorderThickness="0">
+            <Button.Flyout>
+                <MenuFlyout ShouldConstrainToRootBounds="False">
+                    <MenuFlyoutItem Text="Settings" Icon="Setting"></MenuFlyoutItem>
+                    <MenuFlyoutItem x:Name="ALunchOption" Text="A Lunch" Click="ALunch_Click"></MenuFlyoutItem>
+                    <MenuFlyoutItem x:Name="BLunchOption" Text="B Lunch" Click="BLunch_Click"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Quit" Icon="Clear" Click="Quit_Click"></MenuFlyoutItem>
+                </MenuFlyout>
+            </Button.Flyout>
+            <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe700;"/>
+        </Button>
+
+
+        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" FontSize="20" Text="Loading"></TextBlock>
+        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" FontSize="17" Text="Loading bell schedule"></TextBlock>
+
+        <ProgressBar x:Name="ProgressBar" Grid.Row="3" Height="10" Grid.ColumnSpan="2" ></ProgressBar>
+    </Grid>
 </Window>
