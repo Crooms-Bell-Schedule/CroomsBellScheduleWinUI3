@@ -67,8 +67,8 @@ namespace CroomsBellScheduleC_.Provider
 
         public class Data
         {
-            public string id { get; set; }
-            public string msg { get; set; }
+            public string id { get; set; } = "";
+            public string msg { get; set; } = "";
             public List<List<List<int>>> schedule { get; set; } = [];
         }
 

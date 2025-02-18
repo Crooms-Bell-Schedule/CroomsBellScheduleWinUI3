@@ -5,11 +5,14 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
+using Microsoft.Windows.AppNotifications.Builder;
+using Microsoft.Windows.AppNotifications;
 using System;
 using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
+using CroomsBellScheduleC_.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,6 +34,7 @@ namespace CroomsBellScheduleC_
         private static SolidColorBrush _defaultProgressbarBrush = new(Colors.Green);
         private static SolidColorBrush OrangeBrush = new(Colors.Orange);
         private static SolidColorBrush Foreground = new(Colors.White); // TODO FIX
+        private static NotificationManager notificationManager = new();
         public MainWindow()
         {
             InitializeComponent();
@@ -61,9 +65,14 @@ namespace CroomsBellScheduleC_
                 return;
             }
 
-            presenter.SetBorderAndTitleBar(hasBorder: false, hasTitleBar: false);
+            presenter.IsMaximizable = false;
+            presenter.IsMinimizable = false;
+            presenter.IsResizable = true;
+            presenter.IsAlwaysOnTop = true;
+            presenter.SetBorderAndTitleBar(hasBorder: true, hasTitleBar: false);
             ExtendsContentIntoTitleBar = true;
-            //SetTitleBar(MoveArea);
+            AppWindow.IsShownInSwitchers = false;
+            SetTitleBar(Content);
         }
 
         private void TrySetMicaBackdrop()
@@ -73,7 +82,7 @@ namespace CroomsBellScheduleC_
         }
         #endregion
         #region Bell
-        private string FormatTimespan(TimeSpan duration)
+        private string FormatTimespan(TimeSpan duration, int progress = 0)
         {
             if (duration.Hours == 0)
             {
@@ -81,7 +90,20 @@ namespace CroomsBellScheduleC_
                 {
                     if (!shown5MinNotif)
                     {
-                        ShowNotification("Bell rings soon", "The bell rings in 5 minutes");
+                        var toast = new AppNotificationBuilder()
+                            .AddText("Bell rings soon")
+                            .AddText("The bell rings in less than 1 minute")
+                            .AddProgressBar(
+                                new AppNotificationProgressBar()
+                                {
+                                    Status = "Progress",
+                                    Value = progress /100
+                                }
+                            )
+                            .BuildNotification();
+
+
+                        AppNotificationManager.Default.Show(toast);
                         shown5MinNotif = true;
                     }
                 }
@@ -89,7 +111,20 @@ namespace CroomsBellScheduleC_
                 {
                     if (!shown1MinNotif)
                     {
-                        ShowNotification("Bell rings soon", "The bell rings in less than 1 minute");
+                        var toast = new AppNotificationBuilder()
+                            .AddText("Bell rings soon")
+                            .AddText("The bell rings in less than 1 minute")
+                            .AddProgressBar(
+                                new AppNotificationProgressBar()
+                                {
+                                    Status = "Progress", Value = progress /100
+                                }
+                            )
+                            .BuildNotification();
+
+
+                        AppNotificationManager.Default.Show(toast);
+
                         shown1MinNotif = true;
                     }
                 }
@@ -110,9 +145,17 @@ namespace CroomsBellScheduleC_
             }
         }
 
-        private void ShowNotification(string v1, string v2)
+        private void ShowNotification(string title, string descr)
         {
+            var toast = new AppNotificationBuilder()
+      .AddText(title)
+      .AddText(descr)
+      .AddProgressBar(new AppNotificationProgressBar() { Status = "Downloading class...", Value = 0.5 })
+      .SetAttributionText("Andrew decided to use WinUI")
+      .BuildNotification();
 
+
+            AppNotificationManager.Default.Show(toast);
         }
 
         public async void UpdateCurrentClass()
@@ -160,7 +203,8 @@ namespace CroomsBellScheduleC_
 
                     TxtCurrentClass.Foreground = Foreground;
                     isTransition = true;
-                    TxtDuration.Text = FormatTimespan(transitionDuration);
+                    var percent = (transitionSpan.TotalSeconds / ProgressBar.Maximum) * 100;
+                    TxtDuration.Text = FormatTimespan(transitionDuration, (int)percent);
 
                     ProgressBar.Minimum = 0;
                     ProgressBar.Maximum = (int)TimeSpan.FromMinutes(5).TotalSeconds;
@@ -168,7 +212,7 @@ namespace CroomsBellScheduleC_
                     if (transitionSpan.TotalSeconds >= 0)
                         ProgressBar.Value = (int)transitionSpan.TotalSeconds;
 
-                    var percent = (transitionSpan.TotalSeconds / ProgressBar.Maximum) * 100;
+              
                     TxtCurrentClass.Text = $"Transition - {Math.Round(percent, 2)}%";
 
                     // reset notifications
@@ -198,7 +242,7 @@ namespace CroomsBellScheduleC_
                     TxtCurrentClass.Text = $"{data.Name} - {Math.Round(percent, 2)}%";
                     TxtCurrentClass.Foreground = Foreground;
                     isTransition = false;
-                    TxtDuration.Text = FormatTimespan(duration);
+                    TxtDuration.Text = FormatTimespan(duration, (int)percent);
 
                     if (duration.TotalMinutes <= 5)
                     {
@@ -257,6 +301,8 @@ namespace CroomsBellScheduleC_
             if (presenter != null)
                 presenter.IsAlwaysOnTop = true;
 
+            notificationManager.Init();
+
             try
             {
                 await UpdateBellSchedule();
@@ -265,7 +311,7 @@ namespace CroomsBellScheduleC_
                 timer.Interval = TimeSpan.FromMilliseconds(199);
                 timer.Tick += Timer_Tick;
                 timer.Start();
-
+                ShowNotification("The bell rings", "It rings today.");
             }
             catch (Exception ex)
             {
