@@ -102,7 +102,6 @@ namespace CroomsBellScheduleCS
                             )
                             .BuildNotification();
 
-
                         AppNotificationManager.Default.Show(toast);
                         shown5MinNotif = true;
                     }
@@ -311,7 +310,7 @@ namespace CroomsBellScheduleCS
                 timer.Interval = TimeSpan.FromMilliseconds(199);
                 timer.Tick += Timer_Tick;
                 timer.Start();
-                ShowNotification("The bell rings", "It rings today.");
+                //ShowNotification("The bell rings", "It rings today.");
             }
             catch (Exception ex)
             {
