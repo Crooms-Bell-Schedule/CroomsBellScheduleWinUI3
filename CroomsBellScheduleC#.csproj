@@ -11,8 +11,9 @@
     <UseWinUI>true</UseWinUI>
     <Nullable>enable</Nullable>
 	<WindowsSdkPackageVersion>10.0.19041.38</WindowsSdkPackageVersion>
-	  <EnableMsixTooling>true</EnableMsixTooling>
-	  <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+	<EnableMsixTooling>true</EnableMsixTooling>
+	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+	<WindowsPackageType>None</WindowsPackageType>
   </PropertyGroup>
 
   <ItemGroup>
