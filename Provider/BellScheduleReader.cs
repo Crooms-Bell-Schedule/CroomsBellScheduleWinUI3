@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CroomsBellScheduleC_.Provider
+namespace CroomsBellScheduleCS.Provider
 {
     public class BellScheduleReader(BellSchedule schedule, Dictionary<string, string> strings)
     {

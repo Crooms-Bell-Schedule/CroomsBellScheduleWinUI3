@@ -1,4 +1,4 @@
-using CroomsBellScheduleC_.Provider;
+using CroomsBellScheduleCS.Provider;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -12,12 +12,12 @@ using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
-using CroomsBellScheduleC_.Utils;
+using CroomsBellScheduleCS.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace CroomsBellScheduleC_
+namespace CroomsBellScheduleCS
 {
     public sealed partial class MainWindow : Window
     {
@@ -92,12 +92,12 @@ namespace CroomsBellScheduleC_
                     {
                         var toast = new AppNotificationBuilder()
                             .AddText("Bell rings soon")
-                            .AddText("The bell rings in less than 1 minute")
+                            .AddText("The bell rings in less than 5 minutes")
                             .AddProgressBar(
                                 new AppNotificationProgressBar()
                                 {
                                     Status = "Progress",
-                                    Value = progress /100
+                                    Value = progress / 100
                                 }
                             )
                             .BuildNotification();

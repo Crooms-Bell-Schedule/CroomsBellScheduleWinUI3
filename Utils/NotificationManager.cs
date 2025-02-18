@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CroomsBellScheduleC_.Utils
+namespace CroomsBellScheduleCS.Utils
 {
     internal class NotificationManager
     {
