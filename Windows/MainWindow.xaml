@@ -13,7 +13,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="20"></RowDefinition>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -23,19 +23,23 @@
 
         <Button Grid.Row="0" Grid.Column="1" Width="32" Background="Transparent" BorderThickness="0">
             <Button.Flyout>
-                <MenuFlyout ShouldConstrainToRootBounds="False">
-                    <MenuFlyoutItem Text="Settings" Icon="Setting"></MenuFlyoutItem>
-                    <MenuFlyoutItem x:Name="ALunchOption" Text="A Lunch" Click="ALunch_Click"></MenuFlyoutItem>
-                    <MenuFlyoutItem x:Name="BLunchOption" Text="B Lunch" Click="BLunch_Click"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Quit" Icon="Clear" Click="Quit_Click"></MenuFlyoutItem>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="Settings" Click="Settings_Click"></MenuFlyoutItem>
+                    <MenuFlyoutSeparator/>
+                    <RadioMenuFlyoutItem x:Name="ALunchOption" Text="A Lunch" Click="ALunch_Click"></RadioMenuFlyoutItem>
+                    <RadioMenuFlyoutItem x:Name="BLunchOption" Text="B Lunch" Click="BLunch_Click"></RadioMenuFlyoutItem>
+                    <MenuFlyoutSeparator/>
+                    <MenuFlyoutItem Text="Quit" Click="Quit_Click"></MenuFlyoutItem>
                 </MenuFlyout>
             </Button.Flyout>
             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe700;"/>
         </Button>
 
 
-        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" FontSize="20" Text="Loading"></TextBlock>
-        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" FontSize="17" Text="Loading bell schedule"></TextBlock>
+        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" FontSize="16" Text="Loading"></TextBlock>
+        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" FontSize="16" Text="Loading bell schedule"></TextBlock>
+
+        <TextBlock x:Name="TxtClassPercent" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Right" FontSize="17" Text="0.00%"></TextBlock>
 
         <ProgressBar x:Name="ProgressBar" Grid.Row="3" Height="10" Grid.ColumnSpan="2" ></ProgressBar>
     </Grid>

@@ -48,7 +48,8 @@ namespace CroomsBellScheduleCS.Provider
                     {
                         StartString = ConvertTime(startHour, startMin),
                         EndString = ConvertTime(endHour, endMin),
-                        Name = typeStr.ToString()
+                        Name = typeStr.ToString(),
+                        ScheduleName = parsed.data.msg
                     });
                 }
                 lunch++;

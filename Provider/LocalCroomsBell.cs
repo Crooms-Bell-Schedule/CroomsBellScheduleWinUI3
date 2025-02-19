@@ -344,6 +344,8 @@ namespace CroomsBellScheduleCS.Provider
                 return int.Parse(EndString.Split(":")[1]);
             }
         }
+
+        public string ScheduleName { get; internal set; } = "Crooms Sched API";
     }
     public class BellSchedule
     {

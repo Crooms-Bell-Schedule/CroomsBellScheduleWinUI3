@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="CroomsBellScheduleCS.Windows.SettingsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Crooms Bell Schedule Settings">
+
+    <NavigationView
+      x:Name="NavigationViewControl"
+      Canvas.ZIndex="0"
+      IsBackButtonVisible="Visible"
+      IsSettingsVisible="True"
+      ExpandedModeThresholdWidth="1280"
+       SelectedItem="Settings"
+        >
+        <NavigationView.MenuItems>
+            
+        </NavigationView.MenuItems>
+    </NavigationView>
+</Window>

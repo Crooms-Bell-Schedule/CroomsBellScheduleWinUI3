@@ -1,18 +1,17 @@
 using CroomsBellScheduleCS.Provider;
+using CroomsBellScheduleCS.Utils;
+using CroomsBellScheduleCS.Windows;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Animation;
-using Microsoft.Windows.AppNotifications.Builder;
 using Microsoft.Windows.AppNotifications;
+using Microsoft.Windows.AppNotifications.Builder;
 using System;
-using System.Reflection.PortableExecutable;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
-using CroomsBellScheduleCS.Utils;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -29,6 +28,7 @@ namespace CroomsBellScheduleCS
         public static CacheProvider provider = null!;
         private BellScheduleReader? _reader;
         private int LunchOffset = 0;
+        private static SettingsWindow _settings = new();
 
         private static SolidColorBrush RedBrush = new SolidColorBrush(Colors.Red);
         private static SolidColorBrush _defaultProgressbarBrush = new(Colors.Green);
@@ -45,7 +45,13 @@ namespace CroomsBellScheduleCS
             MakeWindowDraggable();
             TrySetMicaBackdrop();
             provider = new CacheProvider(new APIProvider());
+            _settings.Closed += _settings_Closed;
             Init();
+        }
+
+        private void _settings_Closed(object sender, WindowEventArgs args)
+        {
+            _settings = new();
         }
 
         #region UI
@@ -82,7 +88,7 @@ namespace CroomsBellScheduleCS
         }
         #endregion
         #region Bell
-        private string FormatTimespan(TimeSpan duration, int progress = 0)
+        private string FormatTimespan(TimeSpan duration, double progress = 12)
         {
             if (duration.Hours == 0)
             {
@@ -112,11 +118,12 @@ namespace CroomsBellScheduleCS
                     {
                         var toast = new AppNotificationBuilder()
                             .AddText("Bell rings soon")
-                            .AddText("The bell rings in less than 1 minute")
+                            .AddText("The bell rings in less than 1 minute").AddButton(new AppNotificationButton() { InputId = "sdf", Content = "Cancel class"})
                             .AddProgressBar(
                                 new AppNotificationProgressBar()
                                 {
-                                    Status = "Progress", Value = progress /100
+                                    Status = "Progress",
+                                    Value = progress / 100
                                 }
                             )
                             .BuildNotification();
@@ -155,6 +162,55 @@ namespace CroomsBellScheduleCS
 
 
             AppNotificationManager.Default.Show(toast);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="currentClass">Current class name</param>
+        /// <param name="transitionDuration">Amount of time spent on class</param>
+        /// <param name="transitionTime">Total class time (ex: 50m)</param>
+        /// <param name="remain">Remaining class time</param>
+        private void UpdateClassText(string currentClass, string scheduleName, TimeSpan transitionDuration, TimeSpan transitionTime)
+        {
+            var transitionSpan = transitionTime - transitionDuration;
+
+            TxtCurrentClass.Foreground = Foreground;
+
+            // Update progress bar
+            ProgressBar.Minimum = 0;
+            ProgressBar.Maximum = (int)transitionTime.TotalSeconds;
+            var percent = (transitionSpan.TotalSeconds / ProgressBar.Maximum) * 100;
+
+            if (transitionSpan.TotalSeconds >= 0)
+                ProgressBar.Value = (int)transitionSpan.TotalSeconds;
+
+            // Update text
+
+            TxtCurrentClass.Text = $"{currentClass} - {FormatTimespan(transitionDuration, percent)}";
+            TxtClassPercent.Text = Math.Round(percent, 2).ToString("0.00") + "%";
+            TxtDuration.Text = scheduleName;
+
+            // reset notifications
+            shown5MinNotif = false;
+            shown1MinNotif = false;
+
+            // update progress bar color
+            if (transitionDuration.TotalMinutes <= 5)
+            {
+                ProgressBar.Foreground = Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush;
+                TxtDuration.Foreground = ProgressBar.Foreground;
+
+            }
+            else if (transitionDuration.TotalMinutes <= 10)
+            {
+                ProgressBar.Foreground = Application.Current.Resources["SystemFillColorCautionBrush"] as SolidColorBrush;
+                TxtDuration.Foreground = ProgressBar.Foreground;
+            }
+            else
+            {
+                ProgressBar.Foreground = Application.Current.Resources["SystemFillColorAttentionBrush"] as SolidColorBrush;
+                TxtDuration.Foreground = ProgressBar.Foreground;
+            }
         }
 
         public async void UpdateCurrentClass()
@@ -197,77 +253,18 @@ namespace CroomsBellScheduleCS
                 {
                     matchFound = true;
                     ProgressBar.IsIndeterminate = false;
-
-                    var transitionSpan = TimeSpan.FromMinutes(5) - transitionDuration;
-
-                    TxtCurrentClass.Foreground = Foreground;
                     isTransition = true;
-                    var percent = (transitionSpan.TotalSeconds / ProgressBar.Maximum) * 100;
-                    TxtDuration.Text = FormatTimespan(transitionDuration, (int)percent);
 
-                    ProgressBar.Minimum = 0;
-                    ProgressBar.Maximum = (int)TimeSpan.FromMinutes(5).TotalSeconds;
-
-                    if (transitionSpan.TotalSeconds >= 0)
-                        ProgressBar.Value = (int)transitionSpan.TotalSeconds;
-
-              
-                    TxtCurrentClass.Text = $"Transition - {Math.Round(percent, 2)}%";
-
-                    // reset notifications
-                    shown5MinNotif = false;
-                    shown1MinNotif = false;
-
-                    // update colors
-
-                    if (transitionDuration.TotalMinutes <= 2)
-                    {
-                        TxtDuration.Foreground = RedBrush;
-                        ProgressBar.Foreground = RedBrush;
-                    }
-                    else
-                    {
-                        TxtDuration.Foreground = TxtCurrentClass.Foreground;
-                        ProgressBar.Foreground = _defaultProgressbarBrush;
-                    }
+                    UpdateClassText("Transition to "+ data.Name, data.ScheduleName, transitionDuration, TimeSpan.FromMinutes(5));
                     break;
                 }
                 else if (current >= start && current <= end)
                 {
                     matchFound = true;
                     ProgressBar.IsIndeterminate = false;
-
-                    var percent = (elapsedTime.TotalSeconds / totalDuration.TotalSeconds) * 100;
-                    TxtCurrentClass.Text = $"{data.Name} - {Math.Round(percent, 2)}%";
-                    TxtCurrentClass.Foreground = Foreground;
                     isTransition = false;
-                    TxtDuration.Text = FormatTimespan(duration, (int)percent);
 
-                    if (duration.TotalMinutes <= 5)
-                    {
-                        TxtDuration.Foreground = RedBrush;
-                        ProgressBar.Foreground = RedBrush;
-                    }
-                    else if (duration.TotalMinutes <= 10)
-                    {
-                        TxtDuration.Foreground = OrangeBrush;
-                        ProgressBar.Foreground = OrangeBrush;
-                    }
-                    else
-                    {
-                        TxtDuration.Foreground = TxtCurrentClass.Foreground;
-                        ProgressBar.Foreground = _defaultProgressbarBrush;
-                    }
-
-
-                    ProgressBar.Minimum = 0;
-                    ProgressBar.Maximum = (int)totalDuration.TotalSeconds;
-
-                    if (elapsedTime.TotalSeconds >= 0)
-                        //if (Settings.SettingsContents.InvertProgress)
-                        ProgressBar.Value = (int)elapsedTime.TotalSeconds;
-                    // else
-                    //    ProgressBar.Value = (int)totalDuration.TotalSeconds - (int)elapsedTime.TotalSeconds;
+                    UpdateClassText(data.Name, data.ScheduleName, duration, totalDuration);
                     break;
                 }
             }
@@ -277,7 +274,7 @@ namespace CroomsBellScheduleCS
                 TxtCurrentClass.Text = "Unknown time remaining";
                 TxtDuration.Text = "out of range";
                 TxtDuration.Foreground = new SolidColorBrush(Colors.Red);
-                ProgressBar.Foreground = new SolidColorBrush(Colors.Red);
+                ProgressBar.Foreground = Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush;
             }
         }
 
@@ -291,7 +288,7 @@ namespace CroomsBellScheduleCS
         private async void Init()
         {
             // TODO load settings
-            ALunchOption.Icon = new SymbolIcon(Symbol.Play);
+            ALunchOption.IsChecked = true;
             var handle = WinRT.Interop.WindowNative.GetWindowHandle(this);
             var id = Win32Interop.GetWindowIdFromWindow(handle);
             var appWindow = AppWindow.GetFromWindowId(id);
@@ -335,18 +332,23 @@ namespace CroomsBellScheduleCS
 
         private void ALunch_Click(object sender, RoutedEventArgs e)
         {
-            ALunchOption.Icon = new SymbolIcon(Symbol.Play);
-            BLunchOption.Icon = null;
+            ALunchOption.IsChecked = true;
+            BLunchOption.IsChecked = false;
             LunchOffset = 0;
             UpdateCurrentClass();
         }
 
         private void BLunch_Click(object sender, RoutedEventArgs e)
         {
-            ALunchOption.Icon = null;
-            BLunchOption.Icon = new SymbolIcon(Symbol.Play);
+            ALunchOption.IsChecked = false;
+            BLunchOption.IsChecked = true;
             LunchOffset = 1;
             UpdateCurrentClass();
+        }
+        private void Settings_Click(object sender, RoutedEventArgs e)
+        {
+
+            _settings.Activate();
         }
         #endregion
     }
