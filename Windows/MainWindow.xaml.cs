@@ -190,10 +190,6 @@ namespace CroomsBellScheduleCS
             TxtClassPercent.Text = Math.Round(percent, 2).ToString("0.00") + "%";
             TxtDuration.Text = scheduleName;
 
-            // reset notifications
-            shown5MinNotif = false;
-            shown1MinNotif = false;
-
             // update progress bar color
             if (transitionDuration.TotalMinutes <= 5)
             {
@@ -209,7 +205,7 @@ namespace CroomsBellScheduleCS
             else
             {
                 ProgressBar.Foreground = Application.Current.Resources["SystemFillColorAttentionBrush"] as SolidColorBrush;
-                TxtDuration.Foreground = ProgressBar.Foreground;
+                TxtDuration.Foreground = Application.Current.Resources["TextFillColorPrimaryBrush"] as SolidColorBrush;
             }
         }
 
@@ -254,6 +250,8 @@ namespace CroomsBellScheduleCS
                     matchFound = true;
                     ProgressBar.IsIndeterminate = false;
                     isTransition = true;
+                    shown5MinNotif = false;
+                    shown1MinNotif = false;
 
                     UpdateClassText("Transition to "+ data.Name, data.ScheduleName, transitionDuration, TimeSpan.FromMinutes(5));
                     break;
