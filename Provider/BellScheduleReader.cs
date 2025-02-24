@@ -44,29 +44,8 @@ namespace CroomsBellScheduleCS.Provider
 
             foreach (var item in schedule.Classes)
             {
-                if (item.Name.EndsWith($" " + letter))
+                if (item.LunchIndex == lunch)
                 {
-                    result.Add(item);
-                }
-                else if (item.Name.Length > 2)
-                {
-                    // Check if the last 2nd character is a space and the last char is a char.
-                    // If so, assume its a different lunch and don't include it in the list
-                    var ndEndChar = item.Name[^2];
-                    var lastChar = item.Name[^1];
-                    if (ndEndChar == ' ' && char.IsLetter(lastChar))
-                    {
-                        // Ignore since it's a different lunch
-                    }
-                    else
-                    {
-                        // Not a lunch, include it in the list
-                        result.Add(item);
-                    }
-                }
-                else
-                {
-                    // Probably not a lunch since there is 1 character in name
                     result.Add(item);
                 }
             }

@@ -40,18 +40,13 @@ namespace CroomsBellScheduleCS
             InitializeComponent();
 
             AppWindow appWindow = GetAppWindow();
-            appWindow.Resize(new SizeInt32(400, 125));
+            appWindow.Resize(new SizeInt32(450, 125));
 
             MakeWindowDraggable();
             TrySetMicaBackdrop();
             provider = new CacheProvider(new APIProvider());
             _settings.Closed += _settings_Closed;
             Init();
-        }
-
-        private void _settings_Closed(object sender, WindowEventArgs args)
-        {
-            _settings = new();
         }
 
         #region UI
@@ -118,7 +113,7 @@ namespace CroomsBellScheduleCS
                     {
                         var toast = new AppNotificationBuilder()
                             .AddText("Bell rings soon")
-                            .AddText("The bell rings in less than 1 minute").AddButton(new AppNotificationButton() { InputId = "sdf", Content = "Cancel class"})
+                            .AddText("The bell rings in less than 1 minute").AddButton(new AppNotificationButton() { InputId = "doCancelClassProc", Content = "Cancel class"})
                             .AddProgressBar(
                                 new AppNotificationProgressBar()
                                 {
@@ -128,7 +123,6 @@ namespace CroomsBellScheduleCS
                             )
                             .BuildNotification();
 
-
                         AppNotificationManager.Default.Show(toast);
 
                         shown1MinNotif = true;
@@ -137,7 +131,7 @@ namespace CroomsBellScheduleCS
 
                 if (duration.Minutes == 0)
                 {
-                    TxtCurrentClass.Foreground = ((duration.Seconds & 1) != 0) ? RedBrush : Foreground;
+                    TxtCurrentClass.Foreground = ((duration.Seconds & 1) != 0) ? Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush : Foreground;
                     return $"{duration.Seconds} seconds remaining";
                 }
                 else
@@ -190,7 +184,7 @@ namespace CroomsBellScheduleCS
             TxtClassPercent.Text = Math.Round(percent, 2).ToString("0.00") + "%";
             TxtDuration.Text = scheduleName;
 
-            // update progress bar color
+            // update progress bar color. TODO change only if necessesary
             if (transitionDuration.TotalMinutes <= 5)
             {
                 ProgressBar.Foreground = Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush;
@@ -236,14 +230,16 @@ namespace CroomsBellScheduleCS
                 TimeSpan duration = end - current;
                 TimeSpan elapsedTime = current - start;
 
-                DateTime transitionStart = end;
-                DateTime transitionEnd = transitionStart.AddMinutes(5);
+                DateTime transitionStart = end; // when transition starts
+                DateTime transitionEnd = transitionStart.AddMinutes(5); // how long transition is in total
 
                 if (nextClass != null)
                 {
                     transitionEnd = new(current.Year, current.Month, current.Day, nextClass.StartHour, nextClass.StartMin, 0);
                 }
-                TimeSpan transitionDuration = transitionEnd - current;
+                TimeSpan transitionRemain = transitionEnd - current; // how much time left in transition
+                TimeSpan transitionLen = transitionEnd - transitionStart;
+
 
                 if (current >= transitionStart && current <= transitionEnd)
                 {
@@ -253,7 +249,7 @@ namespace CroomsBellScheduleCS
                     shown5MinNotif = false;
                     shown1MinNotif = false;
 
-                    UpdateClassText("Transition to "+ data.Name, data.ScheduleName, transitionDuration, TimeSpan.FromMinutes(5));
+                    UpdateClassText("Transition to "+ nextClass.Name, data.ScheduleName, transitionRemain, transitionLen);
                     break;
                 }
                 else if (current >= start && current <= end)
@@ -345,8 +341,13 @@ namespace CroomsBellScheduleCS
         }
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-
+            _settings = new();
             _settings.Activate();
+        }
+
+        private void _settings_Closed(object sender, WindowEventArgs args)
+        {
+            _settings = null;
         }
         #endregion
     }

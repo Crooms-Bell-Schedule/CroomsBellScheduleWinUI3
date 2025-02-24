@@ -346,6 +346,7 @@ namespace CroomsBellScheduleCS.Provider
         }
 
         public string ScheduleName { get; internal set; } = "Crooms Sched API";
+        public int LunchIndex { get; set; }
     }
     public class BellSchedule
     {
