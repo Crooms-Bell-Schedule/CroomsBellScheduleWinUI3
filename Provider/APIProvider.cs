@@ -27,7 +27,7 @@ namespace CroomsBellScheduleCS.Provider
                 { "101", "Welcome" },
                 { "102", "Lunch" },
                 { "103", "Homeroom" },
-                { "104", "Dismisal" },
+                { "104", "Dismissal" },
                 { "105", "After school" },
                 { "106", "End" }
             };
