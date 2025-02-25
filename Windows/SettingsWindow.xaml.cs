@@ -28,12 +28,12 @@ namespace CroomsBellScheduleCS.Windows
             InitializeComponent();
 
             AppWindow appWindow = GetAppWindow();
-            appWindow.Resize(new SizeInt32(800, 600));
+            appWindow.Resize(new SizeInt32(1000, 900));
             appWindow.Title = "Crooms Bell Schedule Settings";
             ExtendsContentIntoTitleBar = true;
             TrySetMicaBackdrop();
             SetTitleBar(AppTitleBar);
-                NavigationViewControl.SelectedItem = NavigationViewControl.SettingsItem;
+            NavigationViewControl.SelectedItem = NavigationViewControl.SettingsItem;
         }
 
         #region UI
@@ -63,7 +63,7 @@ namespace CroomsBellScheduleCS.Windows
                 Right = AppTitleBar.Margin.Right,
                 Bottom = AppTitleBar.Margin.Bottom
             };
-        }
+        }   
 
         private void NavigationViewControl_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {

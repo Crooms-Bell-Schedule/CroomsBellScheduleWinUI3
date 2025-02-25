@@ -14,8 +14,12 @@
 	<EnableMsixTooling>true</EnableMsixTooling>
 	<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 	<WindowsPackageType>None</WindowsPackageType>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Styles\FontSizes.xaml" />
+    <None Remove="Styles\TextBlock.xaml" />
+    <None Remove="Styles\Thickness.xaml" />
     <None Remove="Views\SettingsView.xaml" />
   </ItemGroup>
 
@@ -49,6 +53,13 @@
     <PackageReference Include="System.Text.Json" Version="9.0.2" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Styles\Thickness.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Styles\TextBlock.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Windows\SettingsWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <Generator>MSBuild:Compile</Generator>
@@ -56,6 +67,11 @@
   </ItemGroup>
   <ItemGroup>
     <Page Update="Views\SettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Styles\FontSizes.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

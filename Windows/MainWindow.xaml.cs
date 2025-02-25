@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
@@ -28,24 +29,23 @@ namespace CroomsBellScheduleCS
         public static CacheProvider provider = null!;
         private BellScheduleReader? _reader;
         private int LunchOffset = 0;
-        private static SettingsWindow _settings = new();
+        private static SettingsWindow? _settings;
 
         private static SolidColorBrush RedBrush = new SolidColorBrush(Colors.Red);
         private static SolidColorBrush _defaultProgressbarBrush = new(Colors.Green);
         private static SolidColorBrush OrangeBrush = new(Colors.Orange);
         private static SolidColorBrush Foreground = new(Colors.White); // TODO FIX
         private static NotificationManager notificationManager = new();
+        public static IntPtr m_oldWndProc;
+        public static Delegate? m_newWndProcDelegate;
         public MainWindow()
         {
             InitializeComponent();
 
-            AppWindow appWindow = GetAppWindow();
-            appWindow.Resize(new SizeInt32(450, 125));
-
             MakeWindowDraggable();
             TrySetMicaBackdrop();
             provider = new CacheProvider(new APIProvider());
-            _settings.Closed += _settings_Closed;
+
             Init();
         }
 
@@ -113,7 +113,7 @@ namespace CroomsBellScheduleCS
                     {
                         var toast = new AppNotificationBuilder()
                             .AddText("Bell rings soon")
-                            .AddText("The bell rings in less than 1 minute").AddButton(new AppNotificationButton() { InputId = "doCancelClassProc", Content = "Cancel class"})
+                            .AddText("The bell rings in less than 1 minute").AddButton(new AppNotificationButton() { InputId = "doCancelClassProc", Content = "Cancel class" })
                             .AddProgressBar(
                                 new AppNotificationProgressBar()
                                 {
@@ -249,7 +249,7 @@ namespace CroomsBellScheduleCS
                     shown5MinNotif = false;
                     shown1MinNotif = false;
 
-                    UpdateClassText("Transition to "+ nextClass.Name, data.ScheduleName, transitionRemain, transitionLen);
+                    UpdateClassText("Transition to " + nextClass.Name, data.ScheduleName, transitionRemain, transitionLen);
                     break;
                 }
                 else if (current >= start && current <= end)
@@ -265,25 +265,33 @@ namespace CroomsBellScheduleCS
 
             if (!matchFound)
             {
-                TxtCurrentClass.Text = "Unknown time remaining";
-                TxtDuration.Text = "out of range";
+                TxtCurrentClass.Text = "Unknown class";
+                TxtDuration.Text = "cannot find current class in data";
                 TxtDuration.Foreground = new SolidColorBrush(Colors.Red);
                 ProgressBar.Foreground = Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush;
             }
         }
 
+        private int GetDpi()
+        {
+            IntPtr hWnd = WindowNative.GetWindowHandle(this);
+            return GetDpiForWindow(hWnd);
+        }
+        [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        public static extern int GetDpiForWindow(IntPtr hwnd);
         private async Task UpdateBellSchedule()
         {
             TxtCurrentClass.Text = "Retrieiving bell schedule";
             TxtDuration.Text = "Please wait";
             _reader = await provider.GetTodayActivity();
+            LoadingThing.Visibility = Visibility.Collapsed;
+            SetLunch(SettingsManager.LunchOffset);
             UpdateCurrentClass();
         }
         private async void Init()
         {
-            // TODO load settings
-            ALunchOption.IsChecked = true;
-            var handle = WinRT.Interop.WindowNative.GetWindowHandle(this);
+            // Set window to be always on top
+            var handle = WindowNative.GetWindowHandle(this);
             var id = Win32Interop.GetWindowIdFromWindow(handle);
             var appWindow = AppWindow.GetFromWindowId(id);
             var presenter = appWindow.Presenter as OverlappedPresenter;
@@ -293,6 +301,15 @@ namespace CroomsBellScheduleCS
 
             notificationManager.Init();
 
+            // Workaround a bug when window maximizes when you double click.
+            const int GWLP_WNDPROC = -4;
+            m_newWndProcDelegate = (WndProcDelegate)WndProc;
+            IntPtr pWndProc = Marshal.GetFunctionPointerForDelegate(m_newWndProcDelegate);
+            m_oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
+
+            // Change taskbar mode
+            SetTaskbarMode(SettingsManager.ShowInTaskbar);
+
             try
             {
                 await UpdateBellSchedule();
@@ -301,7 +318,6 @@ namespace CroomsBellScheduleCS
                 timer.Interval = TimeSpan.FromMilliseconds(199);
                 timer.Tick += Timer_Tick;
                 timer.Start();
-                //ShowNotification("The bell rings", "It rings today.");
             }
             catch (Exception ex)
             {
@@ -311,6 +327,53 @@ namespace CroomsBellScheduleCS
                 await dlg.ShowAsync();
             }
         }
+
+        private void SetTaskbarMode(bool showInTaskbar)
+        {
+            var handle = WindowNative.GetWindowHandle(this);
+            var id = Win32Interop.GetWindowIdFromWindow(handle);
+            var appWindow = AppWindow.GetFromWindowId(id);
+
+            if (showInTaskbar)
+            {
+                IntPtr trayHWnd = FindWindowW("Shell_TrayWnd", null);
+                IntPtr taskbarUIHWnd = FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
+                SetParent(handle, taskbarUIHWnd);
+
+                appWindow.MoveAndResize(new RectInt32() { Width = GetDpi() * 4, Height = GetDpi() * 1 });
+                MainButton.Visibility = Visibility.Collapsed;
+                TxtDuration.FontSize = 14;
+                TxtCurrentClass.FontSize = 14;
+                TxtClassPercent.FontSize = 14;
+                ProgressBar.MinHeight = 20;
+            }
+            else
+            {
+                SetParent(handle, 0);
+                MainButton.Visibility = Visibility.Visible;
+                TxtDuration.FontSize = 16;
+                TxtCurrentClass.FontSize = 16;
+                TxtClassPercent.FontSize = 16;
+
+                appWindow.Resize(new SizeInt32(GetDpi() * 4, GetDpi() * 1));
+            }
+        }
+
+
+        private delegate IntPtr WndProcDelegate(IntPtr hwnd, uint msg, UIntPtr wParam, IntPtr lParam);
+        private IntPtr WndProc(IntPtr hwnd, uint msg, UIntPtr wParam, IntPtr lParam)
+        {
+            const uint WM_SYSCOMMAND = 0x0112;
+            const uint SC_MAXIMIZE = 0xF030;
+            if (msg == WM_SYSCOMMAND && wParam == SC_MAXIMIZE)
+            {
+                // Ignore WM_SYSCOMMAND SC_MAXIMIZE message
+                // Thank you Microsoft :)
+                return 1;
+            }
+            return CallWindowProcW(m_oldWndProc, hwnd, msg, wParam, lParam);
+        }
+
         private void Timer_Tick(object? sender, object e)
         {
             UpdateCurrentClass();
@@ -326,22 +389,26 @@ namespace CroomsBellScheduleCS
 
         private void ALunch_Click(object sender, RoutedEventArgs e)
         {
-            ALunchOption.IsChecked = true;
-            BLunchOption.IsChecked = false;
-            LunchOffset = 0;
-            UpdateCurrentClass();
+            SetLunch(0);
         }
 
         private void BLunch_Click(object sender, RoutedEventArgs e)
         {
-            ALunchOption.IsChecked = false;
-            BLunchOption.IsChecked = true;
-            LunchOffset = 1;
+            SetLunch(1);
+        }
+        private void SetLunch(int index)
+        {
+            ALunchOption.IsChecked = index == 0;
+            BLunchOption.IsChecked = index == 1;
+            LunchOffset = index;
+            if (SettingsManager.LunchOffset != index)
+                SettingsManager.LunchOffset = index;
             UpdateCurrentClass();
         }
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             _settings = new();
+            _settings.Closed += _settings_Closed;
             _settings.Activate();
         }
 
@@ -349,6 +416,19 @@ namespace CroomsBellScheduleCS
         {
             _settings = null;
         }
+        #endregion
+
+        #region Win32
+        [LibraryImport("user32.dll")]
+        public static partial IntPtr SetWindowLongPtrW(IntPtr hwnd, int index, IntPtr value);
+        [LibraryImport("user32.dll")]
+        public static partial IntPtr CallWindowProcW(IntPtr lpPrevWndFunc, IntPtr hwnd, uint msg, UIntPtr wParam, IntPtr lParam);
+        [LibraryImport("user32.dll")]
+        public static partial IntPtr SetParent(IntPtr child, IntPtr newParent);
+        [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        public static partial IntPtr FindWindowW(string? className, string? windowName);
+        [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
+        public static partial IntPtr FindWindowExW(IntPtr parent, IntPtr childAfter, string? className, string? windowName);
         #endregion
     }
 }
