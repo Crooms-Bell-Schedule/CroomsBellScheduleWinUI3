@@ -8,7 +8,7 @@
     mc:Ignorable="d"
     Title="Crooms Bell Schedule" >
 
-    <Grid Margin="5">
+    <Grid Margin="5, 5, 5, 2.5">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
@@ -36,11 +36,11 @@
         </Button>
 
 
-        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" FontSize="16" Text="Loading"></TextBlock>
-        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" FontSize="16" Text="Loading bell schedule"></TextBlock>
+        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" FontSize="17" Text="Loading"></TextBlock>
+        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" FontSize="17" Text="Loading bell schedule"></TextBlock>
 
         <TextBlock x:Name="TxtClassPercent" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Right" FontSize="17" Text="0.00%"></TextBlock>
 
-        <ProgressBar x:Name="ProgressBar" Grid.Row="3" Height="10" Grid.ColumnSpan="2" ></ProgressBar>
+        <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Height="10" Grid.ColumnSpan="2" ></ProgressBar>
     </Grid>
 </Window>
