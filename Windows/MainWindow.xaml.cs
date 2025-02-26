@@ -54,8 +54,6 @@ public sealed partial class MainWindow
             AppWindow.IsShownInSwitchers = false;
             SetTitleBar(Content);
         }
-
-        SystemBackdrop = new MicaBackdrop();
     }
 
     private async void Init()

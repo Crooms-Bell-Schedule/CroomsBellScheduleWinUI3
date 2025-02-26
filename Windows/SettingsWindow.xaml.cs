@@ -16,8 +16,6 @@ namespace CroomsBellScheduleCS.Windows;
 
 public sealed partial class SettingsWindow
 {
-    private MicaBackdrop? _micaBackdrop;
-
     public SettingsWindow()
     {
         InitializeComponent();
@@ -26,7 +24,6 @@ public sealed partial class SettingsWindow
         appWindow.Resize(new SizeInt32(1300, 900));
         appWindow.Title = "Crooms Bell Schedule Settings";
         ExtendsContentIntoTitleBar = true;
-        TrySetMicaBackdrop();
         SetTitleBar(AppTitleBar);
     }
 
@@ -82,12 +79,6 @@ public sealed partial class SettingsWindow
         IntPtr hWnd = WindowNative.GetWindowHandle(this);
         WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
         return AppWindow.GetFromWindowId(windowId);
-    }
-
-    private void TrySetMicaBackdrop()
-    {
-        _micaBackdrop = new MicaBackdrop();
-        SystemBackdrop = _micaBackdrop;
     }
 
     #endregion

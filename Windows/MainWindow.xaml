@@ -9,6 +9,9 @@
     mc:Ignorable="d"
     Title="Crooms Bell Schedule"
     Activated="Window_Activated">
+    <Window.SystemBackdrop>
+        <MicaBackdrop />
+    </Window.SystemBackdrop>
 
     <Grid Margin="5, 5, 5, 2.5">
         <Grid.RowDefinitions>
