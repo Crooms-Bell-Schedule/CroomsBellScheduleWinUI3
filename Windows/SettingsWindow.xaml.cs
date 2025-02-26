@@ -1,3 +1,4 @@
+using System;
 using Windows.Graphics;
 using CroomsBellScheduleCS.Views.Settings;
 using Microsoft.UI;
@@ -7,7 +8,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using WinRT.Interop;
-using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -54,6 +54,13 @@ public sealed partial class SettingsWindow
             TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
         };
         if (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top) navOptions.IsNavigationStackEnabled = false;
+
+        if (args.InvokedItemContainer == PersonalizationViewItem)
+            NavigationFrame.NavigateToType(typeof(PersonalizationView), null, navOptions);
+        else if (args.InvokedItemContainer == BellViewItem)
+            NavigationFrame.NavigateToType(typeof(BellView), null, navOptions);
+        else if (args.InvokedItemContainer == AccountViewItem)
+            NavigationFrame.NavigateToType(typeof(AccountView), null, navOptions);
     }
 
     private void NavigationFrame_Navigated(object sender, NavigationEventArgs e)
