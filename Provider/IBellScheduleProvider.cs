@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
-namespace CroomsBellScheduleCS.Provider
+namespace CroomsBellScheduleCS.Provider;
+
+public interface IBellScheduleProvider
 {
-    public interface IBellScheduleProvider
-    {
-        abstract Task<BellScheduleReader> GetTodayActivity();
-    }
+    Task<BellScheduleReader> GetTodayActivity();
 }

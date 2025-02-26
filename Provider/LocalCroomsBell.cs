@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CroomsBellScheduleCS.Provider
+namespace CroomsBellScheduleCS.Provider;
+
+public class LocalCroomsBell : IBellScheduleProvider
 {
-    public partial class LocalCroomsBell : IBellScheduleProvider
-    {
-        private const string CroomsBellData = @"{
+    private const string CroomsBellData = @"{
   ""schedules"": [
     {
       ""name"": ""none"",
@@ -224,137 +224,122 @@ namespace CroomsBellScheduleCS.Provider
     {""Period 7"": ""Period 7""}
   ]
 }";
-        public Task<BellScheduleReader> GetTodayActivity()
-        {
-            //var data = System.Text.Json.JsonSerializer.Deserialize<LocalBellRoot>(CroomsBellData);
-            //JObject? rawData = JObject.Parse(CroomsBellData);
 
-            //if (data == null) throw new Exception("Invalid or missing JSON");
-            //if (rawData == null) throw new Exception("Invalid or missing JSON");
-
-            //// Find bell schedule name for current day
-            //var bellScheduleName = data.defaultWeekMap.Where(x => x.day == DateTime.Now.DayOfWeek).FirstOrDefault() ?? throw new Exception("Day of week does not exist in data");
-
-            //// Check if current day is overridden
-            //var currentData = $"{DateTime.Now.Month}-{DateTime.Now.Day}-{DateTime.Now.Year}";
-            //foreach (var item in data.overrides)
-            //{
-            //    if (item.date == currentData)
-            //    {
-            //        bellScheduleName.scheduleName = item.scheduleName;
-            //    }
-            //}
-
-
-            //// Parse schedule object
-            //FullBellSchedule schedules = new();
-            //var schedulesArray = (JArray?)rawData["schedules"] ?? throw new Exception("schedules item missing in json");
-            //foreach (var item in schedulesArray)
-            //{
-            //    var sched = new BellSchedule();
-
-            //    JToken? name = item["name"] ?? throw new Exception("name missing in json");
-            //    sched.Name = name.ToString();
-
-            //    var datas = (JObject?)item["data"] ?? throw new Exception("data missing in json");
-            //    foreach (var item2 in datas)
-            //    {
-            //        var item3 = (JArray?)item2.Value ?? throw new Exception("data value missing in json");
-
-            //        var start = item3[0];
-            //        var end = item3[1];
-
-            //        if (start == null) throw new Exception("start time missing in json");
-            //        if (end == null) throw new Exception("end time missing in json");
-
-            //        sched.Classes.Add(new BellScheduleEntry() { Name = item2.Key, StartString = start.ToString(), EndString = end.ToString() });
-            //    }
-
-            //    schedules.Schedules.Add(sched);
-            //}
-
-            //// Get the schedule by its name
-            //if (bellScheduleName == null) throw new Exception("No schedule for today");
-            //var schedule = schedules.Schedules.Where(x => x.Name == bellScheduleName.scheduleName).FirstOrDefault() ?? throw new Exception("Unable to lookup schedule");
-
-
-            //// Read strings
-            //Dictionary<string, string> stringsDictionary = [];
-            //var stringsArray = (JArray?)rawData["strings"] ?? throw new Exception("strings missing in json");
-            //foreach (JObject item in stringsArray.Cast<JObject>())
-            //{
-            //    foreach (var item2 in item)
-            //    {
-            //        var strVal = item2.Value ?? throw new Exception("String value missing");
-            //        stringsDictionary.Add(item2.Key, strVal.ToString());
-            //    }
-            //}
-
-            return Task.FromResult(new BellScheduleReader(null,null));//Task.FromResult(null);//new BellScheduleReader(schedule, stringsDictionary));
-        }
-    }
-    public class JsonDefaultWeek
+    public Task<BellScheduleReader> GetTodayActivity()
     {
-        public DayOfWeek day;
-        public string scheduleName = "";
-    }
-    public class JsonBellOverrides
-    {
-        public string date = "";
-        public string scheduleName = "";
-    }
-    public class LocalBellRoot
-    {
-        public List<JsonDefaultWeek> defaultWeekMap = [];
-        public List<JsonBellOverrides> overrides = [];
-    }
+        //var data = System.Text.Json.JsonSerializer.Deserialize<LocalBellRoot>(CroomsBellData);
+        //JObject? rawData = JObject.Parse(CroomsBellData);
 
-    public class BellScheduleEntry
-    {
-        public string Name = "";
-        public string StartString = "";
-        public string EndString = "";
+        //if (data == null) throw new Exception("Invalid or missing JSON");
+        //if (rawData == null) throw new Exception("Invalid or missing JSON");
 
-        public int StartHour
-        {
-            get
-            {
-                return int.Parse(StartString.Split(":")[0]);
-            }
-        }
-        public int StartMin
-        {
-            get
-            {
-                return int.Parse(StartString.Split(":")[1]);
-            }
-        }
+        //// Find bell schedule name for current day
+        //var bellScheduleName = data.defaultWeekMap.Where(x => x.day == DateTime.Now.DayOfWeek).FirstOrDefault() ?? throw new Exception("Day of week does not exist in data");
 
-        public int EndHour
-        {
-            get
-            {
-                return int.Parse(EndString.Split(":")[0]);
-            }
-        }
-        public int EndMin
-        {
-            get
-            {
-                return int.Parse(EndString.Split(":")[1]);
-            }
-        }
+        //// Check if current day is overridden
+        //var currentData = $"{DateTime.Now.Month}-{DateTime.Now.Day}-{DateTime.Now.Year}";
+        //foreach (var item in data.overrides)
+        //{
+        //    if (item.date == currentData)
+        //    {
+        //        bellScheduleName.scheduleName = item.scheduleName;
+        //    }
+        //}
 
-        public string ScheduleName { get; internal set; } = "Crooms Sched API";
-        public int LunchIndex { get; set; }
+
+        //// Parse schedule object
+        //FullBellSchedule schedules = new();
+        //var schedulesArray = (JArray?)rawData["schedules"] ?? throw new Exception("schedules item missing in json");
+        //foreach (var item in schedulesArray)
+        //{
+        //    var sched = new BellSchedule();
+
+        //    JToken? name = item["name"] ?? throw new Exception("name missing in json");
+        //    sched.Name = name.ToString();
+
+        //    var datas = (JObject?)item["data"] ?? throw new Exception("data missing in json");
+        //    foreach (var item2 in datas)
+        //    {
+        //        var item3 = (JArray?)item2.Value ?? throw new Exception("data value missing in json");
+
+        //        var start = item3[0];
+        //        var end = item3[1];
+
+        //        if (start == null) throw new Exception("start time missing in json");
+        //        if (end == null) throw new Exception("end time missing in json");
+
+        //        sched.Classes.Add(new BellScheduleEntry() { Name = item2.Key, StartString = start.ToString(), EndString = end.ToString() });
+        //    }
+
+        //    schedules.Schedules.Add(sched);
+        //}
+
+        //// Get the schedule by its name
+        //if (bellScheduleName == null) throw new Exception("No schedule for today");
+        //var schedule = schedules.Schedules.Where(x => x.Name == bellScheduleName.scheduleName).FirstOrDefault() ?? throw new Exception("Unable to lookup schedule");
+
+
+        //// Read strings
+        //Dictionary<string, string> stringsDictionary = [];
+        //var stringsArray = (JArray?)rawData["strings"] ?? throw new Exception("strings missing in json");
+        //foreach (JObject item in stringsArray.Cast<JObject>())
+        //{
+        //    foreach (var item2 in item)
+        //    {
+        //        var strVal = item2.Value ?? throw new Exception("String value missing");
+        //        stringsDictionary.Add(item2.Key, strVal.ToString());
+        //    }
+        //}
+
+        return
+            Task.FromResult(new BellScheduleReader(null,
+                null)); //Task.FromResult(null);//new BellScheduleReader(schedule, stringsDictionary));
     }
-    public class BellSchedule
-    {
-        public string Name = "";
-        public List<BellScheduleEntry> Classes = [];
-    }
-    public class FullBellSchedule
-    {
-        public List<BellSchedule> Schedules = [];
-    }
+}
+
+public class JsonDefaultWeek
+{
+    public DayOfWeek day;
+    public string scheduleName = "";
+}
+
+public class JsonBellOverrides
+{
+    public string date = "";
+    public string scheduleName = "";
+}
+
+public class LocalBellRoot
+{
+    public List<JsonDefaultWeek> defaultWeekMap = [];
+    public List<JsonBellOverrides> overrides = [];
+}
+
+public class BellScheduleEntry
+{
+    public string EndString = "";
+    public string Name = "";
+    public string StartString = "";
+
+    public int StartHour => int.Parse(StartString.Split(":")[0]);
+
+    public int StartMin => int.Parse(StartString.Split(":")[1]);
+
+    public int EndHour => int.Parse(EndString.Split(":")[0]);
+
+    public int EndMin => int.Parse(EndString.Split(":")[1]);
+
+    public string ScheduleName { get; internal set; } = "Crooms Sched API";
+    public int LunchIndex { get; set; }
+}
+
+public class BellSchedule
+{
+    public List<BellScheduleEntry> Classes = [];
+    public string Name = "";
+}
+
+public class FullBellSchedule
+{
+    public List<BellSchedule> Schedules = [];
 }

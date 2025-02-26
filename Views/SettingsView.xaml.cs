@@ -1,19 +1,11 @@
-﻿using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.UI.Xaml.Controls;
 
-namespace CroomsBellScheduleCS.Views
+namespace CroomsBellScheduleCS.Views;
+
+public sealed partial class SettingsView : Page
 {
-    public sealed partial class SettingsView : Page
+    public SettingsView()
     {
-        public SettingsView()
-        {
-            InitializeComponent();
-
-        }
+        InitializeComponent();
     }
 }

@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace CroomsBellScheduleCS.Utils
+namespace CroomsBellScheduleCS.Utils;
+
+public class RuntimeHelper
 {
-
-    public class RuntimeHelper
+    public static bool IsMSIX
     {
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        private static extern int GetCurrentPackageFullName(ref int packageFullNameLength, StringBuilder? packageFullName);
-
-        public static bool IsMSIX
+        get
         {
-            get
-            {
-                var length = 0;
+            var length = 0;
 
-                return GetCurrentPackageFullName(ref length, null) != 15700L;
-            }
+            return GetCurrentPackageFullName(ref length, null) != 15700L;
         }
     }
 
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    private static extern int GetCurrentPackageFullName(ref int packageFullNameLength, StringBuilder? packageFullName);
 }
