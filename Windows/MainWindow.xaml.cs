@@ -355,16 +355,14 @@ public sealed partial class MainWindow
         if (msg == Win32.WM_SYSCOMMAND && wParam == Win32.SC_MAXIMIZE)
             // Ignore WM_SYSCOMMAND SC_MAXIMIZE message
             // Thank you Microsoft :)
-        {
             return 1;
-        }
 
         if (msg == Win32.WM_GETMINMAXINFO)
         {
             int dpi = GetDpi();
             float scalingFactor = (float)dpi / 96;
 
-            MINMAXINFO minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
+            var minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
             minMaxInfo.ptMinTrackSize.X = (int)(100 * scalingFactor); // TODO SUVAN
             minMaxInfo.ptMinTrackSize.Y = (int)(100 * scalingFactor); // TODO SUVAN
             Marshal.StructureToPtr(minMaxInfo, lParam, true);
