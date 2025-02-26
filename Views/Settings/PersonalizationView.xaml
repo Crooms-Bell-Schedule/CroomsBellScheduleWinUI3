@@ -32,6 +32,22 @@
                 </StackPanel>
             </StackPanel>
 
+            <ToggleSwitch x:Name="chkTaskbar" Header="Show inside of taskbar" Toggled="chkTaskbar_Toggled"></ToggleSwitch>
+
+            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Lunch" />
+            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                <TextBlock Text="5th period lunch: " Style="{ThemeResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                <ToggleButton Margin="5">A</ToggleButton>
+                <ToggleButton Margin="5">B</ToggleButton>
+            </StackPanel>
+            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                <TextBlock Text="Homeroom lunch: " Style="{ThemeResource BodyTextBlockStyle}" VerticalAlignment="Center"/>
+
+                <ToggleButton Margin="5">A</ToggleButton>
+                <ToggleButton Margin="5">B</ToggleButton>
+            </StackPanel>
+
             <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" />
 
             <StackPanel Margin="0,8,0,0">

@@ -52,4 +52,14 @@ public sealed partial class PersonalizationView
 
         MainWindow.Instance.SetTheme(SettingsManager.Theme);
     }
+
+    private async void chkTaskbar_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!_initialized) return;
+
+        SettingsManager.ShowInTaskbar = chkTaskbar.IsOn;
+        await SettingsManager.SaveSettings();
+
+        MainWindow.Instance.SetTaskbarMode(SettingsManager.ShowInTaskbar);
+    }
 }

@@ -310,11 +310,12 @@ public sealed partial class MainWindow
         }
     }
 
-    private void SetTaskbarMode(bool showInTaskbar)
+    public void SetTaskbarMode(bool showInTaskbar)
     {
         var handle = WindowNative.GetWindowHandle(this);
         var id = Win32Interop.GetWindowIdFromWindow(handle);
         var appWindow = AppWindow.GetFromWindowId(id);
+        if (appWindow == null) return; // What?
 
         if (showInTaskbar)
         {
@@ -356,8 +357,8 @@ public sealed partial class MainWindow
             float scalingFactor = (float)dpi / 96;
 
             MINMAXINFO minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
-            minMaxInfo.ptMinTrackSize.X = (int)(100 * scalingFactor);
-            minMaxInfo.ptMinTrackSize.Y = (int)(100 * scalingFactor);
+            minMaxInfo.ptMinTrackSize.X = (int)(100 * scalingFactor); // TODO SUVAN
+            minMaxInfo.ptMinTrackSize.Y = (int)(100 * scalingFactor); // TODO SUVAN
             Marshal.StructureToPtr(minMaxInfo, lParam, true);
         }
         return Win32.CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
