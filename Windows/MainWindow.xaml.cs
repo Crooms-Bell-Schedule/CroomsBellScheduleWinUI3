@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using WinRT.Interop;
+using System.Collections.Generic;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -86,7 +87,7 @@ public sealed partial class MainWindow
             if (duration.Minutes == 4 && !_isTransition)
                 if (!_shown5MinNotif)
                 {
-                    var toast = new AppNotificationBuilder()
+                    AppNotification toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")
                         .AddText("The bell rings in less than 5 minutes")
                         .AddProgressBar(
@@ -105,7 +106,7 @@ public sealed partial class MainWindow
             if (duration.Minutes == 0 && !_isTransition)
                 if (!_shown1MinNotif)
                 {
-                    var toast = new AppNotificationBuilder()
+                    AppNotification toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")
                         .AddText("The bell rings in less than 1 minute").AddButton(new AppNotificationButton
                             { InputId = "doCancelClassProc", Content = "Cancel class" })
@@ -146,12 +147,12 @@ public sealed partial class MainWindow
     private void UpdateClassText(string currentClass, string scheduleName, TimeSpan transitionDuration,
         TimeSpan transitionTime)
     {
-        var transitionSpan = transitionTime - transitionDuration;
+        TimeSpan transitionSpan = transitionTime - transitionDuration;
 
         // Update progress bar
         ProgressBar.Minimum = 0;
         ProgressBar.Maximum = (int)transitionTime.TotalSeconds;
-        var percent = transitionSpan.TotalSeconds / ProgressBar.Maximum * 100;
+        double percent = transitionSpan.TotalSeconds / ProgressBar.Maximum * 100;
 
         if (transitionSpan.TotalSeconds >= 0)
             ProgressBar.Value = (int)transitionSpan.TotalSeconds;
@@ -185,35 +186,35 @@ public sealed partial class MainWindow
         if (_reader == null) throw new InvalidOperationException();
 
         _reader = await Provider.GetTodayActivity();
-        var classes = _reader.GetFilteredClasses(_lunchOffset);
+        List<BellScheduleEntry> classes = _reader.GetFilteredClasses(_lunchOffset);
 
-        var matchFound = false;
+        bool matchFound = false;
 
 
         BellScheduleEntry? nextClass;
-        for (var i = 0; i < classes.Count; i++)
+        for (int i = 0; i < classes.Count; i++)
         {
-            var data = classes[i];
+            BellScheduleEntry data = classes[i];
 
             nextClass = classes.Count - 1 == i ? null : classes[i + 1];
 
-            var current = DateTime.Now;
+            DateTime current = DateTime.Now;
 
             DateTime start = new(current.Year, current.Month, current.Day, data.StartHour, data.StartMin, 0);
             DateTime end = new(current.Year, current.Month, current.Day, data.EndHour, data.EndMin, 0);
 
-            var totalDuration = end - start;
+            TimeSpan totalDuration = end - start;
 
-            var duration = end - current;
+            TimeSpan duration = end - current;
 
-            var transitionStart = end; // when transition starts
-            var transitionEnd = transitionStart.AddMinutes(5); // how long transition is in total
+            DateTime transitionStart = end; // when transition starts
+            DateTime transitionEnd = transitionStart.AddMinutes(5); // how long transition is in total
 
             if (nextClass != null)
                 transitionEnd = new DateTime(current.Year, current.Month, current.Day, nextClass.StartHour,
                     nextClass.StartMin, 0);
-            var transitionRemain = transitionEnd - current; // how much time left in transition
-            var transitionLen = transitionEnd - transitionStart;
+            TimeSpan transitionRemain = transitionEnd - current; // how much time left in transition
+            TimeSpan transitionLen = transitionEnd - transitionStart;
 
 
             if (current >= transitionStart && current <= transitionEnd)
@@ -253,8 +254,7 @@ public sealed partial class MainWindow
 
     private int GetDpi()
     {
-        var hWnd = WindowNative.GetWindowHandle(this);
-        return Win32.GetDpiForWindow(hWnd);
+        return Win32.GetDpiForWindow(WindowNative.GetWindowHandle(this));
     }
 
     private async Task UpdateBellSchedule()
@@ -274,10 +274,10 @@ public sealed partial class MainWindow
 
 
         // Set window to be always on top
-        var handle = WindowNative.GetWindowHandle(this);
-        var id = Win32Interop.GetWindowIdFromWindow(handle);
-        var appWindow = AppWindow.GetFromWindowId(id);
-        var presenter = appWindow.Presenter as OverlappedPresenter;
+        nint handle = WindowNative.GetWindowHandle(this);
+        WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
+        AppWindow appWindow = AppWindow.GetFromWindowId(id);
+        OverlappedPresenter? presenter = appWindow.Presenter as OverlappedPresenter;
         appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
         if (presenter != null)
             presenter.IsAlwaysOnTop = true;
@@ -286,7 +286,7 @@ public sealed partial class MainWindow
 
         // Workaround a bug when window maximizes when you double click.
         _newWndProcDelegate = (WndProcDelegate)WndProc;
-        var pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
+        nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
         _oldWndProc = Win32.SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
 
         // Change taskbar mode
@@ -296,31 +296,35 @@ public sealed partial class MainWindow
         {
             await UpdateBellSchedule();
 
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromMilliseconds(199);
+            _timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(199)
+            };
             _timer.Tick += Timer_Tick;
             _timer.Start();
         }
         catch (Exception ex)
         {
-            var dlg = new ContentDialog();
-            dlg.Title = "Failed to load schedule";
-            dlg.Content = $"Failed to load schedule:{Environment.NewLine}{ex}";
+            ContentDialog dlg = new()
+            {
+                Title = "Failed to load schedule",
+                Content = $"Failed to load schedule:{Environment.NewLine}{ex}"
+            };
             await dlg.ShowAsync();
         }
     }
 
     public void SetTaskbarMode(bool showInTaskbar)
     {
-        var handle = WindowNative.GetWindowHandle(this);
-        var id = Win32Interop.GetWindowIdFromWindow(handle);
-        var appWindow = AppWindow.GetFromWindowId(id);
+        nint handle = WindowNative.GetWindowHandle(this);
+        WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
+        AppWindow appWindow = AppWindow.GetFromWindowId(id);
         if (appWindow == null) return; // What?
 
         if (showInTaskbar)
         {
-            var trayHWnd = Win32.FindWindowW("Shell_TrayWnd", null);
-            var taskbarUIHWnd =
+            IntPtr trayHWnd = Win32.FindWindowW("Shell_TrayWnd", null);
+            IntPtr taskbarUIHWnd =
                 Win32.FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
             Win32.SetParent(handle, taskbarUIHWnd);
 
@@ -357,8 +361,8 @@ public sealed partial class MainWindow
 
         if (msg == Win32.WM_GETMINMAXINFO)
         {
-            var dpi = GetDpi();
-            var scalingFactor = (float)dpi / 96;
+            int dpi = GetDpi();
+            float scalingFactor = (float)dpi / 96;
 
             MINMAXINFO minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
             minMaxInfo.ptMinTrackSize.X = (int)(100 * scalingFactor); // TODO SUVAN

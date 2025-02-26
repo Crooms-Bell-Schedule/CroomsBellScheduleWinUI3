@@ -22,13 +22,13 @@ public class BellScheduleReader(BellSchedule schedule, Dictionary<string, string
         if (!_normalizedNames)
         {
             _normalizedNames = true;
-            foreach (var item in schedule.Classes) item.Name = GetFriendlyName(item.Name);
+            foreach (BellScheduleEntry item in schedule.Classes) item.Name = GetFriendlyName(item.Name);
         }
 
         List<BellScheduleEntry> result = [];
-        var letter = (char)('A' + lunch);
+        char letter = (char)('A' + lunch);
 
-        foreach (var item in schedule.Classes)
+        foreach (BellScheduleEntry item in schedule.Classes)
             if (item.LunchIndex == lunch)
                 result.Add(item);
 

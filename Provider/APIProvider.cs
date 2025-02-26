@@ -13,13 +13,13 @@ public class APIProvider : IBellScheduleProvider
     public async Task<BellScheduleReader> GetTodayActivity()
     {
         // fetch data from esrver
-        var dataBody = await _client.GetAsync("https://api.croomssched.tech/today");
+        HttpResponseMessage dataBody = await _client.GetAsync("https://api.croomssched.tech/today");
         if (!dataBody.IsSuccessStatusCode)
             throw new Exception("failed to fetch todays schedule: " + dataBody.StatusCode);
 
-        var dataResp = await dataBody.Content.ReadAsStringAsync() ?? throw new Exception("server response is empty");
+        string? dataResp = await dataBody.Content.ReadAsStringAsync() ?? throw new Exception("server response is empty");
 
-        var parsed = JsonSerializer.Deserialize<Root>(dataResp) ?? throw new Exception("server response is malformed");
+        Root parsed = JsonSerializer.Deserialize<Root>(dataResp) ?? throw new Exception("server response is malformed");
 
         // convert response to the better format
         Dictionary<string, string> strings = new()
@@ -34,16 +34,16 @@ public class APIProvider : IBellScheduleProvider
         };
         BellSchedule bellSchedule = new();
 
-        var lunch = 'A';
-        foreach (var schedule in parsed.data.schedule)
+        char lunch = 'A';
+        foreach (List<List<int>> schedule in parsed.data.schedule)
         {
-            foreach (var grouping in schedule)
+            foreach (List<int> grouping in schedule)
             {
-                var startHour = grouping[0];
-                var startMin = grouping[1];
-                var typeStr = grouping[2];
-                var endHour = grouping[3];
-                var endMin = grouping[4];
+                int startHour = grouping[0];
+                int startMin = grouping[1];
+                int typeStr = grouping[2];
+                int endHour = grouping[3];
+                int endMin = grouping[4];
 
                 bellSchedule.Classes.Add(new BellScheduleEntry
                 {
@@ -59,7 +59,7 @@ public class APIProvider : IBellScheduleProvider
         }
 
         // Add appropriate strings
-        for (var i = 0; i < 7; i++) strings.Add(i.ToString(), "Period " + i);
+        for (int i = 0; i < 7; i++) strings.Add(i.ToString(), "Period " + i);
 
         return new BellScheduleReader(bellSchedule, strings);
     }

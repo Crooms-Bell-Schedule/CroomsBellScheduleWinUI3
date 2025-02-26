@@ -17,24 +17,26 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
     <ItemGroup>
-        <None Remove="Styles\FontSizes.xaml"/>
-        <None Remove="Styles\TextBlock.xaml"/>
-        <None Remove="Styles\Thickness.xaml"/>
-        <None Remove="Views\SettingsView.xaml"/>
+        <None Remove="Styles\FontSizes.xaml" />
+        <None Remove="Styles\TextBlock.xaml" />
+        <None Remove="Styles\Thickness.xaml" />
+        <None Remove="Views\SettingsView.xaml" />
+        <None Remove="Views\Settings\AccountView.xaml" />
+        <None Remove="Views\Settings\BellView.xaml" />
     </ItemGroup>
 
     <ItemGroup>
-        <Content Include="Assets\SplashScreen.scale-200.png"/>
-        <Content Include="Assets\LockScreenLogo.scale-200.png"/>
-        <Content Include="Assets\Square150x150Logo.scale-200.png"/>
-        <Content Include="Assets\Square44x44Logo.scale-200.png"/>
-        <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png"/>
-        <Content Include="Assets\StoreLogo.png"/>
-        <Content Include="Assets\Wide310x150Logo.scale-200.png"/>
+        <Content Include="Assets\SplashScreen.scale-200.png" />
+        <Content Include="Assets\LockScreenLogo.scale-200.png" />
+        <Content Include="Assets\Square150x150Logo.scale-200.png" />
+        <Content Include="Assets\Square44x44Logo.scale-200.png" />
+        <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
+        <Content Include="Assets\StoreLogo.png" />
+        <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     </ItemGroup>
 
     <ItemGroup>
-        <Manifest Include="$(ApplicationManifest)"/>
+        <Manifest Include="$(ApplicationManifest)" />
     </ItemGroup>
 
     <!--
@@ -43,14 +45,14 @@
       package has not yet been restored.
     -->
     <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
-        <ProjectCapability Include="Msix"/>
-        <Reference Include="WindowsBase"/>
-        <Reference Include="PresentationCore"/>
-        <Reference Include="System.Xaml"/>
+        <ProjectCapability Include="Msix" />
+        <Reference Include="WindowsBase" />
+        <Reference Include="PresentationCore" />
+        <Reference Include="System.Xaml" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250208002-preview1"/>
-        <PackageReference Include="System.Text.Json" Version="9.0.2"/>
+        <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250208002-preview1" />
+        <PackageReference Include="System.Text.Json" Version="9.0.2" />
     </ItemGroup>
     <ItemGroup>
         <Page Update="Styles\Thickness.xaml">
@@ -59,6 +61,13 @@
         </Page>
         <Page Update="Styles\TextBlock.xaml">
             <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+        </Page>
+        <Page Update="Views\Settings\AccountView.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+          <SubType>Designer</SubType>
+        </Page>
+        <Page Update="Views\Settings\BellView.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
         </Page>
         <Page Update="Windows\SettingsWindow.xaml">
             <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

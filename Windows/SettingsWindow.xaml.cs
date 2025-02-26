@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using WinRT.Interop;
+using System;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,7 +22,7 @@ public sealed partial class SettingsWindow
     {
         InitializeComponent();
 
-        var appWindow = GetAppWindow();
+        AppWindow appWindow = GetAppWindow();
         appWindow.Resize(new SizeInt32(1300, 900));
         appWindow.Title = "Crooms Bell Schedule Settings";
         ExtendsContentIntoTitleBar = true;
@@ -48,15 +49,11 @@ public sealed partial class SettingsWindow
 
     private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
-        var navOptions = new FrameNavigationOptions
+        FrameNavigationOptions navOptions = new FrameNavigationOptions
         {
             TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
         };
         if (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top) navOptions.IsNavigationStackEnabled = false;
-
-
-        if ((NavigationViewItem)args.InvokedItem == PersonalizationViewItem)
-            NavigationFrame.NavigateToType(typeof(PersonalizationView), null, navOptions);
     }
 
     private void NavigationFrame_Navigated(object sender, NavigationEventArgs e)
@@ -75,8 +72,8 @@ public sealed partial class SettingsWindow
     // Helper method to get AppWindow
     private AppWindow GetAppWindow()
     {
-        var hWnd = WindowNative.GetWindowHandle(this);
-        var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+        IntPtr hWnd = WindowNative.GetWindowHandle(this);
+        WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
         return AppWindow.GetFromWindowId(windowId);
     }
 

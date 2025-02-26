@@ -34,10 +34,10 @@ public class LocalSettingsService
     {
         if (!_isInitialized)
         {
-            var path = Path.Combine(_applicationDataFolder, _localsettingsFile);
+            string path = Path.Combine(_applicationDataFolder, _localsettingsFile);
             if (File.Exists(path))
             {
-                var json = await File.ReadAllTextAsync(path);
+                string json = await File.ReadAllTextAsync(path);
                 var result = JsonSerializer.Deserialize<IDictionary<string, object>>(json);
                 if (result != null) _settings = result;
             }
@@ -51,7 +51,7 @@ public class LocalSettingsService
     {
         if (RuntimeHelper.IsMSIX)
         {
-            if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
+            if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out object? obj))
                 return JsonSerializer.Deserialize<T>((string)obj);
             return norm;
         }
@@ -59,7 +59,7 @@ public class LocalSettingsService
         {
             await InitializeAsync();
 
-            if (_settings != null && _settings.TryGetValue(key, out var obj))
+            if (_settings != null && _settings.TryGetValue(key, out object? obj))
             {
                 if (obj is JsonElement el)
                     return el.Deserialize<T>();
@@ -86,7 +86,7 @@ public class LocalSettingsService
 
             await Task.Run(() =>
             {
-                var jSettings = JsonSerializer.Serialize(_settings);
+                string jSettings = JsonSerializer.Serialize(_settings);
                 if (!Directory.Exists(_applicationDataFolder)) Directory.CreateDirectory(_applicationDataFolder);
                 File.WriteAllText(Path.Combine(_applicationDataFolder, _localsettingsFile), jSettings, Encoding.UTF8);
             });
