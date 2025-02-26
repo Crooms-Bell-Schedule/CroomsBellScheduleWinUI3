@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Windows.Graphics;
 using CroomsBellScheduleCS.Provider;
 using CroomsBellScheduleCS.Utils;
-using CroomsBellScheduleCS.Windows;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -13,33 +12,28 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using WinRT.Interop;
-using Microsoft.UI.Xaml.Controls.Primitives;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace CroomsBellScheduleCS;
+namespace CroomsBellScheduleCS.Windows;
 
-public sealed partial class MainWindow : Window
+public sealed partial class MainWindow
 {
-    public static CacheProvider provider = null!;
+    private static readonly CacheProvider Provider = new(new APIProvider());
     private static SettingsWindow? _settings;
-
-    private static SolidColorBrush RedBrush = new(Colors.Red);
-    private static SolidColorBrush _defaultProgressbarBrush = new(Colors.Green);
-    private static SolidColorBrush OrangeBrush = new(Colors.Orange);
-    private static readonly NotificationManager notificationManager = new();
-    public static IntPtr m_oldWndProc;
-    public static Delegate? m_newWndProcDelegate;
-    private MicaBackdrop? _micaBackdrop;
-    private BellScheduleReader? _reader;
-    private bool isTransition;
-    private int LunchOffset;
-    private bool shown1MinNotif;
-    private bool shown5MinNotif;
-    private DispatcherTimer? timer;
-    private bool _initialized = false;
+    
+    private static readonly NotificationManager NotificationManager = new();
+    private static IntPtr _oldWndProc;
+    private static Delegate? _newWndProcDelegate;
     public static MainWindow Instance = null!;
+    private bool _initialized;
+    private bool _isTransition;
+    private int _lunchOffset;
+    private BellScheduleReader? _reader;
+    private bool _shown1MinNotif;
+    private bool _shown5MinNotif;
+    private DispatcherTimer? _timer;
 
     public MainWindow()
     {
@@ -47,43 +41,41 @@ public sealed partial class MainWindow : Window
 
         Instance = this;
 
-        MakeWindowDraggable();
-        TrySetMicaBackdrop();
-        provider = new CacheProvider(new APIProvider());
+        // Remove title bar and make full window draggable
+        if (AppWindow?.Presenter is OverlappedPresenter presenter)
+        {
+            presenter.IsMaximizable = false;
+            presenter.IsMinimizable = false;
+            presenter.IsResizable = true;
+            presenter.IsAlwaysOnTop = true;
+            presenter.SetBorderAndTitleBar(true, false);
+            ExtendsContentIntoTitleBar = true;
+            AppWindow.IsShownInSwitchers = false;
+            SetTitleBar(Content);
+        }
+
+        SystemBackdrop = new MicaBackdrop();
     }
 
-    #region UI
 
-    // Helper method to get AppWindow
-    private AppWindow GetAppWindow()
+    private void Window_Activated(object sender, WindowActivatedEventArgs args)
     {
-        var hWnd = WindowNative.GetWindowHandle(this);
-        var windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-        return AppWindow.GetFromWindowId(windowId);
+        if (!_initialized)
+        {
+            _initialized = true;
+
+            Init();
+        }
     }
 
-    // Remove title bar and make full window draggable
-    private void MakeWindowDraggable()
+    public void SetTheme(ElementTheme theme)
     {
-        if (AppWindow?.Presenter is not OverlappedPresenter presenter) return;
+        if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
 
-        presenter.IsMaximizable = false;
-        presenter.IsMinimizable = false;
-        presenter.IsResizable = true;
-        presenter.IsAlwaysOnTop = true;
-        presenter.SetBorderAndTitleBar(true, false);
-        ExtendsContentIntoTitleBar = true;
-        AppWindow.IsShownInSwitchers = false;
-        SetTitleBar(Content);
+        if (_settings != null)
+            if (_settings.Content is FrameworkElement rootElement2)
+                rootElement2.RequestedTheme = theme;
     }
-
-    private void TrySetMicaBackdrop()
-    {
-        _micaBackdrop = new MicaBackdrop();
-        SystemBackdrop = _micaBackdrop;
-    }
-
-    #endregion
 
     #region Bell
 
@@ -91,8 +83,8 @@ public sealed partial class MainWindow : Window
     {
         if (duration.Hours == 0)
         {
-            if (duration.Minutes == 4 && !isTransition)
-                if (!shown5MinNotif)
+            if (duration.Minutes == 4 && !_isTransition)
+                if (!_shown5MinNotif)
                 {
                     var toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")
@@ -107,11 +99,11 @@ public sealed partial class MainWindow : Window
                         .BuildNotification();
 
                     AppNotificationManager.Default.Show(toast);
-                    shown5MinNotif = true;
+                    _shown5MinNotif = true;
                 }
 
-            if (duration.Minutes == 0 && !isTransition)
-                if (!shown1MinNotif)
+            if (duration.Minutes == 0 && !_isTransition)
+                if (!_shown1MinNotif)
                 {
                     var toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")
@@ -128,7 +120,7 @@ public sealed partial class MainWindow : Window
 
                     AppNotificationManager.Default.Show(toast);
 
-                    shown1MinNotif = true;
+                    _shown1MinNotif = true;
                 }
 
             if (duration.Minutes == 0)
@@ -139,31 +131,18 @@ public sealed partial class MainWindow : Window
                 return $"{duration.Seconds} seconds remaining";
             }
 
-            return string.Format("{0:D2}:{1:D2}", duration.Minutes, duration.Seconds);
+            return $"{duration.Minutes:D2}:{duration.Seconds:D2}";
         }
 
-        return string.Format("{0:D2}:{1:D2}:{2:D2}", duration.Hours, duration.Minutes, duration.Seconds);
-    }
-
-    private void ShowNotification(string title, string descr)
-    {
-        var toast = new AppNotificationBuilder()
-            .AddText(title)
-            .AddText(descr)
-            .AddProgressBar(new AppNotificationProgressBar { Status = "Downloading class...", Value = 0.5 })
-            .SetAttributionText("Andrew decided to use WinUI")
-            .BuildNotification();
-
-
-        AppNotificationManager.Default.Show(toast);
+        return $"{duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}";
     }
 
     /// <summary>
     /// </summary>
     /// <param name="currentClass">Current class name</param>
+    /// <param name="scheduleName">The current day's schedule message</param>
     /// <param name="transitionDuration">Amount of time spent on class</param>
     /// <param name="transitionTime">Total class time (ex: 50m)</param>
-    /// <param name="remain">Remaining class time</param>
     private void UpdateClassText(string currentClass, string scheduleName, TimeSpan transitionDuration,
         TimeSpan transitionTime)
     {
@@ -201,17 +180,17 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    public async void UpdateCurrentClass()
+    private async void UpdateCurrentClass()
     {
         if (_reader == null) throw new InvalidOperationException();
 
-        _reader = await provider.GetTodayActivity();
-        var classes = _reader.GetFilteredClasses(LunchOffset);
+        _reader = await Provider.GetTodayActivity();
+        var classes = _reader.GetFilteredClasses(_lunchOffset);
 
         var matchFound = false;
 
 
-        BellScheduleEntry? nextClass = null;
+        BellScheduleEntry? nextClass;
         for (var i = 0; i < classes.Count; i++)
         {
             var data = classes[i];
@@ -226,7 +205,6 @@ public sealed partial class MainWindow : Window
             var totalDuration = end - start;
 
             var duration = end - current;
-            var elapsedTime = current - start;
 
             var transitionStart = end; // when transition starts
             var transitionEnd = transitionStart.AddMinutes(5); // how long transition is in total
@@ -242,12 +220,12 @@ public sealed partial class MainWindow : Window
             {
                 matchFound = true;
                 ProgressBar.IsIndeterminate = false;
-                isTransition = true;
-                shown5MinNotif = false;
-                shown1MinNotif = false;
-
+                _isTransition = true;
+                _shown5MinNotif = false;
+                _shown1MinNotif = false;
                 if (nextClass != null)
-                    UpdateClassText("Transition to " + nextClass.Name, data.ScheduleName, transitionRemain, transitionLen);
+                    UpdateClassText("Transition to " + nextClass.Name, data.ScheduleName, transitionRemain,
+                        transitionLen);
                 else
                     UpdateClassText("Transition to next day", data.ScheduleName, transitionRemain, transitionLen);
                 break;
@@ -257,7 +235,7 @@ public sealed partial class MainWindow : Window
             {
                 matchFound = true;
                 ProgressBar.IsIndeterminate = false;
-                isTransition = false;
+                _isTransition = false;
 
                 UpdateClassText(data.Name, data.ScheduleName, duration, totalDuration);
                 break;
@@ -286,7 +264,7 @@ public sealed partial class MainWindow : Window
     {
         TxtCurrentClass.Text = "Retrieiving bell schedule";
         TxtDuration.Text = "Please wait";
-        _reader = await provider.GetTodayActivity();
+        _reader = await Provider.GetTodayActivity();
         LoadingThing.Visibility = Visibility.Collapsed;
         SetLunch(SettingsManager.LunchOffset);
         UpdateCurrentClass();
@@ -296,7 +274,7 @@ public sealed partial class MainWindow : Window
     {
         await SettingsManager.LoadSettings();
         SetTheme(SettingsManager.Theme);
-        
+
 
         // Set window to be always on top
         var handle = WindowNative.GetWindowHandle(this);
@@ -307,13 +285,13 @@ public sealed partial class MainWindow : Window
         if (presenter != null)
             presenter.IsAlwaysOnTop = true;
 
-        notificationManager.Init();
+        NotificationManager.Init();
 
         // Workaround a bug when window maximizes when you double click.
-        const int GWLP_WNDPROC = -4;
-        m_newWndProcDelegate = (WndProcDelegate)WndProc;
-        var pWndProc = Marshal.GetFunctionPointerForDelegate(m_newWndProcDelegate);
-        m_oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
+
+        _newWndProcDelegate = (WndProcDelegate)WndProc;
+        var pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
+        _oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
 
         // Change taskbar mode
         SetTaskbarMode(SettingsManager.ShowInTaskbar);
@@ -322,10 +300,10 @@ public sealed partial class MainWindow : Window
         {
             await UpdateBellSchedule();
 
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(199);
-            timer.Tick += Timer_Tick;
-            timer.Start();
+            _timer = new DispatcherTimer();
+            _timer.Interval = TimeSpan.FromMilliseconds(199);
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
         }
         catch (Exception ex)
         {
@@ -372,13 +350,11 @@ public sealed partial class MainWindow : Window
 
     private IntPtr WndProc(IntPtr hwnd, uint msg, UIntPtr wParam, IntPtr lParam)
     {
-        const uint WM_SYSCOMMAND = 0x0112;
-        const uint SC_MAXIMIZE = 0xF030;
         if (msg == WM_SYSCOMMAND && wParam == SC_MAXIMIZE)
             // Ignore WM_SYSCOMMAND SC_MAXIMIZE message
             // Thank you Microsoft :)
             return 1;
-        return CallWindowProcW(m_oldWndProc, hwnd, msg, wParam, lParam);
+        return CallWindowProcW(_oldWndProc, hwnd, msg, wParam, lParam);
     }
 
     private void Timer_Tick(object? sender, object e)
@@ -409,7 +385,7 @@ public sealed partial class MainWindow : Window
     {
         ALunchOption.IsChecked = index == 0;
         BLunchOption.IsChecked = index == 1;
-        LunchOffset = index;
+        _lunchOffset = index;
         if (SettingsManager.LunchOffset != index)
             SettingsManager.LunchOffset = index;
         UpdateCurrentClass();
@@ -431,48 +407,27 @@ public sealed partial class MainWindow : Window
 
     #region Win32
 
-    [LibraryImport("user32.dll")]
-    public static partial IntPtr SetWindowLongPtrW(IntPtr hwnd, int index, IntPtr value);
+    private const int GWLP_WNDPROC = -4;
+
+    private const uint WM_SYSCOMMAND = 0x0112;
+    private const uint SC_MAXIMIZE = 0xF030;
 
     [LibraryImport("user32.dll")]
-    public static partial IntPtr CallWindowProcW(IntPtr lpPrevWndFunc, IntPtr hwnd, uint msg, UIntPtr wParam,
+    private static partial IntPtr SetWindowLongPtrW(IntPtr hwnd, int index, IntPtr value);
+
+    [LibraryImport("user32.dll")]
+    private static partial IntPtr CallWindowProcW(IntPtr lpPrevWndFunc, IntPtr hwnd, uint msg, UIntPtr wParam,
         IntPtr lParam);
 
     [LibraryImport("user32.dll")]
-    public static partial IntPtr SetParent(IntPtr child, IntPtr newParent);
+    private static partial void SetParent(IntPtr child, IntPtr newParent);
 
     [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
-    public static partial IntPtr FindWindowW(string? className, string? windowName);
+    private static partial IntPtr FindWindowW(string? className, string? windowName);
 
     [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
-    public static partial IntPtr FindWindowExW(IntPtr parent, IntPtr childAfter, string? className, string? windowName);
+    private static partial IntPtr
+        FindWindowExW(IntPtr parent, IntPtr childAfter, string? className, string? windowName);
 
     #endregion
-
-
-    private void Window_Activated(object sender, WindowActivatedEventArgs args)
-    {
-        if (!_initialized)
-        {
-            _initialized = true;
-
-            Init();
-        }
-    }
-
-    public void SetTheme(ElementTheme theme)
-    {
-        if (Content is FrameworkElement rootElement)
-        {
-            rootElement.RequestedTheme = theme;
-        }
-
-        if (_settings != null)
-        {
-            if (_settings.Content is FrameworkElement rootElement2)
-            {
-                rootElement2.RequestedTheme = theme;
-            }
-        }
-    }
 }

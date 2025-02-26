@@ -66,11 +66,6 @@
         </Page>
     </ItemGroup>
     <ItemGroup>
-        <Page Update="Views\SettingsView.xaml">
-            <Generator>MSBuild:Compile</Generator>
-        </Page>
-    </ItemGroup>
-    <ItemGroup>
         <Page Update="Styles\FontSizes.xaml">
             <Generator>MSBuild:Compile</Generator>
         </Page>

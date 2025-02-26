@@ -6,7 +6,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:utils="using:CroomsBellScheduleCS.Utils"
     mc:Ignorable="d"
     Title="Crooms Bell Schedule Settings">
     <Grid>
@@ -29,21 +28,23 @@
             x:Name="NavigationViewControl"
             Canvas.ZIndex="0"
             IsBackButtonVisible="Visible"
-            IsSettingsVisible="True"
+            IsSettingsVisible="False"
             ExpandedModeThresholdWidth="1280"
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
             SelectionChanged="NavigationViewControl_SelectionChanged"
             ItemInvoked="NavigationViewControl_ItemInvoked">
+
             <NavigationView.MenuItems>
-                <NavigationViewItem x:Uid="Shell_Main" utils:NavigationHelper.NavigateTo="CroomsBellScheduleCS.View.SettingsView">
+                <NavigationViewItem Content="Personalization" x:Name="PersonalizationViewItem">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <Grid>
-                <Frame x:Name="NavigationFrame" Margin="{StaticResource NavigationViewPageContentMargin}" Navigated="NavigationFrame_Navigated" Loaded="NavigationFrame_Loaded" />
+                <Frame x:Name="NavigationFrame" Margin="{StaticResource NavigationViewPageContentMargin}"
+                       Navigated="NavigationFrame_Navigated" Loaded="NavigationFrame_Loaded" />
             </Grid>
         </NavigationView>
     </Grid>

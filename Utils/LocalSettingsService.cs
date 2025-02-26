@@ -46,14 +46,14 @@ public class LocalSettingsService
             _isInitialized = true;
         }
     }
+
     public async Task<T?> ReadSettingAsync<T>(string key, T norm)
     {
         if (RuntimeHelper.IsMSIX)
         {
             if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
                 return JsonSerializer.Deserialize<T>((string)obj);
-            else
-                return norm;
+            return norm;
         }
         else
         {

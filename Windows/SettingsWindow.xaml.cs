@@ -1,10 +1,11 @@
-using CroomsBellScheduleCS.Views;
+using Windows.Graphics;
+using CroomsBellScheduleCS.Views.Settings;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using Windows.Graphics;
+using Microsoft.UI.Xaml.Navigation;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -12,7 +13,7 @@ using WinRT.Interop;
 
 namespace CroomsBellScheduleCS.Windows;
 
-public sealed partial class SettingsWindow : Window
+public sealed partial class SettingsWindow
 {
     private MicaBackdrop? _micaBackdrop;
 
@@ -21,7 +22,7 @@ public sealed partial class SettingsWindow : Window
         InitializeComponent();
 
         var appWindow = GetAppWindow();
-        appWindow.Resize(new SizeInt32(1000, 900));
+        appWindow.Resize(new SizeInt32(1300, 900));
         appWindow.Title = "Crooms Bell Schedule Settings";
         ExtendsContentIntoTitleBar = true;
         TrySetMicaBackdrop();
@@ -43,7 +44,30 @@ public sealed partial class SettingsWindow : Window
     private void NavigationViewControl_SelectionChanged(NavigationView sender,
         NavigationViewSelectionChangedEventArgs args)
     {
+    }
 
+    private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    {
+        var navOptions = new FrameNavigationOptions
+        {
+            TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
+        };
+        if (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top) navOptions.IsNavigationStackEnabled = false;
+
+
+        if (args.InvokedItem == PersonalizationViewItem)
+            NavigationFrame.NavigateToType(typeof(PersonalizationView), null, navOptions);
+    }
+
+    private void NavigationFrame_Navigated(object sender, NavigationEventArgs e)
+    {
+        if (e.SourcePageType == typeof(PersonalizationView))
+            NavigationViewControl.SelectedItem = PersonalizationViewItem;
+    }
+
+    private void NavigationFrame_Loaded(object sender, RoutedEventArgs e)
+    {
+        NavigationFrame.Navigate(typeof(PersonalizationView));
     }
 
     #region UI
@@ -63,25 +87,4 @@ public sealed partial class SettingsWindow : Window
     }
 
     #endregion
-
-    private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
-    {
-        if (args.IsSettingsInvoked)
-        {
-            NavigationFrame.Navigate(typeof(SettingsView));
-        }
-    }
-
-    private void NavigationFrame_Navigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
-    {
-        if (e.SourcePageType == typeof(SettingsView))
-        {
-            NavigationViewControl.SelectedItem = NavigationViewControl.SettingsItem;
-        }
-    }
-
-    private void NavigationFrame_Loaded(object sender, RoutedEventArgs e)
-    {
-        NavigationFrame.Navigate(typeof(SettingsView));
-    }
 }

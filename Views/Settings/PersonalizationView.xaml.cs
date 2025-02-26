@@ -1,26 +1,29 @@
-﻿using CroomsBellScheduleCS.Utils;
+﻿using System.Reflection;
+using CroomsBellScheduleCS.Utils;
+using CroomsBellScheduleCS.Windows;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 
-namespace CroomsBellScheduleCS.Views;
+namespace CroomsBellScheduleCS.Views.Settings;
 
-public sealed partial class SettingsView : Page
+public sealed partial class PersonalizationView
 {
     private bool _initialized;
-    public SettingsView()
+
+    public PersonalizationView()
     {
         InitializeComponent();
     }
 
-    private void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void Page_Loaded(object sender, RoutedEventArgs e)
     {
         RdLight.IsChecked = SettingsManager.Theme == ElementTheme.Light;
         RdDark.IsChecked = SettingsManager.Theme == ElementTheme.Dark;
         RdDefault.IsChecked = SettingsManager.Theme == ElementTheme.Default;
+        VersionText.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
         _initialized = true;
     }
 
-    private async void RdLight_Checked(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private async void RdLight_Checked(object sender, RoutedEventArgs e)
     {
         if (!_initialized) return;
 
