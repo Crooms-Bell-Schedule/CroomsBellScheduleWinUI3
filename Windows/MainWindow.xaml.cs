@@ -58,6 +58,52 @@ public sealed partial class MainWindow
         SystemBackdrop = new MicaBackdrop();
     }
 
+    private async void Init()
+    {
+        await SettingsManager.LoadSettings();
+        SetTheme(SettingsManager.Theme);
+
+
+        // Set window to be always on top
+        nint handle = WindowNative.GetWindowHandle(this);
+        WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
+        AppWindow appWindow = AppWindow.GetFromWindowId(id);
+        OverlappedPresenter? presenter = appWindow.Presenter as OverlappedPresenter;
+        appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+        if (presenter != null)
+            presenter.IsAlwaysOnTop = true;
+
+        NotificationManager.Init();
+
+        // Workaround a bug when window maximizes when you double click.
+        _newWndProcDelegate = (WndProcDelegate)WndProc;
+        nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
+        _oldWndProc = Win32.SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
+
+        // Change taskbar mode
+        SetTaskbarMode(SettingsManager.ShowInTaskbar);
+
+        try
+        {
+            await UpdateBellSchedule();
+
+            _timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(199)
+            };
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
+        }
+        catch (Exception ex)
+        {
+            ContentDialog dlg = new()
+            {
+                Title = "Failed to load schedule",
+                Content = $"Failed to load schedule:{Environment.NewLine}{ex}"
+            };
+            await dlg.ShowAsync();
+        }
+    }
 
     private void Window_Activated(object sender, WindowActivatedEventArgs args)
     {
@@ -265,53 +311,6 @@ public sealed partial class MainWindow
         LoadingThing.Visibility = Visibility.Collapsed;
         SetLunch(SettingsManager.LunchOffset);
         UpdateCurrentClass();
-    }
-
-    private async void Init()
-    {
-        await SettingsManager.LoadSettings();
-        SetTheme(SettingsManager.Theme);
-
-
-        // Set window to be always on top
-        nint handle = WindowNative.GetWindowHandle(this);
-        WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
-        AppWindow appWindow = AppWindow.GetFromWindowId(id);
-        OverlappedPresenter? presenter = appWindow.Presenter as OverlappedPresenter;
-        appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
-        if (presenter != null)
-            presenter.IsAlwaysOnTop = true;
-
-        NotificationManager.Init();
-
-        // Workaround a bug when window maximizes when you double click.
-        _newWndProcDelegate = (WndProcDelegate)WndProc;
-        nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
-        _oldWndProc = Win32.SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
-
-        // Change taskbar mode
-        SetTaskbarMode(SettingsManager.ShowInTaskbar);
-
-        try
-        {
-            await UpdateBellSchedule();
-
-            _timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(199)
-            };
-            _timer.Tick += Timer_Tick;
-            _timer.Start();
-        }
-        catch (Exception ex)
-        {
-            ContentDialog dlg = new()
-            {
-                Title = "Failed to load schedule",
-                Content = $"Failed to load schedule:{Environment.NewLine}{ex}"
-            };
-            await dlg.ShowAsync();
-        }
     }
 
     public void SetTaskbarMode(bool showInTaskbar)
