@@ -362,7 +362,7 @@ public sealed partial class MainWindow
             int dpi = GetDpi();
             float scalingFactor = (float)dpi / 96;
 
-            var minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
+            MINMAXINFO minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
             minMaxInfo.ptMinTrackSize.X = (int)(100 * scalingFactor); // TODO SUVAN
             minMaxInfo.ptMinTrackSize.Y = (int)(100 * scalingFactor); // TODO SUVAN
             Marshal.StructureToPtr(minMaxInfo, lParam, true);
