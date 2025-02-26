@@ -108,7 +108,7 @@ public sealed partial class MainWindow
                     var toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")
                         .AddText("The bell rings in less than 1 minute").AddButton(new AppNotificationButton
-                            { InputId = "doCancelClassProc", Content = "Cancel class" })
+                        { InputId = "doCancelClassProc", Content = "Cancel class" })
                         .AddProgressBar(
                             new AppNotificationProgressBar
                             {
@@ -128,7 +128,7 @@ public sealed partial class MainWindow
                 TxtCurrentClass.Foreground = (duration.Seconds & 1) != 0
                     ? Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush
                     : Application.Current.Resources["TextFillColorPrimaryBrush"] as SolidColorBrush;
-                return $"{duration.Seconds} seconds remaining";
+                return $"00:{duration.Seconds:D2}";
             }
 
             return $"{duration.Minutes:D2}:{duration.Seconds:D2}";
@@ -254,11 +254,8 @@ public sealed partial class MainWindow
     private int GetDpi()
     {
         var hWnd = WindowNative.GetWindowHandle(this);
-        return GetDpiForWindow(hWnd);
+        return Win32.GetDpiForWindow(hWnd);
     }
-
-    [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-    public static extern int GetDpiForWindow(IntPtr hwnd);
 
     private async Task UpdateBellSchedule()
     {
@@ -288,10 +285,9 @@ public sealed partial class MainWindow
         NotificationManager.Init();
 
         // Workaround a bug when window maximizes when you double click.
-
         _newWndProcDelegate = (WndProcDelegate)WndProc;
         var pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
-        _oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
+        _oldWndProc = Win32.SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
 
         // Change taskbar mode
         SetTaskbarMode(SettingsManager.ShowInTaskbar);
@@ -322,9 +318,9 @@ public sealed partial class MainWindow
 
         if (showInTaskbar)
         {
-            var trayHWnd = FindWindowW("Shell_TrayWnd", null);
-            var taskbarUIHWnd = FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
-            SetParent(handle, taskbarUIHWnd);
+            var trayHWnd = Win32.FindWindowW("Shell_TrayWnd", null);
+            var taskbarUIHWnd = Win32.FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
+            Win32.SetParent(handle, taskbarUIHWnd);
 
             appWindow.MoveAndResize(new RectInt32 { Width = GetDpi() * 4, Height = GetDpi() * 1 });
             MainButton.Visibility = Visibility.Collapsed;
@@ -335,7 +331,7 @@ public sealed partial class MainWindow
         }
         else
         {
-            SetParent(handle, 0);
+            Win32.SetParent(handle, 0);
             MainButton.Visibility = Visibility.Visible;
             TxtDuration.FontSize = 16;
             TxtCurrentClass.FontSize = 16;
@@ -348,13 +344,23 @@ public sealed partial class MainWindow
 
     private delegate IntPtr WndProcDelegate(IntPtr hwnd, uint msg, UIntPtr wParam, IntPtr lParam);
 
-    private IntPtr WndProc(IntPtr hwnd, uint msg, UIntPtr wParam, IntPtr lParam)
+    private IntPtr WndProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
     {
-        if (msg == WM_SYSCOMMAND && wParam == SC_MAXIMIZE)
+        if (msg == Win32.WM_SYSCOMMAND && wParam == Win32.SC_MAXIMIZE)
             // Ignore WM_SYSCOMMAND SC_MAXIMIZE message
             // Thank you Microsoft :)
             return 1;
-        return CallWindowProcW(_oldWndProc, hwnd, msg, wParam, lParam);
+        else if (msg == Win32.WM_GETMINMAXINFO)
+        {
+            var dpi = GetDpi();
+            float scalingFactor = (float)dpi / 96;
+
+            MINMAXINFO minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
+            minMaxInfo.ptMinTrackSize.X = (int)(100 * scalingFactor);
+            minMaxInfo.ptMinTrackSize.Y = (int)(100 * scalingFactor);
+            Marshal.StructureToPtr(minMaxInfo, lParam, true);
+        }
+        return Win32.CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
     }
 
     private void Timer_Tick(object? sender, object e)
@@ -405,29 +411,4 @@ public sealed partial class MainWindow
 
     #endregion
 
-    #region Win32
-
-    private const int GWLP_WNDPROC = -4;
-
-    private const uint WM_SYSCOMMAND = 0x0112;
-    private const uint SC_MAXIMIZE = 0xF030;
-
-    [LibraryImport("user32.dll")]
-    private static partial IntPtr SetWindowLongPtrW(IntPtr hwnd, int index, IntPtr value);
-
-    [LibraryImport("user32.dll")]
-    private static partial IntPtr CallWindowProcW(IntPtr lpPrevWndFunc, IntPtr hwnd, uint msg, UIntPtr wParam,
-        IntPtr lParam);
-
-    [LibraryImport("user32.dll")]
-    private static partial void SetParent(IntPtr child, IntPtr newParent);
-
-    [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
-    private static partial IntPtr FindWindowW(string? className, string? windowName);
-
-    [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
-    private static partial IntPtr
-        FindWindowExW(IntPtr parent, IntPtr childAfter, string? className, string? windowName);
-
-    #endregion
 }

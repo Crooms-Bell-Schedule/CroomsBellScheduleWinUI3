@@ -55,7 +55,7 @@ public sealed partial class SettingsWindow
         if (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top) navOptions.IsNavigationStackEnabled = false;
 
 
-        if (args.InvokedItem == PersonalizationViewItem)
+        if ((NavigationViewItem)args.InvokedItem == PersonalizationViewItem)
             NavigationFrame.NavigateToType(typeof(PersonalizationView), null, navOptions);
     }
 
