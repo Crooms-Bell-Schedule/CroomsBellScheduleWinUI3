@@ -1,7 +1,4 @@
-﻿using System.Reflection;
-using CroomsBellScheduleCS.Utils;
-using CroomsBellScheduleCS.Windows;
-using Microsoft.UI.Xaml;
+﻿using Microsoft.UI.Xaml;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
