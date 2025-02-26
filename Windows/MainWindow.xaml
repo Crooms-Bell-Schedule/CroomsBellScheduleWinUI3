@@ -7,7 +7,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Title="Crooms Bell Schedule">
+    Title="Crooms Bell Schedule"
+    Activated="Window_Activated">
 
     <Grid Margin="5, 5, 5, 2.5">
         <Grid.RowDefinitions>

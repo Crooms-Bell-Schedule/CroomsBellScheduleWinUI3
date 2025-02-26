@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using WinRT.Interop;
+using Microsoft.UI.Xaml.Controls.Primitives;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -38,16 +39,18 @@ public sealed partial class MainWindow : Window
     private bool shown1MinNotif;
     private bool shown5MinNotif;
     private DispatcherTimer? timer;
+    private bool _initialized = false;
+    public static MainWindow Instance = null!;
 
     public MainWindow()
     {
         InitializeComponent();
 
+        Instance = this;
+
         MakeWindowDraggable();
         TrySetMicaBackdrop();
         provider = new CacheProvider(new APIProvider());
-
-        Init();
     }
 
     #region UI
@@ -246,7 +249,10 @@ public sealed partial class MainWindow : Window
                 shown5MinNotif = false;
                 shown1MinNotif = false;
 
-                UpdateClassText("Transition to " + nextClass.Name, data.ScheduleName, transitionRemain, transitionLen);
+                if (nextClass != null)
+                    UpdateClassText("Transition to " + nextClass.Name, data.ScheduleName, transitionRemain, transitionLen);
+                else
+                    UpdateClassText("Transition to next day", data.ScheduleName, transitionRemain, transitionLen);
                 break;
             }
 
@@ -291,6 +297,10 @@ public sealed partial class MainWindow : Window
 
     private async void Init()
     {
+        await SettingsManager.LoadSettings();
+        SetTheme(SettingsManager.Theme);
+        
+
         // Set window to be always on top
         var handle = WindowNative.GetWindowHandle(this);
         var id = Win32Interop.GetWindowIdFromWindow(handle);
@@ -441,4 +451,31 @@ public sealed partial class MainWindow : Window
     public static partial IntPtr FindWindowExW(IntPtr parent, IntPtr childAfter, string? className, string? windowName);
 
     #endregion
+
+
+    private void Window_Activated(object sender, WindowActivatedEventArgs args)
+    {
+        if (!_initialized)
+        {
+            _initialized = true;
+
+            Init();
+        }
+    }
+
+    public void SetTheme(ElementTheme theme)
+    {
+        if (Content is FrameworkElement rootElement)
+        {
+            rootElement.RequestedTheme = theme;
+        }
+
+        if (_settings != null)
+        {
+            if (_settings.Content is FrameworkElement rootElement2)
+            {
+                rootElement2.RequestedTheme = theme;
+            }
+        }
+    }
 }

@@ -37,7 +37,7 @@ public class LocalSettingsService
             var path = Path.Combine(_applicationDataFolder, _localsettingsFile);
             if (File.Exists(path))
             {
-                var json = File.ReadAllText(path);
+                var json = await File.ReadAllTextAsync(path);
                 var result = JsonSerializer.Deserialize<IDictionary<string, object>>(json);
                 if (result != null) _settings = result;
             }
@@ -46,17 +46,18 @@ public class LocalSettingsService
             _isInitialized = true;
         }
     }
-
-    public T? ReadSetting<T>(string key)
+    public async Task<T?> ReadSettingAsync<T>(string key, T norm)
     {
         if (RuntimeHelper.IsMSIX)
         {
             if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
                 return JsonSerializer.Deserialize<T>((string)obj);
+            else
+                return norm;
         }
         else
         {
-            InitializeAsync().GetAwaiter().GetResult();
+            await InitializeAsync();
 
             if (_settings != null && _settings.TryGetValue(key, out var obj))
             {
@@ -66,25 +67,7 @@ public class LocalSettingsService
             }
         }
 
-        return default;
-    }
-
-    public async Task<T?> ReadSettingAsync<T>(string key)
-    {
-        if (RuntimeHelper.IsMSIX)
-        {
-            if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out var obj))
-                return JsonSerializer.Deserialize<T>((string)obj);
-        }
-        else
-        {
-            await InitializeAsync();
-
-            if (_settings != null && _settings.TryGetValue(key, out var obj))
-                return JsonSerializer.Deserialize<T>((string)obj);
-        }
-
-        return default;
+        return norm;
     }
 
     public async Task SaveSettingAsync<T>(string key, T value)
@@ -97,33 +80,11 @@ public class LocalSettingsService
         {
             await InitializeAsync();
 
-            _settings[key] = JsonSerializer.Serialize(value);
+            if (value != null)
+                _settings[key] = value;
 
 
             await Task.Run(() =>
-            {
-                var jSettings = JsonSerializer.Serialize(_settings);
-                if (!Directory.Exists(_applicationDataFolder)) Directory.CreateDirectory(_applicationDataFolder);
-                File.WriteAllText(Path.Combine(_applicationDataFolder, _localsettingsFile), jSettings, Encoding.UTF8);
-            });
-        }
-    }
-
-    public void SaveSetting<T>(string key, T value)
-    {
-        if (RuntimeHelper.IsMSIX)
-        {
-            ApplicationData.Current.LocalSettings.Values[key] = JsonSerializer.Serialize(value);
-        }
-        else
-        {
-            InitializeAsync().GetAwaiter().GetResult();
-
-
-            _settings[key] = value;
-
-
-            Task.Run(() =>
             {
                 var jSettings = JsonSerializer.Serialize(_settings);
                 if (!Directory.Exists(_applicationDataFolder)) Directory.CreateDirectory(_applicationDataFolder);

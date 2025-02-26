@@ -1,10 +1,10 @@
-using Windows.Graphics;
 using CroomsBellScheduleCS.Views;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using Windows.Graphics;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -26,7 +26,6 @@ public sealed partial class SettingsWindow : Window
         ExtendsContentIntoTitleBar = true;
         TrySetMicaBackdrop();
         SetTitleBar(AppTitleBar);
-        NavigationViewControl.SelectedItem = NavigationViewControl.SettingsItem;
     }
 
     private void NavigationViewControl_DisplayModeChanged(NavigationView sender,
@@ -44,10 +43,7 @@ public sealed partial class SettingsWindow : Window
     private void NavigationViewControl_SelectionChanged(NavigationView sender,
         NavigationViewSelectionChangedEventArgs args)
     {
-        if (args.IsSettingsSelected)
-            NavigationFrame.Navigate(typeof(SettingsView));
-        //else 
-        //  NavigationFrame.Navigate(((NavigationViewItem)args.SelectedItem).);
+
     }
 
     #region UI
@@ -67,4 +63,25 @@ public sealed partial class SettingsWindow : Window
     }
 
     #endregion
+
+    private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+    {
+        if (args.IsSettingsInvoked)
+        {
+            NavigationFrame.Navigate(typeof(SettingsView));
+        }
+    }
+
+    private void NavigationFrame_Navigated(object sender, Microsoft.UI.Xaml.Navigation.NavigationEventArgs e)
+    {
+        if (e.SourcePageType == typeof(SettingsView))
+        {
+            NavigationViewControl.SelectedItem = NavigationViewControl.SettingsItem;
+        }
+    }
+
+    private void NavigationFrame_Loaded(object sender, RoutedEventArgs e)
+    {
+        NavigationFrame.Navigate(typeof(SettingsView));
+    }
 }
