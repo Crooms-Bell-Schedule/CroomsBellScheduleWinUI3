@@ -28,7 +28,6 @@ public sealed partial class MainWindow : Window
     private static SolidColorBrush RedBrush = new(Colors.Red);
     private static SolidColorBrush _defaultProgressbarBrush = new(Colors.Green);
     private static SolidColorBrush OrangeBrush = new(Colors.Orange);
-    private static readonly SolidColorBrush Foreground = new(Colors.White); // TODO FIX
     private static readonly NotificationManager notificationManager = new();
     public static IntPtr m_oldWndProc;
     public static Delegate? m_newWndProcDelegate;
@@ -136,7 +135,7 @@ public sealed partial class MainWindow : Window
             {
                 TxtCurrentClass.Foreground = (duration.Seconds & 1) != 0
                     ? Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush
-                    : Foreground;
+                    : Application.Current.Resources["TextFillColorPrimaryBrush"] as SolidColorBrush;
                 return $"{duration.Seconds} seconds remaining";
             }
 
@@ -170,8 +169,6 @@ public sealed partial class MainWindow : Window
     {
         var transitionSpan = transitionTime - transitionDuration;
 
-        TxtCurrentClass.Foreground = Foreground;
-
         // Update progress bar
         ProgressBar.Minimum = 0;
         ProgressBar.Maximum = (int)transitionTime.TotalSeconds;
@@ -190,17 +187,17 @@ public sealed partial class MainWindow : Window
         if (transitionDuration.TotalMinutes <= 5)
         {
             ProgressBar.Foreground = Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush;
-            TxtDuration.Foreground = ProgressBar.Foreground;
+            TxtCurrentClass.Foreground = ProgressBar.Foreground;
         }
         else if (transitionDuration.TotalMinutes <= 10)
         {
             ProgressBar.Foreground = Application.Current.Resources["SystemFillColorCautionBrush"] as SolidColorBrush;
-            TxtDuration.Foreground = ProgressBar.Foreground;
+            TxtCurrentClass.Foreground = ProgressBar.Foreground;
         }
         else
         {
             ProgressBar.Foreground = Application.Current.Resources["SystemFillColorAttentionBrush"] as SolidColorBrush;
-            TxtDuration.Foreground = Application.Current.Resources["TextFillColorPrimaryBrush"] as SolidColorBrush;
+            TxtCurrentClass.Foreground = Application.Current.Resources["TextFillColorPrimaryBrush"] as SolidColorBrush;
         }
     }
 
