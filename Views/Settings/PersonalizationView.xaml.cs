@@ -19,7 +19,7 @@ public sealed partial class PersonalizationView
         RdLight.IsChecked = SettingsManager.Theme == ElementTheme.Light;
         RdDark.IsChecked = SettingsManager.Theme == ElementTheme.Dark;
         RdDefault.IsChecked = SettingsManager.Theme == ElementTheme.Default;
-        VersionText.Text = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
+        VersionText.Text = "Version " + Assembly.GetExecutingAssembly().GetName().Version;
         _initialized = true;
     }
 

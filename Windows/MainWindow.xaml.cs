@@ -22,7 +22,7 @@ public sealed partial class MainWindow
 {
     private static readonly CacheProvider Provider = new(new APIProvider());
     private static SettingsWindow? _settings;
-    
+
     private static readonly NotificationManager NotificationManager = new();
     private static IntPtr _oldWndProc;
     private static Delegate? _newWndProcDelegate;
@@ -108,7 +108,7 @@ public sealed partial class MainWindow
                     var toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")
                         .AddText("The bell rings in less than 1 minute").AddButton(new AppNotificationButton
-                        { InputId = "doCancelClassProc", Content = "Cancel class" })
+                            { InputId = "doCancelClassProc", Content = "Cancel class" })
                         .AddProgressBar(
                             new AppNotificationProgressBar
                             {
@@ -320,7 +320,8 @@ public sealed partial class MainWindow
         if (showInTaskbar)
         {
             var trayHWnd = Win32.FindWindowW("Shell_TrayWnd", null);
-            var taskbarUIHWnd = Win32.FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
+            var taskbarUIHWnd =
+                Win32.FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
             Win32.SetParent(handle, taskbarUIHWnd);
 
             appWindow.MoveAndResize(new RectInt32 { Width = GetDpi() * 4, Height = GetDpi() * 1 });
@@ -350,17 +351,21 @@ public sealed partial class MainWindow
         if (msg == Win32.WM_SYSCOMMAND && wParam == Win32.SC_MAXIMIZE)
             // Ignore WM_SYSCOMMAND SC_MAXIMIZE message
             // Thank you Microsoft :)
+        {
             return 1;
-        else if (msg == Win32.WM_GETMINMAXINFO)
+        }
+
+        if (msg == Win32.WM_GETMINMAXINFO)
         {
             var dpi = GetDpi();
-            float scalingFactor = (float)dpi / 96;
+            var scalingFactor = (float)dpi / 96;
 
             MINMAXINFO minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
             minMaxInfo.ptMinTrackSize.X = (int)(100 * scalingFactor); // TODO SUVAN
             minMaxInfo.ptMinTrackSize.Y = (int)(100 * scalingFactor); // TODO SUVAN
             Marshal.StructureToPtr(minMaxInfo, lParam, true);
         }
+
         return Win32.CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
     }
 
@@ -411,5 +416,4 @@ public sealed partial class MainWindow
     }
 
     #endregion
-
 }
