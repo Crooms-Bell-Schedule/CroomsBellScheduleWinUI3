@@ -32,7 +32,7 @@
                 </StackPanel>
             </StackPanel>
 
-            <ToggleSwitch x:Name="chkTaskbar" Header="Show inside of taskbar" Toggled="chkTaskbar_Toggled" />
+            <ToggleSwitch x:Name="chkTaskbar" Header="Show inside of taskbar" Toggled="chkTaskbar_Toggled" ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Does not function on Windows 10 currently, and the bell schedule is not shown when an app is fullscreen."/>
 
             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Lunch" />
             <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
