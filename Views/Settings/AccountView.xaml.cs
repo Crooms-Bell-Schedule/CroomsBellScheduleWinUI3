@@ -1,8 +1,7 @@
 ﻿using System;
+using Windows.UI.Popups;
 using CroomsBellScheduleCS.Windows;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Windows.UI.Popups;
 using WinRT.Interop;
 
 namespace CroomsBellScheduleCS.Views.Settings;
@@ -23,18 +22,17 @@ public sealed partial class AccountView
 
     private async void Button_Click(object sender, RoutedEventArgs e)
     {
-        MessageDialog dlg = new MessageDialog($"Do you accept the terms of service of croomstech.sched?")
+        MessageDialog dlg = new MessageDialog("Do you accept the terms of service of croomstech.sched?")
         {
-            Title = "Authenticate with croomstech.sched",
-
+            Title = "Authenticate with croomstech.sched"
         };
 
         dlg.Commands.Add(new UICommand(
             "Yes",
-            new UICommandInvokedHandler(this.CommandInvokedHandler_none)));
+            CommandInvokedHandler_none));
         dlg.Commands.Add(new UICommand(
             "No",
-            new UICommandInvokedHandler(this.CommandInvokedHandler_none)));
+            CommandInvokedHandler_none));
 
         InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
 
@@ -46,6 +44,5 @@ public sealed partial class AccountView
 
     private void CommandInvokedHandler_none(IUICommand command)
     {
-        
     }
 }

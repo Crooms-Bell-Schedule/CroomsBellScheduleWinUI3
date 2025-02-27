@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Graphics;
+using Windows.UI.Popups;
 using CroomsBellScheduleCS.Provider;
 using CroomsBellScheduleCS.Utils;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using WinRT.Interop;
-using Windows.UI.Popups;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,13 +21,14 @@ namespace CroomsBellScheduleCS.Windows;
 
 public sealed partial class MainWindow
 {
-    private static CacheProvider Provider = new(new APIProvider());
+    private static CacheProvider _provider = new(new APIProvider());
     private static SettingsWindow? _settings;
 
     private static readonly NotificationManager NotificationManager = new();
     private static IntPtr _oldWndProc;
     private static Delegate? _newWndProcDelegate;
     public static MainWindow Instance = null!;
+    private double? _defaultProgressbarMinHeight;
     private bool _initialized;
     private bool _isTransition;
     private int _lunchOffset;
@@ -36,7 +36,6 @@ public sealed partial class MainWindow
     private bool _shown1MinNotif;
     private bool _shown5MinNotif;
     private DispatcherTimer? _timer;
-    private double _defaultProgressbarMinHeight = -1;
 
     public MainWindow()
     {
@@ -231,7 +230,7 @@ public sealed partial class MainWindow
     {
         if (_reader == null) throw new InvalidOperationException();
 
-        _reader = await Provider.GetTodayActivity();
+        _reader = await _provider.GetTodayActivity();
         List<BellScheduleEntry> classes = _reader.GetFilteredClasses(_lunchOffset);
 
         bool matchFound = false;
@@ -309,20 +308,23 @@ public sealed partial class MainWindow
         TxtDuration.Text = "Please wait";
         try
         {
-            _reader = await Provider.GetTodayActivity();
+            _reader = await _provider.GetTodayActivity();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
-            MessageDialog dlg = new MessageDialog($"Failed to load schedule:{Environment.NewLine}{ex.Message}. A copy of the bell schedule will be used, which may not be up to date.")
-            {
-                Title = "Failed to download schedule"
-            };
+            MessageDialog dlg =
+                new MessageDialog(
+                    $"Failed to load schedule:{Environment.NewLine}{ex.Message}. A copy of the bell schedule will be used, which may not be up to date.")
+                {
+                    Title = "Failed to download schedule"
+                };
             InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
             await dlg.ShowAsync();
 
-            Provider = new CacheProvider(new LocalCroomsBell());
-            _reader = await Provider.GetTodayActivity();
+            _provider = new CacheProvider(new LocalCroomsBell());
+            _reader = await _provider.GetTodayActivity();
         }
+
         LoadingThing.Visibility = Visibility.Collapsed;
         SetLunch(SettingsManager.LunchOffset);
         UpdateCurrentClass();
@@ -357,8 +359,8 @@ public sealed partial class MainWindow
             TxtDuration.FontSize = 16;
             TxtCurrentClass.FontSize = 16;
             TxtClassPercent.FontSize = 16;
-            if (_defaultProgressbarMinHeight != -1)
-                ProgressBar.MinHeight = _defaultProgressbarMinHeight;
+            if (_defaultProgressbarMinHeight != null)
+                ProgressBar.MinHeight = _defaultProgressbarMinHeight.Value;
 
             appWindow.Resize(new SizeInt32(GetDpi() * 4, GetDpi() * 1));
         }

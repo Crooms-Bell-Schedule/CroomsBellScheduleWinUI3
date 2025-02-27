@@ -13,7 +13,10 @@
             x:Name="ContentArea">
             <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}"
                        Text="CroomsSched Account" />
-            <TextBlock>By logging in, you agree to the <Hyperlink NavigateUri="https://croomssched.tech/terms">Terms of Service</Hyperlink></TextBlock>
+            <TextBlock>
+                By logging in, you agree to the
+                <Hyperlink NavigateUri="https://croomssched.tech/terms">Terms of Service</Hyperlink>
+            </TextBlock>
             <Button Click="Button_Click">Login</Button>
         </StackPanel>
     </Grid>
