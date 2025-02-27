@@ -36,6 +36,7 @@ public sealed partial class MainWindow
     private bool _shown1MinNotif;
     private bool _shown5MinNotif;
     private DispatcherTimer? _timer;
+    private AppWindow? _windowApp;
 
     public MainWindow()
     {
@@ -335,7 +336,9 @@ public sealed partial class MainWindow
         nint handle = WindowNative.GetWindowHandle(this);
         WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
         AppWindow appWindow = AppWindow.GetFromWindowId(id);
-        if (appWindow == null) return; // What?
+        if (appWindow != null)
+            _windowApp = appWindow;
+        if (_windowApp == null) return; // What?
 
         if (showInTaskbar)
         {
@@ -344,7 +347,8 @@ public sealed partial class MainWindow
                 Win32.FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
             Win32.SetParent(handle, taskbarUIHWnd);
 
-            appWindow.MoveAndResize(new RectInt32 { Width = GetDpi() * 4, Height = GetDpi() * 1 });
+            if (_windowApp != null)
+                _windowApp.MoveAndResize(new RectInt32 { Width = GetDpi() * 4, Height = GetDpi() * 1 });
             MainButton.Visibility = Visibility.Collapsed;
             TxtDuration.FontSize = 14;
             TxtCurrentClass.FontSize = 14;
@@ -362,7 +366,7 @@ public sealed partial class MainWindow
             if (_defaultProgressbarMinHeight != null)
                 ProgressBar.MinHeight = _defaultProgressbarMinHeight.Value;
 
-            appWindow.Resize(new SizeInt32(GetDpi() * 4, GetDpi() * 1));
+            _windowApp.Resize(new SizeInt32(GetDpi() * 4, GetDpi() * 1));
         }
     }
 
