@@ -305,7 +305,7 @@ public sealed partial class MainWindow
 
     private async Task UpdateBellSchedule()
     {
-        TxtCurrentClass.Text = "Retrieiving bell schedule";
+        TxtCurrentClass.Text = "Retrieving bell schedule";
         TxtDuration.Text = "Please wait";
         try
         {

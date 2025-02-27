@@ -22,9 +22,9 @@ public sealed partial class AccountView
 
     private async void Button_Click(object sender, RoutedEventArgs e)
     {
-        MessageDialog dlg = new MessageDialog("Do you accept the terms of service of croomstech.sched?")
+        MessageDialog dlg = new MessageDialog("Do you accept the terms of service of croomssched.tech?")
         {
-            Title = "Authenticate with croomstech.sched"
+            Title = "Authenticate with croomssched.tech"
         };
 
         dlg.Commands.Add(new UICommand(
