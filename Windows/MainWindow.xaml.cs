@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using WinRT.Interop;
+using Windows.UI.Popups;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -21,7 +22,7 @@ namespace CroomsBellScheduleCS.Windows;
 
 public sealed partial class MainWindow
 {
-    private static readonly CacheProvider Provider = new(new APIProvider());
+    private static CacheProvider Provider = new(new APIProvider());
     private static SettingsWindow? _settings;
 
     private static readonly NotificationManager NotificationManager = new();
@@ -35,6 +36,7 @@ public sealed partial class MainWindow
     private bool _shown1MinNotif;
     private bool _shown5MinNotif;
     private DispatcherTimer? _timer;
+    private double _defaultProgressbarMinHeight = -1;
 
     public MainWindow()
     {
@@ -94,11 +96,11 @@ public sealed partial class MainWindow
         }
         catch (Exception ex)
         {
-            ContentDialog dlg = new()
+            MessageDialog dlg = new MessageDialog($"Failed to load schedule:{Environment.NewLine}{ex}")
             {
-                Title = "Failed to load schedule",
-                Content = $"Failed to load schedule:{Environment.NewLine}{ex}"
+                Title = "Failed to initialize schedule"
             };
+            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
             await dlg.ShowAsync();
         }
     }
@@ -305,7 +307,22 @@ public sealed partial class MainWindow
     {
         TxtCurrentClass.Text = "Retrieiving bell schedule";
         TxtDuration.Text = "Please wait";
-        _reader = await Provider.GetTodayActivity();
+        try
+        {
+            _reader = await Provider.GetTodayActivity();
+        }
+        catch(Exception ex)
+        {
+            MessageDialog dlg = new MessageDialog($"Failed to load schedule:{Environment.NewLine}{ex.Message}. A copy of the bell schedule will be used, which may not be up to date.")
+            {
+                Title = "Failed to download schedule"
+            };
+            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
+            await dlg.ShowAsync();
+
+            Provider = new CacheProvider(new LocalCroomsBell());
+            _reader = await Provider.GetTodayActivity();
+        }
         LoadingThing.Visibility = Visibility.Collapsed;
         SetLunch(SettingsManager.LunchOffset);
         UpdateCurrentClass();
@@ -330,6 +347,7 @@ public sealed partial class MainWindow
             TxtDuration.FontSize = 14;
             TxtCurrentClass.FontSize = 14;
             TxtClassPercent.FontSize = 14;
+            _defaultProgressbarMinHeight = ProgressBar.MinHeight;
             ProgressBar.MinHeight = 20;
         }
         else
@@ -339,6 +357,8 @@ public sealed partial class MainWindow
             TxtDuration.FontSize = 16;
             TxtCurrentClass.FontSize = 16;
             TxtClassPercent.FontSize = 16;
+            if (_defaultProgressbarMinHeight != -1)
+                ProgressBar.MinHeight = _defaultProgressbarMinHeight;
 
             appWindow.Resize(new SizeInt32(GetDpi() * 4, GetDpi() * 1));
         }
