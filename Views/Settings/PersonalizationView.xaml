@@ -11,9 +11,9 @@
     <Grid>
         <StackPanel
             x:Name="ContentArea">
-            <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}"
-                       Text="Personalization: " />
-            <StackPanel Margin="0,12,0,12">
+            <TextBlock x:Uid="Settings_Personalization" Margin="0, 20, 0, 26" Style="{ThemeResource TitleTextBlockStyle}"
+                       Text="Personalization" />
+            <StackPanel Margin="0,0,0,12">
                 <TextBlock x:Uid="Settings_Theme" Text="Theme: " />
 
                 <StackPanel Margin="0,8,0,0">
