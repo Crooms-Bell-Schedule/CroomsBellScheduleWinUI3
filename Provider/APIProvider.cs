@@ -67,7 +67,7 @@ public class APIProvider : IBellScheduleProvider
 
     private static string ConvertTime(int hour, int min)
     {
-        return $"{hour}:{min}";
+        return $"{hour}:{min:d2}";
     }
 
     public class Data

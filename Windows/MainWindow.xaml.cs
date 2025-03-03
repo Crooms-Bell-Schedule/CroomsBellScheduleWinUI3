@@ -38,6 +38,10 @@ public sealed partial class MainWindow
     private DispatcherTimer? _timer;
     private AppWindow? _windowApp;
 
+    public BellScheduleReader? Reader { get => _reader; }
+    public int LunchOffset { get => _lunchOffset; }
+    
+
     public MainWindow()
     {
         InitializeComponent();
