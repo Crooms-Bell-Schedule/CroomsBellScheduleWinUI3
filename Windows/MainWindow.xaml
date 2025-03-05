@@ -6,6 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tb="using:H.NotifyIcon"
     mc:Ignorable="d"
     Title="Crooms Bell Schedule"
     Activated="Window_Activated">
@@ -50,5 +51,21 @@
 
         <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Height="10" Grid.ColumnSpan="2" />
         <ProgressRing x:Name="LoadingThing" Grid.Row="1" Grid.Column="1" />
+
+        <tb:TaskbarIcon
+        ToolTipText="Crooms Bell Schedule"
+        IconSource="/Assets/croomsBellSchedule.ico"
+        MenuActivation="LeftOrRightClick"
+        PopupActivation="DoubleClick"
+        NoLeftClickDelay="True"
+            LeftClickCommand=""
+        >
+            <tb:TaskbarIcon.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="Settings"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Quit"></MenuFlyoutItem>
+                </MenuFlyout>
+            </tb:TaskbarIcon.ContextFlyout>
+        </tb:TaskbarIcon>
     </Grid>
 </Window>
