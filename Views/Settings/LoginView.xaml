@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<UserControl
+    x:Class="CroomsBellScheduleCS.Views.Settings.LoginView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel
+            x:Name="ContentArea">
+            <TextBlock Margin="0,0,0,10">Username:</TextBlock>
+            <AutoSuggestBox x:Name="UsernameBox" PlaceholderText="Enter username" TextChanged="UsernameBox_TextChanged"></AutoSuggestBox>
+            <TextBlock Margin="0,0,0,10">Password:</TextBlock>
+            <PasswordBox x:Name="PasswordBox" PlaceholderText="Enter password" PasswordChanged="PasswordBox_PasswordChanged"></PasswordBox>
+            <TextBlock x:Name="LoginFailureText"  Foreground="Yellow">The login failed due to possible chance of rain,<LineBreak/>and the server ran away because Suvan scared it.</TextBlock>
+        </StackPanel>
+    </Grid>
+</UserControl>

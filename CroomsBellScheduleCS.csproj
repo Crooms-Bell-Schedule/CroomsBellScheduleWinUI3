@@ -67,6 +67,11 @@
             <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
             <SubType>Designer</SubType>
         </Page>
+        <Page Update="Views\Settings\LoginView.xaml">
+          <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+          <SubType>Designer</SubType>
+          <Generator>MSBuild:Compile</Generator>
+        </Page>
         <Page Update="Views\Settings\BellView.xaml">
             <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
         </Page>

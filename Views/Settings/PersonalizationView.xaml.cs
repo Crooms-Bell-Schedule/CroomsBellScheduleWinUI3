@@ -20,6 +20,7 @@ public sealed partial class PersonalizationView
         RdDark.IsChecked = SettingsManager.Theme == ElementTheme.Dark;
         RdDefault.IsChecked = SettingsManager.Theme == ElementTheme.Default;
         VersionText.Text = "Version " + Assembly.GetExecutingAssembly().GetName().Version;
+        chkTaskbar.IsOn = SettingsManager.ShowInTaskbar;
         _initialized = true;
     }
 
