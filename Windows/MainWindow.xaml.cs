@@ -445,4 +445,9 @@ public sealed partial class MainWindow
     }
 
     #endregion
+
+    private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
 }
