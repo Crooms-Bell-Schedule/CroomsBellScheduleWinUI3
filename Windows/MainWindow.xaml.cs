@@ -13,6 +13,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI.Popups;
+using System.Linq;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -336,7 +337,7 @@ public sealed partial class MainWindow
         }
 
         LoadingThing.Visibility = Visibility.Collapsed;
-        SetLunch(SettingsManager.LunchOffset);
+        UpdateLunch();
         UpdateCurrentClass();
     }
 
@@ -401,6 +402,10 @@ public sealed partial class MainWindow
             minMaxInfo.ptMinTrackSize.Y = (int)(100 * scalingFactor); // TODO SUVAN
             Marshal.StructureToPtr(minMaxInfo, lParam, true);
         }
+        else if (msg == Win32.WM_DPICHANGED)
+        {
+            SetTaskbarMode(SettingsManager.ShowInTaskbar);
+        }
 
         return Win32.CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
     }
@@ -453,8 +458,18 @@ public sealed partial class MainWindow
 
     #endregion
 
-    private void MenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+    internal void UpdateLunch()
     {
+        _lunchOffset = DetermineLunchOffsetFromToday();
+        SetLunch(_lunchOffset);
+    }
 
+    private int DetermineLunchOffsetFromToday()
+    {
+        if (_reader == null) return SettingsManager.LunchOffset;
+        if (_reader.GetUnfilteredClasses().Where(x => x.ScheduleName.ToLower() == "odd").Any())
+            return SettingsManager.HomeroomLunch;
+        else
+            return SettingsManager.Period5Lunch;
     }
 }

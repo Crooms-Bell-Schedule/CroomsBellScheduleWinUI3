@@ -17,7 +17,7 @@ public class BellScheduleReader(BellSchedule schedule, Dictionary<string, string
         return name;
     }
 
-    public List<BellScheduleEntry> GetFilteredClasses(int lunch)
+    public List<BellScheduleEntry> GetUnfilteredClasses()
     {
         if (!_normalizedNames)
         {
@@ -25,10 +25,15 @@ public class BellScheduleReader(BellSchedule schedule, Dictionary<string, string
             foreach (BellScheduleEntry item in schedule.Classes) item.Name = GetFriendlyName(item.Name);
         }
 
+        return schedule.Classes;
+    }
+
+    public List<BellScheduleEntry> GetFilteredClasses(int lunch)
+    {
         List<BellScheduleEntry> result = [];
         char letter = (char)('A' + lunch);
 
-        foreach (BellScheduleEntry item in schedule.Classes)
+        foreach (BellScheduleEntry item in GetUnfilteredClasses())
             if (item.LunchIndex == lunch)
                 result.Add(item);
 

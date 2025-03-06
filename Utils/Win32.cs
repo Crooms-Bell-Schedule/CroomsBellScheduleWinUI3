@@ -26,6 +26,7 @@ public static partial class Win32
 
     public const uint WM_SYSCOMMAND = 0x0112;
     public const uint WM_GETMINMAXINFO = 0x24;
+    public const uint WM_DPICHANGED = 0x02E0;
 
     public const uint SC_MAXIMIZE = 0xF030;
 
