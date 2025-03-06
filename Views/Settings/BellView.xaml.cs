@@ -14,11 +14,11 @@ public sealed partial class BellView
 
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        BellScheduleReader? reader = MainWindow.Instance.Reader;
+        BellScheduleReader? reader = MainWindow.ViewInstance.Reader;
         if (reader == null) return;
 
         string response = "";
-        foreach (var item in reader.GetFilteredClasses(MainWindow.Instance.LunchOffset))
+        foreach (var item in reader.GetFilteredClasses(MainWindow.ViewInstance.LunchOffset))
         {
             if (item != null)
             {

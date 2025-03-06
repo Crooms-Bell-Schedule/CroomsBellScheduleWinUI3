@@ -46,7 +46,7 @@ public sealed partial class PersonalizationView
         SettingsManager.Theme = ElementTheme.Light;
         await SettingsManager.SaveSettings();
 
-        MainWindow.Instance.SetTheme(SettingsManager.Theme);
+        MainWindow.ViewInstance.SetTheme(SettingsManager.Theme);
     }
 
     private async void RdDark_Checked(object sender, RoutedEventArgs e)
@@ -56,7 +56,7 @@ public sealed partial class PersonalizationView
         SettingsManager.Theme = ElementTheme.Dark;
         await SettingsManager.SaveSettings();
 
-        MainWindow.Instance.SetTheme(SettingsManager.Theme);
+        MainWindow.ViewInstance.SetTheme(SettingsManager.Theme);
     }
 
     private async void RdDefault_Checked(object sender, RoutedEventArgs e)
@@ -66,7 +66,7 @@ public sealed partial class PersonalizationView
         SettingsManager.Theme = ElementTheme.Default;
         await SettingsManager.SaveSettings();
 
-        MainWindow.Instance.SetTheme(SettingsManager.Theme);
+        MainWindow.ViewInstance.SetTheme(SettingsManager.Theme);
     }
 
     private async void chkTaskbar_Toggled(object sender, RoutedEventArgs e)
@@ -76,7 +76,7 @@ public sealed partial class PersonalizationView
         SettingsManager.ShowInTaskbar = chkTaskbar.IsOn;
         await SettingsManager.SaveSettings();
 
-        MainWindow.Instance.SetTaskbarMode(SettingsManager.ShowInTaskbar);
+        MainWindow.ViewInstance.SetTaskbarMode(SettingsManager.ShowInTaskbar);
     }
 
     private async void p5LunchA_Checked(object sender, RoutedEventArgs e)
@@ -87,7 +87,7 @@ public sealed partial class PersonalizationView
         await SettingsManager.SaveSettings();
         UpdateCheckState();
 
-        MainWindow.Instance.UpdateLunch();
+        MainWindow.ViewInstance.UpdateLunch();
     }
 
     private async void p5LunchB_Checked(object sender, RoutedEventArgs e)
@@ -98,7 +98,7 @@ public sealed partial class PersonalizationView
         await SettingsManager.SaveSettings();
         UpdateCheckState();
 
-        MainWindow.Instance.UpdateLunch();
+        MainWindow.ViewInstance.UpdateLunch();
     }
 
     private async void pHLunchA_Checked(object sender, RoutedEventArgs e)
@@ -109,7 +109,7 @@ public sealed partial class PersonalizationView
         await SettingsManager.SaveSettings();
         UpdateCheckState();
 
-        MainWindow.Instance.UpdateLunch();
+        MainWindow.ViewInstance.UpdateLunch();
     }
 
     private async void pHLunchB_Checked(object sender, RoutedEventArgs e)
@@ -120,7 +120,7 @@ public sealed partial class PersonalizationView
         await SettingsManager.SaveSettings();
         UpdateCheckState();
 
-        MainWindow.Instance.UpdateLunch();
+        MainWindow.ViewInstance.UpdateLunch();
     }
 
     private void Lunch_Unchecked(object sender, RoutedEventArgs e)

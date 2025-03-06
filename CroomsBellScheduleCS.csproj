@@ -76,6 +76,9 @@
         <Page Update="Views\Settings\BellView.xaml">
             <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
         </Page>
+        <Page Update="Windows\MainView.xaml">
+          <SubType>Designer</SubType>
+        </Page>
         <Page Update="Windows\SettingsWindow.xaml">
             <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
             <Generator>MSBuild:Compile</Generator>
