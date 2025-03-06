@@ -22,6 +22,7 @@ public sealed partial class SettingsWindow
         AppWindow appWindow = GetAppWindow();
         appWindow.Resize(new SizeInt32(1300, 900));
         appWindow.Title = "Crooms Bell Schedule Settings";
+        appWindow.SetIcon("Assets\\croomsBellSchedule.ico");
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
     }

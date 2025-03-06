@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
-using Windows.Graphics;
-using Windows.UI.Popups;
 using CroomsBellScheduleCS.Provider;
 using CroomsBellScheduleCS.Utils;
 using Microsoft.UI;
@@ -12,6 +6,13 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using Squirrel;
+using System;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Windows.Graphics;
+using Windows.UI.Popups;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -23,6 +24,7 @@ public sealed partial class MainWindow
 {
     private static CacheProvider _provider = new(new APIProvider());
     private static SettingsWindow? _settings;
+    private static UpdateManager? _updateManager;
 
     private static readonly NotificationManager NotificationManager = new();
     private static IntPtr _oldWndProc;
@@ -86,6 +88,9 @@ public sealed partial class MainWindow
 
         // Change taskbar mode
         SetTaskbarMode(SettingsManager.ShowInTaskbar);
+
+        TxtCurrentClass.Text = "Checking for updates...";
+        
 
         try
         {
@@ -343,6 +348,8 @@ public sealed partial class MainWindow
         if (appWindow != null)
             _windowApp = appWindow;
         if (_windowApp == null) return; // What?
+
+        _windowApp.SetIcon(@"Assets\croomsBellSchedule.ico");
 
         if (showInTaskbar)
         {
