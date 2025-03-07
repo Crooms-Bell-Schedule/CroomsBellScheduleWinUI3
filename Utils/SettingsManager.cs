@@ -1,5 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
+using static CroomsBellScheduleCS.Utils.SettingsManager;
 
 namespace CroomsBellScheduleCS.Utils;
 
@@ -11,50 +15,57 @@ public static class SettingsManager
     public const string Period5LunchName = "p5l";
     public const string HomeroomLunchName = "p9l";
 
-    private static LocalSettingsService? _settings;
+    private static SettingsRoot? _settings;
 
-    public static LocalSettingsService Settings
+    public static SettingsRoot Settings
     {
         get
         {
             if (_settings == null)
-                _settings = new LocalSettingsService();
+                _settings = new SettingsRoot();
             return _settings;
         }
     }
-    /// <summary>
-    /// TODO remove
-    /// </summary>
-    public static int LunchOffset { get; set; }
-
-    public static bool ShowInTaskbar { get; set; }
-
-    public static ElementTheme Theme { get; set; }
-    /// <summary>
-    /// lunch for wenesday schedule
-    /// </summary>
-    public static int HomeroomLunch { get; set; }
-    /// <summary>
-    /// lunch for standard, activity days
-    /// </summary>
-    public static int Period5Lunch { get; set; }
 
     public static async Task LoadSettings()
     {
-        LunchOffset = await Settings.ReadSettingAsync(LunchOffsetSettingName, 0);
-        ShowInTaskbar = await Settings.ReadSettingAsync(ShowInTaskbarSettingName, false);
-        Theme = await Settings.ReadSettingAsync(ThemeSettingName, ElementTheme.Default);
-        HomeroomLunch = await Settings.ReadSettingAsync(HomeroomLunchName, 0);
-        Period5Lunch = await Settings.ReadSettingAsync(Period5LunchName, 0);
+        using Stream s = await LocalSettingsService.OpenAsync();
+        var result = (SettingsRoot?)await JsonSerializer.DeserializeAsync(s, typeof(SettingsRoot));
+        if (result != null)
+            _settings = result;
     }
 
     public static async Task SaveSettings()
     {
-        // TODO: I don't like this settings system
-        await Settings.SaveSettingAsync(LunchOffsetSettingName, LunchOffset);
-        await Settings.SaveSettingAsync(ShowInTaskbarSettingName, ShowInTaskbar);
-        await Settings.SaveSettingAsync(ThemeSettingName, Theme);
-        await Settings.SaveSettingAsync(HomeroomLunchName, HomeroomLunch);
-        await Settings.SaveSettingAsync(Period5LunchName, Period5Lunch);
+        using Stream s = await LocalSettingsService.OpenAsync();
+        await JsonSerializer.SerializeAsync(s, _settings, typeof(SettingsRoot));
+
+        LocalSettingsService.SaveAsync(s);
     }
+
+    public class SettingsRoot
+    {
+        /// <summary>
+        /// TODO remove
+        /// </summary>
+        public int LunchOffset { get; set; }
+
+        public bool ShowInTaskbar { get; set; }
+
+        public ElementTheme Theme { get; set; }
+        /// <summary>
+        /// lunch for wenesday schedule
+        /// </summary>
+        public int HomeroomLunch { get; set; }
+        /// <summary>
+        /// lunch for standard, activity days
+        /// </summary>
+        public int Period5Lunch { get; set; }
+    }
+}
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSerializable(typeof(SettingsRoot))]
+internal partial class SourceGenerationContext : JsonSerializerContext
+{
 }

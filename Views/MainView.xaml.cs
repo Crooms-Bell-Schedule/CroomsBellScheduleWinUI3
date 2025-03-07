@@ -61,8 +61,8 @@ public sealed partial class MainView
         MainWindow.Instance.SetTitleBar(Content);
 
         await SettingsManager.LoadSettings();
-        SetTheme(SettingsManager.Theme);
-        SetTaskbarMode(SettingsManager.ShowInTaskbar);
+        SetTheme(SettingsManager.Settings.Theme);
+        SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
         if (_windowApp == null) throw new Exception("WinUI init failed");
 
 
@@ -398,7 +398,7 @@ public sealed partial class MainView
         }
         else if (msg == Win32.WM_DPICHANGED)
         {
-            SetTaskbarMode(SettingsManager.ShowInTaskbar);
+            SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
         }
 
         return Win32.CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
@@ -433,8 +433,8 @@ public sealed partial class MainView
         //ALunchOption.IsChecked = index == 0;
         //BLunchOption.IsChecked = index == 1;
         _lunchOffset = index;
-        if (SettingsManager.LunchOffset != index)
-            SettingsManager.LunchOffset = index;
+        if (SettingsManager.Settings.LunchOffset != index)
+            SettingsManager.Settings.LunchOffset = index;
         UpdateCurrentClass();
     }
 
@@ -460,11 +460,11 @@ public sealed partial class MainView
 
     private int DetermineLunchOffsetFromToday()
     {
-        if (_reader == null) return SettingsManager.LunchOffset;
+        if (_reader == null) return SettingsManager.Settings.LunchOffset;
         if (_reader.GetUnfilteredClasses().Where(x => x.ScheduleName.ToLower() == "odd").Any())
-            return SettingsManager.HomeroomLunch;
+            return SettingsManager.Settings.HomeroomLunch;
         else
-            return SettingsManager.Period5Lunch;
+            return SettingsManager.Settings.Period5Lunch;
     }
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)

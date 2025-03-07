@@ -7,89 +7,52 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using CroomsBellScheduleCS.Utils;
 
-public class LocalSettingsService
+public static class LocalSettingsService
 {
     private const string _defaultApplicationDataFolder = "CroomsBellSchedule/";
     private const string _defaultLocalSettingsFile = "LocalSettings.json";
-    private readonly string _applicationDataFolder;
+    private static readonly string _applicationDataFolder;
 
-    private readonly string _localApplicationData =
+    private static readonly string _localApplicationData =
         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-    private readonly string _localsettingsFile;
+    private static readonly string _localsettingsFile;
 
-    private bool _isInitialized;
-
-    private IDictionary<string, object> _settings;
-
-    public LocalSettingsService()
+    static LocalSettingsService()
     {
         _applicationDataFolder = Path.Combine(_localApplicationData, _defaultApplicationDataFolder);
         _localsettingsFile = _defaultLocalSettingsFile;
-
-        _settings = new Dictionary<string, object>();
     }
 
-    private async Task InitializeAsync()
+    public static async Task<Stream> OpenAsync()
     {
-        if (!_isInitialized)
+        if (RuntimeHelper.IsMSIX)
+        {
+            var data = ApplicationData.Current.LocalSettings.Values["data"];
+            if (data != null)
+                return new MemoryStream(Encoding.UTF8.GetBytes(data.ToString()));
+            else return new MemoryStream();
+        }
+        else
         {
             string path = Path.Combine(_applicationDataFolder, _localsettingsFile);
             if (File.Exists(path))
             {
-                string json = await File.ReadAllTextAsync(path);
-                var result = JsonSerializer.Deserialize<IDictionary<string, object>>(json);
-                if (result != null) _settings = result;
+                return File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             }
 
-
-            _isInitialized = true;
+            return new MemoryStream();
         }
     }
 
-    public async Task<T?> ReadSettingAsync<T>(string key, T norm)
+    public static void SaveAsync(Stream s)
     {
-        if (RuntimeHelper.IsMSIX)
+        if (s is MemoryStream ms)
         {
-            if (ApplicationData.Current.LocalSettings.Values.TryGetValue(key, out object? obj))
-                return JsonSerializer.Deserialize<T>((string)obj);
-            return norm;
-        }
-        else
-        {
-            await InitializeAsync();
-
-            if (_settings != null && _settings.TryGetValue(key, out object? obj))
+            if (RuntimeHelper.IsMSIX)
             {
-                if (obj is JsonElement el)
-                    return el.Deserialize<T>();
-                return (T?)obj;
+                ApplicationData.Current.LocalSettings.Values["data"] = Encoding.UTF8.GetString(ms.ToArray());
             }
-        }
-
-        return norm;
-    }
-
-    public async Task SaveSettingAsync<T>(string key, T value)
-    {
-        if (RuntimeHelper.IsMSIX)
-        {
-            ApplicationData.Current.LocalSettings.Values[key] = JsonSerializer.Serialize(value);
-        }
-        else
-        {
-            await InitializeAsync();
-
-            if (value != null)
-                _settings[key] = value;
-
-
-            await Task.Run(() =>
-            {
-                string jSettings = JsonSerializer.Serialize(_settings);
-                if (!Directory.Exists(_applicationDataFolder)) Directory.CreateDirectory(_applicationDataFolder);
-                File.WriteAllText(Path.Combine(_applicationDataFolder, _localsettingsFile), jSettings, Encoding.UTF8);
-            });
         }
     }
 }
