@@ -63,19 +63,18 @@ public sealed partial class MainView
         await SettingsManager.LoadSettings();
         SetTheme(SettingsManager.Theme);
         SetTaskbarMode(SettingsManager.ShowInTaskbar);
+        if (_windowApp == null) throw new Exception("WinUI init failed");
 
 
         // Set window to be always on top
-        nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
-        WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
-        AppWindow appWindow = AppWindow.GetFromWindowId(id);
-        appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+        _windowApp.SetPresenter(AppWindowPresenterKind.Overlapped);
         if (presenter != null)
             presenter.IsAlwaysOnTop = true;
 
         NotificationManager.Init();
 
         // Workaround a bug when window maximizes when you double click.
+        nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
         _newWndProcDelegate = (WndProcDelegate)WndProc;
         nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
         _oldWndProc = Win32.SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
@@ -468,7 +467,7 @@ public sealed partial class MainView
             return SettingsManager.Period5Lunch;
     }
 
-    private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+    private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
         DispatcherQueue.TryEnqueue(async () => { await Init(); });
     }

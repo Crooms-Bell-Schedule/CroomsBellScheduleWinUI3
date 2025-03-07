@@ -4,7 +4,7 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>CroomsBellScheduleC# (Package)</ActiveDebugProfile>
+    <ActiveDebugProfile>CroomsBellScheduleC# (Unpackaged)</ActiveDebugProfile>
     <_LastSelectedProfileId>C:\Users\Mikhail\source\CroomsBellScheduleWinUI3\Properties\PublishProfiles\win-arm64.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
