@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CroomsBellScheduleCS.Provider;
@@ -80,10 +81,10 @@ public sealed partial class MainView
         _oldWndProc = Win32.SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
 
         TxtCurrentClass.Text = "Checking for updates...";
-        _updateManager = new("C:\\Users\\Mikhail\\Downloads\\m");
 
         try
         {
+            _updateManager = new("https://update.croomssched.tech/update/win32/" + Assembly.GetExecutingAssembly().GetName().Version);
             if (_updateManager.IsInstalledApp)
                 await _updateManager.UpdateApp(delegate (int progress)
                 {
@@ -114,7 +115,7 @@ public sealed partial class MainView
             {
                 Title = "Failed to initialize schedule"
             };
-            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
+            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
             await dlg.ShowAsync();
         }
     }
@@ -323,7 +324,7 @@ public sealed partial class MainView
                 {
                     Title = "Failed to download schedule"
                 };
-            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
+            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
             await dlg.ShowAsync();
 
             _provider = new CacheProvider(new LocalCroomsBell());

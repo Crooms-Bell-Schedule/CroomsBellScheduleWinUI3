@@ -15,7 +15,7 @@
             <AutoSuggestBox x:Name="UsernameBox" PlaceholderText="Enter username" TextChanged="UsernameBox_TextChanged"></AutoSuggestBox>
             <TextBlock Margin="0,0,0,10">Password:</TextBlock>
             <PasswordBox x:Name="PasswordBox" PlaceholderText="Enter password" PasswordChanged="PasswordBox_PasswordChanged"></PasswordBox>
-            <TextBlock x:Name="LoginFailureText"  Foreground="Yellow">The login failed due to possible chance of rain,<LineBreak/>and the server ran away because Suvan scared it.</TextBlock>
+            <TextBlock x:Name="LoginFailureText"  Foreground="Yellow">This login attempt failed. Try again later.</TextBlock>
         </StackPanel>
     </Grid>
 </UserControl>

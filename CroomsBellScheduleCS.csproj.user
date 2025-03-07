@@ -4,8 +4,8 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>CroomsBellScheduleC# (Unpackaged)</ActiveDebugProfile>
-    <_LastSelectedProfileId>C:\Users\5927002308\source\CroomsBellScheduleWinUI3\Properties\PublishProfiles\win-arm64.pubxml</_LastSelectedProfileId>
+    <ActiveDebugProfile>CroomsBellScheduleC# (Package)</ActiveDebugProfile>
+    <_LastSelectedProfileId>C:\Users\Mikhail\source\CroomsBellScheduleWinUI3\Properties\PublishProfiles\win-arm64.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
   <ItemGroup>
     <None Update="App.xaml">

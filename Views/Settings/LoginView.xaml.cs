@@ -5,7 +5,7 @@ public sealed partial class LoginView
     public LoginView()
     {
         InitializeComponent();
-        UsernameBox.ItemsSource = new string[] { "Suvan", "LandonLostHisAccountAgainBecauseOfSuvanAgain", };
+        UsernameBox.ItemsSource = new string[] {  };
     }
     private void ValidateFields()
     {

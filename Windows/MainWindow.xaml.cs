@@ -33,5 +33,17 @@ public sealed partial class MainWindow
 
         Instance = this;
         ViewInstance = mainView;
+
+        Application.Current.UnhandledException += Current_UnhandledException;
+    }
+
+    private async void Current_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
+    {
+        MessageDialog dlg = new MessageDialog($"{e.ToString()}")
+        {
+            Title = "Unhandled runtime error"
+        };
+        InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
+        await dlg.ShowAsync();
     }
 }
