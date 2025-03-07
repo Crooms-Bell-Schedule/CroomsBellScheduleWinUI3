@@ -24,7 +24,7 @@ public static class LocalSettingsService
         _localsettingsFile = _defaultLocalSettingsFile;
     }
 
-    public static async Task<Stream> OpenAsync()
+    public static Stream Open()
     {
         if (RuntimeHelper.IsMSIX)
         {
@@ -45,7 +45,7 @@ public static class LocalSettingsService
         }
     }
 
-    public static void SaveAsync(Stream s)
+    public static void Save(Stream s)
     {
         if (s is MemoryStream ms)
         {

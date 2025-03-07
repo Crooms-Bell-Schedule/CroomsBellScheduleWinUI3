@@ -29,18 +29,18 @@ public static class SettingsManager
 
     public static async Task LoadSettings()
     {
-        using Stream s = await LocalSettingsService.OpenAsync();
-        var result = (SettingsRoot?)await JsonSerializer.DeserializeAsync(s, typeof(SettingsRoot));
+        using Stream s = LocalSettingsService.Open();
+        var result = (SettingsRoot?)await JsonSerializer.DeserializeAsync(s, SourceGenerationContext.Default.SettingsRoot);
         if (result != null)
             _settings = result;
     }
 
     public static async Task SaveSettings()
     {
-        using Stream s = await LocalSettingsService.OpenAsync();
-        await JsonSerializer.SerializeAsync(s, _settings, typeof(SettingsRoot));
+        using Stream s = LocalSettingsService.Open();
+        await JsonSerializer.SerializeAsync(s, _settings, SourceGenerationContext.Default.SettingsRoot);
 
-        LocalSettingsService.SaveAsync(s);
+        LocalSettingsService.Save(s);
     }
 
     public class SettingsRoot
@@ -62,10 +62,4 @@ public static class SettingsManager
         /// </summary>
         public int Period5Lunch { get; set; }
     }
-}
-
-[JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(SettingsRoot))]
-internal partial class SourceGenerationContext : JsonSerializerContext
-{
 }

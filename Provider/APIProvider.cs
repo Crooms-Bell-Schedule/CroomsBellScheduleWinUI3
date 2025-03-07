@@ -1,8 +1,12 @@
-﻿using System;
+﻿using CroomsBellScheduleCS.Utils;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static CroomsBellScheduleCS.Provider.APIProvider;
+using static CroomsBellScheduleCS.Utils.SettingsManager;
 
 namespace CroomsBellScheduleCS.Provider;
 
@@ -20,7 +24,7 @@ public class APIProvider : IBellScheduleProvider
         string? dataResp = await dataBody.Content.ReadAsStringAsync() ??
                            throw new Exception("server response is empty");
 
-        Root parsed = JsonSerializer.Deserialize<Root>(dataResp) ?? throw new Exception("server response is malformed");
+        Root parsed = JsonSerializer.Deserialize<Root>(dataResp, SourceGenerationContext.Default.Root) ?? throw new Exception("server response is malformed");
 
         // convert response to the better format
         Dictionary<string, string> strings = new()

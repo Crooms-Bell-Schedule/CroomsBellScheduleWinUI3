@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CroomsBellScheduleCS.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -229,7 +230,7 @@ public class LocalCroomsBell : IBellScheduleProvider
 
     public Task<BellScheduleReader> GetTodayActivity()
     {
-        var data = JsonSerializer.Deserialize<LocalBellRoot>(CroomsBellData, new JsonSerializerOptions() { IncludeFields = true });
+        var data = JsonSerializer.Deserialize(CroomsBellData, SourceGenerationContext.Default.LocalBellRoot);
 
         if (data == null) throw new Exception("Invalid or missing JSON");
 
