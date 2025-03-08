@@ -292,29 +292,29 @@ public class LocalCroomsBell : IBellScheduleProvider
 
 public class JsonDefaultWeek
 {
-    public DayOfWeek day;
-    public string name = "";
-    public Dictionary<string, string[]> data = [];
+    public DayOfWeek day { get; set; }
+    public string name { get; set; } = "";
+    public Dictionary<string, string[]> data { get; set; } = [];
 }
 
 public class JsonBellOverrides
 {
-    public string date = "";
-    public string scheduleName = "";
+    public string date { get; set; } = "";
+    public string scheduleName { get; set; } = "";
 }
 
 public class WeekMap
 {
-    public string scheduleName = "";
-    public string day = "";
+    public string scheduleName { get; set; } = "";
+    public string day { get; set; } = "";
 }
 
 public class LocalBellRoot
 {
-    public List<WeekMap> defaultWeekMap = [];
-    public List<JsonDefaultWeek> schedules = [];
-    public List<JsonBellOverrides> overrides = [];
-    public Dictionary<string, string> stringsDictionary = [];
+    public List<WeekMap> defaultWeekMap { get; set; } = [];
+    public List<JsonDefaultWeek> schedules { get; set; } = [];
+    public List<JsonBellOverrides> overrides { get; set; } = [];
+    public Dictionary<string, string> stringsDictionary { get; set; } = [];
 }
 
 public class BellScheduleEntry

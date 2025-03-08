@@ -9,7 +9,7 @@ using CroomsBellScheduleCS.Utils;
 
 public static class LocalSettingsService
 {
-    private const string _defaultApplicationDataFolder = "CroomsBellSchedule/";
+    private const string _defaultApplicationDataFolder = "Crooms Bell Schedule/";
     private const string _defaultLocalSettingsFile = "LocalSettings.json";
     private static readonly string _applicationDataFolder;
 
@@ -30,7 +30,7 @@ public static class LocalSettingsService
         {
             var data = ApplicationData.Current.LocalSettings.Values["data"];
             if (data != null)
-                return new MemoryStream(Encoding.UTF8.GetBytes(data.ToString()));
+                return new MemoryStream(Encoding.UTF8.GetBytes(data.ToString() ?? "{}"));
             else return new MemoryStream();
         }
         else
@@ -40,8 +40,12 @@ public static class LocalSettingsService
             {
                 return File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             }
-
-            return new MemoryStream();
+            else
+            {
+                Directory.CreateDirectory(_applicationDataFolder);
+                File.WriteAllText(path, "{}");
+                return File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+            }
         }
     }
 

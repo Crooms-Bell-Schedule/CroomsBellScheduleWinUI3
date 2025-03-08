@@ -50,45 +50,57 @@ public sealed partial class MainView
 
     private async Task Init()
     {
-        // Window setup
-        OverlappedPresenter? presenter = MainWindow.Instance.AppWindow.Presenter as OverlappedPresenter;
-        if (presenter == null) return;
-        presenter.IsMaximizable = false;
-        presenter.IsMinimizable = false;
-        presenter.IsResizable = true;
-        presenter.IsAlwaysOnTop = true;
-        presenter.SetBorderAndTitleBar(true, false);
-        MainWindow.Instance.ExtendsContentIntoTitleBar = true;
-        MainWindow.Instance.AppWindow.IsShownInSwitchers = false;
-        MainWindow.Instance.SetTitleBar(Content);
-
-        await SettingsManager.LoadSettings();
-        SetTheme(SettingsManager.Settings.Theme);
-        SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
-        if (_windowApp == null) throw new Exception("WinUI init failed");
-
-
-        // Set window to be always on top
-        _windowApp.SetPresenter(AppWindowPresenterKind.Overlapped);
-        if (presenter != null)
+        try
+        {
+            // Window setup
+            OverlappedPresenter? presenter = MainWindow.Instance.AppWindow.Presenter as OverlappedPresenter;
+            if (presenter == null) return;
+            presenter.IsMaximizable = false;
+            presenter.IsMinimizable = false;
+            presenter.IsResizable = true;
             presenter.IsAlwaysOnTop = true;
+            presenter.SetBorderAndTitleBar(true, false);
+            MainWindow.Instance.ExtendsContentIntoTitleBar = true;
+            MainWindow.Instance.AppWindow.IsShownInSwitchers = false;
+            MainWindow.Instance.SetTitleBar(Content);
 
-        NotificationManager.Init();
+            await SettingsManager.LoadSettings();
+            SetTheme(SettingsManager.Settings.Theme);
+            SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
+            if (_windowApp == null) throw new Exception("WinUI init failed");
 
-        // Workaround a bug when window maximizes when you double click.
-        nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
-        _newWndProcDelegate = (WndProcDelegate)WndProc;
-        nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
-        _oldWndProc = Win32.SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
 
-        TxtCurrentClass.Text = "Checking for updates...";
+            // Set window to be always on top
+            _windowApp.SetPresenter(AppWindowPresenterKind.Overlapped);
+            if (presenter != null)
+                presenter.IsAlwaysOnTop = true;
+
+            NotificationManager.Init();
+
+            // Workaround a bug when window maximizes when you double click.
+            nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
+            _newWndProcDelegate = (WndProcDelegate)WndProc;
+            nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
+            _oldWndProc = Win32.SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
+
+            TxtCurrentClass.Text = "Checking for updates...";
+        }
+        catch (Exception ex)
+        {
+            MessageDialog dlg = new MessageDialog($"Failed to load application:{Environment.NewLine}{ex}")
+            {
+                Title = "Failed to initialize application"
+            };
+            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
+            await dlg.ShowAsync();
+        }
 
         try
         {
             VelopackApp.Build().Run();
             string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            _updateManager = new($"https://update.croomssched.tech/update/win32/{currentVersion.Major}.{currentVersion.Minor}.{currentVersion.MajorRevision}");
+            _updateManager = new($"https://mikhail.croomssched.tech/updateapiv2/");
 
             if (_updateManager.IsInstalled)
             {
