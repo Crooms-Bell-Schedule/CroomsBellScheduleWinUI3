@@ -27,8 +27,8 @@
             <Button.Flyout>
                 <MenuFlyout>
                     <MenuFlyoutItem Text="Settings" Click="Settings_Click" />
-                    <MenuFlyoutSeparator />
-                    <!--<RadioMenuFlyoutItem x:Name="ALunchOption" Text="A Lunch" Click="ALunch_Click" />
+                    <!--<MenuFlyoutSeparator />
+                    <RadioMenuFlyoutItem x:Name="ALunchOption" Text="A Lunch" Click="ALunch_Click" />
                     <RadioMenuFlyoutItem x:Name="BLunchOption" Text="B Lunch" Click="BLunch_Click" />-->
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem Text="Quit" Click="Quit_Click" />

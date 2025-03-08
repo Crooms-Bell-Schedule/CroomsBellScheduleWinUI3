@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -13,7 +15,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
-using Squirrel;
+using Velopack;
 using Windows.Graphics;
 using Windows.UI.Popups;
 using WinRT.Interop;
@@ -24,7 +26,7 @@ public sealed partial class MainView
 {
     private static CacheProvider _provider = new(new APIProvider());
     private static SettingsWindow? _settings;
-    private static UpdateManager? _updateManager;
+    private static Velopack.UpdateManager? _updateManager;
 
     private static readonly NotificationManager NotificationManager = new();
     private static IntPtr _oldWndProc;
@@ -83,17 +85,45 @@ public sealed partial class MainView
 
         try
         {
-            _updateManager = new("https://update.croomssched.tech/update/win32/" + Assembly.GetExecutingAssembly().GetName().Version);
-            if (_updateManager.IsInstalledApp)
-                await _updateManager.UpdateApp(delegate (int progress)
+            VelopackApp.Build().Run();
+            string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
+            var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            _updateManager = new($"https://update.croomssched.tech/update/win32/{currentVersion.Major}.{currentVersion.Minor}.{currentVersion.MajorRevision}");
+
+            if (_updateManager.IsInstalled)
+            {
+                var newVersion = await _updateManager.CheckForUpdatesAsync();
+                if (newVersion != null)
                 {
-                    TxtCurrentClass.Text = "Checking and installing update";
-                    ProgressBar.Value = progress;
-                });
+                    await _updateManager.DownloadUpdatesAsync(newVersion, delegate(int progress) {
+                        DispatcherQueue.TryEnqueue(() =>
+                        {
+                            TxtCurrentClass.Text = "Downloading updates";
+                            ProgressBar.Value = progress;
+                        });
+                    });
+
+                    _updateManager.ApplyUpdatesAndRestart(newVersion);
+                }
+            }
+            else if (!Debugger.IsAttached)
+            {
+                MessageDialog dlg = new MessageDialog($"The Crooms Bell Schedule application is not properly installed. Please download and reinstall it again. Details: {Path.Combine(executablePath, "../Update.exe")} is missing.")
+                {
+                    Title = "Failed to install update"
+                };
+                InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
+                await dlg.ShowAsync();
+            }
         }
-        catch
+        catch(Exception ex)
         {
-            // Squirrel might be stupid
+            MessageDialog dlg = new MessageDialog($"{ex.ToString()}")
+            {
+                Title = "Failed to install update"
+            };
+            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
+            await dlg.ShowAsync();
         }
 
 
