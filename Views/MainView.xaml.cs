@@ -536,6 +536,7 @@ public sealed partial class MainView
 
     internal async Task UpdateScheduleSource()
     {
+        // TODO do not use try/catch
         if (SettingsManager.Settings.UseLocalBellSchedule)
         {
             _provider.SetProvider(new LocalCroomsBell());
@@ -546,7 +547,26 @@ public sealed partial class MainView
         }
 
         UpdateStrings();
-        await UpdateBellSchedule();
+        try
+        {
+            await UpdateBellSchedule();
+        }
+        catch
+        {
+            if (_provider.Provider is APIProvider)
+            {
+                _provider.SetProvider(new LocalCroomsBell());
+                UpdateStrings();
+                try
+                {
+                    await UpdateBellSchedule();
+                }
+                catch
+                {
+
+                }
+            }
+        }
     }
 
     public void UpdateStrings(bool namesChanged = false)

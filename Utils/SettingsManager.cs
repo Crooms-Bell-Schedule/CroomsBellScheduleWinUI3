@@ -33,14 +33,27 @@ public static class SettingsManager
     {
         using Stream s = LocalSettingsService.Open();
         var result = await JsonSerializer.DeserializeAsync(s, SourceGenerationContext.Default.SettingsRoot);
-        if (result != null)
+        try
         {
-            if (result.PeriodNames.Count == 0)
+            if (result != null)
             {
-                for (int i = 1; i < 8; i++) result.PeriodNames.Add(i, "Period " + i);
-            }
+                if (result.PeriodNames.Count == 0)
+                {
+                    for (int i = 1; i < 8; i++) result.PeriodNames.Add(i, "Period " + i);
+                }
 
-            _settings = result;
+                _settings = result;
+            }
+            else
+            {
+                _settings = new();
+                for (int i = 1; i < 8; i++) _settings.PeriodNames.Add(i, "Period " + i);
+            }
+        }
+        catch
+        {
+            _settings = new();
+            for (int i = 1; i < 8; i++) _settings.PeriodNames.Add(i, "Period " + i);
         }
     }
 

@@ -9,6 +9,7 @@ public class CacheProvider(IBellScheduleProvider actualProvider) : IBellSchedule
     private BellScheduleReader? _cache;
     private int CacheDay;
 
+    public IBellScheduleProvider Provider { get => _bellScheduleProvider; }
     public bool RequiresUpdate => CacheDay != DateTime.Now.DayOfYear;
 
     public async Task<BellScheduleReader> GetTodayActivity()

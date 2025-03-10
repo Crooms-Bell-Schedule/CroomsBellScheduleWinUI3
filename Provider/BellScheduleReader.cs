@@ -13,7 +13,8 @@ public class BellScheduleReader(BellSchedule schedule, Dictionary<string, string
     public void UpdateStrings(Dictionary<string, string> values, bool updateCache)
     {
         strings = values;
-        if (_normalizedNames) _normalizedNames = updateCache;
+        if (updateCache)
+            _normalizedNames = false;
     }
 
     private string GetFriendlyName(string name)
