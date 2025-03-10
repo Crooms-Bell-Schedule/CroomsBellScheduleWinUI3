@@ -278,7 +278,7 @@ public class LocalCroomsBell : IBellScheduleProvider
                 }
 
 
-                sched.Classes.Add(new BellScheduleEntry() { Name = str, StartString = start.ToString(), EndString = end.ToString(), LunchIndex = lunchOffset, ScheduleName = item.name });
+                sched.Classes.Add(new BellScheduleEntry() { Name = str, StartString = start.ToString(), EndString = end.ToString(), LunchIndex = lunchOffset, ScheduleName = item.properName });
             }
 
             schedules.Schedules.Add(sched);
