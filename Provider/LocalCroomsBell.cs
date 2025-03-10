@@ -276,6 +276,10 @@ public class LocalCroomsBell : IBellScheduleProvider
                     lunchOffset = 1;
                     str = str.Substring(0, str.Length - 2);
                 }
+                else
+                {
+                    lunchOffset = 99;
+                }
 
 
                 sched.Classes.Add(new BellScheduleEntry() { Name = str, StartString = start.ToString(), EndString = end.ToString(), LunchIndex = lunchOffset, ScheduleName = item.properName });

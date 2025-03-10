@@ -41,7 +41,7 @@ public class BellScheduleReader(BellSchedule schedule, Dictionary<string, string
         char letter = (char)('A' + lunch);
 
         foreach (BellScheduleEntry item in GetUnfilteredClasses())
-            if (item.LunchIndex == lunch)
+            if (item.LunchIndex == lunch || item.LunchIndex == 99)
                 result.Add(item);
 
         return result;
