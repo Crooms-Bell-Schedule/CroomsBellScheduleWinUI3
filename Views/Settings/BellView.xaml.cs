@@ -39,11 +39,16 @@ public sealed partial class BellView
                 VerticalAlignment = VerticalAlignment.Center
             };
 
-            TextBox box = new TextBox() { Text = SettingsManager.Settings.PeriodNames[i], Margin = new Thickness(10, 0, 0, 0), Width = 300, MaxWidth = 300 };
+            TextBox box = new TextBox() { Text = SettingsManager.Settings.PeriodNames[i], Margin = new Thickness(10, 0, 0, 0), Width = 300, MaxWidth = 300, Tag = i };
             box.TextChanged += async delegate (object sender, TextChangedEventArgs e)
             {
-                SettingsManager.Settings.PeriodNames[i] = box.Text;
-                await SettingsManager.SaveSettings();
+                var txtBox = sender as TextBox;
+                if (txtBox != null)
+                {
+                    SettingsManager.Settings.PeriodNames[(int)txtBox.Tag] = txtBox.Text;
+                    await SettingsManager.SaveSettings();
+                    MainWindow.ViewInstance.UpdateStrings(true);
+                }
             };
             panel.Children.Add(time);
             panel.Children.Add(box);

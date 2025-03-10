@@ -10,6 +10,12 @@ public class BellScheduleReader(BellSchedule schedule, Dictionary<string, string
 
     public int ClassLengths => schedule.Classes.Count;
 
+    public void UpdateStrings(Dictionary<string, string> values, bool updateCache)
+    {
+        strings = values;
+        if (!_normalizedNames) _normalizedNames = updateCache;
+    }
+
     private string GetFriendlyName(string name)
     {
         if (strings.ContainsKey(name))

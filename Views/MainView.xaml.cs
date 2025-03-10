@@ -64,7 +64,19 @@ public sealed partial class MainView
             MainWindow.Instance.AppWindow.IsShownInSwitchers = false;
             MainWindow.Instance.SetTitleBar(Content);
 
-            await SettingsManager.LoadSettings();
+            try
+            {
+                await SettingsManager.LoadSettings();
+            }
+            catch(Exception ex)
+            {
+                MessageDialog dlg = new MessageDialog($"Exception:{Environment.NewLine}{ex}")
+                {
+                    Title = "Failed to load your settings"
+                };
+                InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
+                await dlg.ShowAsync();
+            }
             SetTheme(SettingsManager.Settings.Theme);
             SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
             if (_windowApp == null) throw new Exception("WinUI init failed");
@@ -284,6 +296,7 @@ public sealed partial class MainView
         if (_reader == null) throw new InvalidOperationException();
 
         _reader = await _provider.GetTodayActivity();
+        UpdateStrings();
         List<BellScheduleEntry> classes = _reader.GetFilteredClasses(_lunchOffset);
 
         bool matchFound = false;
@@ -377,6 +390,7 @@ public sealed partial class MainView
             _provider = new CacheProvider(new LocalCroomsBell());
             _reader = await _provider.GetTodayActivity();
         }
+        UpdateStrings(true);
 
         LoadingThing.Visibility = Visibility.Collapsed;
         UpdateLunch();
@@ -531,6 +545,35 @@ public sealed partial class MainView
             _provider.SetProvider(new APIProvider());
         }
 
+        UpdateStrings();
         await UpdateBellSchedule();
+    }
+
+    public void UpdateStrings(bool namesChanged = false)
+    {
+        if (_reader == null) return;
+
+        // API
+        Dictionary<string, string> strings = new()
+        {
+            { "0", "Nothing!" },
+            { "100", "Morning" },
+            { "101", "Welcome" },
+            { "102", "Lunch" },
+            { "103", "Homeroom" },
+            { "104", "Dismissal" },
+            { "105", "After school" },
+            { "106", "End" }
+        };
+
+        for (int i = 1; i < 8; i++) strings.Add(i.ToString(), SettingsManager.Settings.PeriodNames[i]);
+
+        // Local
+        foreach (var item in SettingsManager.Settings.PeriodNames)
+        {
+            strings.Add("Period " + item.Key, item.Value);
+        }
+
+        _reader.UpdateStrings(strings, namesChanged);
     }
 }

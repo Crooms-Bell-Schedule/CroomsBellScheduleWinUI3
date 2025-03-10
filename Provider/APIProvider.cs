@@ -25,17 +25,6 @@ public class APIProvider : IBellScheduleProvider
         Root parsed = JsonSerializer.Deserialize<Root>(dataResp, SourceGenerationContext.Default.Root) ?? throw new Exception("server response is malformed");
 
         // convert response to the better format
-        Dictionary<string, string> strings = new()
-        {
-            { "0", "Nothing!" },
-            { "100", "Morning" },
-            { "101", "Welcome" },
-            { "102", "Lunch" },
-            { "103", "Homeroom" },
-            { "104", "Dismissal" },
-            { "105", "After school" },
-            { "106", "End" }
-        };
         BellSchedule bellSchedule = new();
 
         char lunch = 'A';
@@ -62,10 +51,7 @@ public class APIProvider : IBellScheduleProvider
             lunch++;
         }
 
-        // Add appropriate strings
-        for (int i = 1; i < 8; i++) strings.Add(i.ToString(), Settings.PeriodNames[i]);
-
-        return new BellScheduleReader(bellSchedule, strings);
+        return new BellScheduleReader(bellSchedule, []);
     }
 
     private static string ConvertTime(int hour, int min)

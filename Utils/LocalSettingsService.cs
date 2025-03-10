@@ -24,7 +24,7 @@ public static class LocalSettingsService
         _localsettingsFile = _defaultLocalSettingsFile;
     }
 
-    public static Stream Open()
+    public static Stream Open(bool write = false)
     {
         if (RuntimeHelper.IsMSIX)
         {
@@ -36,16 +36,26 @@ public static class LocalSettingsService
         else
         {
             string path = Path.Combine(_applicationDataFolder, _localsettingsFile);
+
+            FileStream fs;
+
             if (File.Exists(path))
             {
-                return File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                fs = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             }
             else
             {
                 Directory.CreateDirectory(_applicationDataFolder);
                 File.WriteAllText(path, "{}");
-                return File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                fs = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
             }
+
+            if (write)
+            {
+                fs.SetLength(0);
+            }
+
+            return fs;
         }
     }
 

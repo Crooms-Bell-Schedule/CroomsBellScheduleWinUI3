@@ -288,13 +288,7 @@ public class LocalCroomsBell : IBellScheduleProvider
         if (bellScheduleName == null) throw new Exception("No schedule for today");
         var schedule = schedules.Schedules.Where(x => x.Name == bellScheduleName.scheduleName).FirstOrDefault() ?? throw new Exception("Unable to lookup schedule");
 
-        Dictionary<string, string> names = new Dictionary<string, string>();
-        foreach (var item in SettingsManager.Settings.PeriodNames)
-        {
-            names.Add("Period " + item.Key, item.Value);
-        }
-
-        return Task.FromResult(new BellScheduleReader(schedule, names));
+        return Task.FromResult(new BellScheduleReader(schedule, []));
     }
 }
 

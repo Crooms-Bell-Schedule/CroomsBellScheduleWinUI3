@@ -46,7 +46,7 @@ public static class SettingsManager
 
     public static async Task SaveSettings()
     {
-        using Stream s = LocalSettingsService.Open();
+        using Stream s = LocalSettingsService.Open(true);
         await JsonSerializer.SerializeAsync(s, _settings, SourceGenerationContext.Default.SettingsRoot);
 
         LocalSettingsService.Save(s);
