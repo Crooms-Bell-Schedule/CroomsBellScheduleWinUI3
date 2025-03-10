@@ -295,7 +295,14 @@ public sealed partial class MainView
     {
         if (_reader == null) throw new InvalidOperationException();
 
-        _reader = await _provider.GetTodayActivity();
+        try
+        {
+            _reader = await _provider.GetTodayActivity();
+        }
+        catch
+        {
+
+        }
         UpdateStrings();
         List<BellScheduleEntry> classes = _reader.GetFilteredClasses(_lunchOffset);
 

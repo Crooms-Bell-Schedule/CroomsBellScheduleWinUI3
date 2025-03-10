@@ -255,8 +255,8 @@ public class LocalCroomsBell : IBellScheduleProvider
         foreach (var item in data.schedules)
         {
             var sched = new BellSchedule();
-            sched.Name = item.name;
-            sched.ProperName = item.properName;
+            sched.InternalName = item.name;
+            sched.Name = item.properName;
 
             foreach (var item2 in item.data)
             {
@@ -286,7 +286,7 @@ public class LocalCroomsBell : IBellScheduleProvider
 
         // Get the schedule by its name
         if (bellScheduleName == null) throw new Exception("No schedule for today");
-        var schedule = schedules.Schedules.Where(x => x.Name == bellScheduleName.scheduleName).FirstOrDefault() ?? throw new Exception("Unable to lookup schedule");
+        var schedule = schedules.Schedules.Where(x => x.InternalName == bellScheduleName.scheduleName).FirstOrDefault() ?? throw new Exception("Unable to lookup schedule");
 
         return Task.FromResult(new BellScheduleReader(schedule, []));
     }
@@ -341,7 +341,7 @@ public class BellSchedule
 {
     public List<BellScheduleEntry> Classes = [];
     public string Name = "";
-    public string ProperName = "";
+    public string InternalName = "";
 }
 
 public class FullBellSchedule
