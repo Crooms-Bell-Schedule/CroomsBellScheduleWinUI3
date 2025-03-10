@@ -343,7 +343,7 @@ public sealed partial class MainView
                 _shown5MinNotif = false;
                 _shown1MinNotif = false;
                 if (nextClass != null)
-                    UpdateClassText("Transition to " + nextClass.Name, data.ScheduleName, transitionRemain,
+                    UpdateClassText("Transition to " + nextClass.FriendlyName, data.ScheduleName, transitionRemain,
                         transitionLen);
                 else
                     UpdateClassText("Transition to next day", data.ScheduleName, transitionRemain, transitionLen);
@@ -356,7 +356,7 @@ public sealed partial class MainView
                 ProgressBar.IsIndeterminate = false;
                 _isTransition = false;
 
-                UpdateClassText(data.Name, data.ScheduleName, duration, totalDuration);
+                UpdateClassText(data.FriendlyName, data.ScheduleName, duration, totalDuration);
                 break;
             }
         }

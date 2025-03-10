@@ -30,13 +30,13 @@ public class LocalCroomsBell : IBellScheduleProvider
         ""Period 4"": [""10:10"", ""11:02""],
 
         ""Lunch A"": [""11:02"", ""11:32""],
-        ""Period 5 A"": [""11:37"", ""12:27""],
+        ""Period 5 A"": [""11:37"", ""12:27""], 
 
-        ""Lunch B"": [""11:07"", ""11:57""],
-        ""Period 5 B"": [""11:57"", ""12:27""],
+        ""Period 5 B"": [""11:07"", ""11:57""],
+        ""Lunch B"": [""11:57"", ""12:27""],
 
-        ""6th period"": [""12:32"", ""13:24""],
-        ""7th period"": [""13:29"", ""14:20""],
+        ""Period 6"": [""12:32"", ""13:24""],
+        ""Period 7"": [""13:29"", ""14:20""],
         ""After school"": [""14:20"", ""23:59""]
       }
     },
@@ -57,8 +57,8 @@ public class LocalCroomsBell : IBellScheduleProvider
         ""Period 5 B"": [""10:31"", ""11:16""],
         ""Lunch B"": [""11:16"", ""11:46""],
 
-        ""6th period"": [""11:51"", ""12:33""],
-        ""7th period"": [""12:38"", ""13:20""],
+        ""Period 6"": [""11:51"", ""12:33""],
+        ""Period 7"": [""12:38"", ""13:20""],
         ""After school"": [""13:20"", ""23:59""]
       }
     },
@@ -77,7 +77,7 @@ public class LocalCroomsBell : IBellScheduleProvider
         ""Homeroom B"": [""10:27"", ""11:17""],
         ""Lunch B"": [""11:17"", ""11:47""],
 
-        ""6th period"": [""11:53"", ""13:20""],
+        ""Period 6"": [""11:53"", ""13:20""],
         ""After school"": [""13:20"", ""23:59""]
       }
     },
@@ -96,7 +96,7 @@ public class LocalCroomsBell : IBellScheduleProvider
         ""Period 5 B"": [""10:39"", ""12:11""],
         ""Lunch B"": [""12:11"", ""12:41""],
 
-        ""7th period"": [""12:47"", ""14:20""],
+        ""Period 7"": [""12:47"", ""14:20""],
         ""After school"": [""14:20"", ""23:59""]
       }
     },
@@ -119,8 +119,8 @@ public class LocalCroomsBell : IBellScheduleProvider
 
         ""Homeroom"": [""11:40"", ""12:45""],
 
-        ""6th period"": [""12:50"", ""13:30""],
-        ""7th period"": [""13:35"", ""14:20""],
+        ""Period 6"": [""12:50"", ""13:30""],
+        ""Period 7"": [""13:35"", ""14:20""],
         ""After school"": [""14:20"", ""23:59""]
       }
     },
@@ -327,6 +327,7 @@ public class BellScheduleEntry
 {
     public string EndString = "";
     public string Name = "";
+    public string FriendlyName = "";
     public string StartString = "";
 
     public int StartHour => int.Parse(StartString.Split(":")[0]);

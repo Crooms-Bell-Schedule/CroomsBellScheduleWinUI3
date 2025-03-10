@@ -29,7 +29,7 @@ public class BellScheduleReader(BellSchedule schedule, Dictionary<string, string
         if (!_normalizedNames)
         {
             _normalizedNames = true;
-            foreach (BellScheduleEntry item in schedule.Classes) item.Name = GetFriendlyName(item.Name);
+            foreach (BellScheduleEntry item in schedule.Classes) item.FriendlyName = GetFriendlyName(item.Name);
         }
 
         return schedule.Classes;

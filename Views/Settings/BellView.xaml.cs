@@ -4,6 +4,7 @@ using CroomsBellScheduleCS.Windows;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Reflection.PortableExecutable;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
@@ -14,8 +15,7 @@ public sealed partial class BellView
     {
         InitializeComponent();
     }
-
-    private void Page_Loaded(object sender, RoutedEventArgs e)
+    private void UpdateClasses()
     {
         BellScheduleReader? reader = MainWindow.ViewInstance.Reader;
         if (reader == null) return;
@@ -25,9 +25,18 @@ public sealed partial class BellView
         {
             if (item != null)
             {
-                txtBell.Text = $"{item.StartString} - {item.EndString}: {item.Name}";
+                response += $"{item.StartString} - {item.EndString}: {item.FriendlyName} ({item.Name}){Environment.NewLine}";
             }
         }
+
+        txtBell.Text = response;
+    }
+    private void Page_Loaded(object sender, RoutedEventArgs e)
+    {
+        BellScheduleReader? reader = MainWindow.ViewInstance.Reader;
+        if (reader == null) return;
+
+        UpdateClasses();
 
         for (int i = 1; i < 8; i++)
         {
@@ -48,6 +57,7 @@ public sealed partial class BellView
                     SettingsManager.Settings.PeriodNames[(int)txtBox.Tag] = txtBox.Text;
                     await SettingsManager.SaveSettings();
                     MainWindow.ViewInstance.UpdateStrings(true);
+                    UpdateClasses();
                 }
             };
             panel.Children.Add(time);
@@ -56,8 +66,6 @@ public sealed partial class BellView
         }
 
         CmbPreferredSchedule.SelectedIndex = SettingsManager.Settings.UseLocalBellSchedule ? 1 : 0;
-
-        txtBell.Text = response;
 
         _initializing = false;
     }
