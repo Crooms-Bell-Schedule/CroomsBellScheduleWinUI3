@@ -130,4 +130,11 @@ public sealed partial class PersonalizationView
         UpdateCheckState();
         _initialized = true;
     }
+
+    private async void ButtonCheckForUpdates_Click(object sender, RoutedEventArgs e)
+    {
+        ButtonCheckForUpdates.IsEnabled = false;
+        await MainWindow.ViewInstance.RunUpdateCheck();
+        ButtonCheckForUpdates.IsEnabled = true;
+    }
 }

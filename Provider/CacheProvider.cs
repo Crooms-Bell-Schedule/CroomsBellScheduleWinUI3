@@ -5,7 +5,7 @@ namespace CroomsBellScheduleCS.Provider;
 
 public class CacheProvider(IBellScheduleProvider actualProvider) : IBellScheduleProvider
 {
-    private readonly IBellScheduleProvider _bellScheduleProvider = actualProvider;
+    private IBellScheduleProvider _bellScheduleProvider = actualProvider;
     private BellScheduleReader? _cache;
     private int CacheDay;
 
@@ -28,5 +28,11 @@ public class CacheProvider(IBellScheduleProvider actualProvider) : IBellSchedule
         }
 
         return _cache;
+    }
+
+    public void SetProvider(IBellScheduleProvider provider)
+    {
+        _bellScheduleProvider = provider;
+        CacheDay = -1;
     }
 }

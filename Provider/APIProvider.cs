@@ -1,11 +1,9 @@
-﻿using CroomsBellScheduleCS.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using static CroomsBellScheduleCS.Provider.APIProvider;
+using CroomsBellScheduleCS.Utils;
 using static CroomsBellScheduleCS.Utils.SettingsManager;
 
 namespace CroomsBellScheduleCS.Provider;
@@ -29,6 +27,7 @@ public class APIProvider : IBellScheduleProvider
         // convert response to the better format
         Dictionary<string, string> strings = new()
         {
+            { "0", "Nothing!" },
             { "100", "Morning" },
             { "101", "Welcome" },
             { "102", "Lunch" },
@@ -64,7 +63,7 @@ public class APIProvider : IBellScheduleProvider
         }
 
         // Add appropriate strings
-        for (int i = 1; i < 8; i++) strings.Add(i.ToString(), "Period " + i);
+        for (int i = 1; i < 8; i++) strings.Add(i.ToString(), Settings.PeriodNames[i]);
 
         return new BellScheduleReader(bellSchedule, strings);
     }

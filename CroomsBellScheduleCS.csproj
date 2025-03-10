@@ -16,8 +16,7 @@
 		<WindowsPackageType>None</WindowsPackageType>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
-		<CETCompat>false</CETCompat>
-		<Version>1.0.0</Version>
+		<Version>3.0.2</Version>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Styles\FontSizes.xaml" />
@@ -56,7 +55,7 @@
 	<ItemGroup>
 		<PackageReference Include="Clowd.Squirrel" Version="2.11.1" />
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.2.0" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250208002-preview1" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250205002" />
 		<PackageReference Include="System.Text.Json" Version="10.0.0-preview.1.25080.5" />
 		<PackageReference Include="Velopack" Version="0.0.1165-g6c20617" />
 	</ItemGroup>
@@ -71,6 +70,12 @@
 		<Page Update="Views\Settings\AccountView.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\Settings\FeedView.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\Settings\LunchView.xaml">
+		  <SubType>Designer</SubType>
 		</Page>
 		<Page Update="Views\Settings\LoginView.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
@@ -111,5 +116,8 @@
 		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
 		<ApplicationIcon>Assets\croomsBellSchedule.ico</ApplicationIcon>
 		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
+		<Title>Crooms Bell Schedule</Title>
+		<Description>The Crooms Bell Schedule app.</Description>
+		<PackageProjectUrl>https://croomssched.tech/</PackageProjectUrl>
 	</PropertyGroup>
 </Project>

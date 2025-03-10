@@ -39,7 +39,7 @@ public sealed partial class MainWindow
 
     private async void Current_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-        MessageDialog dlg = new MessageDialog($"{e.ToString()}")
+        MessageDialog dlg = new MessageDialog($"{e.Exception.ToString()}")
         {
             Title = "Unhandled runtime error"
         };

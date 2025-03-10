@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
-    <Grid>
+    <ScrollViewer>
         <StackPanel
             x:Name="ContentArea">
             <TextBlock x:Uid="Settings_Personalization" Margin="0, 20, 0, 26" Style="{ThemeResource TitleTextBlockStyle}"
@@ -55,13 +55,10 @@
 
             <StackPanel Margin="0,8,0,0">
                 <TextBlock x:Name="VersionText" Style="{ThemeResource BodyTextBlockStyle}" />
+                <Button x:Name="ButtonCheckForUpdates" Click="ButtonCheckForUpdates_Click">Check for updates</Button>
 
-                <TextBlock
-                    x:Uid="Settings_AboutDescription"
-                    Margin="0,8,0,0"
-                    Style="{ThemeResource BodyTextBlockStyle}" />
-                <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="-12,4,0,0" />
+                <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="0,4,0,0" Content="Changelog" NavigateUri="https://mikhail.croomssched.tech/updateapiv2/changelog.html" />
             </StackPanel>
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </Page>

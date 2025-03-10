@@ -58,12 +58,24 @@ public sealed partial class SettingsWindow
             NavigationFrame.NavigateToType(typeof(BellView), null, navOptions);
         else if (args.InvokedItemContainer == AccountViewItem)
             NavigationFrame.NavigateToType(typeof(AccountView), null, navOptions);
+        else if (args.InvokedItemContainer == FeedItem)
+            NavigationFrame.NavigateToType(typeof(FeedView), null, navOptions);
+        else if (args.InvokedItemContainer == LunchMenuItem)
+            NavigationFrame.NavigateToType(typeof(LunchView), null, navOptions);
     }
 
     private void NavigationFrame_Navigated(object sender, NavigationEventArgs e)
     {
         if (e.SourcePageType == typeof(PersonalizationView))
             NavigationViewControl.SelectedItem = PersonalizationViewItem;
+        else if (e.SourcePageType == typeof(BellView))
+            NavigationViewControl.SelectedItem = BellViewItem;
+        else if (e.SourcePageType == typeof(AccountView))
+            NavigationViewControl.SelectedItem = AccountViewItem;
+        else if (e.SourcePageType == typeof(FeedView))
+            NavigationViewControl.SelectedItem = FeedItem;
+        else if (e.SourcePageType == typeof(LunchView))
+            NavigationViewControl.SelectedItem = LunchMenuItem;
     }
 
     private void NavigationFrame_Loaded(object sender, RoutedEventArgs e)

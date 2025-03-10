@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
+using Microsoft.VisualBasic;
 using static CroomsBellScheduleCS.Utils.SettingsManager;
 
 namespace CroomsBellScheduleCS.Utils;
@@ -30,9 +32,16 @@ public static class SettingsManager
     public static async Task LoadSettings()
     {
         using Stream s = LocalSettingsService.Open();
-        var result = (SettingsRoot?)await JsonSerializer.DeserializeAsync(s, SourceGenerationContext.Default.SettingsRoot);
+        var result = await JsonSerializer.DeserializeAsync(s, SourceGenerationContext.Default.SettingsRoot);
         if (result != null)
+        {
+            if (result.PeriodNames.Count == 0)
+            {
+                for (int i = 1; i < 8; i++) result.PeriodNames.Add(i, "Period " + i);
+            }
+
             _settings = result;
+        }
     }
 
     public static async Task SaveSettings()
@@ -61,5 +70,12 @@ public static class SettingsManager
         /// lunch for standard, activity days
         /// </summary>
         public int Period5Lunch { get; set; }
+
+        /// <summary>
+        /// Use local bell schedule file instead of website
+        /// </summary>
+        public bool UseLocalBellSchedule { get; set; }
+
+        public Dictionary<int, string> PeriodNames { get; set; } = [];
     }
 }

@@ -95,10 +95,38 @@ public sealed partial class MainView
             await dlg.ShowAsync();
         }
 
+        VelopackApp.Build().Run();
+
+        await RunUpdateCheck();
+
+
         try
         {
-            VelopackApp.Build().Run();
-            string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]);
+            await UpdateScheduleSource();
+
+            _timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(199)
+            };
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
+        }
+        catch (Exception ex)
+        {
+            MessageDialog dlg = new MessageDialog($"Failed to load schedule:{Environment.NewLine}{ex}")
+            {
+                Title = "Failed to initialize schedule"
+            };
+            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
+            await dlg.ShowAsync();
+        }
+    }
+
+    internal async Task RunUpdateCheck()
+    {
+        try
+        {
+            string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]) ?? AppDomain.CurrentDomain.BaseDirectory;
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             _updateManager = new($"https://mikhail.croomssched.tech/updateapiv2/");
 
@@ -107,7 +135,7 @@ public sealed partial class MainView
                 var newVersion = await _updateManager.CheckForUpdatesAsync();
                 if (newVersion != null)
                 {
-                    await _updateManager.DownloadUpdatesAsync(newVersion, delegate(int progress) {
+                    await _updateManager.DownloadUpdatesAsync(newVersion, delegate (int progress) {
                         DispatcherQueue.TryEnqueue(() =>
                         {
                             TxtCurrentClass.Text = "Downloading updates";
@@ -128,33 +156,11 @@ public sealed partial class MainView
                 await dlg.ShowAsync();
             }
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             MessageDialog dlg = new MessageDialog($"{ex.ToString()}")
             {
                 Title = "Failed to install update"
-            };
-            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
-            await dlg.ShowAsync();
-        }
-
-
-        try
-        {
-            await UpdateBellSchedule();
-
-            _timer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(199)
-            };
-            _timer.Tick += Timer_Tick;
-            _timer.Start();
-        }
-        catch (Exception ex)
-        {
-            MessageDialog dlg = new MessageDialog($"Failed to load schedule:{Environment.NewLine}{ex}")
-            {
-                Title = "Failed to initialize schedule"
             };
             InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
             await dlg.ShowAsync();
@@ -512,5 +518,19 @@ public sealed partial class MainView
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
         DispatcherQueue.TryEnqueue(async () => { await Init(); });
+    }
+
+    internal async Task UpdateScheduleSource()
+    {
+        if (SettingsManager.Settings.UseLocalBellSchedule)
+        {
+            _provider.SetProvider(new LocalCroomsBell());
+        }
+        else
+        {
+            _provider.SetProvider(new APIProvider());
+        }
+
+        await UpdateBellSchedule();
     }
 }

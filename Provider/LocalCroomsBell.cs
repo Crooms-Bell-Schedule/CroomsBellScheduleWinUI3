@@ -13,12 +13,14 @@ public class LocalCroomsBell : IBellScheduleProvider
   ""schedules"": [
     {
       ""name"": ""none"",
+      ""properName"": ""No school"",
       ""data"": {
         ""No school"": [""00:00"", ""23:59""]
       }
     },
     {
       ""name"": ""normal7"",
+      ""properName"": ""Normal day"",
       ""data"": {
         ""Before School"": [""00:00"", ""7:15""],
         ""Welcome"": [""7:15"", ""7:20""],
@@ -40,6 +42,7 @@ public class LocalCroomsBell : IBellScheduleProvider
     },
     {
       ""name"": ""modShort7"",
+      ""properName"": ""Short 7"",
       ""data"": {
         ""Before School"": [""00:00"", ""7:15""],
         ""Welcome"": [""7:15"", ""7:20""],
@@ -61,6 +64,7 @@ public class LocalCroomsBell : IBellScheduleProvider
     },
     {
       ""name"": ""evenblock"",
+      ""properName"": ""Even block"",
       ""data"": {
         ""Before School"": [""00:00"", ""7:15""],
         ""Welcome"": [""7:15"", ""7:20""],
@@ -79,6 +83,7 @@ public class LocalCroomsBell : IBellScheduleProvider
     },
     {
       ""name"": ""oddblock"",
+      ""properName"": ""Odd block"",
       ""data"": {
         ""Before School"": [""00:00"", ""7:15""],
         ""Welcome"": [""7:15"", ""7:20""],
@@ -97,6 +102,7 @@ public class LocalCroomsBell : IBellScheduleProvider
     },
     {
       ""name"": ""activity"",
+      ""properName"": ""Activity day"",
       ""data"": {
         ""Before School"": [""00:00"", ""7:15""],
         ""Welcome"": [""7:15"", ""7:20""],
@@ -120,6 +126,7 @@ public class LocalCroomsBell : IBellScheduleProvider
     },
     {
       ""name"": ""mod1stPdEx"",
+      ""properName"": ""Extended first period"",
       ""data"": {
         ""Before School"": [""00:00"", ""7:15""],
         ""Welcome"": [""7:15"", ""7:20""],
@@ -141,6 +148,7 @@ public class LocalCroomsBell : IBellScheduleProvider
     },
     {
       ""name"": ""modExam2"",
+      ""properName"": ""Period 2 and 3 exams"",
       ""data"": {
         ""Before School"": [""00:00"", ""7:15""],
         ""Welcome"": [""7:15"", ""7:20""],
@@ -151,6 +159,7 @@ public class LocalCroomsBell : IBellScheduleProvider
     },
     {
       ""name"": ""modExam4"",
+      ""properName"": ""Period 4 and 5 exams"",
       ""data"": {
         ""Before School"": [""00:00"", ""7:15""],
         ""Welcome"": [""7:15"", ""7:20""],
@@ -161,6 +170,7 @@ public class LocalCroomsBell : IBellScheduleProvider
     },
     {
       ""name"": ""modExam6"",
+      ""properName"": ""Period 6 and 7 exams"",
       ""data"": {
         ""Before School"": [""00:00"", ""7:15""],
         ""Welcome"": [""7:15"", ""7:20""],
@@ -216,15 +226,6 @@ public class LocalCroomsBell : IBellScheduleProvider
       ""date"": ""2-14-2025"",
       ""scheduleName"": ""activity""
     }
-  ],
-  ""strings"": [
-    {""Period 1"": ""Period 1""},
-    {""Period 2"": ""Period 2""},
-    {""Period 3"": ""Period 3""},
-    {""Period 4"": ""Period 4""},
-    {""Period 5"": ""Period 5""},
-    {""Period 6"": ""Period 6""},
-    {""Period 7"": ""Period 7""}
   ]
 }";
 
@@ -255,6 +256,7 @@ public class LocalCroomsBell : IBellScheduleProvider
         {
             var sched = new BellSchedule();
             sched.Name = item.name;
+            sched.ProperName = item.properName;
 
             foreach (var item2 in item.data)
             {
@@ -286,7 +288,13 @@ public class LocalCroomsBell : IBellScheduleProvider
         if (bellScheduleName == null) throw new Exception("No schedule for today");
         var schedule = schedules.Schedules.Where(x => x.Name == bellScheduleName.scheduleName).FirstOrDefault() ?? throw new Exception("Unable to lookup schedule");
 
-        return Task.FromResult(new BellScheduleReader(schedule, data.stringsDictionary));
+        Dictionary<string, string> names = new Dictionary<string, string>();
+        foreach (var item in SettingsManager.Settings.PeriodNames)
+        {
+            names.Add("Period " + item.Key, item.Value);
+        }
+
+        return Task.FromResult(new BellScheduleReader(schedule, names));
     }
 }
 
@@ -294,6 +302,7 @@ public class JsonDefaultWeek
 {
     public DayOfWeek day { get; set; }
     public string name { get; set; } = "";
+    public string properName { get; set; } = "";
     public Dictionary<string, string[]> data { get; set; } = [];
 }
 
@@ -314,7 +323,6 @@ public class LocalBellRoot
     public List<WeekMap> defaultWeekMap { get; set; } = [];
     public List<JsonDefaultWeek> schedules { get; set; } = [];
     public List<JsonBellOverrides> overrides { get; set; } = [];
-    public Dictionary<string, string> stringsDictionary { get; set; } = [];
 }
 
 public class BellScheduleEntry
@@ -339,6 +347,7 @@ public class BellSchedule
 {
     public List<BellScheduleEntry> Classes = [];
     public string Name = "";
+    public string ProperName = "";
 }
 
 public class FullBellSchedule

@@ -8,13 +8,30 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
-    <Grid>
+    <ScrollViewer>
         <StackPanel
             x:Name="ContentArea">
-            <TextBlock x:Uid="Settings_Personalization" Margin="0, 20, 0, 26" Style="{ThemeResource TitleTextBlockStyle}"
-                       Text="Bell" />
+            <TextBlock Margin="0, 20, 0, 26" Style="{ThemeResource TitleTextBlockStyle}" Text="Bell schedule" />
+
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="0,8,0,0" Text="Preferred bell schedule: "/>
+                <ComboBox x:Name="CmbPreferredSchedule" Margin="8,0,0,0" SelectedIndex="0" SelectionChanged="CmbPreferredSchedule_SelectionChanged">
+                    <ComboBox.Items>
+                        <ComboBoxItem>croomssched.tech</ComboBoxItem>
+                        <ComboBoxItem>On-device</ComboBoxItem>
+                    </ComboBox.Items>
+                </ComboBox>
+            </StackPanel>
+            <InfoBar
+    IsOpen="True"
+    IsIconVisible="True"
+    IsClosable="False"
+    Title="Note"
+    Message="The on-device bell schedule will be used if the server is inaccessible or under maintenance." Margin="0,8,0,8"/>
+
+            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Class names" />
 
             <TextBlock x:Name="txtBell"></TextBlock>
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </Page>
