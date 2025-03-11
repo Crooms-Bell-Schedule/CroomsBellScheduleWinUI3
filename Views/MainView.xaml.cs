@@ -15,7 +15,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
-using Velopack;
 using Windows.Graphics;
 using Windows.UI.Popups;
 using WinRT.Interop;
@@ -472,7 +471,6 @@ public sealed partial class MainView
             if (_defaultProgressbarMinHeight != null)
                 ProgressBar.MinHeight = _defaultProgressbarMinHeight.Value;
 
-            _windowApp.Resize(new SizeInt32(GetDpi() * 4, GetDpi() * 1));
             PositionWindow();
         }
     }
