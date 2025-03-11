@@ -30,7 +30,7 @@ public sealed partial class MainWindow
 
         Application.Current.UnhandledException += Current_UnhandledException;
         TrySetSystemBackdrop();
-        AppWindow.Resize(new SizeInt32(MainView.GetDpi() * 4, MainView.GetDpi() * 1));
+        //AppWindow.Resize(new SizeInt32(MainView.GetDpi() * 4, MainView.GetDpi() * 1));
     }
 
     public void RemoveMica()
