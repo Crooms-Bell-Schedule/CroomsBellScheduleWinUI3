@@ -18,7 +18,7 @@ public sealed partial class MainWindow
 {
     public static MainWindow Instance = null!;
     public static MainView ViewInstance = null!;
-   // WindowsSystemDispatcherQueueHelper? m_wsdqHelper; // See below for implementation.
+    WindowsSystemDispatcherQueueHelper? m_wsdqHelper; // See below for implementation.
     MicaController? m_backdropController;
     SystemBackdropConfiguration? m_configurationSource;
     public MainWindow()
@@ -33,13 +33,26 @@ public sealed partial class MainWindow
         AppWindow.Resize(new SizeInt32(MainView.GetDpi() * 4, MainView.GetDpi() * 1));
     }
 
-    bool TrySetSystemBackdrop()
+    public void RemoveMica()
+    {
+        // Make sure any Mica/Acrylic controller is disposed
+        // so it doesn't try to use this closed window.
+        if (m_backdropController != null)
+        {
+            m_backdropController.Dispose();
+            m_backdropController = null;
+        }
+        this.Activated -= Window_Activated;
+        m_configurationSource = null;
+    }
+
+    public bool TrySetSystemBackdrop()
     {
         if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
         {
             // TODO is this needed
-            //m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-            //m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+            m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+            m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
 
             // Create the policy object.
             m_configurationSource = new SystemBackdropConfiguration();
@@ -115,37 +128,37 @@ public sealed partial class MainWindow
         InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
         await dlg.ShowAsync();
     }
-    //class WindowsSystemDispatcherQueueHelper
-    //{
-    //    [StructLayout(LayoutKind.Sequential)]
-    //    struct DispatcherQueueOptions
-    //    {
-    //        internal int dwSize;
-    //        internal int threadType;
-    //        internal int apartmentType;
-    //    }
+    class WindowsSystemDispatcherQueueHelper
+    {
+        [StructLayout(LayoutKind.Sequential)]
+        struct DispatcherQueueOptions
+        {
+            internal int dwSize;
+            internal int threadType;
+            internal int apartmentType;
+        }
 
-    //    [DllImport("CoreMessaging.dll")]
-    //    private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
+        [DllImport("CoreMessaging.dll")]
+        private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
 
-    //    object m_dispatcherQueueController = null;
-    //    public void EnsureWindowsSystemDispatcherQueueController()
-    //    {
-    //        if (global::Windows.System.DispatcherQueue.GetForCurrentThread() != null)
-    //        {
-    //            // one already exists, so we'll just use it.
-    //            return;
-    //        }
+        object m_dispatcherQueueController = null;
+        public void EnsureWindowsSystemDispatcherQueueController()
+        {
+            if (global::Windows.System.DispatcherQueue.GetForCurrentThread() != null)
+            {
+                // one already exists, so we'll just use it.
+                return;
+            }
 
-    //        if (m_dispatcherQueueController == null)
-    //        {
-    //            DispatcherQueueOptions options;
-    //            options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
-    //            options.threadType = 2;    // DQTYPE_THREAD_CURRENT
-    //            options.apartmentType = 2; // DQTAT_COM_STA
+            if (m_dispatcherQueueController == null)
+            {
+                DispatcherQueueOptions options;
+                options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
+                options.threadType = 2;    // DQTYPE_THREAD_CURRENT
+                options.apartmentType = 2; // DQTAT_COM_STA
 
-    //            CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
-    //        }
-    //    }
-    //}
+                CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
+            }
+        }
+    }
 }

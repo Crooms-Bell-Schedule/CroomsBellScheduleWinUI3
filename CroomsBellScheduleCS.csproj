@@ -19,6 +19,7 @@
 		<Version>3.0.2</Version>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Styles\FontSizes.xaml" />
