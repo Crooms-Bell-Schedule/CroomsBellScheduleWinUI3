@@ -2,6 +2,7 @@
 using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Windows;
 using Microsoft.UI.Xaml;
+using static CroomsBellScheduleCS.Utils.SettingsManager;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
@@ -21,6 +22,7 @@ public sealed partial class PersonalizationView
         RdDark.IsChecked = SettingsManager.Settings.Theme == ElementTheme.Dark;
         RdDefault.IsChecked = SettingsManager.Settings.Theme == ElementTheme.Default;
         chkTaskbar.IsOn = SettingsManager.Settings.ShowInTaskbar;
+        ComboPercentage.SelectedIndex = (int)SettingsManager.Settings.PercentageSetting;
         UpdateCheckState();
 
         // show version
@@ -38,13 +40,22 @@ public sealed partial class PersonalizationView
         pHLunchB.IsChecked = SettingsManager.Settings.HomeroomLunch == 1;
         _initialized = true;
     }
+    private async void ComboPercentage_SelectionChanged(object sender, Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs e)
+    {
+        if (!_initialized) return;
+
+        SettingsManager.Settings.PercentageSetting = (PercentageSetting)ComboPercentage.SelectedIndex;
+        await SaveSettings();
+
+        try { MainWindow.ViewInstance.UpdateCurrentClass(); } catch { }
+    }
 
     private async void RdLight_Checked(object sender, RoutedEventArgs e)
     {
         if (!_initialized) return;
 
         SettingsManager.Settings.Theme = ElementTheme.Light;
-        await SettingsManager.SaveSettings();
+        await SaveSettings();
 
         MainWindow.ViewInstance.SetTheme(SettingsManager.Settings.Theme);
     }
@@ -54,7 +65,7 @@ public sealed partial class PersonalizationView
         if (!_initialized) return;
 
         SettingsManager.Settings.Theme = ElementTheme.Dark;
-        await SettingsManager.SaveSettings();
+        await SaveSettings();
 
         MainWindow.ViewInstance.SetTheme(SettingsManager.Settings.Theme);
     }
@@ -64,7 +75,7 @@ public sealed partial class PersonalizationView
         if (!_initialized) return;
 
         SettingsManager.Settings.Theme = ElementTheme.Default;
-        await SettingsManager.SaveSettings();
+        await SaveSettings();
 
         MainWindow.ViewInstance.SetTheme(SettingsManager.Settings.Theme);
     }
@@ -74,7 +85,7 @@ public sealed partial class PersonalizationView
         if (!_initialized) return;
 
         SettingsManager.Settings.ShowInTaskbar = chkTaskbar.IsOn;
-        await SettingsManager.SaveSettings();
+        await SaveSettings();
 
         MainWindow.ViewInstance.SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
     }
@@ -84,7 +95,7 @@ public sealed partial class PersonalizationView
         if (!_initialized) return;
 
         SettingsManager.Settings.Period5Lunch = 0;
-        await SettingsManager.SaveSettings();
+        await SaveSettings();
         UpdateCheckState();
 
         MainWindow.ViewInstance.UpdateLunch();
@@ -95,7 +106,7 @@ public sealed partial class PersonalizationView
         if (!_initialized) return;
 
         SettingsManager.Settings.Period5Lunch = 1;
-        await SettingsManager.SaveSettings();
+        await SaveSettings();
         UpdateCheckState();
 
         MainWindow.ViewInstance.UpdateLunch();
@@ -117,7 +128,7 @@ public sealed partial class PersonalizationView
         if (!_initialized) return;
 
         SettingsManager.Settings.HomeroomLunch = 1;
-        await SettingsManager.SaveSettings();
+        await SaveSettings();
         UpdateCheckState();
 
         MainWindow.ViewInstance.UpdateLunch();

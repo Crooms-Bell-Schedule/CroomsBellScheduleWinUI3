@@ -134,8 +134,15 @@ public sealed partial class MainView
 
     internal async Task RunUpdateCheck()
     {
+        bool wasRunning = false;
         try
         {
+            if (_timer != null)
+            {
+                wasRunning = _timer.IsEnabled;
+                if (wasRunning) _timer.Stop();
+            }
+
             string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]) ?? AppDomain.CurrentDomain.BaseDirectory;
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             _updateManager = new($"https://mikhail.croomssched.tech/updateapiv2/");
@@ -175,6 +182,8 @@ public sealed partial class MainView
             InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
             await dlg.ShowAsync();
         }
+
+        if (wasRunning && _timer != null) _timer.Start();
     }
 
     public void SetTheme(ElementTheme theme)
@@ -217,12 +226,13 @@ public sealed partial class MainView
                 {
                     AppNotification toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")
-                        .AddText("The bell rings in less than 1 minute").AddButton(new AppNotificationButton
-                        { InputId = "doCancelClassProc", Content = "Cancel class" })
+                        .AddText("The bell rings in less than 1 minute")
+                        //.AddButton(new AppNotificationButton
+                       // { InputId = "doCancelClassProc", Content = "Cancel class" })
                         .AddProgressBar(
                             new AppNotificationProgressBar
                             {
-                                Status = "Progress",
+                                Status = "Class completion",
                                 Value = progress / 100
                             }
                         )
@@ -269,7 +279,24 @@ public sealed partial class MainView
         // Update text
 
         TxtCurrentClass.Text = $"{currentClass} - {FormatTimespan(transitionDuration, percent)}";
-        TxtClassPercent.Text = Math.Round(percent, 2).ToString("0.00") + "%";
+        switch (SettingsManager.Settings.PercentageSetting)
+        {
+            case SettingsManager.PercentageSetting.Hide:
+                TxtClassPercent.Text = "";
+                break;
+            case SettingsManager.PercentageSetting.SigFig2:
+                TxtClassPercent.Text = percent.ToString("0") + "%";
+                break;
+            case SettingsManager.PercentageSetting.SigFig3:
+                TxtClassPercent.Text = Math.Round(percent, 1).ToString("0.0") + "%";
+                break;
+            case SettingsManager.PercentageSetting.SigFig4:
+                TxtClassPercent.Text = Math.Round(percent, 2).ToString("0.00") + "%";
+                break;
+            default:
+                break;
+        }
+
         TxtDuration.Text = scheduleName;
 
         // update progress bar color. TODO change only if necessesary
@@ -290,7 +317,7 @@ public sealed partial class MainView
         }
     }
 
-    private async void UpdateCurrentClass()
+    public async void UpdateCurrentClass()
     {
         if (_reader == null) throw new InvalidOperationException();
 
@@ -369,7 +396,7 @@ public sealed partial class MainView
         }
     }
 
-    private int GetDpi()
+    public static int GetDpi()
     {
         return Win32.GetDpiForWindow(WindowNative.GetWindowHandle(MainWindow.Instance));
     }

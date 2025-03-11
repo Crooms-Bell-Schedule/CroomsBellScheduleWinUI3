@@ -4,6 +4,7 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using System;
 using System.Runtime.InteropServices;
+using Windows.Graphics;
 using Windows.UI.Popups;
 using WinRT;
 using WinRT.Interop;
@@ -29,6 +30,7 @@ public sealed partial class MainWindow
 
         Application.Current.UnhandledException += Current_UnhandledException;
         TrySetSystemBackdrop();
+        AppWindow.Resize(new SizeInt32(MainView.GetDpi() * 4, MainView.GetDpi() * 1));
     }
 
     bool TrySetSystemBackdrop()
@@ -113,37 +115,37 @@ public sealed partial class MainWindow
         InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
         await dlg.ShowAsync();
     }
-    class WindowsSystemDispatcherQueueHelper
-    {
-        [StructLayout(LayoutKind.Sequential)]
-        struct DispatcherQueueOptions
-        {
-            internal int dwSize;
-            internal int threadType;
-            internal int apartmentType;
-        }
+    //class WindowsSystemDispatcherQueueHelper
+    //{
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    struct DispatcherQueueOptions
+    //    {
+    //        internal int dwSize;
+    //        internal int threadType;
+    //        internal int apartmentType;
+    //    }
 
-        [DllImport("CoreMessaging.dll")]
-        private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
+    //    [DllImport("CoreMessaging.dll")]
+    //    private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
 
-        object m_dispatcherQueueController = null;
-        public void EnsureWindowsSystemDispatcherQueueController()
-        {
-            if (global::Windows.System.DispatcherQueue.GetForCurrentThread() != null)
-            {
-                // one already exists, so we'll just use it.
-                return;
-            }
+    //    object m_dispatcherQueueController = null;
+    //    public void EnsureWindowsSystemDispatcherQueueController()
+    //    {
+    //        if (global::Windows.System.DispatcherQueue.GetForCurrentThread() != null)
+    //        {
+    //            // one already exists, so we'll just use it.
+    //            return;
+    //        }
 
-            if (m_dispatcherQueueController == null)
-            {
-                DispatcherQueueOptions options;
-                options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
-                options.threadType = 2;    // DQTYPE_THREAD_CURRENT
-                options.apartmentType = 2; // DQTAT_COM_STA
+    //        if (m_dispatcherQueueController == null)
+    //        {
+    //            DispatcherQueueOptions options;
+    //            options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
+    //            options.threadType = 2;    // DQTYPE_THREAD_CURRENT
+    //            options.apartmentType = 2; // DQTAT_COM_STA
 
-                CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
-            }
-        }
-    }
+    //            CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
+    //        }
+    //    }
+    //}
 }

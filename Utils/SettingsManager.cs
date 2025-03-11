@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -90,5 +91,15 @@ public static class SettingsManager
         public bool UseLocalBellSchedule { get; set; }
 
         public Dictionary<int, string> PeriodNames { get; set; } = [];
+        [DefaultValue((int)PercentageSetting.SigFig4)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public PercentageSetting PercentageSetting { get; set; } = PercentageSetting.SigFig4;
+    }
+    public enum PercentageSetting
+    {
+        Hide = 0,
+        SigFig2 = 1,
+        SigFig3 = 2,
+        SigFig4 = 3,
     }
 }

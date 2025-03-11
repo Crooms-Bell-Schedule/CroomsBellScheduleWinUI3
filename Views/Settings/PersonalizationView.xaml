@@ -51,7 +51,20 @@
                 <ToggleButton x:Name="pHLunchB" Margin="5" Checked="pHLunchB_Checked" Unchecked="Lunch_Unchecked">B</ToggleButton>
             </StackPanel>
 
-            <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" />
+            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Behavior" />
+            <StackPanel Margin="0,8,0,0">
+                <TextBlock Text="Percentage: " Style="{ThemeResource BodyTextBlockStyle}" VerticalAlignment="Center" />
+                <ComboBox x:Name="ComboPercentage" SelectedItem="2" SelectionChanged="ComboPercentage_SelectionChanged">
+                    <ComboBox.Items>
+                        <ComboBoxItem>Hide</ComboBoxItem>
+                        <ComboBoxItem>2 digit places (59%)</ComboBoxItem>
+                        <ComboBoxItem>3 digit places (59.3%)</ComboBoxItem>
+                        <ComboBoxItem>4 digit places (59.32%) (default)</ComboBoxItem>
+                    </ComboBox.Items>
+                </ComboBox>
+            </StackPanel>
+
+            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" />
 
             <StackPanel Margin="0,8,0,0">
                 <TextBlock x:Name="VersionText" Style="{ThemeResource BodyTextBlockStyle}" />
