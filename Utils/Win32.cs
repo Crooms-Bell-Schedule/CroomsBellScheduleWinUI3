@@ -73,5 +73,5 @@ public static partial class Win32
     public static partial IntPtr MonitorFromWindow(IntPtr hwnd, int flags);
     [LibraryImport("user32.dll")]
     [return:MarshalAs(UnmanagedType.Bool)]
-    public static partial bool GetMonitorInfoW(IntPtr hwnd, out MONITORINFO data);
+    public static partial bool GetMonitorInfoW(IntPtr hwnd, ref MONITORINFO data);
 }

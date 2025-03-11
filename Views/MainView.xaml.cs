@@ -487,10 +487,11 @@ public sealed partial class MainView
         if (_windowApp == null) return; // What?
 
         IntPtr monitor = MonitorFromWindow(handle, 0);
-        GetMonitorInfoW(monitor, out MONITORINFO data);
+        MONITORINFO data = new() { size = Marshal.SizeOf<MONITORINFO>() };
+        GetMonitorInfoW(monitor, ref data);
         var mWidth = data.rcWork.right - data.rcWork.left;
         var mHeight = data.rcWork.bottom - data.rcWork.top;
-        _windowApp.Move(new PointInt32(mWidth - _windowApp.Size.Height - 20, mHeight - _windowApp.Size.Width - 20));
+        _windowApp.MoveAndResize(new RectInt32(mWidth - _windowApp.Size.Width - 20, mHeight - _windowApp.Size.Height - 20, GetDpi() * 4, GetDpi()));
     }
 
 
