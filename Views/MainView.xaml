@@ -8,13 +8,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tb="using:H.NotifyIcon"
     mc:Ignorable="d" Loaded="UserControl_Loaded">
-
+    
     <Grid Margin="5, 5, 5, 2.5">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -38,11 +38,11 @@
         </Button>
 
 
-        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" FontSize="17" Text="Downloading bell schedule" />
-        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" FontSize="17" Text="" />
+        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" Text="Downloading bell schedule" />
+        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" Text="" />
 
         <TextBlock x:Name="TxtClassPercent" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
-               HorizontalAlignment="Right" FontSize="17" Text="" />
+               HorizontalAlignment="Right" Text="" />
 
         <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Height="10" Grid.ColumnSpan="2" />
         <ProgressRing x:Name="LoadingThing" Grid.Row="1" Grid.Column="1" />

@@ -30,7 +30,7 @@ public sealed partial class MainWindow
 
         Application.Current.UnhandledException += Current_UnhandledException;
         TrySetSystemBackdrop();
-        //AppWindow.Resize(new SizeInt32(MainView.GetDpi() * 4, MainView.GetDpi() * 1));
+        AppWindow.Resize(new SizeInt32(MainView.GetDpi() * 4, MainView.GetDpi() * 1));
     }
 
     public void RemoveMica()
@@ -48,9 +48,8 @@ public sealed partial class MainWindow
 
     public bool TrySetSystemBackdrop()
     {
-        if (Microsoft.UI.Composition.SystemBackdrops.MicaController.IsSupported())
+        if (MicaController.IsSupported())
         {
-            // TODO is this needed
             m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
             m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
 
@@ -64,7 +63,7 @@ public sealed partial class MainWindow
             m_configurationSource.IsInputActive = true;
             SetConfigurationSourceTheme();
 
-            m_backdropController = new Microsoft.UI.Composition.SystemBackdrops.MicaController();
+            m_backdropController = new MicaController();
 
             // Enable the system backdrop.
             // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.

@@ -19,6 +19,7 @@ using Velopack;
 using Windows.Graphics;
 using Windows.UI.Popups;
 using WinRT.Interop;
+using static CroomsBellScheduleCS.Utils.Win32;
 
 namespace CroomsBellScheduleCS.Views;
 
@@ -448,8 +449,12 @@ public sealed partial class MainView
                 Win32.FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
             Win32.SetParent(handle, taskbarUIHWnd);
 
+            RECT rc = new();
+            GetClientRect(trayHWnd, ref rc);
+            var taskbarHeight = rc.bottom - rc.top;
+
             if (_windowApp != null)
-                _windowApp.MoveAndResize(new RectInt32 { Width = GetDpi() * 4, Height = GetDpi() * 1 });
+                _windowApp.MoveAndResize(new RectInt32 { Width = GetDpi() * 4, Height = taskbarHeight + 14 });
             MainButton.Visibility = Visibility.Collapsed;
             TxtDuration.FontSize = 14;
             TxtCurrentClass.FontSize = 14;
@@ -459,7 +464,7 @@ public sealed partial class MainView
         }
         else
         {
-            Win32.SetParent(handle, 0);
+            SetParent(handle, 0);
             MainButton.Visibility = Visibility.Visible;
             TxtDuration.FontSize = 16;
             TxtCurrentClass.FontSize = 16;
@@ -468,7 +473,24 @@ public sealed partial class MainView
                 ProgressBar.MinHeight = _defaultProgressbarMinHeight.Value;
 
             _windowApp.Resize(new SizeInt32(GetDpi() * 4, GetDpi() * 1));
+            PositionWindow();
         }
+    }
+
+    public void PositionWindow()
+    {
+        nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
+        WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
+        AppWindow appWindow = AppWindow.GetFromWindowId(id);
+        if (appWindow != null)
+            _windowApp = appWindow;
+        if (_windowApp == null) return; // What?
+
+        IntPtr monitor = MonitorFromWindow(handle, 0);
+        GetMonitorInfoW(monitor, out MONITORINFO data);
+        var mWidth = data.rcWork.right - data.rcWork.left;
+        var mHeight = data.rcWork.bottom - data.rcWork.top;
+        _windowApp.Move(new PointInt32(mWidth - _windowApp.Size.Height - 20, mHeight - _windowApp.Size.Width - 20));
     }
 
 

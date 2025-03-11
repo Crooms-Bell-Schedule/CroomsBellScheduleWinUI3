@@ -35,6 +35,8 @@ public static partial class Win32
 
     [LibraryImport("user32.dll")]
     public static partial IntPtr SetWindowLongPtrW(IntPtr hwnd, int index, IntPtr value);
+    [LibraryImport("user32.dll")]
+    public static partial IntPtr SetWindowLongW(IntPtr hwnd, int index, long value);
 
     [LibraryImport("user32.dll")]
     public static partial IntPtr CallWindowProcW(IntPtr lpPrevWndFunc, IntPtr hwnd, uint msg, UIntPtr wParam,
@@ -48,4 +50,28 @@ public static partial class Win32
 
     [LibraryImport("user32.dll", StringMarshalling = StringMarshalling.Utf16)]
     public static partial IntPtr FindWindowExW(IntPtr parent, IntPtr childAfter, string? className, string? windowName);
+    [LibraryImport("user32.dll")]
+    public static partial void GetClientRect(IntPtr hwnd, ref RECT lpRect);
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT
+    {
+        public int left;
+        public int top;
+        public int right;
+        public int bottom;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MONITORINFO
+    {
+        public int size;
+        public RECT rcMonitor;
+        public RECT rcWork;
+        public int dwFlags;
+    }
+    [LibraryImport("user32.dll")]
+    public static partial IntPtr MonitorFromWindow(IntPtr hwnd, int flags);
+    [LibraryImport("user32.dll")]
+    [return:MarshalAs(UnmanagedType.Bool)]
+    public static partial bool GetMonitorInfoW(IntPtr hwnd, out MONITORINFO data);
 }
