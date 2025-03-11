@@ -107,8 +107,6 @@ public sealed partial class MainView
             await dlg.ShowAsync();
         }
 
-        VelopackApp.Build().Run();
-
         await RunUpdateCheck();
 
 
@@ -186,6 +184,7 @@ public sealed partial class MainView
         if (_settings != null)
             if (_settings.Content is FrameworkElement rootElement2)
                 rootElement2.RequestedTheme = theme;
+        MainWindow.Instance.UpdateTheme(theme);
     }
 
     #region Bell

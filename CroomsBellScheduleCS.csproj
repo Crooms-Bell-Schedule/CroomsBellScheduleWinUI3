@@ -17,6 +17,8 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
 		<Version>3.0.2</Version>
+		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Styles\FontSizes.xaml" />

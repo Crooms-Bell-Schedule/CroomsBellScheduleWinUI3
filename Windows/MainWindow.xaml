@@ -9,9 +9,6 @@
     xmlns:views="using:CroomsBellScheduleCS.Views"
     mc:Ignorable="d"
     Title="Crooms Bell Schedule">
-    <Window.SystemBackdrop>
-        <MicaBackdrop />
-    </Window.SystemBackdrop>
 
     <Grid>
         <views:MainView x:Name="mainView"></views:MainView>
