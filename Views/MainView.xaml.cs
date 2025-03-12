@@ -532,6 +532,7 @@ public sealed partial class MainView
     private void Quit_Click(object sender, RoutedEventArgs e)
     {
         Application.Current.Exit();
+        Environment.Exit(0);
     }
 
     private void ALunch_Click(object sender, RoutedEventArgs e)
@@ -577,7 +578,7 @@ public sealed partial class MainView
     private int DetermineLunchOffsetFromToday()
     {
         if (_reader == null) return SettingsManager.Settings.LunchOffset;
-        if (_reader.GetUnfilteredClasses().Where(x => x.ScheduleName.ToLower() == "odd").Any())
+        if (_reader.GetUnfilteredClasses().Where(x => x.ScheduleName.ToLower().Contains("even")).Any())
             return SettingsManager.Settings.HomeroomLunch;
         else
             return SettingsManager.Settings.Period5Lunch;
