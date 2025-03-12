@@ -19,7 +19,7 @@ public sealed partial class LoginView
             LoginFailureText.Text = "A password is required.";
             return;
         }
-        LoginFailureText.Text = "Not implemented";
+        LoginFailureText.Text = "Coming soon";
     }
     private void UsernameBox_TextChanged(Microsoft.UI.Xaml.Controls.AutoSuggestBox sender, Microsoft.UI.Xaml.Controls.AutoSuggestBoxTextChangedEventArgs args)
     {
