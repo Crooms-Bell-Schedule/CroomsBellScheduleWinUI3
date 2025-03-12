@@ -151,12 +151,15 @@ public sealed partial class MainWindow
 
             if (m_dispatcherQueueController == null)
             {
-                DispatcherQueueOptions options;
+                DispatcherQueueOptions options = new();
                 options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
                 options.threadType = 2;    // DQTYPE_THREAD_CURRENT
                 options.apartmentType = 2; // DQTAT_COM_STA
 
-                CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
+                if (CreateDispatcherQueueController(options, ref m_dispatcherQueueController) != 0)
+                {
+                    // TODO: show error
+                }
             }
         }
     }
