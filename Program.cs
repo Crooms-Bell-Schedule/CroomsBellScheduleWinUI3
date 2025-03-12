@@ -1,10 +1,4 @@
-﻿using Microsoft.UI.Dispatching;
-using Microsoft.UI.Xaml;
-using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Threading;
-using Velopack;
+﻿using Velopack;
 
 namespace CroomsBellScheduleCS
 {

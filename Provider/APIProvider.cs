@@ -1,10 +1,9 @@
-﻿using System;
+﻿using CroomsBellScheduleCS.Utils;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using CroomsBellScheduleCS.Utils;
-using static CroomsBellScheduleCS.Utils.SettingsManager;
 
 namespace CroomsBellScheduleCS.Provider;
 
@@ -27,6 +26,25 @@ public class APIProvider : IBellScheduleProvider
         // convert response to the better format
         BellSchedule bellSchedule = new();
 
+        Dictionary<int, string> properNames = new()
+        {
+            { 0, "Nothing" },
+            { 100, "Morning" },
+            { 101, "Welcome" },
+            { 102, "Lunch" },
+            { 103, "Homeroom" },
+            { 104, "Dismissal" },
+            { 105, "After school" },
+            { 106, "End" },
+            { 107, "Break" },
+            { 110, "PSAT/SAT" },
+            { 111, "Session 1"},
+            { 112, "Session 2" },
+            { 113, "Session 3" },
+            { 114, "Session 4" },
+            { 115, "Field Day" }
+        };
+
         char lunch = 'A';
         foreach (List<List<int>> schedule in parsed.data.schedule)
         {
@@ -42,7 +60,7 @@ public class APIProvider : IBellScheduleProvider
                 {
                     StartString = ConvertTime(startHour, startMin),
                     EndString = ConvertTime(endHour, endMin),
-                    Name = typeStr.ToString(),
+                    Name = properNames.ContainsKey(typeStr) ? properNames[typeStr] : typeStr.ToString(),
                     ScheduleName = parsed.data.msg,
                     LunchIndex = lunch == 'B' ? 1 : 0
                 });

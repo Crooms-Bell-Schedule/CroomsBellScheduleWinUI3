@@ -4,7 +4,6 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using System;
 using System.Runtime.InteropServices;
-using Windows.Graphics;
 using Windows.UI.Popups;
 using WinRT;
 using WinRT.Interop;
@@ -140,7 +139,7 @@ public sealed partial class MainWindow
         [DllImport("CoreMessaging.dll")]
         private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
 
-        object m_dispatcherQueueController = null;
+        object? m_dispatcherQueueController = null;
         public void EnsureWindowsSystemDispatcherQueueController()
         {
             if (global::Windows.System.DispatcherQueue.GetForCurrentThread() != null)
