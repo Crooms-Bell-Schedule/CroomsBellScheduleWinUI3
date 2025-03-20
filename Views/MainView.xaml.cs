@@ -1,8 +1,11 @@
-﻿using System;
+﻿//#define MIGRATION_CODE // uncomment to enable migration code from old bell schedule app (2.1.0 -> 2.9.9 -> 3.x)
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -146,6 +149,66 @@ public sealed partial class MainView
             string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]) ?? AppDomain.CurrentDomain.BaseDirectory;
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             _updateManager = new($"https://mikhail.croomssched.tech/updateapiv2/");
+
+#if MIGRATION_CODE
+            string updateExe = Path.Combine(executablePath, "..", "Update.exe");
+            if (File.Exists(updateExe))
+            {
+                try
+                {
+                    File.Delete(updateExe);
+                }
+                catch
+                {
+                    MessageDialog dlg = new MessageDialog($"Failed to update the update executable to install the required updates for the update executable. Please close all other instances of the bell schedule app.")
+                    {
+                        Title = "Failed to install critical update"
+                    };
+                    InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
+                    await dlg.ShowAsync();
+                }
+
+                try
+                {
+                    if (File.Exists(updateExe))
+                        File.Delete(updateExe);
+                }
+                catch
+                {
+                    MessageDialog dlg = new MessageDialog($"Failed to update the update executable to install the required updates for the update executable. Please close all other instances of the bell schedule app.")
+                    {
+                        Title = "Failed to install critical update"
+                    };
+                    InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
+                    await dlg.ShowAsync();
+                }
+
+                try
+                {
+                    using (var client = new HttpClient())
+                    {
+                        using (var s = await client.GetStreamAsync("https://update.croomssched.tech/update.exe"))
+                        {
+                            using (var fs = new FileStream(updateExe, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+                            {
+                                await s.CopyToAsync(fs);
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    MessageDialog dlg = new MessageDialog($"Failed to install a critical update. The app will not function after a restart. Please download and reinstall this application from the website.")
+                    {
+                        Title = "Failed to install critical update"
+                    };
+                    InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
+                    await dlg.ShowAsync();
+                }
+            
+
+            }
+#endif
 
             if (_updateManager.IsInstalled)
             {
