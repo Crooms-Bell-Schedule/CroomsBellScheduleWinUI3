@@ -506,23 +506,29 @@ public sealed partial class MainView
 
         if (showInTaskbar)
         {
-            IntPtr trayHWnd = Win32.FindWindowW("Shell_TrayWnd", null);
+            IntPtr trayHWnd = FindWindowW("Shell_TrayWnd", null);
             IntPtr taskbarUIHWnd =
-                Win32.FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
-            Win32.SetParent(handle, taskbarUIHWnd);
+                FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
+            SetParent(handle, taskbarUIHWnd);
 
             RECT rc = new();
             GetClientRect(trayHWnd, ref rc);
             var taskbarHeight = rc.bottom - rc.top;
 
             if (_windowApp != null)
-                _windowApp.MoveAndResize(new RectInt32 { Width = GetDpi() * 4, Height = taskbarHeight + 14 });
+                _windowApp.MoveAndResize(
+                    new RectInt32 {
+                        Width = GetDpi() * 4,
+                        Height = taskbarHeight + 14 
+                    }
+                );
+
             MainButton.Visibility = Visibility.Collapsed;
             TxtDuration.FontSize = 14;
             TxtCurrentClass.FontSize = 14;
             TxtClassPercent.FontSize = 14;
             _defaultProgressbarMinHeight = ProgressBar.MinHeight;
-            ProgressBar.MinHeight = 20;
+            ProgressBar.MinHeight = 10;
         }
         else
         {
