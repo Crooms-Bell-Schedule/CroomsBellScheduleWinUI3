@@ -4,6 +4,7 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using System;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Windows.UI.Popups;
 using WinRT;
 using WinRT.Interop;
@@ -20,6 +21,7 @@ public sealed partial class MainWindow
     WindowsSystemDispatcherQueueHelper? m_wsdqHelper; // See below for implementation.
     MicaController? m_backdropController;
     SystemBackdropConfiguration? m_configurationSource;
+    private bool SendInputNotification = true;
     public MainWindow()
     {
         InitializeComponent();
@@ -27,11 +29,25 @@ public sealed partial class MainWindow
         Instance = this;
         ViewInstance = mainView;
 
-        Application.Current.UnhandledException += Current_UnhandledException;
-        TrySetSystemBackdrop();
-        mainView.PositionWindow();
-    }
+        ViewInstance.PositionWindow();
+        LoadSettings();
 
+        Application.Current.UnhandledException += Current_UnhandledException;
+        this.Activated += Window_Activated;
+        this.Closed += Window_Closed;
+        ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+    }
+    private async void LoadSettings()
+    {
+        try
+        {
+            await SettingsManager.LoadSettings();
+        }
+        catch
+        {
+
+        }
+    }
     public void RemoveMica()
     {
         // Make sure any Mica/Acrylic controller is disposed
@@ -45,8 +61,11 @@ public sealed partial class MainWindow
         m_configurationSource = null;
     }
 
-    public bool TrySetSystemBackdrop()
+    public void TrySetSystemBackdrop(bool input)
     {
+        SendInputNotification = input;
+
+        mainView.PositionWindow();
         if (MicaController.IsSupported())
         {
             m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
@@ -54,24 +73,21 @@ public sealed partial class MainWindow
 
             // Create the policy object.
             m_configurationSource = new SystemBackdropConfiguration();
-            this.Activated += Window_Activated;
-            this.Closed += Window_Closed;
-            ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
-
+ 
+          
             // Initial configuration state.
-            m_configurationSource.IsInputActive = true;
+            m_configurationSource.IsInputActive = input;
             SetConfigurationSourceTheme();
 
             m_backdropController = new MicaController();
 
             // Enable the system backdrop.
             // Note: Be sure to have "using WinRT;" to support the Window.As<...>() call.
-            m_backdropController.AddSystemBackdropTarget(this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>());
-            m_backdropController.SetSystemBackdropConfiguration(m_configurationSource);
-            return true; // succeeded
-        }
+            var brush = this.As<Microsoft.UI.Composition.ICompositionSupportsSystemBackdrop>();
 
-        return false; // Mica is not supported on this system
+            m_backdropController.AddSystemBackdropTarget(brush);
+            m_backdropController.SetSystemBackdropConfiguration(m_configurationSource);
+        }
     }
 
     private void Window_ThemeChanged(FrameworkElement sender, object args)
@@ -98,22 +114,30 @@ public sealed partial class MainWindow
     private void SetConfigurationSourceTheme()
     {
         //UpdateTheme(((FrameworkElement)this.Content).ActualTheme);
-        UpdateTheme(SettingsManager.Settings.Theme);
+        //UpdateTheme(SettingsManager.Settings.Theme);
     }
     private void Window_Activated(object sender, WindowActivatedEventArgs args)
     {
-        if (m_configurationSource == null) return;
+        if (m_configurationSource == null || SendInputNotification) return;
         m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
     }
 
     internal void UpdateTheme(ElementTheme theme)
     {
-        if (m_configurationSource == null) return;
-        switch (theme)
+        if (SettingsManager.Settings.ShowInTaskbar) return;
+        try
         {
-            case ElementTheme.Dark: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark; break;
-            case ElementTheme.Light: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light; break;
-            case ElementTheme.Default: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default; break;
+            if (m_configurationSource == null) return;
+            switch (theme)
+            {
+                case ElementTheme.Dark: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark; break;
+                case ElementTheme.Light: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light; break;
+                case ElementTheme.Default: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default; break;
+            }
+        }
+        catch
+        {
+
         }
     }
 

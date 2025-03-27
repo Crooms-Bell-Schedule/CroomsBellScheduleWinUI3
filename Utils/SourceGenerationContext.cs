@@ -9,6 +9,14 @@ namespace CroomsBellScheduleCS.Utils
     [JsonSerializable(typeof(Root))]
     [JsonSerializable(typeof(SettingsRoot))]
     [JsonSerializable(typeof(LocalBellRoot))]
+    [JsonSerializable(typeof(LoginRequest))]
+    [JsonSerializable(typeof(ApiResponse<ErrorResponse>))]
+    [JsonSerializable(typeof(ApiResponse<LoginResponse>))]
+    [JsonSerializable(typeof(ApiResponse<CommandResponse>))]
+    [JsonSerializable(typeof(ApiResponse<FeedEntry[]>))]
+    [JsonSerializable(typeof(ApiResponse<FeedEntry>))]
+    [JsonSerializable(typeof(SubmitFeedRequest))]
+    [JsonSerializable(typeof(ApiSimpleResponse))]
     internal partial class SourceGenerationContext : JsonSerializerContext
     {
     }

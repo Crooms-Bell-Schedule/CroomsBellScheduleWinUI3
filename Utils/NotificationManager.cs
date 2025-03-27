@@ -4,7 +4,7 @@ using Microsoft.Windows.AppNotifications;
 
 namespace CroomsBellScheduleCS.Utils;
 
-internal class NotificationManager
+public class NotificationManager
 {
     private Dictionary<int, Action<AppNotificationActivatedEventArgs>> c_map;
     private bool m_isRegistered;

@@ -89,6 +89,8 @@ public static class SettingsManager
         /// Use local bell schedule file instead of website
         /// </summary>
         public bool UseLocalBellSchedule { get; set; }
+        public string? SessionID { get; set; }
+        public string? UserID { get; set; }
 
         public Dictionary<int, string> PeriodNames { get; set; } = [];
         [DefaultValue((int)PercentageSetting.SigFig4)]

@@ -1,19 +1,21 @@
-﻿namespace CroomsBellScheduleCS.Views.Settings;
+﻿using System;
 
-public sealed partial class LoginView
+namespace CroomsBellScheduleCS.Views.Settings;
+
+public sealed partial class PostView
 {
-    public string Username
+    public string PostContent
     {
         get
         {
-            return UsernameBox.Text;
+            return PostContentBox.Text;
         }
     }
-    public string Password
+    public string PostLink
     {
         get
         {
-            return PasswordBox.Password;
+            return PasswordBox.Text;
         }
     }
 
@@ -38,31 +40,26 @@ public sealed partial class LoginView
         }
     }
 
-    public LoginView()
+    public PostView()
     {
         InitializeComponent();
-        UsernameBox.ItemsSource = new string[] { };
     }
     private void ValidateFields()
     {
-        if (string.IsNullOrEmpty(UsernameBox.Text))
+        if (string.IsNullOrEmpty(PostContentBox.Text))
         {
-            LoginFailureText.Text = "A username is required.";
+            LoginFailureText.Text = "Post content is required";
             return;
         }
-        if (string.IsNullOrEmpty(PasswordBox.Password))
+        if (!string.IsNullOrEmpty(PasswordBox.Text) && !Uri.TryCreate(PasswordBox.Text, UriKind.Absolute, out _))
         {
-            LoginFailureText.Text = "A password is required.";
+            LoginFailureText.Text = "Invalid link";
             return;
         }
         LoginFailureText.Text = "";
     }
-    private void UsernameBox_TextChanged(Microsoft.UI.Xaml.Controls.AutoSuggestBox sender, Microsoft.UI.Xaml.Controls.AutoSuggestBoxTextChangedEventArgs args)
-    {
-        ValidateFields();
-    }
 
-    private void PasswordBox_PasswordChanged(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void PostContentBox_TextChanged(object sender, Microsoft.UI.Xaml.Controls.TextChangedEventArgs e)
     {
         ValidateFields();
     }

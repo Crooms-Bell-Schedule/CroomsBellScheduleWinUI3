@@ -31,7 +31,6 @@ public sealed partial class MainView
     private static SettingsWindow? _settings;
     private static Velopack.UpdateManager? _updateManager;
 
-    private static readonly NotificationManager NotificationManager = new();
     private static IntPtr _oldWndProc;
     private static Delegate? _newWndProcDelegate;
     private double? _defaultProgressbarMinHeight;
@@ -90,7 +89,7 @@ public sealed partial class MainView
             if (presenter != null)
                 presenter.IsAlwaysOnTop = true;
 
-            NotificationManager.Init();
+            Services.NotificationManager.Init();
 
             // Workaround a bug when window maximizes when you double click.
             nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
@@ -506,10 +505,14 @@ public sealed partial class MainView
 
         if (showInTaskbar)
         {
+            MainWindow.Instance.RemoveMica();
             IntPtr trayHWnd = FindWindowW("Shell_TrayWnd", null);
             IntPtr taskbarUIHWnd =
                 FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
             SetParent(handle, taskbarUIHWnd);
+
+
+            Background = new SolidColorBrush(new global::Windows.UI.Color() { A = 0 });
 
             RECT rc = new();
             GetClientRect(trayHWnd, ref rc);
@@ -532,6 +535,8 @@ public sealed partial class MainView
         }
         else
         {
+            MainWindow.Instance.TrySetSystemBackdrop(true);
+            Background = new SolidColorBrush(new global::Windows.UI.Color() { A = 255 });
             SetParent(handle, 0);
             MainButton.Visibility = Visibility.Visible;
             TxtDuration.FontSize = 16;
@@ -539,8 +544,6 @@ public sealed partial class MainView
             TxtClassPercent.FontSize = 16;
             if (_defaultProgressbarMinHeight != null)
                 ProgressBar.MinHeight = _defaultProgressbarMinHeight.Value;
-
-            PositionWindow();
         }
     }
 
@@ -581,12 +584,12 @@ public sealed partial class MainView
             minMaxInfo.ptMinTrackSize.Y = (int)(100 * scalingFactor); // TODO SUVAN
             Marshal.StructureToPtr(minMaxInfo, lParam, true);
         }
-        else if (msg == Win32.WM_DPICHANGED)
+        else if (msg == WM_DPICHANGED)
         {
             SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
         }
 
-        return Win32.CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
+        return CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
     }
 
     private void Timer_Tick(object? sender, object e)
@@ -655,7 +658,7 @@ public sealed partial class MainView
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
-        DispatcherQueue.TryEnqueue(async () => { await Init(); });
+        DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low,async () => { await Init(); });
     }
 
     internal async Task UpdateScheduleSource()
