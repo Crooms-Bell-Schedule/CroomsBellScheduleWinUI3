@@ -362,20 +362,27 @@ public sealed partial class MainView
         TxtDuration.Text = scheduleName;
 
         // update progress bar color. TODO change only if necessesary
-        if (transitionDuration.TotalMinutes <= 5)
+        if (transitionDuration.TotalMinutes <= 1)
         {
-            ProgressBar.Foreground = Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush;
-            TxtCurrentClass.Foreground = ProgressBar.Foreground;
+            if (transitionDuration.Seconds % 2 == 0)
+                TxtCurrentClass.Style = (Style)Resources["CriticalTime"];
+            else
+                TxtCurrentClass.Style = (Style)Resources["NormalTime"];
+        }
+        else if (transitionDuration.TotalMinutes <= 5)
+        {
+            ProgressBar.Style = (Style)Resources["CriticalProgress"];
+            TxtCurrentClass.Style = (Style)Resources["CriticalTime"];
         }
         else if (transitionDuration.TotalMinutes <= 10)
         {
-            ProgressBar.Foreground = Application.Current.Resources["SystemFillColorCautionBrush"] as SolidColorBrush;
-            TxtCurrentClass.Foreground = ProgressBar.Foreground;
+            ProgressBar.Style = (Style)Resources["CautionProgress"];
+            TxtCurrentClass.Style = (Style)Resources["CautionTime"];
         }
         else
         {
-            ProgressBar.Foreground = Application.Current.Resources["SystemFillColorAttentionBrush"] as SolidColorBrush;
-            TxtCurrentClass.Foreground = Application.Current.Resources["TextFillColorPrimaryBrush"] as SolidColorBrush;
+            ProgressBar.Style = (Style)Resources["NormalProgress"];
+            TxtCurrentClass.Style = (Style)Resources["NormalTime"];
         }
     }
 
@@ -503,16 +510,16 @@ public sealed partial class MainView
 
         _windowApp.SetIcon(@"Assets\croomsBellSchedule.ico");
 
+        MainWindow.Instance.TrySetSystemBackdrop(true);
         if (showInTaskbar)
         {
             MainWindow.Instance.RemoveMica();
             IntPtr trayHWnd = FindWindowW("Shell_TrayWnd", null);
             IntPtr taskbarUIHWnd =
                 FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
-            SetParent(handle, taskbarUIHWnd);
 
+            SetParent(handle, taskbarUIHWnd);   
 
-            Background = new SolidColorBrush(new global::Windows.UI.Color() { A = 0 });
 
             RECT rc = new();
             GetClientRect(trayHWnd, ref rc);
@@ -535,7 +542,6 @@ public sealed partial class MainView
         }
         else
         {
-            MainWindow.Instance.TrySetSystemBackdrop(true);
             Background = new SolidColorBrush(new global::Windows.UI.Color() { A = 255 });
             SetParent(handle, 0);
             MainButton.Visibility = Visibility.Visible;

@@ -15,7 +15,7 @@
             <AutoSuggestBox x:Name="UsernameBox" PlaceholderText="Enter username" TextChanged="UsernameBox_TextChanged"></AutoSuggestBox>
             <TextBlock Margin="0,0,0,10">Password:</TextBlock>
             <PasswordBox x:Name="PasswordBox" PlaceholderText="Enter password" PasswordChanged="PasswordBox_PasswordChanged"></PasswordBox>
-            <TextBlock x:Name="LoginFailureText"  Foreground="Yellow"></TextBlock>
+            <TextBlock x:Name="LoginFailureText"  Foreground="{ThemeResource SystemFillColorCriticalBrush}"></TextBlock>
         </StackPanel>
         <StackPanel
     x:Name="Loader" Visibility="Collapsed">

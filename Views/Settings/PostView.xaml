@@ -17,7 +17,7 @@
             </ScrollViewer>
             <TextBlock Margin="0,0,0,10">Link:</TextBlock>
             <TextBox x:Name="PasswordBox" PlaceholderText="Enter a link (optional)" TextChanged="PostContentBox_TextChanged"></TextBox>
-            <TextBlock x:Name="LoginFailureText" Foreground="Yellow"></TextBlock>
+            <TextBlock x:Name="LoginFailureText" Foreground="{ThemeResource SystemFillColorCriticalBrush}"></TextBlock>
         </StackPanel>
         <StackPanel
     x:Name="Loader" Visibility="Collapsed">

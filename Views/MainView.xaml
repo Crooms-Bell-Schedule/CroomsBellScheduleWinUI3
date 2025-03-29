@@ -8,6 +8,30 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tb="using:H.NotifyIcon"
     mc:Ignorable="d" Loaded="UserControl_Loaded">
+
+    <UserControl.Resources>
+        <!--TODO: There is no better way to do this in WinUI-->
+        <!--This is required to allow colors to update properly when switching themes-->
+        <Style x:Key="CriticalTime" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCriticalBrush}" />
+        </Style>
+        <Style x:Key="CautionTime" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCautionBrush}" />
+        </Style>
+        <Style x:Key="NormalTime" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+        </Style>
+        
+        <Style x:Key="CriticalProgress" TargetType="ProgressBar">
+            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCriticalBrush}" />
+        </Style>
+        <Style x:Key="CautionProgress" TargetType="ProgressBar">
+            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCautionBrush}" />
+        </Style>
+        <Style x:Key="NormalProgress" TargetType="ProgressBar">
+            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorAttentionBrush}" />
+        </Style>
+    </UserControl.Resources>
     
     <Grid Margin="5, 5, 5, 2.5">
         <Grid.RowDefinitions>
@@ -27,16 +51,12 @@
             <Button.Flyout>
                 <MenuFlyout>
                     <MenuFlyoutItem Text="Settings" Click="Settings_Click" />
-                    <!--<MenuFlyoutSeparator />
-                    <RadioMenuFlyoutItem x:Name="ALunchOption" Text="A Lunch" Click="ALunch_Click" />
-                    <RadioMenuFlyoutItem x:Name="BLunchOption" Text="B Lunch" Click="BLunch_Click" />-->
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem Text="Quit" Click="Quit_Click" />
                 </MenuFlyout>
             </Button.Flyout>
             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe700;" />
         </Button>
-
 
         <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" Text="Downloading bell schedule" />
         <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" Text="" />
