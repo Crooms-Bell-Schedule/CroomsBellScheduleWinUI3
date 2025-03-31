@@ -96,7 +96,7 @@ namespace CroomsBellScheduleCS.Utils
             if (result.OK)
                 return "Server returned OK";
             if (result.ErrorValue != null)
-                return result.ErrorValue.error;
+                return result.ErrorValue.error.Contains("permissions") ? "Your login information has expired or is incorrect. Please login again." : result.ErrorValue.error;
             if (result.Exception != null)
             {
                 if (result.Exception is SocketException)

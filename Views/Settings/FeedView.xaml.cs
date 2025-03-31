@@ -10,7 +10,7 @@ namespace CroomsBellScheduleCS.Views.Settings;
 
 public sealed partial class FeedView
 {
-    public static ObservableCollection<FeedEntry> Entries = new();
+    public static ObservableCollection<FeedUIEntry> Entries = new();
     private static bool _isLoaded = false;
     public FeedView()
     {
@@ -19,62 +19,44 @@ public sealed partial class FeedView
         FeedViewer.ItemsSource = Entries;
     }
 
-    private void InitPage(FeedEntry[] entry)
+
+    private FeedUIEntry ProcessEntry(FeedEntry entry)
+    {
+        return new FeedUIEntry()
+        {
+            AuthorAndDate = $"{entry.createdBy} - {entry.create}",
+            StringContent = ProcessStringContent(entry.data)
+        };
+    }
+    private void InitPage(FeedEntry[] items)
     {
         Entries.Clear();
-
-        StringBuilder sb = new();
-        foreach (var item in entry)
+        foreach (var entry in items)
         {
-            // TODO present HTML
-            // TODO do not alter FeedEntry
-            item.data = WebUtility.UrlDecode(item.data);
-            item.createdBy = $"{item.create} - {item.createdBy}";
-            Entries.Add(item);
+            Entries.Add(ProcessEntry(entry));
         }
+    }
 
+    private string ProcessStringContent(string data)
+    {
+        // TODO present HTML properly
+        string decoded = WebUtility.HtmlDecode(data);
+        if (decoded.Contains("<span class=emoji>"))
+        {
+            decoded = decoded.Replace("<span class=emoji>", "").Replace("</span>", "");
+        }
+        if (decoded.Contains("<span class=rainbow>"))
+        {
+            // TODO
+            decoded = decoded.Replace("<span class=rainbow>", "").Replace("</span>", "");
+        }
+        decoded = decoded.Replace("<emoji>", "").Replace("</emoji>", "");
+        decoded = decoded.Replace("<rainbow>", "").Replace("</rainbow>", "");
+        return decoded;
     }
 
     private async void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        if (string.IsNullOrEmpty(SettingsManager.Settings.SessionID) || string.IsNullOrEmpty(SettingsManager.Settings.UserID))
-        {
-            // logged out
-            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-            LoggedOutView.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
-
-            return;
-        }
-
-        // check the token
-        var tokenResponse = await Services.ApiClient.ValidateSessionAsync();
-        if (tokenResponse.Value != null && !tokenResponse.Value.result)
-        {
-            ContentDialog dlg2 = new() { Title = "Login Required" };
-            dlg2.XamlRoot = XamlRoot;
-            dlg2.CloseButtonText = "OK";
-
-            LoginView content = new();
-            dlg2.Content = "Your login information has expired. Please login again.";
-
-            await dlg2.ShowAsync();
-            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-            return;
-        }
-        if (!tokenResponse.OK)
-        {
-            ContentDialog dlg2 = new() { Title = "Login Required" };
-            dlg2.XamlRoot = XamlRoot;
-            dlg2.CloseButtonText = "OK";
-
-            LoginView content = new();
-            dlg2.Content = "Failed to connect to the server. Check your internet connection.";
-
-            await dlg2.ShowAsync();
-            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-            return;
-        }
-
         if (!_isLoaded)
         {
             var feedResult = await Services.ApiClient.GetFeed();
@@ -85,7 +67,7 @@ public sealed partial class FeedView
                 dlg2.CloseButtonText = "OK";
 
                 LoginView content = new();
-                dlg2.Content = "Failed to download feed information. The server may be under maintenance.";
+                dlg2.Content = "Failed to reconnect to server. Check your internet connection, or the server may be under maintainence.";
 
                 await dlg2.ShowAsync();
                 Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
@@ -140,13 +122,13 @@ public sealed partial class FeedView
 
         if (val.Length > 0)
         {
-            if (val[0].id != Entries[0].id)
+            if (val[0].id != Entries[0].Id)
             {
                 // figure out how many new entires were added
                 int added = 0;
                 for (added = 0; added < val.Length; added++)
                 {
-                    if (val[added].id == Entries[0].id)
+                    if (val[added].id == Entries[0].Id)
                     {
                         break;
                     }
@@ -155,7 +137,7 @@ public sealed partial class FeedView
                 // add the missing items to the observable collection in reverse order
                 for (int i = added - 1; i >= 0; i--)
                 {
-                    Entries.Insert(0, val[i]);
+                    Entries.Insert(0, ProcessEntry(val[i]));
                 }
 
                 // the list view will automatically update
@@ -164,7 +146,7 @@ public sealed partial class FeedView
 
         RefreshBtn.IsEnabled = true;
     }
-    private async void Refresh_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void Refresh_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         RefreshFeed(false);
     }
@@ -212,4 +194,10 @@ public sealed partial class FeedView
             content.ShowingLoading = false;
         }
     }
+}
+public class FeedUIEntry
+{
+    public string AuthorAndDate { get; set; } = "";
+    public string StringContent { get; set; } = "";
+    public string Id { get; set; } = "";
 }

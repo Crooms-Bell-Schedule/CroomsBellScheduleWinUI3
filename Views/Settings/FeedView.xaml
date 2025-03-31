@@ -7,29 +7,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:CroomsBellScheduleCS.Utils"
+    xmlns:views="using:CroomsBellScheduleCS.Views.Settings"
     mc:Ignorable="d" Loaded="Page_Loaded">
-   
+
 
     <Grid>
-        <Grid x:Name="Loader">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <ProgressRing x:Name="LoadingThing" Height="64" Width="64"/>
-                <TextBlock x:Name="LoadingText" HorizontalAlignment="Center">Downloading feed...</TextBlock>
-            </StackPanel>
-        </Grid>
-
-        <Grid x:Name="LoggedOutView" Visibility="Collapsed">
-            <InfoBar
-IsOpen="True"
-Severity="Error"
-       IsClosable="False"
-Title="Sign-in required"
-Message="Please login to view the feed." />
-
-            <TextBlock FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Center">Login is required.</TextBlock>
-        </Grid>
-
-        <Grid x:Name="FeedUI" Visibility="Collapsed">
+        <Grid x:Name="FeedUI">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
@@ -39,30 +22,40 @@ Message="Please login to view the feed." />
                 <AppBarButton Icon="Add" Grid.Row="0" Label="Post" Click="AppBarButton_Click"/>
                 <AppBarButton x:Name="RefreshBtn" Icon="Refresh" Grid.Row="0" Label="Refresh" Click="Refresh_Click"/>
             </StackPanel>
-            <ScrollViewer x:Name="scroller" Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                <ListView x:Name="FeedViewer" ItemsSource="">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="local:FeedEntry">
-                            <Grid Margin="0, 0" MinHeight="25">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+            <ListView x:Name="FeedViewer" Grid.Row="1" IsTapEnabled="False"
+                  IsItemClickEnabled="False"
+                  ScrollViewer.ZoomMode="Enabled"
+                  ScrollViewer.HorizontalScrollMode="Enabled"
+                  ScrollViewer.VerticalScrollMode="Enabled"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible"
+                  HorizontalAlignment="Stretch">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="views:FeedUIEntry">
+                        <Grid Margin="0, 0" MinHeight="25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                                <PersonPicture Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32"></PersonPicture>
-                                <Grid Grid.Column="1" CornerRadius="{StaticResource ControlCornerRadius}">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Grid.Row="0" Text="{x:Bind createdBy}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                    <TextBlock Grid.Row="1" Text="{x:Bind data, Mode=OneWay}" TextWrapping="Wrap" Padding="0, 0, 0, 5" FontSize="18"/>
-                                </Grid>
+                            <PersonPicture Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32"></PersonPicture>
+                            <Grid Grid.Column="1" CornerRadius="{StaticResource ControlCornerRadius}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="{x:Bind AuthorAndDate, Mode=OneWay}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <TextBlock Grid.Row="1" Text="{x:Bind StringContent, Mode=OneWay}" TextWrapping="Wrap" Padding="0, 0, 0, 5" FontSize="18"/>
                             </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollViewer>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
+
+        <StackPanel x:Name="Loader" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <ProgressRing x:Name="LoadingThing" Height="64" Width="64"/>
+            <TextBlock x:Name="LoadingText" HorizontalAlignment="Center">Downloading feed...</TextBlock>
+        </StackPanel>
     </Grid>
 </Page>
