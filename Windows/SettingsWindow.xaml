@@ -59,7 +59,7 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8F2;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="LunchMenu" x:Name="LunchMenuItem">
+                <NavigationViewItem Content="Lunch Menu" x:Name="LunchMenuItem">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED56;" />
                     </NavigationViewItem.Icon>
