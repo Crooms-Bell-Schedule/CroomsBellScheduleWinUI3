@@ -62,6 +62,10 @@ Text="Welcome Username!" x:Name="welcomeUser" HorizontalAlignment="Center" Verti
                     <Button Margin="5" IsEnabled="False" >
                         Change profile picture (coming soon)
                     </Button>
+
+                    <Button Margin="5" IsEnabled="True" Click="ChangeUsername_Click">
+                        Change username
+                    </Button>
                 </StackPanel>
 
             </Grid>

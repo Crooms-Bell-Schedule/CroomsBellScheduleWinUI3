@@ -232,6 +232,21 @@ namespace CroomsBellScheduleCS.Utils
 
             return await DecodeResponse<FeedEntry>(responseText);
         }
+
+        internal async Task<Result<UsernameChangeRequest?>> ChangeUsernameAsync(string username)
+        {
+            var req = new UsernameChangeRequest() { username = username};
+            StringContent content = new(JsonSerializer.Serialize(req, SourceGenerationContext.Default.UsernameChangeRequest));
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+            AddAuthorization();
+
+            var response = await _client.PatchAsync("https://api.croomssched.tech/users/changeUsername", content);
+
+            var responseText = await response.Content.ReadAsStringAsync();
+
+            return await DecodeResponse<UsernameChangeRequest>(responseText);
+        }
     }
 
     public class LoginRequest
@@ -260,6 +275,10 @@ namespace CroomsBellScheduleCS.Utils
     public class SubmitFeedRequest
     {
         public string data { get; set; } = "";
+    }
+    public class UsernameChangeRequest
+    {
+        public string username { get; set; } = "";
     }
     public class ApiSimpleResponse
     {

@@ -15,8 +15,10 @@ namespace CroomsBellScheduleCS.Utils
     [JsonSerializable(typeof(ApiResponse<CommandResponse>))]
     [JsonSerializable(typeof(ApiResponse<FeedEntry[]>))]
     [JsonSerializable(typeof(ApiResponse<FeedEntry>))]
+    [JsonSerializable(typeof(ApiResponse<UsernameChangeRequest>))]
     [JsonSerializable(typeof(SubmitFeedRequest))]
     [JsonSerializable(typeof(ApiSimpleResponse))]
+    [JsonSerializable(typeof(UsernameChangeRequest))]
     internal partial class SourceGenerationContext : JsonSerializerContext
     {
     }

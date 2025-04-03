@@ -150,4 +150,39 @@ public sealed partial class AccountView
         LoadingView.Visibility = Visibility.Collapsed;
         LoggedOutView.Visibility = Visibility.Visible;
     }
+
+    private async void ChangeUsername_Click(object sender, RoutedEventArgs e)
+    {
+        var txt = new TextBox();
+        var error = new TextBlock() { Text = "" };
+        var content = new StackPanel();
+        content.Children.Add(new TextBlock() { Text = "New username: " });
+        content.Children.Add(txt);
+        content.Children.Add(error);
+
+        ContentDialog dlg = new()
+        {
+            Title = "Change username",
+            PrimaryButtonText = "Save",
+            DefaultButton = ContentDialogButton.Primary,
+            Content = content,
+            XamlRoot = XamlRoot
+        };
+
+        dlg.PrimaryButtonClick += async delegate(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var result = await Services.ApiClient.ChangeUsernameAsync(txt.Text);
+            if (result.OK)
+            {
+
+            }
+            else
+            {
+                error.Text = Services.ApiClient.FormatResult(result);
+                await dlg.ShowAsync();
+            }
+        };
+
+        await dlg.ShowAsync();
+    }
 }
