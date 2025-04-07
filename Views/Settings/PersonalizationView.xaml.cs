@@ -85,6 +85,12 @@ public sealed partial class PersonalizationView
         if (!_initialized) return;
 
         SettingsManager.Settings.ShowInTaskbar = chkTaskbar.IsOn;
+
+        if (chkTaskbar.IsOn && !SettingsManager.Settings.ShownTaskbarTip)
+        {
+            ToggleThemeTeachingTip1.IsOpen = true;
+            SettingsManager.Settings.ShownTaskbarTip = true;
+        }
         await SaveSettings();
 
         MainWindow.ViewInstance.SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);

@@ -66,6 +66,9 @@
 	  <Content Update="Assets\croomsBellSchedule.ico">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
+	  <Content Update="Assets\teach1.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 	<ItemGroup>
 		<Page Update="Styles\Thickness.xaml">

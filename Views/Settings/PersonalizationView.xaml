@@ -35,6 +35,15 @@
             <ToggleSwitch x:Name="chkTaskbar" Header="Show inside of taskbar" Toggled="chkTaskbar_Toggled"
                           ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Does not function on Windows 10 currently, and the bell schedule is not shown when an app is fullscreen." />
 
+            <TeachingTip x:Name="ToggleThemeTeachingTip1"
+    Target="{x:Bind chkTaskbar}"
+    Title="Tip"
+    Subtitle="To exit taskbar mode in the future, access the settings in the tray.">
+                <TeachingTip.HeroContent>
+                    <Image Source="/Assets/teach1.png" AutomationProperties.Name="Taskbar Image with Crooms Bell Schedule icon" />
+                </TeachingTip.HeroContent>
+            </TeachingTip>
+
             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Lunch" />
             <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
                 <TextBlock Text="5th period lunch: " Style="{ThemeResource BodyTextBlockStyle}"
