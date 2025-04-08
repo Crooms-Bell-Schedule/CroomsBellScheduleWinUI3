@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CroomsBellScheduleCS.Utils
@@ -11,10 +13,11 @@ namespace CroomsBellScheduleCS.Utils
     public class ApiClient
     {
         private HttpClient _client = new();
+        private HttpClient _glitchClient = new();
 
         public ApiClient()
         {
-
+            _glitchClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36");
         }
         public async static Task<Result<T?>> DecodeResponse<T>(string responseText)
         {
@@ -161,6 +164,37 @@ namespace CroomsBellScheduleCS.Utils
             return await DecodeResponse<LoginResponse>(responseText);
         }
 
+        public async Task<Result<BellScheduleProperties?>> GetProperties()
+        {
+            try
+            {
+                var response = await _glitchClient.GetAsync("https://g-chrome-dino.glitch.me/cbsh.json");
+
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                return new Result<BellScheduleProperties?>() { OK = true, Value = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.BellScheduleProperties) };
+            }
+            catch (Exception ex)
+            {
+                return new Result<BellScheduleProperties?>() { OK = false, Exception = ex };
+            }
+        }
+        public async Task<Result<LunchData?>> GetLunchData()
+        {
+            try
+            {
+                var response = await _glitchClient.GetAsync("https://croomssched.glitch.me/infoFetch.json");
+
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                return new Result<LunchData?>() { OK = true, Value = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.LunchData) };
+            }
+            catch (Exception ex)
+            {
+                return new Result<LunchData?>() { OK = false, Exception = ex };
+            }
+        }
+
         private void AddAuthorization()
         {
             if (_client.DefaultRequestHeaders.Contains("Authorization"))
@@ -233,9 +267,9 @@ namespace CroomsBellScheduleCS.Utils
             return await DecodeResponse<FeedEntry>(responseText);
         }
 
-        internal async Task<Result<UsernameChangeRequest?>> ChangeUsernameAsync(string username)
+        public async Task<Result<UsernameChangeRequest?>> ChangeUsernameAsync(string username)
         {
-            var req = new UsernameChangeRequest() { username = username};
+            var req = new UsernameChangeRequest() { username = username };
             StringContent content = new(JsonSerializer.Serialize(req, SourceGenerationContext.Default.UsernameChangeRequest));
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
@@ -262,6 +296,43 @@ namespace CroomsBellScheduleCS.Utils
     {
         public string sid { get; set; } = "";
         public string uid { get; set; } = "";
+    }
+    public class BellScheduleProperties
+    {
+        public string senseless { get; set; } = "";
+        public string dailypoll { get; set; } = "";
+    }
+    public class LunchEntries
+    {
+        [JsonPropertyName("1")]
+        public LunchEntry? Monday { get; set; }
+        [JsonPropertyName("2")]
+        public LunchEntry? Tuesday { get; set; }
+        [JsonPropertyName("3")]
+        public LunchEntry? Wenesday { get; set; }
+        [JsonPropertyName("4")]
+        public LunchEntry? Thursday { get; set; }
+        [JsonPropertyName("5")]
+        public LunchEntry? Friday { get; set; }
+        [JsonPropertyName("6")]
+        public string All { get; set; }
+    }
+    public class LunchData
+    {
+        public LunchEntries lunch { get; set; } = new();
+        public List<string> quickBits { get; set; } = [];
+    }
+    public class LunchEntry
+    {
+        public string name { get; set; } = "";
+        public string image { get; set; } = "";
+    }
+    
+
+    public class TeacherQuote
+    {
+        public string quote { get; set; } = "";
+        public string teacher { get; set; } = "";
     }
     public class FeedEntry
     {

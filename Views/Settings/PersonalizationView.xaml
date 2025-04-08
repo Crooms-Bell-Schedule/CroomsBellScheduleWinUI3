@@ -71,6 +71,9 @@
                         <ComboBoxItem>4 digit places (59.32%) (default)</ComboBoxItem>
                     </ComboBox.Items>
                 </ComboBox>
+
+                <CheckBox x:Name="chk5MinNotif" Content="Show 5 minutes remaining notification" Checked="chk5MinNotif_Checked" Unchecked="chk5MinNotif_Checked"></CheckBox>
+                <CheckBox x:Name="chk1MinNotif" Content="Show 1 minute remaining notification" Checked="chk5MinNotif_Checked" Unchecked="chk5MinNotif_Checked"></CheckBox>
             </StackPanel>
 
             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" />

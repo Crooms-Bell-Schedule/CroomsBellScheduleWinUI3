@@ -16,6 +16,8 @@ namespace CroomsBellScheduleCS.Utils
     [JsonSerializable(typeof(ApiResponse<FeedEntry[]>))]
     [JsonSerializable(typeof(ApiResponse<FeedEntry>))]
     [JsonSerializable(typeof(ApiResponse<UsernameChangeRequest>))]
+    [JsonSerializable(typeof(BellScheduleProperties))]
+    [JsonSerializable(typeof(LunchData))]
     [JsonSerializable(typeof(SubmitFeedRequest))]
     [JsonSerializable(typeof(ApiSimpleResponse))]
     [JsonSerializable(typeof(UsernameChangeRequest))]

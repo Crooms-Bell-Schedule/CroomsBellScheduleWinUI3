@@ -21,6 +21,11 @@
                 <TextBlock VerticalAlignment="Center" FontSize="19">The Feed (Beta)</TextBlock>
                 <AppBarButton Icon="Add" Grid.Row="0" Label="Post" Click="AppBarButton_Click"/>
                 <AppBarButton x:Name="RefreshBtn" Icon="Refresh" Grid.Row="0" Label="Refresh" Click="Refresh_Click"/>
+                <AppBarButton x:Name="DailyPollBtn" Grid.Row="0" Label="Daily Poll" Click="DailyPoll_Click">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE9D2;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
             </StackPanel>
             <ListView x:Name="FeedViewer" Grid.Row="1" IsTapEnabled="False"
                   IsItemClickEnabled="False"
@@ -55,7 +60,7 @@
 
         <StackPanel x:Name="Loader" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
             <ProgressRing x:Name="LoadingThing" Height="64" Width="64"/>
-            <TextBlock x:Name="LoadingText" HorizontalAlignment="Center">Downloading feed...</TextBlock>
+            <TextBlock x:Name="LoadingText" HorizontalAlignment="Center">Retrieving feed data</TextBlock>
         </StackPanel>
     </Grid>
 </Page>

@@ -93,6 +93,11 @@ public static class SettingsManager
         public string? SessionID { get; set; }
         public string? UserID { get; set; }
 
+        [DefaultValue(true)]
+        public bool Show5MinNotification { get; set; } = true;
+        [DefaultValue(true)]
+        public bool Show1MinNotification { get; set; } = true;
+
         public Dictionary<int, string> PeriodNames { get; set; } = [];
         [DefaultValue((int)PercentageSetting.SigFig4)]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]

@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Net;
 using System.Text;
 using System.Timers;
@@ -149,6 +150,50 @@ public sealed partial class FeedView
     private void Refresh_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         RefreshFeed(false);
+    }
+
+    private async void DailyPoll_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        DailyPollBtn.IsEnabled = false;
+        var x = await Services.ApiClient.GetProperties();
+        DailyPollBtn.IsEnabled = true;
+        if (x.OK && x.Value != null)
+        {
+            if (!string.IsNullOrEmpty(x.Value.dailypoll))
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo() { FileName = x.Value.dailypoll, UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    ContentDialog dlg2 = new() { Title = "Failed to launch default browser" };
+                    dlg2.XamlRoot = XamlRoot;
+                    dlg2.CloseButtonText = "OK";
+                    dlg2.Content = "Failed to launch default browser: " + ex.Message;
+
+                    await dlg2.ShowAsync();
+                }
+            }
+            else
+            {
+                ContentDialog dlg2 = new() { Title = "No daily poll" };
+                dlg2.XamlRoot = XamlRoot;
+                dlg2.CloseButtonText = "OK";
+                dlg2.Content = "The daily poll is currently unavailable.";
+
+                await dlg2.ShowAsync();
+            }
+        }
+        else
+        {
+            ContentDialog dlg2 = new() { Title = "Failed to load daily poll" };
+            dlg2.XamlRoot = XamlRoot;
+            dlg2.CloseButtonText = "OK";
+            dlg2.Content = "Check your internet connection. Error details: " + x.Exception.Message;
+
+            await dlg2.ShowAsync();
+        }
     }
     private async void AppBarButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {

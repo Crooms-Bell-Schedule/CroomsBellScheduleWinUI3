@@ -23,6 +23,8 @@ public sealed partial class PersonalizationView
         RdDefault.IsChecked = SettingsManager.Settings.Theme == ElementTheme.Default;
         chkTaskbar.IsOn = SettingsManager.Settings.ShowInTaskbar;
         ComboPercentage.SelectedIndex = (int)SettingsManager.Settings.PercentageSetting;
+        chk1MinNotif.IsChecked = SettingsManager.Settings.Show1MinNotification;
+        chk5MinNotif.IsChecked = SettingsManager.Settings.Show5MinNotification;
         UpdateCheckState();
 
         // show version
@@ -86,7 +88,7 @@ public sealed partial class PersonalizationView
 
         SettingsManager.Settings.ShowInTaskbar = chkTaskbar.IsOn;
 
-        if (chkTaskbar.IsOn && !SettingsManager.Settings.ShownTaskbarTip)
+        if (!chkTaskbar.IsOn && !SettingsManager.Settings.ShownTaskbarTip)
         {
             ToggleThemeTeachingTip1.IsOpen = true;
             SettingsManager.Settings.ShownTaskbarTip = true;
@@ -153,5 +155,14 @@ public sealed partial class PersonalizationView
         ButtonCheckForUpdates.IsEnabled = false;
         await MainWindow.ViewInstance.RunUpdateCheck();
         ButtonCheckForUpdates.IsEnabled = true;
+    }
+
+    private async void chk5MinNotif_Checked(object sender, RoutedEventArgs e)
+    {
+        if (!_initialized) return;
+
+        SettingsManager.Settings.Show5MinNotification = chk5MinNotif.IsChecked == true;
+        SettingsManager.Settings.Show1MinNotification = chk1MinNotif.IsChecked == true;
+        await SaveSettings();
     }
 }
