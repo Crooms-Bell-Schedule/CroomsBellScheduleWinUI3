@@ -66,9 +66,9 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind AuthorAndDate}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 
-                                <Button Grid.Row="0" Grid.Column="1" MaxWidth="16" MaxHeight="16" Margin="0" Padding="0">
+                               <!-- <Button Grid.Row="0" Grid.Column="1" MaxWidth="16" MaxHeight="16" Margin="0" Padding="0">
                                     <FontIcon Glyph="&#xE97A;" />
-                                </Button>
+                                </Button>-->
                                 
                                 <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind StringContent}" TextWrapping="Wrap" Padding="0, 0, 0, 5" FontSize="18"/>
                             </Grid>
