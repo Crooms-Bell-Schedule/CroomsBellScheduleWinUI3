@@ -26,7 +26,8 @@ public sealed partial class FeedView
         return new FeedUIEntry()
         {
             AuthorAndDate = $"{entry.createdBy} - {entry.create}",
-            StringContent = ProcessStringContent(entry.data)
+            StringContent = ProcessStringContent(entry.data),
+            Id = entry.id
         };
     }
     private void InitPage(FeedEntry[] items)

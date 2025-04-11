@@ -64,10 +64,10 @@ public sealed partial class LunchView
             }
         }
 
-        // TODO: this is not good
+        // TODO: this is not good code
         AddLunch(data.lunch.Monday, "Monday");
         AddLunch(data.lunch.Tuesday, "Tuesday");
-        AddLunch(data.lunch.Wenesday, "Wenesday");
+        AddLunch(data.lunch.Wednesday, "Wednesday");
         AddLunch(data.lunch.Thursday, "Thursday");
         AddLunch(data.lunch.Friday, "Friday");
 
@@ -78,7 +78,6 @@ public sealed partial class LunchView
         {
             quickBits.Text += $"{i++}. {item}{Environment.NewLine}";
         }
-        tabView.TabItems.Add(quickBitsTab);
 
         Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
         LunchUI.Visibility = Microsoft.UI.Xaml.Visibility.Visible;

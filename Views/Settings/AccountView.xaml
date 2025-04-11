@@ -11,7 +11,7 @@
     <Grid>
         <Grid x:Name="LoadingView">
             <TextBlock Margin="0, 20, 0, 26" Style="{ThemeResource TitleTextBlockStyle}"
-            Text="Loading your account information..." />
+            Text="Loading your account information..." HorizontalAlignment="Center"/>
             <ProgressRing HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
         </Grid>

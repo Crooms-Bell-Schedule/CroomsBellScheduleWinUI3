@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:CroomsBellScheduleCS.Utils"
     xmlns:views="using:CroomsBellScheduleCS.Views.Settings"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
 
@@ -18,8 +19,8 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0">
-                <TextBlock VerticalAlignment="Center" FontSize="19">The Feed (Beta)</TextBlock>
-                <AppBarButton Icon="Add" Grid.Row="0" Label="Post" Click="AppBarButton_Click"/>
+                <TextBlock VerticalAlignment="Center" FontSize="19">The Feed</TextBlock>
+                <AppBarButton Icon="Add" Grid.Row="0" Label="New" Click="AppBarButton_Click"/>
                 <AppBarButton x:Name="RefreshBtn" Icon="Refresh" Grid.Row="0" Label="Refresh" Click="Refresh_Click"/>
                 <AppBarButton x:Name="DailyPollBtn" Grid.Row="0" Label="Daily Poll" Click="DailyPoll_Click">
                     <AppBarButton.Icon>
@@ -35,6 +36,15 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
                   HorizontalAlignment="Stretch">
+                
+                <!--Disable clicking-->
+                <ListView.Resources>
+                    <Style
+                    BasedOn="{StaticResource DefaultListViewItemStyle}"
+                    TargetType="ListViewItem">
+                        <Setter Property="IsHitTestVisible" Value="False" />
+                    </Style>
+                </ListView.Resources>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="views:FeedUIEntry">
                         <Grid Margin="0, 0" MinHeight="25">
@@ -49,8 +59,18 @@
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="{x:Bind AuthorAndDate, Mode=OneWay}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                                <TextBlock Grid.Row="1" Text="{x:Bind StringContent, Mode=OneWay}" TextWrapping="Wrap" Padding="0, 0, 0, 5" FontSize="18"/>
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind AuthorAndDate}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+
+                                <Button Grid.Row="0" Grid.Column="1" MaxWidth="16" MaxHeight="16" Margin="0" Padding="0">
+                                    <FontIcon Glyph="&#xE97A;" />
+                                </Button>
+                                
+                                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind StringContent}" TextWrapping="Wrap" Padding="0, 0, 0, 5" FontSize="18"/>
                             </Grid>
                         </Grid>
                     </DataTemplate>
