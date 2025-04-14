@@ -108,14 +108,17 @@ public sealed partial class FeedView
         var feedResult = await Services.ApiClient.GetFeed();
         if (!feedResult.OK || feedResult.Value == null)
         {
-            ContentDialog dlg2 = new() { Title = "Failed to get feed" };
-            dlg2.XamlRoot = XamlRoot;
-            dlg2.CloseButtonText = "OK";
+            if (!automatic)
+            {
+                ContentDialog dlg2 = new() { Title = "Failed to get feed" };
+                dlg2.XamlRoot = XamlRoot;
+                dlg2.CloseButtonText = "OK";
 
-            LoginView content = new();
-            dlg2.Content = "Failed to download feed information. The server may be under maintenance or you refreshed too many times.";
+                LoginView content = new();
+                dlg2.Content = "Failed to download feed information. The server may be under maintenance or you refreshed too many times.";
 
-            await dlg2.ShowAsync();
+                await dlg2.ShowAsync();
+            }
             Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             return;
         }
@@ -233,6 +236,7 @@ public sealed partial class FeedView
         if (result.OK)
         {
             sender.Hide();
+            RefreshFeed(true);
         }
         else
         {
