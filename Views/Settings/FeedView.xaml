@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="using:CroomsBellScheduleCS.Utils"
     xmlns:views="using:CroomsBellScheduleCS.Views.Settings"
+    xmlns:cui="using:CroomsBellScheduleCS.Controls"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
@@ -28,23 +29,15 @@
                     </AppBarButton.Icon>
                 </AppBarButton>
             </StackPanel>
-            <ListView x:Name="FeedViewer" Grid.Row="1" IsTapEnabled="False"
-                  IsItemClickEnabled="False"
+            <ListView x:Name="FeedViewer" Grid.Row="1"
                   ScrollViewer.ZoomMode="Enabled"
                   ScrollViewer.HorizontalScrollMode="Enabled"
                   ScrollViewer.VerticalScrollMode="Enabled"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
-                  HorizontalAlignment="Stretch">
-                
-                <!--Disable clicking-->
-                <ListView.Resources>
-                    <Style
-                    BasedOn="{StaticResource DefaultListViewItemStyle}"
-                    TargetType="ListViewItem">
-                        <Setter Property="IsHitTestVisible" Value="False" />
-                    </Style>
-                </ListView.Resources>
+                  HorizontalAlignment="Stretch"
+                      SelectionMode="None">
+               
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="views:FeedUIEntry">
                         <Grid Margin="0, 0" MinHeight="25">
@@ -61,7 +54,7 @@
                                 </Grid.RowDefinitions>
 
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind AuthorAndDate}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
@@ -70,7 +63,7 @@
                                     <FontIcon Glyph="&#xE97A;" />
                                 </Button>-->
                                 
-                                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{x:Bind StringContent}" TextWrapping="Wrap" Padding="0, 0, 0, 5" FontSize="18"/>
+                                <cui:FeedEntry Grid.Row="1" Grid.ColumnSpan="2" ContentData="{x:Bind ContentData}" Padding="0, 0, 0, 5" FontSize="18"/>
                             </Grid>
                         </Grid>
                     </DataTemplate>

@@ -315,7 +315,7 @@ namespace CroomsBellScheduleCS.Utils
         [JsonPropertyName("5")]
         public LunchEntry? Friday { get; set; }
         [JsonPropertyName("6")]
-        public string All { get; set; }
+        public string All { get; set; } = "";
     }
     public class LunchData
     {

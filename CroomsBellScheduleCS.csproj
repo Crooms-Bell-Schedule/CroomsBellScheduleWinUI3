@@ -22,6 +22,7 @@
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	</PropertyGroup>
 	<ItemGroup>
+		<None Remove="Controls\FeedEntry.xaml" />
 		<None Remove="Styles\FontSizes.xaml" />
 		<None Remove="Styles\TextBlock.xaml" />
 		<None Remove="Styles\Thickness.xaml" />
@@ -58,7 +59,7 @@
 	<ItemGroup>
 		<PackageReference Include="Clowd.Squirrel" Version="2.11.1" />
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.2.0" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.250205002" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
 		<PackageReference Include="System.Text.Json" Version="10.0.0-preview.1.25080.5" />
 		<PackageReference Include="Velopack" Version="0.0.1165-g6c20617" />
 	</ItemGroup>
@@ -71,6 +72,10 @@
 	  </Content>
 	</ItemGroup>
 	<ItemGroup>
+		<Page Update="Controls\FeedEntry.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		  <SubType>Designer</SubType>
+		</Page>
 		<Page Update="Styles\Thickness.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 			<SubType>Designer</SubType>

@@ -1,10 +1,12 @@
 ﻿using CroomsBellScheduleCS.Utils;
+using HtmlAgilityPack;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Timers;
 
 namespace CroomsBellScheduleCS.Views.Settings;
@@ -23,10 +25,11 @@ public sealed partial class FeedView
 
     private FeedUIEntry ProcessEntry(FeedEntry entry)
     {
+        var content = ProcessStringContent(entry.data);
         return new FeedUIEntry()
         {
-            AuthorAndDate = $"{entry.createdBy} - {entry.create}",
-            StringContent = ProcessStringContent(entry.data),
+            AuthorAndDate = $"{entry.createdBy} - {entry.create.ToLocalTime()}",
+            ContentData = content,
             Id = entry.id
         };
     }
@@ -39,8 +42,24 @@ public sealed partial class FeedView
         }
     }
 
-    private string ProcessStringContent(string data)
+    private ContentData ProcessStringContent(string data)
     {
+        ContentData result = new();
+
+        if (!data.Contains("<"))
+        {
+            // do not parse non-html things to improve preformance
+            result.Content = WebUtility.HtmlDecode(data);
+            return result;
+        }
+
+        //HtmlDocument doc = new();
+        //doc.LoadHtml(data);
+        
+
+
+
+
         // TODO present HTML properly
         string decoded = WebUtility.HtmlDecode(data);
         if (decoded.Contains("<span class=emoji>"))
@@ -54,7 +73,30 @@ public sealed partial class FeedView
         }
         decoded = decoded.Replace("<emoji>", "").Replace("</emoji>", "");
         decoded = decoded.Replace("<rainbow>", "").Replace("</rainbow>", "");
-        return decoded;
+
+        result.Content = decoded;
+
+        // Regex to extract href attribute and inner text from the <a> tag
+        string pattern = @"<a[^>]*\bhref\s*=\s*[""']?([^'"" >]+)[^>]*>(.*?)<\/a>";
+        var match = Regex.Match(decoded, pattern, RegexOptions.IgnoreCase);
+
+        if (match.Success)
+        {
+            string url = match.Groups[1].Value; // Extracted URL
+            string text = match.Groups[2].Value; // Extracted text
+            result.Link = FixLink(url);
+            result.Content = text;
+        }
+
+        return result;
+    }
+
+    private string FixLink(string url)
+    {
+        if (!url.StartsWith("https://") && !url.StartsWith("http://"))
+            url = "https://" + url;
+
+        return url;
     }
 
     private async void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -250,4 +292,11 @@ public class FeedUIEntry
     public string AuthorAndDate { get; set; } = "";
     public string StringContent { get; set; } = "";
     public string Id { get; set; } = "";
+    public ContentData ContentData { get; set; } = new();
+}
+
+public class ContentData
+{
+    public string Content { get; set; } = "";
+    public string Link { get; set; } = "";
 }
