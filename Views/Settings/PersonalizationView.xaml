@@ -79,10 +79,12 @@
             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" />
 
             <StackPanel Margin="0,8,0,0">
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="Created by Mikhail Tyukin with some contributions from Suvan and Andrew. This application uses WinUI 3.0, C#, HtmlAgilityPack, System.Text.Json, Velopack and H.NotifyIcon.WinUI." TextWrapping="Wrap" />
                 <TextBlock x:Name="VersionText" Style="{ThemeResource BodyTextBlockStyle}" />
                 <Button x:Name="ButtonCheckForUpdates" Click="ButtonCheckForUpdates_Click">Check for updates</Button>
 
-                <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" Margin="0,4,0,0" Content="Changelog" NavigateUri="https://mikhail.croomssched.tech/updateapiv2/changelog.html" />
+                <HyperlinkButton Margin="0,4,0,0" Content="Changelog" NavigateUri="https://mikhail.croomssched.tech/updateapiv2/changelog.html" />
+                <HyperlinkButton Margin="0,4,0,0" Content="Source code" NavigateUri="https://github.com/thealmighyderpybird/CroomsBellScheduleWinUI3" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

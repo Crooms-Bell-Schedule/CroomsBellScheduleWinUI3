@@ -7,9 +7,9 @@ namespace CroomsBellScheduleCS.Controls;
 
 public sealed partial class FeedEntry
 {
-    public ContentData ContentData
+    public string ContentData
     {
-        get { return (ContentData)GetValue(ContentDataProperty); }
+        get { return (string)GetValue(ContentDataProperty); }
         set { SetValue(ContentDataProperty, value); }
     }
 
@@ -18,9 +18,9 @@ public sealed partial class FeedEntry
     public static readonly DependencyProperty ContentDataProperty
         = DependencyProperty.Register(
               "ContentDataProperty",
-              typeof(ContentData),
+              typeof(string),
               typeof(FeedEntry),
-              new PropertyMetadata(new ContentData(), ChangedDataCB)
+              new PropertyMetadata("", ChangedDataCB)
           );
 
     public FeedEntry()
@@ -31,25 +31,24 @@ public sealed partial class FeedEntry
     private static void ChangedDataCB(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var t = d as FeedEntry;
-        var n = e.NewValue as ContentData;
+        var n = e.NewValue as string;
         if (t != null && n != null)
         {
-            t.blk.Inlines.Clear(); // destroy previous data
-            if (!string.IsNullOrEmpty(n.Link))
+            try
             {
-                var link = new Hyperlink()
+                t.blk.Inlines.Clear(); // destroy previous data
+
+                foreach (var item in FeedView.ProcessStringContent(n))
                 {
-                    NavigateUri = new Uri(n.Link),
-                };
-
-                link.Inlines.Add(new Run() { Text = n.Content });
-
-                t.blk.Inlines.Add(link);
+                    t.blk.Inlines.Add(item);
+                }
             }
-            else
+            catch
             {
-                t.blk.Inlines.Add(new Run() { Text = n.Content });
+                t.blk.Inlines.Clear();
+                t.blk.Text = "FAILED TO RENDER CONTENT";
             }
         }
+
     }
 }

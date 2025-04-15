@@ -59,6 +59,7 @@
 	<ItemGroup>
 		<PackageReference Include="Clowd.Squirrel" Version="2.11.1" />
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.2.0" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.12.0" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
 		<PackageReference Include="System.Text.Json" Version="10.0.0-preview.1.25080.5" />
 		<PackageReference Include="Velopack" Version="0.0.1165-g6c20617" />

@@ -1,7 +1,10 @@
 ﻿using CroomsBellScheduleCS.Utils;
 using HtmlAgilityPack;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Net;
@@ -25,12 +28,12 @@ public sealed partial class FeedView
 
     private FeedUIEntry ProcessEntry(FeedEntry entry)
     {
-        var content = ProcessStringContent(entry.data);
         return new FeedUIEntry()
         {
             AuthorAndDate = $"{entry.createdBy} - {entry.create.ToLocalTime()}",
-            ContentData = content,
-            Id = entry.id
+            ContentData = entry.data,
+            Id = entry.id,
+            //PicSource = entry.createdBy == "mikhail" ? null : null
         };
     }
     private void InitPage(FeedEntry[] items)
@@ -42,106 +45,186 @@ public sealed partial class FeedView
         }
     }
 
-    private ContentData ProcessStringContent(string data)
+    private static List<Inline> ParseTheHtml(HtmlNodeCollection node)
     {
-        ContentData result = new();
+        List<Inline> result = new();
 
-        if (!data.Contains("<"))
+        foreach (var item in node)
         {
-            // do not parse non-html things to improve preformance
-            result.Content = WebUtility.HtmlDecode(data);
-            return result;
-        }
-
-        //HtmlDocument doc = new();
-        //doc.LoadHtml(data);
-        
-
-
-
-
-        // TODO present HTML properly
-        string decoded = WebUtility.HtmlDecode(data);
-        if (decoded.Contains("<span class=emoji>"))
-        {
-            decoded = decoded.Replace("<span class=emoji>", "").Replace("</span>", "");
-        }
-        if (decoded.Contains("<span class=rainbow>"))
-        {
-            // TODO
-            decoded = decoded.Replace("<span class=rainbow>", "").Replace("</span>", "");
-        }
-        decoded = decoded.Replace("<emoji>", "").Replace("</emoji>", "");
-        decoded = decoded.Replace("<rainbow>", "").Replace("</rainbow>", "");
-
-        result.Content = decoded;
-
-        // Regex to extract href attribute and inner text from the <a> tag
-        string pattern = @"<a[^>]*\bhref\s*=\s*[""']?([^'"" >]+)[^>]*>(.*?)<\/a>";
-        var match = Regex.Match(decoded, pattern, RegexOptions.IgnoreCase);
-
-        if (match.Success)
-        {
-            string url = match.Groups[1].Value; // Extracted URL
-            string text = match.Groups[2].Value; // Extracted text
-            result.Link = FixLink(url);
-            result.Content = text;
+            result.AddRange(ParseTheHtml(item));
         }
 
         return result;
     }
 
-    private string FixLink(string url)
+    private static List<Inline> ParseTheHtml(HtmlNode node)
+    {
+        List<Inline> result = new();
+
+        var ch = ParseTheHtml(node.ChildNodes);
+
+        Span? rootElem = null;
+        if (node.Name == "b" || node.Name == "strong")
+        {
+            rootElem = new Bold();
+        }
+        else if (node.Name == "i" || node.Name == "em")
+        {
+            rootElem = new Italic();
+        }
+        else if (node.Name == "del")
+        {
+            rootElem = new Span() { TextDecorations = global::Windows.UI.Text.TextDecorations.Strikethrough };
+        }
+        else if (node.Name == "span" || node.Name == "emoji")
+        {
+            rootElem = new Span();
+        }
+        else if (node.Name == "ins")
+        {
+            rootElem = new Underline();
+        }
+        else if (node.Name == "#text")
+        {
+            return [new Run() { Text = HtmlEntity.DeEntitize(node.InnerText) }];
+        }
+        else if (node.Name == "rainbow")
+        {
+            // TODO
+            rootElem = new Span() { Foreground = new SolidColorBrush(new() { R = 255, A = 255 }) };
+        }
+        else if (node.Name == "eason")
+        {
+            // TODO
+            rootElem = new Span() { Foreground = new SolidColorBrush(new() { R = 255, A = 255, B = 50 }) };
+        }
+        else if (node.Name == "br")
+        {
+            rootElem = new Span();
+            rootElem.Inlines.Add(new LineBreak());
+        }
+        else if (node.Name == "a")
+        {
+            rootElem = new Hyperlink();
+
+            foreach (var item in node.Attributes)
+            {
+                if (item.Name == "href")
+                {
+                    ((Hyperlink)rootElem).NavigateUri = FixLink(item.DeEntitizeValue);
+                }
+            }
+        }
+        else
+        {
+            rootElem = new();
+            rootElem.Inlines.Add(new Run() { Text = "[PARSER ERROR: UNKNOWN ELEMENT " + node.Name + "]", Foreground = new SolidColorBrush(new() { R = 255, A = 255 }) });
+        }
+
+        foreach (var item in ch)
+        {
+            rootElem.Inlines.Add(item);
+        }
+
+        result.Add(rootElem);
+
+        return result;
+    }
+    public static List<Inline> ProcessStringContent(string data)
+    {
+        List<Inline> result = new();
+
+        // remove uselss things
+        if (data.Contains("<span class=emoji>"))
+        {
+            data = data.Replace("<span class=emoji>", "").Replace("</span>", "");
+        }
+
+        if (!data.Contains("<"))
+        {
+            // do not parse non-html things to improve preformance
+            result.Add(new Run() { Text = WebUtility.HtmlDecode(data) });
+            return result;
+        }
+
+        HtmlDocument doc = new();
+        doc.LoadHtml(data);
+
+        var rootNode = doc.DocumentNode;
+
+        foreach (var item in rootNode.ChildNodes)
+        {
+            result.AddRange(ParseTheHtml(item));
+        }
+
+        return result;
+    }
+
+    private static Uri FixLink(string url)
     {
         if (!url.StartsWith("https://") && !url.StartsWith("http://"))
             url = "https://" + url;
 
-        return url;
+        return new(url);
     }
 
     private async void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        if (!_isLoaded)
+        try
         {
-            var feedResult = await Services.ApiClient.GetFeed();
-            if (!feedResult.OK || feedResult.Value == null)
+            if (!_isLoaded)
             {
-                ContentDialog dlg2 = new() { Title = "Failed to get feed" };
-                dlg2.XamlRoot = XamlRoot;
-                dlg2.CloseButtonText = "OK";
+                var feedResult = await Services.ApiClient.GetFeed();
+                if (!feedResult.OK || feedResult.Value == null)
+                {
+                    ContentDialog dlg2 = new() { Title = "Failed to get feed" };
+                    dlg2.XamlRoot = XamlRoot;
+                    dlg2.CloseButtonText = "OK";
 
-                LoginView content = new();
-                dlg2.Content = "Failed to reconnect to server. Check your internet connection, or the server may be under maintainence.";
+                    LoginView content = new();
+                    dlg2.Content = "Failed to reconnect to server. Check your internet connection, or the server may be under maintainence.";
 
-                await dlg2.ShowAsync();
-                Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-                return;
+                    await dlg2.ShowAsync();
+                    Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                    return;
+                }
+
+                InitPage(feedResult.Value);
+
+                // setup refresh timer for this page
+                Timer tmm = new Timer();
+                tmm.Elapsed += delegate (object? sender, ElapsedEventArgs e)
+                {
+                    try
+                    {
+                        DispatcherQueue.TryEnqueue(() =>
+                        {
+                            RefreshFeed(true);
+                        });
+                    }
+                    catch { }
+                };
+                tmm.Interval = 1000 * 60; // 1 minute = 60 seconds
+                tmm.Start();
+
+                _isLoaded = true;
             }
 
-            InitPage(feedResult.Value);
-
-            // setup refresh timer for this page
-            Timer tmm = new Timer();
-            tmm.Elapsed += delegate (object? sender, ElapsedEventArgs e)
-            {
-                try
-                {
-                    DispatcherQueue.TryEnqueue(() =>
-                {
-                    RefreshFeed(true);
-                });
-                }
-                catch { }
-            };
-            tmm.Interval = 1000 * 60; // 1 minute = 60 seconds
-            tmm.Start();
-
-            _isLoaded = true;
+            // load feed
+            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+            FeedUI.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
         }
+        catch(Exception ex)
+        {
+            ContentDialog dlg2 = new() { Title = "Failed to get feed" };
+            dlg2.XamlRoot = XamlRoot;
+            dlg2.CloseButtonText = "OK";
 
-        // load feed
-        Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-        FeedUI.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            LoginView content = new();
+            dlg2.Content = "Application error: " + ex.Message;
+
+            await dlg2.ShowAsync();
+        }
     }
 
     private async void RefreshFeed(bool automatic)
@@ -241,6 +324,11 @@ public sealed partial class FeedView
             await dlg2.ShowAsync();
         }
     }
+
+    private void MA_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        Process.Start("https://mikhail.croomssched.tech/advice.html");
+    }
     private async void AppBarButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         ContentDialog dialog = new() { Title = "Create new post" };
@@ -292,11 +380,6 @@ public class FeedUIEntry
     public string AuthorAndDate { get; set; } = "";
     public string StringContent { get; set; } = "";
     public string Id { get; set; } = "";
-    public ContentData ContentData { get; set; } = new();
-}
-
-public class ContentData
-{
-    public string Content { get; set; } = "";
-    public string Link { get; set; } = "";
+    public string ContentData { get; set; } = "";
+    public ImageSource? PicSource { get; set; } = null;
 }

@@ -15,6 +15,7 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="175">
                 <TextBox x:Name="PostContentBox" PlaceholderText="Enter post content" TextChanged="PostContentBox_TextChanged" IsSpellCheckEnabled="True" AcceptsReturn="True" TextWrapping="Wrap"></TextBox>
             </ScrollViewer>
+            <TextBlock>HTML tags such as em, bold, rainbow, eason, and more can also be used.</TextBlock>
             <TextBlock Margin="0,0,0,10">Link:</TextBlock>
             <TextBox x:Name="PasswordBox" PlaceholderText="Enter a link (optional)" TextChanged="PostContentBox_TextChanged"></TextBox>
             <TextBlock x:Name="LoginFailureText" Foreground="{ThemeResource SystemFillColorCriticalBrush}"></TextBlock>

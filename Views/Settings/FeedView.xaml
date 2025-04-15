@@ -28,6 +28,7 @@
                         <FontIcon Glyph="&#xE9D2;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
+                <AppBarButton x:Name="MAdvice" Grid.Row="0" Label="Mikhail's Advice" Click="MA_Click" Icon="PhoneBook"/>
             </StackPanel>
             <ListView x:Name="FeedViewer" Grid.Row="1"
                   ScrollViewer.ZoomMode="Enabled"
@@ -46,7 +47,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <PersonPicture Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32"></PersonPicture>
+                            <PersonPicture Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32" BadgeImageSource="{Binding PicSource}"></PersonPicture>
                             <Grid Grid.Column="1" CornerRadius="{StaticResource ControlCornerRadius}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto"/>
