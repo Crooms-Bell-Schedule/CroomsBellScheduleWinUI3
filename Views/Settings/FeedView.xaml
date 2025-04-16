@@ -20,7 +20,7 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal" Grid.Row="0">
-                <TextBlock VerticalAlignment="Center" FontSize="19">The Feed</TextBlock>
+                <TextBlock VerticalAlignment="Center" FontSize="19">Tweeter</TextBlock>
                 <AppBarButton Icon="Add" Grid.Row="0" Label="New" Click="AppBarButton_Click"/>
                 <AppBarButton x:Name="RefreshBtn" Icon="Refresh" Grid.Row="0" Label="Refresh" Click="Refresh_Click"/>
                 <AppBarButton x:Name="DailyPollBtn" Grid.Row="0" Label="Daily Poll" Click="DailyPoll_Click">
@@ -47,7 +47,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <PersonPicture Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32" BadgeImageSource="{Binding PicSource}"></PersonPicture>
+                            <PersonPicture Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32" ProfilePicture="{Binding PicSource}" DisplayName="{Binding Author}"></PersonPicture>
                             <Grid Grid.Column="1" CornerRadius="{StaticResource ControlCornerRadius}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto"/>

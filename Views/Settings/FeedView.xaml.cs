@@ -3,6 +3,7 @@ using HtmlAgilityPack;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -31,9 +32,10 @@ public sealed partial class FeedView
         return new FeedUIEntry()
         {
             AuthorAndDate = $"{entry.createdBy} - {entry.create.ToLocalTime()}",
+            Author = entry.createdBy,
             ContentData = entry.data,
             Id = entry.id,
-            //PicSource = entry.createdBy == "mikhail" ? null : null
+            PicSource = entry.createdBy == "mikhail" ? new BitmapImage(new Uri("https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=sao.png")) : null
         };
     }
     private void InitPage(FeedEntry[] items)
@@ -119,6 +121,18 @@ public sealed partial class FeedView
         {
             rootElem = new();
             rootElem.Inlines.Add(new Run() { Text = "[PARSER ERROR: UNKNOWN ELEMENT " + node.Name + "]", Foreground = new SolidColorBrush(new() { R = 255, A = 255 }) });
+        }
+
+        foreach (var item in node.Attributes)
+        {
+            if (item.Name == "class" && item.Value == "urgent")
+            {
+                rootElem.Foreground = new SolidColorBrush(new() { R = 255, A = 255 });
+            }
+            else if (item.Name == "class" && item.Value == "rainbow")
+            {
+                rootElem.Foreground = new SolidColorBrush(new() { G = 255, A = 255 });
+            }
         }
 
         foreach (var item in ch)
@@ -214,7 +228,7 @@ public sealed partial class FeedView
             Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             FeedUI.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             ContentDialog dlg2 = new() { Title = "Failed to get feed" };
             dlg2.XamlRoot = XamlRoot;
@@ -377,6 +391,7 @@ public sealed partial class FeedView
 }
 public class FeedUIEntry
 {
+    public string Author { get; set; }
     public string AuthorAndDate { get; set; } = "";
     public string StringContent { get; set; } = "";
     public string Id { get; set; } = "";

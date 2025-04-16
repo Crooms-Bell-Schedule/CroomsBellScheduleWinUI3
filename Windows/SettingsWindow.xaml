@@ -44,12 +44,12 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Bell" x:Name="BellViewItem">
+                <NavigationViewItem Content="Schedule" x:Name="BellViewItem">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEA8F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="The Feed" x:Name="FeedItem">
+                <NavigationViewItem Content="Tweeter" x:Name="FeedItem">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8F2;" />
                     </NavigationViewItem.Icon>

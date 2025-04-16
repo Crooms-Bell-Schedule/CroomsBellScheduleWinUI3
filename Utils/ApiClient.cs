@@ -245,6 +245,14 @@ namespace CroomsBellScheduleCS.Utils
         public async Task<Result<FeedEntry?>> PostFeed(string postContent, string postLink)
         {
             var properContent = WebUtility.HtmlEncode(postContent);
+
+            // allow HTML content (if there is any)
+            // todo improve detection
+            if (properContent.Contains("/"))
+            {
+                properContent = properContent.Replace("&lt;", "<").Replace("&gt;", ">");
+            }
+
             var req = new SubmitFeedRequest();
 
             if (string.IsNullOrEmpty(postLink))
