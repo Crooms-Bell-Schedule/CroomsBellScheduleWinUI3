@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net8.0-windows10.0.22621.0</TargetFramework>
-		<TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+		<TargetFramework>net8.0-windows10.0.18362.0</TargetFramework>
+		<TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
 		<RootNamespace>CroomsBellScheduleCS</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x86;x64;ARM64</Platforms>
@@ -10,10 +10,10 @@
 		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<Nullable>enable</Nullable>
-		<WindowsSdkPackageVersion>10.0.22621.38</WindowsSdkPackageVersion>
 		<EnableMsixTooling>true</EnableMsixTooling>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<WindowsPackageType>None</WindowsPackageType>
+		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
 		<Version>3.0.2</Version>
@@ -58,8 +58,8 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Clowd.Squirrel" Version="2.11.1" />
-		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.2.0" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.12.0" />
+		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
 		<PackageReference Include="System.Text.Json" Version="10.0.0-preview.1.25080.5" />
 		<PackageReference Include="Velopack" Version="0.0.1165-g6c20617" />
