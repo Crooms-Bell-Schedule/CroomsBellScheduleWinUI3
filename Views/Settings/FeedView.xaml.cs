@@ -17,7 +17,7 @@ namespace CroomsBellScheduleCS.Views.Settings;
 
 public sealed partial class FeedView
 {
-    public static ObservableCollection<FeedUIEntry> Entries = new();
+    internal static ObservableCollection<FeedUIEntry> Entries = [];
     private static bool _isLoaded = false;
     public FeedView()
     {
@@ -27,7 +27,7 @@ public sealed partial class FeedView
     }
 
 
-    private FeedUIEntry ProcessEntry(FeedEntry entry)
+    private static FeedUIEntry ProcessEntry(FeedEntry entry)
     {
         return new FeedUIEntry()
         {
@@ -38,7 +38,7 @@ public sealed partial class FeedView
             PicSource = entry.createdBy == "mikhail" ? new BitmapImage(new Uri("https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=sao.png")) : null
         };
     }
-    private void InitPage(FeedEntry[] items)
+    private static void InitPage(FeedEntry[] items)
     {
         Entries.Clear();
         foreach (var entry in items)
@@ -49,7 +49,7 @@ public sealed partial class FeedView
 
     private static List<Inline> ParseTheHtml(HtmlNodeCollection node)
     {
-        List<Inline> result = new();
+        List<Inline> result = [];
 
         foreach (var item in node)
         {
@@ -61,11 +61,11 @@ public sealed partial class FeedView
 
     private static List<Inline> ParseTheHtml(HtmlNode node)
     {
-        List<Inline> result = new();
+        List<Inline> result = [];
 
         var ch = ParseTheHtml(node.ChildNodes);
 
-        Span? rootElem = null;
+        Span? rootElem;
         if (node.Name == "b" || node.Name == "strong")
         {
             rootElem = new Bold();
@@ -115,6 +115,10 @@ public sealed partial class FeedView
                 {
                     ((Hyperlink)rootElem).NavigateUri = FixLink(item.DeEntitizeValue);
                 }
+                else if (item.Name == "username")
+                {
+                    //((Hyperlink)rootElem).
+                }
             }
         }
         else
@@ -146,7 +150,7 @@ public sealed partial class FeedView
     }
     public static List<Inline> ProcessStringContent(string data)
     {
-        List<Inline> result = new();
+        List<Inline> result = [];
 
         // remove uselss things
         if (data.Contains("<span class=emoji>"))
@@ -154,7 +158,7 @@ public sealed partial class FeedView
             data = data.Replace("<span class=emoji>", "").Replace("</span>", "");
         }
 
-        if (!data.Contains("<"))
+        if (!data.Contains('<'))
         {
             // do not parse non-html things to improve preformance
             result.Add(new Run() { Text = WebUtility.HtmlDecode(data) });
@@ -191,9 +195,12 @@ public sealed partial class FeedView
                 var feedResult = await Services.ApiClient.GetFeed();
                 if (!feedResult.OK || feedResult.Value == null)
                 {
-                    ContentDialog dlg2 = new() { Title = "Failed to get feed" };
-                    dlg2.XamlRoot = XamlRoot;
-                    dlg2.CloseButtonText = "OK";
+                    ContentDialog dlg2 = new()
+                    {
+                        Title = "Failed to get feed",
+                        XamlRoot = XamlRoot,
+                        CloseButtonText = "OK"
+                    };
 
                     LoginView content = new();
                     dlg2.Content = "Failed to reconnect to server. Check your internet connection, or the server may be under maintainence.";
@@ -206,7 +213,7 @@ public sealed partial class FeedView
                 InitPage(feedResult.Value);
 
                 // setup refresh timer for this page
-                Timer tmm = new Timer();
+                Timer tmm = new();
                 tmm.Elapsed += delegate (object? sender, ElapsedEventArgs e)
                 {
                     try
@@ -230,9 +237,12 @@ public sealed partial class FeedView
         }
         catch (Exception ex)
         {
-            ContentDialog dlg2 = new() { Title = "Failed to get feed" };
-            dlg2.XamlRoot = XamlRoot;
-            dlg2.CloseButtonText = "OK";
+            ContentDialog dlg2 = new()
+            {
+                Title = "Failed to get feed",
+                XamlRoot = XamlRoot,
+                CloseButtonText = "OK"
+            };
 
             LoginView content = new();
             dlg2.Content = "Application error: " + ex.Message;
@@ -249,12 +259,13 @@ public sealed partial class FeedView
         {
             if (!automatic)
             {
-                ContentDialog dlg2 = new() { Title = "Failed to get feed" };
-                dlg2.XamlRoot = XamlRoot;
-                dlg2.CloseButtonText = "OK";
-
-                LoginView content = new();
-                dlg2.Content = "Failed to download feed information. The server may be under maintenance or you refreshed too many times.";
+                ContentDialog dlg2 = new()
+                {
+                    Title = "Failed to get feed",
+                    XamlRoot = XamlRoot,
+                    CloseButtonText = "OK",
+                    Content = "Failed to download feed information. The server may be under maintenance or you refreshed too many times."
+                };
 
                 await dlg2.ShowAsync();
             }
@@ -269,7 +280,7 @@ public sealed partial class FeedView
             if (val[0].id != Entries[0].Id)
             {
                 // figure out how many new entires were added
-                int added = 0;
+                int added;
                 for (added = 0; added < val.Length; added++)
                 {
                     if (val[added].id == Entries[0].Id)
@@ -310,32 +321,45 @@ public sealed partial class FeedView
                 }
                 catch (Exception ex)
                 {
-                    ContentDialog dlg2 = new() { Title = "Failed to launch default browser" };
-                    dlg2.XamlRoot = XamlRoot;
-                    dlg2.CloseButtonText = "OK";
-                    dlg2.Content = "Failed to launch default browser: " + ex.Message;
+                    ContentDialog dlg2 = new()
+                    {
+                        Title = "Failed to launch default browser",
+                        XamlRoot = XamlRoot,
+                        CloseButtonText = "OK",
+                        Content = "Failed to launch default browser: " + ex.Message
+                    };
 
                     await dlg2.ShowAsync();
                 }
             }
             else
             {
-                ContentDialog dlg2 = new() { Title = "No daily poll" };
-                dlg2.XamlRoot = XamlRoot;
-                dlg2.CloseButtonText = "OK";
-                dlg2.Content = "The daily poll is currently unavailable.";
+                ContentDialog dlg2 = new()
+                {
+                    Title = "No daily poll",
+                    XamlRoot = XamlRoot,
+                    CloseButtonText = "OK",
+                    Content = "The daily poll is currently unavailable."
+                };
 
                 await dlg2.ShowAsync();
             }
         }
         else
         {
-            ContentDialog dlg2 = new() { Title = "Failed to load daily poll" };
-            dlg2.XamlRoot = XamlRoot;
-            dlg2.CloseButtonText = "OK";
-            dlg2.Content = "Check your internet connection. Error details: " + x.Exception.Message;
+            var ex = x.Exception;
+            if (ex != null)
+            {
+                ContentDialog dlg2 = new()
+                {
+                    Title = "Failed to load daily poll",
+                    XamlRoot = XamlRoot,
+                    CloseButtonText = "OK",
+                    Content = "Check your internet connection. Error details: " + ex.Message
+                };
 
-            await dlg2.ShowAsync();
+                await dlg2.ShowAsync();
+            }
         }
     }
 
@@ -345,11 +369,14 @@ public sealed partial class FeedView
     }
     private async void AppBarButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        ContentDialog dialog = new() { Title = "Create new post" };
-        dialog.XamlRoot = XamlRoot;
-        dialog.PrimaryButtonText = "Post";
-        dialog.CloseButtonText = "Cancel";
-        dialog.DefaultButton = ContentDialogButton.Primary;
+        ContentDialog dialog = new()
+        {
+            Title = "Create new post",
+            XamlRoot = XamlRoot,
+            PrimaryButtonText = "Post",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary
+        };
         dialog.PrimaryButtonClick += PostDialog_PrimaryButtonClick;
 
         PostView content = new();
@@ -384,16 +411,15 @@ public sealed partial class FeedView
         }
         else
         {
-            content.Error = Services.ApiClient.FormatResult(result);
+            content.Error = ApiClient.FormatResult(result);
             content.ShowingLoading = false;
         }
     }
 }
 public class FeedUIEntry
 {
-    public string Author { get; set; }
+    public required string Author { get; set; }
     public string AuthorAndDate { get; set; } = "";
-    public string StringContent { get; set; } = "";
     public string Id { get; set; } = "";
     public string ContentData { get; set; } = "";
     public ImageSource? PicSource { get; set; } = null;
