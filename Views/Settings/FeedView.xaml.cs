@@ -35,7 +35,7 @@ public sealed partial class FeedView
             Author = entry.createdBy,
             ContentData = entry.data,
             Id = entry.id,
-            PicSource = entry.createdBy == "mikhail" ? new BitmapImage(new Uri("https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=sao.png")) : new BitmapImage(new Uri("https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=default.jpg"))
+            PicSource = entry.createdBy == "mikhail" ? "https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=sao.png" : "https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=default.jpg"
         };
     }
     private static void InitPage(FeedEntry[] items)
@@ -422,5 +422,5 @@ public class FeedUIEntry
     public string AuthorAndDate { get; set; } = "";
     public string Id { get; set; } = "";
     public string ContentData { get; set; } = "";
-    public ImageSource? PicSource { get; set; } = null;
+    public string PicSource { get; set; } = "https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=sao.png";
 }
