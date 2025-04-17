@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net8.0-windows10.0.18362.0</TargetFramework>
-		<TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
+		<TargetFramework>net8.0-windows10.0.26100.57</TargetFramework>
+		<WindowsSdkPackageVersion>10.0.26100.57</WindowsSdkPackageVersion>
 		<RootNamespace>CroomsBellScheduleCS</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x86;x64;ARM64</Platforms>
@@ -57,7 +57,6 @@
 		<Reference Include="System.Xaml" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Clowd.Squirrel" Version="2.11.1" />
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
@@ -137,7 +136,6 @@
 		<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
 		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
 		<ApplicationIcon>Assets\croomsBellSchedule.ico</ApplicationIcon>
-		<SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
 		<Title>Crooms Bell Schedule</Title>
 		<Description>The Crooms Bell Schedule app.</Description>
 		<PackageProjectUrl>https://croomssched.tech/</PackageProjectUrl>
