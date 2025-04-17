@@ -23,11 +23,17 @@ public sealed partial class LunchView
         }
         else
         {
-            ContentDialog dlg2 = new() { Title = "Failed to get lunch" };
-            dlg2.XamlRoot = XamlRoot;
-            dlg2.CloseButtonText = "OK";
+            ContentDialog dlg2 = new()
+            {
+                Title = "Failed to get lunch",
+                XamlRoot = XamlRoot,
+                CloseButtonText = "OK"
+            };
             var ex = data.Exception;
-            dlg2.Content = "Failed to get latest lunch information. Details: " + ex != null ? ex.Message : "(Unknown)";
+            if (ex != null)
+                dlg2.Content = $"Failed to get latest lunch information. Details: {ex.Message}";
+            else
+                dlg2.Content = "Failed to get latest lunch information. Details: (Unknown)";
             await dlg2.ShowAsync();
             Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             return;

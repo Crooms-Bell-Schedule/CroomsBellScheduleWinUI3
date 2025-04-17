@@ -12,14 +12,14 @@ namespace CroomsBellScheduleCS.Utils
 {
     public class ApiClient
     {
-        private HttpClient _client = new();
-        private HttpClient _glitchClient = new();
+        private readonly HttpClient _client = new();
+        private readonly HttpClient _glitchClient = new();
 
         public ApiClient()
         {
             _glitchClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36");
         }
-        public async static Task<Result<T?>> DecodeResponse<T>(string responseText)
+        public static Result<T?> DecodeResponse<T>(string responseText)
         {
             Result<T?> result = new();
             try
@@ -35,9 +35,7 @@ namespace CroomsBellScheduleCS.Utils
 
                 if (resp.status == "OK")
                 {
-                    var typeInfo = SourceGenerationContext.Default.GetTypeInfo(typeof(ApiResponse<T>));
-                    if (typeInfo == null) throw new Exception("typeinfo not present: " + typeof(ApiResponse<T>).Name);
-
+                    var typeInfo = SourceGenerationContext.Default.GetTypeInfo(typeof(ApiResponse<T>)) ?? throw new Exception("typeinfo not present: " + typeof(ApiResponse<T>).Name);
                     var apiResp = (ApiResponse<T>?)JsonSerializer.Deserialize(responseText, typeInfo);
 
                     if (apiResp != null)
@@ -53,9 +51,7 @@ namespace CroomsBellScheduleCS.Utils
                 }
                 else
                 {
-                    var typeInfo = SourceGenerationContext.Default.GetTypeInfo(typeof(ApiResponse<ErrorResponse>));
-                    if (typeInfo == null) throw new Exception("typeinfo not present: ApiResponse<ErrorResponse>");
-
+                    var typeInfo = SourceGenerationContext.Default.GetTypeInfo(typeof(ApiResponse<ErrorResponse>)) ?? throw new Exception("typeinfo not present: ApiResponse<ErrorResponse>");
                     var apiResp = (ApiResponse<ErrorResponse>?)JsonSerializer.Deserialize(responseText, typeInfo);
 
                     result.OK = false;
@@ -94,7 +90,7 @@ namespace CroomsBellScheduleCS.Utils
             }
         }
 
-        internal string FormatResult<T>(Result<T> result)
+        internal static string FormatResult<T>(Result<T> result)
         {
             if (result.OK)
                 return "Server returned OK";
@@ -114,7 +110,7 @@ namespace CroomsBellScheduleCS.Utils
             return "Unspecified error";
         }
 
-        internal string FormatResult(Result result)
+        internal static string FormatResult(Result result)
         {
             if (result.OK)
                 return "Server returned OK";
@@ -137,17 +133,14 @@ namespace CroomsBellScheduleCS.Utils
         private static string SHA512(string input)
         {
             var bytes = System.Text.Encoding.UTF8.GetBytes(input);
-            using (var hash = System.Security.Cryptography.SHA512.Create())
-            {
-                var hashedInputBytes = hash.ComputeHash(bytes);
+            var hashedInputBytes = System.Security.Cryptography.SHA512.HashData(bytes);
 
-                // Convert to text
-                // StringBuilder Capacity is 128, because 512 bits / 8 bits in byte * 2 symbols for byte 
-                var hashedInputStringBuilder = new System.Text.StringBuilder(128);
-                foreach (var b in hashedInputBytes)
-                    hashedInputStringBuilder.Append(b.ToString("X2"));
-                return hashedInputStringBuilder.ToString();
-            }
+            // Convert to text
+            // StringBuilder Capacity is 128, because 512 bits / 8 bits in byte * 2 symbols for byte 
+            var hashedInputStringBuilder = new System.Text.StringBuilder(128);
+            foreach (var b in hashedInputBytes)
+                hashedInputStringBuilder.Append(b.ToString("X2"));
+            return hashedInputStringBuilder.ToString();
         }
 
         private async Task<Result<LoginResponse?>> RunLoginAsync(LoginRequest req)
@@ -161,7 +154,7 @@ namespace CroomsBellScheduleCS.Utils
 
             var responseText = await response.Content.ReadAsStringAsync();
 
-            return await DecodeResponse<LoginResponse>(responseText);
+            return DecodeResponse<LoginResponse>(responseText);
         }
 
         public async Task<Result<BellScheduleProperties?>> GetProperties()
@@ -213,15 +206,13 @@ namespace CroomsBellScheduleCS.Utils
 
             var responseText = await response.Content.ReadAsStringAsync();
 
-            return await DecodeResponse<CommandResponse>(responseText);
+            return DecodeResponse<CommandResponse>(responseText);
         }
 
         public async Task<Result> LogoutAsync()
         {
             AddAuthorization();
             var response = await _client.DeleteAsync("https://api.croomssched.tech/users/logout/" + SettingsManager.Settings.UserID);
-
-            var responseText = await response.Content.ReadAsStringAsync();
 
             if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
             {
@@ -239,7 +230,7 @@ namespace CroomsBellScheduleCS.Utils
 
             var responseText = await response.Content.ReadAsStringAsync();
 
-            return await DecodeResponse<FeedEntry[]?>(responseText);
+            return DecodeResponse<FeedEntry[]?>(responseText);
         }
 
         public async Task<Result<FeedEntry?>> PostFeed(string postContent, string postLink)
@@ -248,7 +239,7 @@ namespace CroomsBellScheduleCS.Utils
 
             // allow HTML content (if there is any)
             // todo improve detection
-            if (properContent.Contains("/"))
+            if (properContent.Contains('/'))
             {
                 properContent = properContent.Replace("&lt;", "<").Replace("&gt;", ">");
             }
@@ -272,7 +263,7 @@ namespace CroomsBellScheduleCS.Utils
 
             var responseText = await response.Content.ReadAsStringAsync();
 
-            return await DecodeResponse<FeedEntry>(responseText);
+            return DecodeResponse<FeedEntry>(responseText);
         }
 
         public async Task<Result<UsernameChangeRequest?>> ChangeUsernameAsync(string username)
@@ -287,7 +278,7 @@ namespace CroomsBellScheduleCS.Utils
 
             var responseText = await response.Content.ReadAsStringAsync();
 
-            return await DecodeResponse<UsernameChangeRequest>(responseText);
+            return DecodeResponse<UsernameChangeRequest>(responseText);
         }
     }
 
@@ -378,7 +369,7 @@ namespace CroomsBellScheduleCS.Utils
         public string Message { get; set; } = "Command OK";
         public Exception? Exception { get; set; }
 
-        public static readonly Result Ok = new Result() { OK = true };
+        public static readonly Result Ok = new() { OK = true };
     }
     public class Result<T>
     {

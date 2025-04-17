@@ -3,22 +3,17 @@ using CroomsBellScheduleCS.Views;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using System;
-using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using Windows.UI.Popups;
 using WinRT;
 using WinRT.Interop;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace CroomsBellScheduleCS.Windows;
 
 public sealed partial class MainWindow
 {
-    public static MainWindow Instance = null!;
-    public static MainView ViewInstance = null!;
-    WindowsSystemDispatcherQueueHelper? m_wsdqHelper; // See below for implementation.
+    internal static MainWindow Instance = null!;
+    internal static MainView ViewInstance = null!;
+    //WindowsSystemDispatcherQueueHelper? m_wsdqHelper; // See below for implementation.
     MicaController? m_backdropController;
     SystemBackdropConfiguration? m_configurationSource;
     private bool SendInputNotification = true;
@@ -37,7 +32,7 @@ public sealed partial class MainWindow
         this.Closed += Window_Closed;
         ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
     }
-    private async void LoadSettings()
+    private static async void LoadSettings()
     {
         try
         {
@@ -68,15 +63,15 @@ public sealed partial class MainWindow
         mainView.PositionWindow();
         if (MicaController.IsSupported())
         {
-            m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
-            m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
+            //m_wsdqHelper = new WindowsSystemDispatcherQueueHelper();
+            //m_wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
 
             // Create the policy object.
-            m_configurationSource = new SystemBackdropConfiguration();
- 
-          
-            // Initial configuration state.
-            m_configurationSource.IsInputActive = input;
+            m_configurationSource = new SystemBackdropConfiguration
+            {
+                // Initial configuration state.
+                IsInputActive = input
+            };
             SetConfigurationSourceTheme();
 
             m_backdropController = new MicaController();
@@ -111,7 +106,7 @@ public sealed partial class MainWindow
         m_configurationSource = null;
     }
 
-    private void SetConfigurationSourceTheme()
+    private static void SetConfigurationSourceTheme()
     {
         //UpdateTheme(((FrameworkElement)this.Content).ActualTheme);
         //UpdateTheme(SettingsManager.Settings.Theme);
@@ -141,49 +136,57 @@ public sealed partial class MainWindow
         }
     }
 
+    private static int ErrorCount = 0;
+
     private async void Current_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-        MessageDialog dlg = new MessageDialog($"{e.Exception.ToString()}")
+        // prevent spamming message boxes
+        if (ErrorCount < 3)
         {
-            Title = "Unhandled runtime error"
-        };
-        InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
-        await dlg.ShowAsync();
-    }
-    class WindowsSystemDispatcherQueueHelper
-    {
-        [StructLayout(LayoutKind.Sequential)]
-        struct DispatcherQueueOptions
-        {
-            internal int dwSize;
-            internal int threadType;
-            internal int apartmentType;
-        }
-
-        [DllImport("CoreMessaging.dll")]
-        private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
-
-        object? m_dispatcherQueueController = null;
-        public void EnsureWindowsSystemDispatcherQueueController()
-        {
-            if (global::Windows.System.DispatcherQueue.GetForCurrentThread() != null)
+            ErrorCount++;
+            MessageDialog dlg = new($"{e.Exception}")
             {
-                // one already exists, so we'll just use it.
-                return;
-            }
-
-            if (m_dispatcherQueueController == null)
-            {
-                DispatcherQueueOptions options = new();
-                options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
-                options.threadType = 2;    // DQTYPE_THREAD_CURRENT
-                options.apartmentType = 2; // DQTAT_COM_STA
-
-                if (CreateDispatcherQueueController(options, ref m_dispatcherQueueController) != 0)
-                {
-                    // TODO: show error
-                }
-            }
+                Title = "Unhandled runtime error"
+            };
+            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
+            await dlg.ShowAsync();
         }
+        
     }
+    //class WindowsSystemDispatcherQueueHelper
+    //{
+    //    [StructLayout(LayoutKind.Sequential)]
+    //    struct DispatcherQueueOptions
+    //    {
+    //        internal int dwSize;
+    //        internal int threadType;
+    //        internal int apartmentType;
+    //    }
+
+    //    [DllImport("CoreMessaging.dll")]
+    //    private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object? dispatcherQueueController);
+
+    //    object? m_dispatcherQueueController = null;
+    //    public void EnsureWindowsSystemDispatcherQueueController()
+    //    {
+    //        if (global::Windows.System.DispatcherQueue.GetForCurrentThread() != null)
+    //        {
+    //            // one already exists, so we'll just use it.
+    //            return;
+    //        }
+
+    //        if (m_dispatcherQueueController == null)
+    //        {
+    //            DispatcherQueueOptions options = new();
+    //            options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
+    //            options.threadType = 2;    // DQTYPE_THREAD_CURRENT
+    //            options.apartmentType = 2; // DQTAT_COM_STA
+
+    //            if (CreateDispatcherQueueController(options, ref m_dispatcherQueueController) != 0)
+    //            {
+    //                // TODO: show error
+    //            }
+    //        }
+    //    }
+    //}
 }

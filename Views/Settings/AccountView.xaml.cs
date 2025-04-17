@@ -17,7 +17,7 @@ public sealed partial class AccountView
 
     private async void Button_Click(object sender, RoutedEventArgs e)
     {
-        MessageDialog dlg = new MessageDialog("Do you accept the terms of service of croomssched.tech?")
+        MessageDialog dlg = new("Do you accept the terms of service of croomssched.tech?")
         {
             Title = "Authenticate with croomssched.tech"
         };
@@ -75,7 +75,7 @@ public sealed partial class AccountView
                 sender.PrimaryButtonText = "Login";
                 content.ShowingLoading = false;
                 sender.Title = "Login with bell schedule account";
-                content.Error = Services.ApiClient.FormatResult(result);
+                content.Error = ApiClient.FormatResult(result);
             }
         }
     }
@@ -178,7 +178,7 @@ public sealed partial class AccountView
             }
             else
             {
-                error.Text = Services.ApiClient.FormatResult(result);
+                error.Text = ApiClient.FormatResult(result);
                 await dlg.ShowAsync();
             }
         };
