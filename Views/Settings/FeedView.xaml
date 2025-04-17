@@ -47,7 +47,13 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <PersonPicture Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32" ProfilePicture="{Binding PicSource, Mode=OneWay}" DisplayName="{Binding Author, Mode=OneWay}"></PersonPicture>
+
+                            <Ellipse Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32">
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{Binding PicSource, Mode=OneWay}" />
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            
                             <Grid Grid.Column="1" CornerRadius="{StaticResource ControlCornerRadius}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto"/>
