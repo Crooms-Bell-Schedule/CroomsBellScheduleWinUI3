@@ -29,13 +29,15 @@ public sealed partial class FeedView
 
     private static FeedUIEntry ProcessEntry(FeedEntry entry)
     {
+        if (entry.createdBy == "mikhail")
+            entry.uid = "sao";
         return new FeedUIEntry()
         {
             AuthorAndDate = $"{entry.createdBy} - {entry.create.ToLocalTime()}",
             Author = entry.createdBy,
             ContentData = entry.data,
             Id = entry.id,
-            PicSource = entry.createdBy == "mikhail" ? "https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=sao.png" : "https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=default.jpg"
+            PicSource = string.IsNullOrEmpty(entry.uid) ? "https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=default.jpg" : "https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=" + entry.uid + ".png&default=pfp"
         };
     }
     private static void InitPage(FeedEntry[] items)
@@ -414,6 +416,24 @@ public sealed partial class FeedView
             content.Error = ApiClient.FormatResult(result);
             content.ShowingLoading = false;
         }
+    }
+    private static bool ShownImageError = false;
+    private async void ImageBrush_ImageFailed(object sender, Microsoft.UI.Xaml.ExceptionRoutedEventArgs e)
+    {
+        if (ShownImageError) return;
+        ShownImageError = true;
+
+        ContentDialog dialog = new()
+        {
+            Title = "Image load failure",
+            XamlRoot = XamlRoot,
+            PrimaryButtonText = "OK",
+            DefaultButton = ContentDialogButton.Primary
+        };
+        dialog.Content =
+        e.ErrorMessage;
+
+        await dialog.ShowAsync();
     }
 }
 public class FeedUIEntry

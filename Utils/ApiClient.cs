@@ -338,6 +338,7 @@ namespace CroomsBellScheduleCS.Utils
         public string data { get; set; } = "";
         public string store { get; set; } = "";
         public string id { get; set; } = "";
+        public string uid { get; set; } = "";
         public DateTime create { get; set; }
         public DateTime delete { get; set; }
         public string createdBy { get; set; } = "";
