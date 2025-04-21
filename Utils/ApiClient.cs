@@ -280,6 +280,17 @@ namespace CroomsBellScheduleCS.Utils
 
             return DecodeResponse<UsernameChangeRequest>(responseText);
         }
+
+        internal async Task<Result<UserDetailsResponse?>> GetUserDetails()
+        {
+            AddAuthorization();
+
+            var response = await _client.PostAsync("https://api.croomssched.tech/users/userDetails", null);
+
+            var responseText = await response.Content.ReadAsStringAsync();
+
+            return DecodeResponse<UserDetailsResponse>(responseText);
+        }
     }
 
     public class LoginRequest
@@ -378,5 +389,13 @@ namespace CroomsBellScheduleCS.Utils
         public T? Value { get; set; }
         public ErrorResponse? ErrorValue { get; set; }
         public Exception? Exception { get; set; }
+    }
+
+    public class UserDetailsResponse
+    {
+        [JsonPropertyName("id")]
+        public string Id { get; set; } = "";
+        [JsonPropertyName("username")]
+        public string Username { get; set; } = "";
     }
 }

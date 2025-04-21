@@ -13,8 +13,8 @@
             <TextBlock Margin="0, 20, 0, 26" Style="{ThemeResource TitleTextBlockStyle}"
             Text="Loading your account information..." HorizontalAlignment="Center"/>
             <ProgressRing HorizontalAlignment="Center" VerticalAlignment="Center"/>
-
         </Grid>
+        
         <StackPanel
             x:Name="LoggedOutView" Visibility="Collapsed">
             <InfoBar x:Name="ErrorBar"
@@ -31,7 +31,6 @@ Message="Failed to connect to server. Check your connection and try again." />
         </StackPanel>
 
         <StackPanel x:Name="AuthenticatedView" Visibility="Collapsed">
-
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"></ColumnDefinition>
@@ -45,7 +44,7 @@ Message="Failed to connect to server. Check your connection and try again." />
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <PersonPicture Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left"></PersonPicture>
+                <PersonPicture x:Name="profilePicture" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Left"></PersonPicture>
                 <TextBlock Grid.Row="0" Grid.Column="1" Style="{ThemeResource TitleTextBlockStyle}"
 Text="Welcome Username!" x:Name="welcomeUser" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
@@ -59,8 +58,8 @@ Text="Welcome Username!" x:Name="welcomeUser" HorizontalAlignment="Center" Verti
                     </Button>
 
                     <!--Change Profile Picture-->
-                    <Button Margin="5" IsEnabled="False" >
-                        Change profile picture (coming soon)
+                    <Button Margin="5" IsEnabled="True" Click="ChangeProfilePic_Click">
+                        Change profile picture
                     </Button>
 
                     <Button Margin="5" IsEnabled="True" Click="ChangeUsername_Click">

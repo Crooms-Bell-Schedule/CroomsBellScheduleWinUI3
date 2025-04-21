@@ -5,6 +5,8 @@ using Microsoft.UI.Xaml;
 using WinRT.Interop;
 using Microsoft.UI.Xaml.Controls;
 using CroomsBellScheduleCS.Utils;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Media;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
@@ -17,34 +19,17 @@ public sealed partial class AccountView
 
     private async void Button_Click(object sender, RoutedEventArgs e)
     {
-        MessageDialog dlg = new("Do you accept the terms of service of croomssched.tech?")
-        {
-            Title = "Authenticate with croomssched.tech"
-        };
+        ContentDialog dlg2 = new() { Title = "Login with bell schedule account" };
+        dlg2.XamlRoot = XamlRoot;
+        dlg2.PrimaryButtonText = "Login";
+        dlg2.CloseButtonText = "Cancel";
+        dlg2.DefaultButton = ContentDialogButton.Primary;
+        dlg2.PrimaryButtonClick += Dlg2_PrimaryButtonClick;
 
-        dlg.Commands.Add(new UICommand(
-            "Yes",
-            CommandInvokedHandler_none));
-        dlg.Commands.Add(new UICommand(
-            "No",
-            CommandInvokedHandler_none));
+        LoginView content = new();
+        dlg2.Content = content;
 
-        InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
-
-        if (await dlg.ShowAsync() == dlg.Commands[0])
-        {
-            ContentDialog dlg2 = new() { Title = "Login with bell schedule account" };
-            dlg2.XamlRoot = XamlRoot;
-            dlg2.PrimaryButtonText = "Login";
-            dlg2.CloseButtonText = "Cancel";
-            dlg2.DefaultButton = ContentDialogButton.Primary;
-            dlg2.PrimaryButtonClick += Dlg2_PrimaryButtonClick;
-
-            LoginView content = new();
-            dlg2.Content = content;
-
-            await dlg2.ShowAsync();
-        }
+        await dlg2.ShowAsync();
     }
 
     private async void Dlg2_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -80,16 +65,20 @@ public sealed partial class AccountView
         }
     }
 
-    private void ShowMainPage()
+    private async void ShowMainPage()
     {
+        var details = await Services.ApiClient.GetUserDetails();
+        if (details != null && details.Value != null)
+            welcomeUser.Text = $"Welcome {details.Value.Username}!";
+        else
+            welcomeUser.Text = $"Failed to load user info";
+
+        profilePicture.ProfilePicture = new BitmapImage(new("https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=" + SettingsManager.Settings.UserID + ".png&default=pfp"));
+
+
         LoadingView.Visibility = Visibility.Collapsed;
         AuthenticatedView.Visibility = Visibility.Visible;
         LoggedOutView.Visibility = Visibility.Collapsed;
-        welcomeUser.Text = $"Welcome {SettingsManager.Settings.UserID}!";
-    }
-
-    private void CommandInvokedHandler_none(IUICommand command)
-    {
     }
 
     private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -138,7 +127,7 @@ public sealed partial class AccountView
     {
         AuthenticatedView.Visibility = Visibility.Collapsed;
         LoadingView.Visibility = Visibility.Visible;
-        if(!(await Services.ApiClient.LogoutAsync()).OK)
+        if (!(await Services.ApiClient.LogoutAsync()).OK)
         {
             ContentDialog dlg2 = new() { Title = "Server/App error" };
             dlg2.XamlRoot = XamlRoot;
@@ -149,6 +138,39 @@ public sealed partial class AccountView
         }
         LoadingView.Visibility = Visibility.Collapsed;
         LoggedOutView.Visibility = Visibility.Visible;
+    }
+
+    private async void ChangeProfilePic_Click(object sender, RoutedEventArgs e)
+    {
+        var txt = new TextBox();
+        var error = new TextBlock() { Text = "" };
+        var content = new PfpUploadView();
+
+        ContentDialog dlg = new()
+        {
+            Title = "Change profile picture",
+            PrimaryButtonText = "Save",
+            SecondaryButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+            Content = content,
+            XamlRoot = XamlRoot
+        };
+
+        dlg.PrimaryButtonClick += async delegate (ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            //var result = await Services.ApiClient.ChangeUsernameAsync(txt.Text);
+            //if (result.OK)
+            //{
+
+            //}
+            //else
+            //{
+            //    error.Text = ApiClient.FormatResult(result);
+            //    await dlg.ShowAsync();
+            //}
+        };
+
+        await dlg.ShowAsync();
     }
 
     private async void ChangeUsername_Click(object sender, RoutedEventArgs e)
@@ -164,12 +186,13 @@ public sealed partial class AccountView
         {
             Title = "Change username",
             PrimaryButtonText = "Save",
+            SecondaryButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Primary,
             Content = content,
             XamlRoot = XamlRoot
         };
 
-        dlg.PrimaryButtonClick += async delegate(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        dlg.PrimaryButtonClick += async delegate (ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var result = await Services.ApiClient.ChangeUsernameAsync(txt.Text);
             if (result.OK)

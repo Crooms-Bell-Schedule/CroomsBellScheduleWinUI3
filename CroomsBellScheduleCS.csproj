@@ -57,6 +57,9 @@
 		<Reference Include="System.Xaml" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.ImageCropper" Version="8.2.250402" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.250402" />
+		<PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.250402" />
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
@@ -88,6 +91,9 @@
 			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="Views\Settings\FeedView.xaml">
+		  <SubType>Designer</SubType>
+		</Page>
+		<Page Update="Views\Settings\PfpUploadView.xaml">
 		  <SubType>Designer</SubType>
 		</Page>
 		<Page Update="Views\Settings\PostView.xaml">

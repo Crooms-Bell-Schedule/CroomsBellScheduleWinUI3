@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<UserControl
+    x:Class="CroomsBellScheduleCS.Views.Settings.PfpUploadView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel
+            x:Name="ContentArea">
+            <TextBlock Margin="0,0,0,10">Profile Picture:</TextBlock>
+            <Button x:Name="SelectButton" Click="SelectButton_Click">Select</Button>
+            <controls:ImageCropper x:Name="cropper"/>
+        </StackPanel>
+        <StackPanel
+    x:Name="Loader" Visibility="Collapsed">
+            <ProgressRing x:Name="LoadingThing" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
