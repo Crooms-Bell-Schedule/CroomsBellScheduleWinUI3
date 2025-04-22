@@ -12,9 +12,12 @@
     <Grid>
         <StackPanel
             x:Name="ContentArea">
-            <TextBlock Margin="0,0,0,10">Profile Picture:</TextBlock>
-            <Button x:Name="SelectButton" Click="SelectButton_Click">Select</Button>
-            <controls:ImageCropper x:Name="cropper"/>
+            <controls:WrapPanel Orientation="Horizontal">
+                <TextBlock Margin="0,10,10,10" HorizontalAlignment="Center">Profile Picture:</TextBlock>
+                <Button x:Name="SelectButton" Click="SelectButton_Click">Select</Button>
+            </controls:WrapPanel>
+            <controls:ImageCropper x:Name="cropper" CropShape="Circular" AspectRatio="1" Padding="0"/>
+            <TextBlock x:Name="ErrorText" Foreground="{ThemeResource SystemFillColorCriticalBrush}"></TextBlock>
         </StackPanel>
         <StackPanel
     x:Name="Loader" Visibility="Collapsed">

@@ -4,11 +4,13 @@ using Windows.Storage;
 using WinRT.Interop;
 using CroomsBellScheduleCS.Windows;
 using CommunityToolkit.WinUI.Controls;
+using Microsoft.UI.Xaml.Controls;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
 public sealed partial class PfpUploadView
 {
+    public ImageCropper Cropper { get => cropper; }
     public bool ShowingLoading
     {
         get
@@ -26,17 +28,13 @@ public sealed partial class PfpUploadView
     {
         set
         {
-            //LoginFailureText.Text = value;
+            ErrorText.Text = value;
         }
     }
 
     public PfpUploadView()
     {
         InitializeComponent();
-    }
-    private void ValidateFields()
-    {
-        
     }
 
     private async void SelectButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -47,7 +45,7 @@ public sealed partial class PfpUploadView
             FileOpenPicker fileOpenPicker = new()
             {
                 ViewMode = PickerViewMode.Thumbnail,
-                FileTypeFilter = { ".jpg", ".jpeg", ".png", ".gif" },
+                FileTypeFilter = { ".jpg", ".jpeg", ".png", ".gif", ".webp" },
             };
 
             nint windowHandle = WindowNative.GetWindowHandle(MainWindow.Instance);
@@ -58,11 +56,12 @@ public sealed partial class PfpUploadView
             if (file != null)
             {
                 await cropper.LoadImageFromFile(file);
+                ErrorText.Text = "";
             }
         }
-        catch
+        catch (Exception ex)
         {
-
+            ErrorText.Text = ex.Message;
         }
     }
 }

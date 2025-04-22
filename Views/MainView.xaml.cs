@@ -28,7 +28,7 @@ namespace CroomsBellScheduleCS.Views;
 public sealed partial class MainView
 {
     private static CacheProvider _provider = new(new APIProvider());
-    private static SettingsWindow? _settings;
+    public static SettingsWindow? Settings { get; private set; }
     private static Velopack.UpdateManager? _updateManager;
 
     private static IntPtr _oldWndProc;
@@ -252,8 +252,8 @@ public sealed partial class MainView
     {
         if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
 
-        if (_settings != null)
-            if (_settings.Content is FrameworkElement rootElement2)
+        if (Settings != null)
+            if (Settings.Content is FrameworkElement rootElement2)
                 rootElement2.RequestedTheme = theme;
         MainWindow.Instance.UpdateTheme(theme);
     }
@@ -635,14 +635,14 @@ public sealed partial class MainView
 
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
-        _settings = new SettingsWindow();
-        _settings.Closed += _settings_Closed;
-        _settings.Activate();
+        Settings = new SettingsWindow();
+        Settings.Closed += _settings_Closed;
+        Settings.Activate();
     }
 
     private void _settings_Closed(object sender, WindowEventArgs args)
     {
-        _settings = null;
+        Settings = null;
     }
 
     #endregion

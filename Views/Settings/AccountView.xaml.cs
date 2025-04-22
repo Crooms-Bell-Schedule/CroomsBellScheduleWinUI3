@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls;
 using CroomsBellScheduleCS.Utils;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Media;
+using System.Threading.Tasks;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
@@ -26,8 +27,7 @@ public sealed partial class AccountView
         dlg2.DefaultButton = ContentDialogButton.Primary;
         dlg2.PrimaryButtonClick += Dlg2_PrimaryButtonClick;
 
-        LoginView content = new();
-        dlg2.Content = content;
+        dlg2.Content = new LoginView();
 
         await dlg2.ShowAsync();
     }
@@ -68,8 +68,10 @@ public sealed partial class AccountView
     private async void ShowMainPage()
     {
         var details = await Services.ApiClient.GetUserDetails();
+
+        // Avoid showing Welcome !
         if (details != null && details.Value != null)
-            welcomeUser.Text = $"Welcome {details.Value.Username}!";
+            welcomeUser.Text = $"Welcome{(details.Value.Username == "" ? "" : " " + details.Value.Username)}!";
         else
             welcomeUser.Text = $"Failed to load user info";
 
@@ -148,7 +150,7 @@ public sealed partial class AccountView
 
         ContentDialog dlg = new()
         {
-            Title = "Change profile picture",
+            Title = "Change Profile Picture",
             PrimaryButtonText = "Save",
             SecondaryButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Primary,
@@ -158,16 +160,37 @@ public sealed partial class AccountView
 
         dlg.PrimaryButtonClick += async delegate (ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            //var result = await Services.ApiClient.ChangeUsernameAsync(txt.Text);
-            //if (result.OK)
-            //{
+            args.Cancel = true;
 
-            //}
-            //else
-            //{
-            //    error.Text = ApiClient.FormatResult(result);
-            //    await dlg.ShowAsync();
-            //}
+            var c = ((PfpUploadView)sender.Content);
+            if (c.Cropper.Source == null)
+            {
+                c.Error = "Please select an image";
+                return;
+            }
+
+            c.ShowingLoading = true;
+            sender.Title = "Uploading file to MikhailHosting";
+            sender.IsPrimaryButtonEnabled = false;
+            sender.IsSecondaryButtonEnabled = false;
+
+
+            try
+            {
+                await Task.Delay(1000);
+                sender.Hide();
+                if (MainView.Settings != null)
+                    MainView.Settings.ShowInAppNotification("Updated profile picture", null, 3);
+                ShowMainPage();
+            }
+            catch (Exception ex)
+            {
+                c.ShowingLoading = false;
+                c.Error = ex.Message;
+                sender.Title = "Change Profile Picture";
+                sender.IsPrimaryButtonEnabled = true;
+                sender.IsSecondaryButtonEnabled = true;
+            }
         };
 
         await dlg.ShowAsync();
@@ -197,7 +220,9 @@ public sealed partial class AccountView
             var result = await Services.ApiClient.ChangeUsernameAsync(txt.Text);
             if (result.OK)
             {
-
+                if (MainView.Settings != null)
+                    MainView.Settings.ShowInAppNotification("Updated username. It may take some time for changes to take into effect.", null, 3);
+                ShowMainPage();
             }
             else
             {

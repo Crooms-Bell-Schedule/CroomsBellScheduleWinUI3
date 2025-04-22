@@ -1,11 +1,12 @@
 using System;
-using Windows.Graphics;
+using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Views.Settings;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using Windows.Graphics;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -25,6 +26,7 @@ public sealed partial class SettingsWindow
         appWindow.SetIcon("Assets\\croomsBellSchedule.ico");
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
+        SetRegionsForCustomTitleBar();
     }
 
     private void NavigationViewControl_DisplayModeChanged(NavigationView sender,
@@ -91,6 +93,21 @@ public sealed partial class SettingsWindow
         IntPtr hWnd = WindowNative.GetWindowHandle(this);
         WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
         return AppWindow.GetFromWindowId(windowId);
+    }
+
+    internal void ShowInAppNotification(string message, string? title, int durationSeconds)
+    {
+        ExampleInAppNotification.Show(message, 1000 * durationSeconds, title);
+    }
+
+    private void SetRegionsForCustomTitleBar()
+    {
+        // Specify the interactive regions of the title bar.
+
+        double scaleAdjustment = MainWindow.ViewInstance.XamlRoot.RasterizationScale;
+
+        RightPaddingColumn.Width = new GridLength(AppWindow.TitleBar.RightInset / scaleAdjustment);
+
     }
 
     #endregion
