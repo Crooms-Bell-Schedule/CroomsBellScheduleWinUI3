@@ -27,13 +27,41 @@ public sealed partial class FeedView
     }
 
 
+    public static string AsTimeAgo(DateTime dateTime)
+    {
+        // TODO update when scrolled away. Custom control is needed
+        return $"{dateTime:MMM dd, yyyy hh:mm tt}";
+        /*TimeSpan timeSpan = DateTime.Now.Subtract(dateTime);
+
+        return timeSpan.TotalSeconds switch
+        {
+            <= 60 => $"{timeSpan.Seconds} seconds ago",
+
+            _ => timeSpan.TotalMinutes switch
+            {
+                <= 1 => "a minute ago",
+                < 60 => $"{timeSpan.Minutes} minutes ago",
+                _ => timeSpan.TotalHours switch
+                {
+                    <= 1 => "an hour ago",
+                    < 24 => $"{timeSpan.Hours} hours ago",
+                    _ => timeSpan.TotalDays switch
+                    {
+                        <= 1 => $"yesterday {dateTime:hh:mm tt}",
+                        <= 2 => $"{timeSpan.Days} days ago",
+
+                        _ => $"{dateTime:MMM dd, yyyy hh:mm tt}"
+                    }
+                }
+            }
+        };*/
+    }
+
     private static FeedUIEntry ProcessEntry(FeedEntry entry)
     {
-        if (entry.createdBy == "mikhail")
-            entry.uid = "sao";
         return new FeedUIEntry()
         {
-            AuthorAndDate = $"{entry.createdBy} - {entry.create.ToLocalTime()}",
+            AuthorAndDate = $"{entry.createdBy}{(entry.verified ? "✔️" : "")} - {AsTimeAgo(entry.create.ToLocalTime())}",
             Author = entry.createdBy,
             ContentData = entry.data,
             Id = entry.id,
@@ -119,7 +147,11 @@ public sealed partial class FeedView
                 }
                 else if (item.Name == "username")
                 {
-                    //((Hyperlink)rootElem).
+                    ((Hyperlink)rootElem).Click += delegate (Hyperlink h, HyperlinkClickEventArgs e)
+                    {
+                        if (MainView.Settings != null)
+                            MainView.Settings.ShowInAppNotification("Coming soon", "", 1);
+                    };
                 }
             }
         }
@@ -367,7 +399,7 @@ public sealed partial class FeedView
 
     private void MA_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        Process.Start(new ProcessStartInfo() { FileName = "https://mikhail.croomssched.tech/advice.html", UseShellExecute = true});
+        Process.Start(new ProcessStartInfo() { FileName = "https://mikhail.croomssched.tech/advice.html", UseShellExecute = true });
     }
     private async void AppBarButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {

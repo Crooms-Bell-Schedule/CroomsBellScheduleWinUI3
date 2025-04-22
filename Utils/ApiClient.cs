@@ -353,6 +353,7 @@ namespace CroomsBellScheduleCS.Utils
         public DateTime create { get; set; }
         public DateTime delete { get; set; }
         public string createdBy { get; set; } = "";
+        public bool verified { get; set; } = false;
     }
     public class SubmitFeedRequest
     {

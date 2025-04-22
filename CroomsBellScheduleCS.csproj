@@ -27,7 +27,6 @@
 		<None Remove="Styles\TextBlock.xaml" />
 		<None Remove="Styles\Thickness.xaml" />
 		<None Remove="Views\SettingsView.xaml" />
-		<None Remove="Views\Settings\AccountView.xaml" />
 		<None Remove="Views\Settings\BellView.xaml" />
 	</ItemGroup>
 
@@ -60,12 +59,13 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Behaviors" Version="8.2.250402" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.ImageCropper" Version="8.2.250402" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.250402" />
+		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
 		<PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.250402" />
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
-		<PackageReference Include="System.Text.Json" Version="10.0.0-preview.1.25080.5" />
-		<PackageReference Include="Velopack" Version="0.0.1165-g6c20617" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250410001-experimental1" />
+		<PackageReference Include="System.Text.Json" Version="10.0.0-preview.3.25171.5" />
+		<PackageReference Include="Velopack" Version="0.0.1213-g57cf68d" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Content Update="Assets\croomsBellSchedule.ico">
@@ -86,10 +86,6 @@
 		</Page>
 		<Page Update="Styles\TextBlock.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		</Page>
-		<Page Update="Views\Settings\AccountView.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-			<SubType>Designer</SubType>
 		</Page>
 		<Page Update="Views\Settings\FeedView.xaml">
 		  <SubType>Designer</SubType>

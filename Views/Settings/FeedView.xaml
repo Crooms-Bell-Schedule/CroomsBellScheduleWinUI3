@@ -48,7 +48,7 @@
                             </Grid.ColumnDefinitions>
 
 
-                            <Ellipse Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32">
+                            <Ellipse Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32" VerticalAlignment="Top">
                                 <Ellipse.Fill>
                                     <ImageBrush ImageSource="{x:Bind PicSource}" ImageFailed="ImageBrush_ImageFailed"/>
                                 </Ellipse.Fill>

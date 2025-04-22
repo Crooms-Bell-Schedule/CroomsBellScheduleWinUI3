@@ -17,11 +17,26 @@
     </Window.SystemBackdrop>
 
     <Grid>
+        <!--<TitleBar x:Name="AppTitleBar" Subtitle="Preview"
+        Background="Transparent" 
+        IsPaneToggleButtonVisible="True" Grid.Row="0"
+        IsBackButtonVisible="True"
+        IsBackButtonEnabled="{x:Bind NavigationFrame.CanGoBack}"
+                  Title="Crooms Bell Schedule"
+                  PaneToggleRequested="AppTitleBar_PaneToggleRequested"
+                  BackRequested="AppTitleBar_BackRequested">
+            <TitleBar.IconSource>
+                <ImageIconSource ImageSource="/Assets/croomsBellSchedule.ico"/>
+            </TitleBar.IconSource>
+            <TitleBar.RightHeader>
+                <Button HorizontalAlignment="Right" Margin="0,90,0,0">Test</Button>
+            </TitleBar.RightHeader>
+        </TitleBar>-->
         <Grid x:Name="AppTitleBar"
               Canvas.ZIndex="1"
               Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
               IsHitTestVisible="True"
-              VerticalAlignment="Top">
+              VerticalAlignment="Top" Grid.Row="0">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
@@ -39,29 +54,53 @@
                        TextWrapping="NoWrap"
                        Style="{StaticResource CaptionTextBlockStyle}" Text="Crooms Bell Schedule"
                        Margin="15,0,0,0" Grid.Column="1"/>
-            <Button Grid.Column="3" Padding="5" HorizontalAlignment="Right" MaxHeight="40" Visibility="Collapsed">
+            <Button Grid.Column="3" Padding="5" HorizontalAlignment="Right" MaxHeight="40" Visibility="Visible">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <PersonPicture x:Name="UserPFP" MaxHeight="28" MaxWidth="28" Grid.Column="0">
-                        
-                    </PersonPicture>
-                    <TextBlock x:Name="UserName" Grid.Column="1" Text="User Account" VerticalAlignment="Center" Margin="15,0,15,0"></TextBlock>
-                    
+                    <PersonPicture x:Name="FlyoutPFP" MaxHeight="28" MaxWidth="28" Grid.Column="0"/>
+                    <TextBlock x:Name="FlyoutUserName" Grid.Column="1" Text="User Account" VerticalAlignment="Center" Margin="15,0,15,0"></TextBlock>
+
                 </Grid>
+
+                <Button.Flyout>
+                    <Flyout>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <PersonPicture x:Name="FlyoutPFP2" Grid.Row="0" Grid.Column="0" Width="64" Height="64" VerticalAlignment="Top"/>
+
+                            <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                                <TextBlock x:Name="FlyoutUsername2"  Grid.Row="0" Grid.Column="1" Text="Username" FontSize="18" Margin="5" VerticalAlignment="Center"/>
+                                <Button x:Name="FlyoutLogin" Content="Login" Click="FlyoutLogin_Click" Margin="5"/>
+                                <Button x:Name="FlyoutLogout" Content="Logout" Visibility="Collapsed" Click="FlyoutLogout_Click" Margin="5"/>
+                                <Button x:Name="FlyoutChangePFP" Content="Change Profile Picture" Click="FlyoutChangePFP_Click" Margin="5"/>
+                                <Button x:Name="FlyoutChangeUsername" Content="Change Username" Click="FlyoutChangeUsername_Click" Margin="5"/>
+                                <Button x:Name="FlyoutChangePW" Content="Change Password" Click="FlyoutChangePW_Click" Margin="5"/>
+                            </StackPanel>
+                        </Grid>
+                    </Flyout>
+                </Button.Flyout>
             </Button>
         </Grid>
         <NavigationView
             x:Name="NavigationViewControl"
             Canvas.ZIndex="0"
-            IsBackButtonVisible="Visible"
+            IsBackButtonVisible="Auto"
+            IsPaneToggleButtonVisible="True"
             IsSettingsVisible="False"
-            ExpandedModeThresholdWidth="1280"
-            DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
-            SelectionChanged="NavigationViewControl_SelectionChanged"
-            ItemInvoked="NavigationViewControl_ItemInvoked">
+            Grid.Row="1"
+            ItemInvoked="NavigationViewControl_ItemInvoked"
+            DisplayModeChanged="NavigationViewControl_DisplayModeChanged">
 
             <NavigationView.MenuItems>
                 <NavigationViewItem Content="Personalization" x:Name="PersonalizationViewItem">
@@ -74,19 +113,14 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEA8F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Prowler" x:Name="FeedItem">
-                    <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8F2;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
                 <NavigationViewItem Content="Lunch Menu" x:Name="LunchMenuItem">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED56;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Account" x:Name="AccountViewItem">
+                <NavigationViewItem Content="Prowler" x:Name="FeedItem">
                     <NavigationViewItem.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE716;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8F2;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
             </NavigationView.MenuItems>
@@ -95,7 +129,7 @@
                 <Frame x:Name="NavigationFrame" Margin="{StaticResource NavigationViewPageContentMargin}"
                        Navigated="NavigationFrame_Navigated" Loaded="NavigationFrame_Loaded" />
 
-                <InfoBar VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
+                <InfoBar VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Background="Red">
                     <interactivity:Interaction.Behaviors>
                         <behaviors:StackedNotificationsBehavior x:Name="ExampleInAppNotification" />
                     </interactivity:Interaction.Behaviors>
@@ -104,5 +138,12 @@
 
 
         </NavigationView>
+
+        <Grid x:Name="LoadingUI" Background="{ThemeResource SystemColorBackgroundColor}" Loaded="LoadingUI_Loaded">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ProgressRing x:Name="RingOfProgress" Height="48" Width="48"></ProgressRing>
+                <TextBlock x:Name="LoadingText">Authenticating</TextBlock>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

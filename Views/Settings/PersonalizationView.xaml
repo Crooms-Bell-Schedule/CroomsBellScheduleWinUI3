@@ -6,6 +6,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
     <ScrollViewer>
@@ -13,27 +14,48 @@
             x:Name="ContentArea">
             <TextBlock x:Uid="Settings_Personalization" Margin="0, 20, 0, 26" Style="{ThemeResource TitleTextBlockStyle}"
                        Text="Personalization" />
-            <StackPanel Margin="0,0,0,12">
-                <TextBlock x:Uid="Settings_Theme" Text="Theme: " />
 
-                <StackPanel Margin="0,8,0,0">
-                    <RadioButton
-                        x:Name="RdDefault"
-                        FontSize="15"
-                        GroupName="AppTheme" Content="Default" Checked="RdDefault_Checked" />
-                    <RadioButton
-                        x:Name="RdLight"
-                        FontSize="15"
-                        GroupName="AppTheme" Content="Light" Checked="RdLight_Checked" />
-                    <RadioButton
-                        x:Name="RdDark"
-                        FontSize="15"
-                        GroupName="AppTheme" Content="Dark" Checked="RdDark_Checked" />
-                </StackPanel>
-            </StackPanel>
+            <controls:SettingsCard Description=""
+                   Header="Theme">
+                <ComboBox x:Name="ThemeCombo" SelectionChanged="ThemeCombo_SelectionChanged">
+                    <ComboBox.Items>
+                        <ComboBoxItem Content="Default"/>
+                        <ComboBoxItem Content="Light"/>
+                        <ComboBoxItem Content="Dark"/>
+                    </ComboBox.Items>
+                </ComboBox>
+            </controls:SettingsCard>
 
-            <ToggleSwitch x:Name="chkTaskbar" Header="Show inside of taskbar" Toggled="chkTaskbar_Toggled"
+            <controls:SettingsCard Description="Put the bell schedule in your Windows Taskbar. To exit from this mode, find the Crooms Bell Schedule Icon in the right area of your taskbar."
+                               Header="Show inside of taskbar">
+                <ToggleSwitch x:Name="chkTaskbar" Header="" Toggled="chkTaskbar_Toggled"
                           ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Does not function on Windows 10 currently, and the bell schedule is not shown when an app is fullscreen." />
+            </controls:SettingsCard>
+
+            <controls:SettingsCard Description="Change how many digits are shown"
+       Header="Percentage">
+                <ComboBox x:Name="ComboPercentage" SelectedItem="2" SelectionChanged="ComboPercentage_SelectionChanged">
+                    <ComboBox.Items>
+                        <ComboBoxItem>Hide</ComboBoxItem>
+                        <ComboBoxItem>2 digit places (59%)</ComboBoxItem>
+                        <ComboBoxItem>3 digit places (59.3%)</ComboBoxItem>
+                        <ComboBoxItem>4 digit places (59.32%) (default)</ComboBoxItem>
+                    </ComboBox.Items>
+                </ComboBox>
+            </controls:SettingsCard>
+
+            <controls:SettingsCard Header="5th Period Lunch">
+                <StackPanel Orientation="Horizontal">
+                    <ToggleButton x:Name="p5LunchA" Margin="5" Checked="p5LunchA_Checked" Unchecked="Lunch_Unchecked">A</ToggleButton>
+                    <ToggleButton x:Name="p5LunchB" Margin="5" Checked="p5LunchB_Checked" Unchecked="Lunch_Unchecked">B</ToggleButton>
+                </StackPanel>
+            </controls:SettingsCard>
+            <controls:SettingsCard Header="Homeroom Lunch">
+                <StackPanel Orientation="Horizontal">
+                    <ToggleButton x:Name="pHLunchA" Margin="5" Checked="pHLunchA_Checked" Unchecked="Lunch_Unchecked">A</ToggleButton>
+                    <ToggleButton x:Name="pHLunchB" Margin="5" Checked="pHLunchB_Checked" Unchecked="Lunch_Unchecked">B</ToggleButton>
+                </StackPanel>
+            </controls:SettingsCard>
 
             <TeachingTip x:Name="ToggleThemeTeachingTip1"
     Target="{x:Bind chkTaskbar}"
@@ -44,44 +66,23 @@
                 </TeachingTip.HeroContent>
             </TeachingTip>
 
-            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Lunch" />
-            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
-                <TextBlock Text="5th period lunch: " Style="{ThemeResource BodyTextBlockStyle}"
-                           VerticalAlignment="Center" />
+            <controls:SettingsCard Header="5-Minute notification" Description="Show 5 minutes remaining notification">
+                <ToggleSwitch x:Name="chk5MinNotif" Toggled="chk5MinNotif_Checked"></ToggleSwitch>
+            </controls:SettingsCard>
+            <controls:SettingsCard Header="1-Minute notification" Description="Show 1 minute remaining notification" >
+                <ToggleSwitch x:Name="chk1MinNotif" Toggled="chk5MinNotif_Checked"></ToggleSwitch>
+            </controls:SettingsCard>
 
-                <ToggleButton x:Name="p5LunchA" Margin="5" Checked="p5LunchA_Checked" Unchecked="Lunch_Unchecked">A</ToggleButton>
-                <ToggleButton x:Name="p5LunchB" Margin="5" Checked="p5LunchB_Checked" Unchecked="Lunch_Unchecked">B</ToggleButton>
-            </StackPanel>
-            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
-                <TextBlock Text="Homeroom lunch: " Style="{ThemeResource BodyTextBlockStyle}"
-                           VerticalAlignment="Center" />
-
-                <ToggleButton x:Name="pHLunchA" Margin="5" Checked="pHLunchA_Checked" Unchecked="Lunch_Unchecked">A</ToggleButton>
-                <ToggleButton x:Name="pHLunchB" Margin="5" Checked="pHLunchB_Checked" Unchecked="Lunch_Unchecked">B</ToggleButton>
-            </StackPanel>
-
-            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Behavior" />
-            <StackPanel Margin="0,8,0,0">
-                <TextBlock Text="Percentage: " Style="{ThemeResource BodyTextBlockStyle}" VerticalAlignment="Center" />
-                <ComboBox x:Name="ComboPercentage" SelectedItem="2" SelectionChanged="ComboPercentage_SelectionChanged">
-                    <ComboBox.Items>
-                        <ComboBoxItem>Hide</ComboBoxItem>
-                        <ComboBoxItem>2 digit places (59%)</ComboBoxItem>
-                        <ComboBoxItem>3 digit places (59.3%)</ComboBoxItem>
-                        <ComboBoxItem>4 digit places (59.32%) (default)</ComboBoxItem>
-                    </ComboBox.Items>
-                </ComboBox>
-
-                <CheckBox x:Name="chk5MinNotif" Content="Show 5 minutes remaining notification" Checked="chk5MinNotif_Checked" Unchecked="chk5MinNotif_Checked"></CheckBox>
-                <CheckBox x:Name="chk1MinNotif" Content="Show 1 minute remaining notification" Checked="chk5MinNotif_Checked" Unchecked="chk5MinNotif_Checked"></CheckBox>
-            </StackPanel>
+            <controls:SettingsCard Header="Version" Description="v1.0" x:Name="VersionCard">
+                <StackPanel Orientation="Horizontal">
+                    <Button x:Name="ButtonCheckForUpdates" Click="ButtonCheckForUpdates_Click">Check for updates</Button>
+                </StackPanel>
+            </controls:SettingsCard>
 
             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" />
 
             <StackPanel Margin="0,8,0,0">
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="App created by Mikhail Tyukin with some contributions from Suvan and Andrew. Crooms Bell Schedule backend was made by Andew Jennings. This application uses WinUI 3.0, C#, HtmlAgilityPack, System.Text.Json, Velopack and H.NotifyIcon.WinUI." TextWrapping="Wrap" />
-                <TextBlock x:Name="VersionText" Style="{ThemeResource BodyTextBlockStyle}" />
-                <Button x:Name="ButtonCheckForUpdates" Click="ButtonCheckForUpdates_Click">Check for updates</Button>
 
                 <HyperlinkButton Margin="0,4,0,0" Content="Changelog" NavigateUri="https://mikhail.croomssched.tech/updateapiv2/changelog.html" />
                 <HyperlinkButton Margin="0,4,0,0" Content="Source code" NavigateUri="https://github.com/thealmighyderpybird/CroomsBellScheduleWinUI3" />

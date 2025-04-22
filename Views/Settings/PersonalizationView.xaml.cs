@@ -18,17 +18,16 @@ public sealed partial class PersonalizationView
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
         // load settings
-        RdLight.IsChecked = SettingsManager.Settings.Theme == ElementTheme.Light;
-        RdDark.IsChecked = SettingsManager.Settings.Theme == ElementTheme.Dark;
-        RdDefault.IsChecked = SettingsManager.Settings.Theme == ElementTheme.Default;
+        SetTheme(SettingsManager.Settings.Theme);
+
         chkTaskbar.IsOn = SettingsManager.Settings.ShowInTaskbar;
         ComboPercentage.SelectedIndex = (int)SettingsManager.Settings.PercentageSetting;
-        chk1MinNotif.IsChecked = SettingsManager.Settings.Show1MinNotification;
-        chk5MinNotif.IsChecked = SettingsManager.Settings.Show5MinNotification;
+        chk1MinNotif.IsOn = SettingsManager.Settings.Show1MinNotification;
+        chk5MinNotif.IsOn = SettingsManager.Settings.Show5MinNotification;
         UpdateCheckState();
 
         // show version
-        VersionText.Text = "Version " + Assembly.GetExecutingAssembly().GetName().Version;
+        VersionCard.Description = "" + Assembly.GetExecutingAssembly().GetName().Version;
 
         _initialized = true;
     }
@@ -50,36 +49,6 @@ public sealed partial class PersonalizationView
         await SaveSettings();
 
         try { MainWindow.ViewInstance.UpdateCurrentClass(); } catch { }
-    }
-
-    private async void RdLight_Checked(object sender, RoutedEventArgs e)
-    {
-        if (!_initialized) return;
-
-        SettingsManager.Settings.Theme = ElementTheme.Light;
-        await SaveSettings();
-
-        MainWindow.ViewInstance.SetTheme(SettingsManager.Settings.Theme);
-    }
-
-    private async void RdDark_Checked(object sender, RoutedEventArgs e)
-    {
-        if (!_initialized) return;
-
-        SettingsManager.Settings.Theme = ElementTheme.Dark;
-        await SaveSettings();
-
-        MainWindow.ViewInstance.SetTheme(SettingsManager.Settings.Theme);
-    }
-
-    private async void RdDefault_Checked(object sender, RoutedEventArgs e)
-    {
-        if (!_initialized) return;
-
-        SettingsManager.Settings.Theme = ElementTheme.Default;
-        await SaveSettings();
-
-        MainWindow.ViewInstance.SetTheme(SettingsManager.Settings.Theme);
     }
 
     private async void chkTaskbar_Toggled(object sender, RoutedEventArgs e)
@@ -161,8 +130,39 @@ public sealed partial class PersonalizationView
     {
         if (!_initialized) return;
 
-        SettingsManager.Settings.Show5MinNotification = chk5MinNotif.IsChecked == true;
-        SettingsManager.Settings.Show1MinNotification = chk1MinNotif.IsChecked == true;
+        SettingsManager.Settings.Show5MinNotification = chk5MinNotif.IsOn;
+        SettingsManager.Settings.Show1MinNotification = chk1MinNotif.IsOn;
         await SaveSettings();
+    }
+
+    private ElementTheme GetSelection()
+    {
+        return ThemeCombo.SelectedIndex switch
+        {
+            0 => ElementTheme.Default,
+            1 => ElementTheme.Light,
+            2 => ElementTheme.Dark,
+            _ => ElementTheme.Default,
+        };
+    }
+
+    private void SetTheme(ElementTheme theme)
+    {
+        switch (theme)
+        {
+            case ElementTheme.Default: ThemeCombo.SelectedIndex = 0; break;
+            case ElementTheme.Light: ThemeCombo.SelectedIndex = 1; break;
+            case ElementTheme.Dark: ThemeCombo.SelectedIndex = 2; break;
+        }
+    }
+
+    private async void ThemeCombo_SelectionChanged(object sender, Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs e)
+    {
+        if (!_initialized) return;
+
+        SettingsManager.Settings.Theme = GetSelection();
+        await SaveSettings();
+
+        MainWindow.ViewInstance.SetTheme(SettingsManager.Settings.Theme);
     }
 }

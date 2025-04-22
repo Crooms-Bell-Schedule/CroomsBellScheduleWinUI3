@@ -1,10 +1,13 @@
 using System;
+using System.Threading.Tasks;
 using CroomsBellScheduleCS.Utils;
+using CroomsBellScheduleCS.Views;
 using CroomsBellScheduleCS.Views.Settings;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Graphics;
 using WinRT.Interop;
@@ -26,6 +29,7 @@ public sealed partial class SettingsWindow
         appWindow.SetIcon("Assets\\croomsBellSchedule.ico");
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
+
         SetRegionsForCustomTitleBar();
     }
 
@@ -41,14 +45,9 @@ public sealed partial class SettingsWindow
         };
     }
 
-    private void NavigationViewControl_SelectionChanged(NavigationView sender,
-        NavigationViewSelectionChangedEventArgs args)
-    {
-    }
-
     private void NavigationViewControl_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
     {
-        FrameNavigationOptions navOptions = new FrameNavigationOptions
+        FrameNavigationOptions navOptions = new()
         {
             TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
         };
@@ -58,8 +57,6 @@ public sealed partial class SettingsWindow
             NavigationFrame.NavigateToType(typeof(PersonalizationView), null, navOptions);
         else if (args.InvokedItemContainer == BellViewItem)
             NavigationFrame.NavigateToType(typeof(BellView), null, navOptions);
-        else if (args.InvokedItemContainer == AccountViewItem)
-            NavigationFrame.NavigateToType(typeof(AccountView), null, navOptions);
         else if (args.InvokedItemContainer == FeedItem)
             NavigationFrame.NavigateToType(typeof(FeedView), null, navOptions);
         else if (args.InvokedItemContainer == LunchMenuItem)
@@ -72,8 +69,6 @@ public sealed partial class SettingsWindow
             NavigationViewControl.SelectedItem = PersonalizationViewItem;
         else if (e.SourcePageType == typeof(BellView))
             NavigationViewControl.SelectedItem = BellViewItem;
-        else if (e.SourcePageType == typeof(AccountView))
-            NavigationViewControl.SelectedItem = AccountViewItem;
         else if (e.SourcePageType == typeof(FeedView))
             NavigationViewControl.SelectedItem = FeedItem;
         else if (e.SourcePageType == typeof(LunchView))
@@ -111,4 +106,269 @@ public sealed partial class SettingsWindow
     }
 
     #endregion
+
+    /*private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
+    {
+        NavigationViewControl.IsPaneOpen = !NavigationViewControl.IsPaneOpen;
+    }
+
+    private void AppTitleBar_BackRequested(TitleBar sender, object args)
+    {
+        if (NavigationFrame.CanGoBack)
+        {
+            NavigationFrame.GoBack();
+        }
+    */
+
+    private void SetLoggedOutMode()
+    {
+        FlyoutLogout.Visibility = Visibility.Collapsed;
+        FlyoutLogin.Visibility = Visibility.Visible;
+        FlyoutChangePFP.IsEnabled = false;
+        FlyoutChangeUsername.IsEnabled = false;
+        FlyoutChangePW.IsEnabled = false;
+        FlyoutUserName.Text = "User Account";
+        FlyoutUsername2.Text = "User Account";
+        FlyoutPFP.ProfilePicture = null;
+        FlyoutPFP2.ProfilePicture = null;
+    }
+    private void SetLoggedInMode()
+    {
+        FlyoutLogout.Visibility = Visibility.Visible;
+        FlyoutLogin.Visibility = Visibility.Collapsed;
+        FlyoutChangePFP.IsEnabled = true;
+        FlyoutChangeUsername.IsEnabled = true;
+        FlyoutChangePW.IsEnabled = false; // TODO
+    }
+        
+    public async Task RefreshUserInfo()
+    {
+        var details = await Services.ApiClient.GetUserDetails();
+
+        if (details != null && details.Value != null)
+            FlyoutUserName.Text = string.IsNullOrEmpty(details.Value.Username) ? "User Account" : details.Value.Username;
+        else
+            FlyoutUserName.Text = $"Unknown";
+
+        FlyoutPFP.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=pfp&size=28"));
+        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=pfp&size=48"));
+        FlyoutUsername2.Text = FlyoutUserName.Text;
+    }
+
+    private async Task RunSignInProcess()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(SettingsManager.Settings.SessionID) || string.IsNullOrEmpty(SettingsManager.Settings.UserID))
+            {
+                // logged out
+                LoadingUI.Visibility = Visibility.Collapsed;
+                SetLoggedOutMode();
+                return;
+            }
+
+            // check the token
+            var tokenResponse = await Services.ApiClient.ValidateSessionAsync();
+
+            if (tokenResponse.Value != null && !tokenResponse.Value.result)
+            {
+                ShowInAppNotification("Your login information has expired. Please login again.", "Login Failed", 0);
+                LoadingUI.Visibility = Visibility.Collapsed;
+                SetLoggedOutMode();
+                return;
+            }
+            if (!tokenResponse.OK)
+            {
+                ShowInAppNotification("Failed to connect to the server. Check your internet connection.", "Login Failed", 0);
+                LoadingUI.Visibility = Visibility.Collapsed;
+                SetLoggedOutMode();
+                return;
+            }
+
+            LoadingText.Text = "Retrieving user info...";
+            await RefreshUserInfo();
+            SetLoggedInMode();
+        }
+        catch(Exception ex)
+        {
+            ContentDialog dlg = new()
+            {
+                Title = "Error",
+                XamlRoot = Content.XamlRoot,
+                PrimaryButtonText = "OK",
+                DefaultButton = ContentDialogButton.Primary,
+                Content = ex.Message
+            };
+
+            await dlg.ShowAsync();
+        }
+        LoadingUI.Visibility = Visibility.Collapsed;
+    }
+
+    private async void LoadingUI_Loaded(object sender, RoutedEventArgs e)
+    {
+        await RunSignInProcess();
+    }
+
+    private async void FlyoutChangePFP_Click(object sender, RoutedEventArgs e)
+    {
+        var txt = new TextBox();
+        var error = new TextBlock() { Text = "" };
+        var content = new PfpUploadView();
+
+        ContentDialog dlg = new()
+        {
+            Title = "Change Profile Picture",
+            PrimaryButtonText = "Save",
+            SecondaryButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+            Content = content,
+            XamlRoot = Content.XamlRoot
+        };
+
+        dlg.PrimaryButtonClick += async delegate (ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            args.Cancel = true;
+
+            var c = ((PfpUploadView)sender.Content);
+            if (c.Cropper.Source == null)
+            {
+                c.Error = "Please select an image";
+                return;
+            }
+
+            c.ShowingLoading = true;
+            sender.Title = "Uploading file to MikhailHosting";
+            sender.IsPrimaryButtonEnabled = false;
+            sender.IsSecondaryButtonEnabled = false;
+
+            try
+            {
+                await Task.Delay(1000);
+                sender.Hide();
+                ShowInAppNotification("Updated profile picture", null, 3);
+                await RefreshUserInfo();
+            }
+            catch (Exception ex)
+            {
+                c.ShowingLoading = false;
+                c.Error = ex.Message;
+                sender.Title = "Change Profile Picture";
+                sender.IsPrimaryButtonEnabled = true;
+                sender.IsSecondaryButtonEnabled = true;
+            }
+        };
+
+        await dlg.ShowAsync();
+    }
+
+    private async void FlyoutChangeUsername_Click(object sender, RoutedEventArgs e)
+    {
+        var txt = new TextBox();
+        var error = new TextBlock() { Text = "" };
+        var content = new StackPanel();
+        content.Children.Add(new TextBlock() { Text = "New username: " });
+        content.Children.Add(txt);
+        content.Children.Add(error);
+
+        ContentDialog dlg = new()
+        {
+            Title = "Change username",
+            PrimaryButtonText = "Save",
+            SecondaryButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+            Content = content,
+            XamlRoot = Content.XamlRoot
+        };
+
+        dlg.PrimaryButtonClick += async delegate (ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var result = await Services.ApiClient.ChangeUsernameAsync(txt.Text);
+            if (result.OK)
+            {
+                ShowInAppNotification("Updated username. It may take some time for changes to take into effect.", null, 3);
+                await RefreshUserInfo();
+            }
+            else
+            {
+                error.Text = ApiClient.FormatResult(result);
+                await dlg.ShowAsync();
+            }
+        };
+
+        await dlg.ShowAsync();
+    }
+
+    private void FlyoutChangePW_Click(object sender, RoutedEventArgs e)
+    {
+        // TODO
+    }
+
+    private async void FlyoutLogin_Click(object sender, RoutedEventArgs e)
+    {
+        ContentDialog dlg = new()
+        {
+            Title = "Login with bell schedule account",
+            XamlRoot = Content.XamlRoot,
+            PrimaryButtonText = "Login",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+            Content = new LoginView()
+        };
+        dlg.PrimaryButtonClick += Dlg2_PrimaryButtonClick;
+
+        await dlg.ShowAsync();
+    }
+
+    private async void Dlg2_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        args.Cancel = true;
+
+        var content = sender.Content as LoginView;
+        if (content == null) return;
+
+        if (!string.IsNullOrEmpty(content.Username) && !string.IsNullOrEmpty(content.Password))
+        {
+            sender.IsPrimaryButtonEnabled = false;
+            sender.PrimaryButtonText = "";
+            sender.CloseButtonText = "Cancel";
+            content.ShowingLoading = true;
+            sender.Title = "Authenticating...";
+
+            var result = await Services.ApiClient.LoginAsync(content.Username, content.Password);
+
+            if (result.OK)
+            {
+                sender.Hide();
+                SetLoggedInMode();
+                await RefreshUserInfo();
+            }
+            else
+            {
+                sender.IsPrimaryButtonEnabled = true;
+                sender.PrimaryButtonText = "Login";
+                content.ShowingLoading = false;
+                sender.Title = "Login with bell schedule account";
+                content.Error = ApiClient.FormatResult(result);
+            }
+        }
+    }
+
+
+    private async void FlyoutLogout_Click(object sender, RoutedEventArgs e)
+    {
+        if (!(await Services.ApiClient.LogoutAsync()).OK)
+        {
+            ContentDialog dlg2 = new() { Title = "Server/App error" };
+            dlg2.XamlRoot = Content.XamlRoot;
+            dlg2.CloseButtonText = "OK";
+            dlg2.Content = "Failed to logout";
+
+            await dlg2.ShowAsync();
+        }
+        else
+        {
+            SetLoggedOutMode();
+        }
+    }
 }

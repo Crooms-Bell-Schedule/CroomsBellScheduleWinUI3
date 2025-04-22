@@ -31,8 +31,7 @@ public sealed partial class FeedEntry
     private static void ChangedDataCB(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         var t = d as FeedEntry;
-        var n = e.NewValue as string;
-        if (t != null && n != null)
+        if (t != null && e.NewValue is string n)
         {
             try
             {
@@ -49,6 +48,5 @@ public sealed partial class FeedEntry
                 t.blk.Text = "FAILED TO RENDER CONTENT";
             }
         }
-
     }
 }

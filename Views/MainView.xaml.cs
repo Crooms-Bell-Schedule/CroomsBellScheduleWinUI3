@@ -529,7 +529,7 @@ public sealed partial class MainView
                 _windowApp.MoveAndResize(
                     new RectInt32 {
                         Width = GetDpi() * 4,
-                        Height = taskbarHeight + 14 
+                        Height = taskbarHeight + (int)(14* XamlRoot.RasterizationScale)
                     }
                 );
 
@@ -538,7 +538,7 @@ public sealed partial class MainView
             TxtCurrentClass.FontSize = 14;
             TxtClassPercent.FontSize = 14;
             _defaultProgressbarMinHeight = ProgressBar.MinHeight;
-            ProgressBar.MinHeight = 10;
+            ProgressBar.MinHeight = 0;// 1 * XamlRoot.RasterizationScale;
         }
         else
         {
