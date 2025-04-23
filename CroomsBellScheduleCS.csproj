@@ -90,6 +90,11 @@
 		<Page Update="Views\Settings\FeedView.xaml">
 		  <SubType>Designer</SubType>
 		</Page>
+		<Page Update="Views\Settings\PasswordChangeView.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		  <SubType>Designer</SubType>
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
 		<Page Update="Views\Settings\PfpUploadView.xaml">
 		  <SubType>Designer</SubType>
 		</Page>

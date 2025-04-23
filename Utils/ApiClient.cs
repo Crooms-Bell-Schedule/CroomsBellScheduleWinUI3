@@ -291,6 +291,30 @@ namespace CroomsBellScheduleCS.Utils
 
             return DecodeResponse<UserDetailsResponse>(responseText);
         }
+
+        public async Task<Result<SetProfilePictureResult?>> SetProfilePicture(byte[] image)
+        {
+            try
+            {
+                var content = new ByteArrayContent(image);
+                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+
+                var response = await _client.PostAsync("https://api.croomssched.tech/setProfilePicture", content);
+
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return new() { OK = false, Exception = new Exception("Coming soon!") };
+                }
+
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                return DecodeResponse<SetProfilePictureResult>(responseText);
+            }
+            catch(Exception ex)
+            {
+                return new() { Exception = ex, OK = false };
+            }
+        }
     }
 
     public class LoginRequest
@@ -398,5 +422,10 @@ namespace CroomsBellScheduleCS.Utils
         public string Id { get; set; } = "";
         [JsonPropertyName("username")]
         public string Username { get; set; } = "";
+    }
+
+    public class SetProfilePictureResult
+    {
+        public string result { get; set; } = "";
     }
 }

@@ -1,8 +1,12 @@
 using System;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Views;
 using CroomsBellScheduleCS.Views.Settings;
+using Microsoft.Security.Authentication.OAuth;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -10,6 +14,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Graphics;
+using Windows.UI.Xaml.Media;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -52,6 +57,7 @@ public sealed partial class SettingsWindow
             TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
         };
         if (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top) navOptions.IsNavigationStackEnabled = false;
+        else navOptions.IsNavigationStackEnabled = true;
 
         if (args.InvokedItemContainer == PersonalizationViewItem)
             NavigationFrame.NavigateToType(typeof(PersonalizationView), null, navOptions);
@@ -138,7 +144,7 @@ public sealed partial class SettingsWindow
         FlyoutLogin.Visibility = Visibility.Collapsed;
         FlyoutChangePFP.IsEnabled = true;
         FlyoutChangeUsername.IsEnabled = true;
-        FlyoutChangePW.IsEnabled = false; // TODO
+        FlyoutChangePW.IsEnabled = Debugger.IsAttached; // TODO backend
     }
         
     public async Task RefreshUserInfo()
@@ -244,10 +250,25 @@ public sealed partial class SettingsWindow
 
             try
             {
-                await Task.Delay(1000);
-                sender.Hide();
-                ShowInAppNotification("Updated profile picture", null, 3);
-                await RefreshUserInfo();
+                using Stream s = c.Cropper.Source.PixelBuffer.AsStream();
+                using MemoryStream ms = new();
+                s.CopyTo(ms);
+
+                var result = await Services.ApiClient.SetProfilePicture(ms.ToArray());
+
+                if (!result.OK)
+                {
+                    c.Error = ApiClient.FormatResult(result);
+                    c.ShowingLoading = false;
+                    sender.Title = "Change Profile Picture";
+                    sender.IsPrimaryButtonEnabled = true;
+                    sender.IsSecondaryButtonEnabled = true;
+                }
+                else
+                {
+                    ShowInAppNotification("Changed profile picture. Restart the app to see changes", "Success", 5);
+                    sender.Hide();
+                }
             }
             catch (Exception ex)
             {
@@ -299,9 +320,20 @@ public sealed partial class SettingsWindow
         await dlg.ShowAsync();
     }
 
-    private void FlyoutChangePW_Click(object sender, RoutedEventArgs e)
+    private async void FlyoutChangePW_Click(object sender, RoutedEventArgs e)
     {
-        // TODO
+        ContentDialog dlg = new()
+        {
+            Title = "Change password",
+            XamlRoot = Content.XamlRoot,
+            PrimaryButtonText = "Save",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+            Content = new PasswordChangeView()
+        };
+        dlg.PrimaryButtonClick += ChangePWDlg_OKClick;
+
+        await dlg.ShowAsync();
     }
 
     private async void FlyoutLogin_Click(object sender, RoutedEventArgs e)
@@ -315,12 +347,40 @@ public sealed partial class SettingsWindow
             DefaultButton = ContentDialogButton.Primary,
             Content = new LoginView()
         };
-        dlg.PrimaryButtonClick += Dlg2_PrimaryButtonClick;
+        dlg.PrimaryButtonClick += LoginDlg_OKClick;
 
         await dlg.ShowAsync();
     }
+    private async void ChangePWDlg_OKClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    {
+        args.Cancel = true;
 
-    private async void Dlg2_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        var content = sender.Content as PasswordChangeView;
+        if (content == null) return;
+
+        if (!content.ValidateFields()) return;
+
+        sender.IsPrimaryButtonEnabled = false;
+        sender.IsSecondaryButtonEnabled = false;
+        content.ShowingLoading = true;
+
+        content.IsEnabled = false;
+
+        /*if (true)
+        {*/
+            sender.Hide();
+            ShowInAppNotification("Changed password successfully.", "", 3);
+        /*}
+        else
+        {
+            sender.IsPrimaryButtonEnabled = true;
+            sender.IsSecondaryButtonEnabled = true;
+            content.ShowingLoading = false;
+            sender.Title = "Change password";
+            //content.Error = ApiClient.FormatResult(result);
+        }*/
+    }
+    private async void LoginDlg_OKClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         args.Cancel = true;
 

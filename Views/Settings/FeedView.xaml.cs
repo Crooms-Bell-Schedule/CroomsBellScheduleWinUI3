@@ -8,10 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Timers;
+using Windows.Graphics.Imaging;
+using Windows.Storage.Streams;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
@@ -57,23 +62,72 @@ public sealed partial class FeedView
         };*/
     }
 
-    private static FeedUIEntry ProcessEntry(FeedEntry entry)
+    private static async Task<FeedUIEntry> ProcessEntry(FeedEntry entry)
     {
         return new FeedUIEntry()
         {
-            AuthorAndDate = $"{entry.createdBy}{(entry.verified ? "✔️" : "")} - {AsTimeAgo(entry.create.ToLocalTime())}",
+            AuthorAndDate = $"{entry.createdBy}{(entry.verified ? "✅" : "")} - {AsTimeAgo(entry.create.ToLocalTime())}",
             Author = entry.createdBy,
             ContentData = entry.data,
             Id = entry.id,
-            PicSource = string.IsNullOrEmpty(entry.uid) ? "https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=default.jpg" : "https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=" + entry.uid + ".png&default=pfp"
+            PicSource = await RetrieveProfileImage(entry.uid)
         };
     }
-    private static void InitPage(FeedEntry[] items)
+
+    private static Dictionary<string, ImageSource> ProfileImageCache = [];
+    private static HttpClient ImageClient = new();
+
+    private async Task<WriteableBitmap> UriToWriteableBitmap(Uri uri)
+    {
+        var randomAccessStreamReference = RandomAccessStreamReference.CreateFromUri(uri);
+        using (IRandomAccessStreamWithContentType stream = await randomAccessStreamReference.OpenReadAsync())
+        {
+            return await StreamToWriteableBitmap(stream);
+        }
+    }
+
+    private static async Task<WriteableBitmap> StreamToWriteableBitmap(IRandomAccessStream stream)
+    {
+        var decoder = await BitmapDecoder.CreateAsync(stream);
+        var writeableBitmap = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
+        stream.Seek(0);
+        await writeableBitmap.SetSourceAsync(stream);
+        return writeableBitmap;
+    }
+    private static async Task<ImageSource?> RetrieveProfileImage(string uid)
+    {
+        string path = $"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={uid}.png&default=pfp&size";
+
+        if (ProfileImageCache.TryGetValue(uid, out ImageSource? value))
+            return value;
+
+        var headers = await ImageClient.GetAsync(path);
+        if (headers.IsSuccessStatusCode)
+        {
+            var rsp = await headers.Content.ReadAsByteArrayAsync();
+
+            MemoryStream stream2 = new MemoryStream(rsp);
+            var stream = stream2.AsRandomAccessStream();
+
+            var decoder = await BitmapDecoder.CreateAsync(stream);
+            var writeableBitmap = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
+            stream.Seek(0);
+            await writeableBitmap.SetSourceAsync(stream);
+
+            ProfileImageCache.Add(uid, writeableBitmap);
+
+            return writeableBitmap;
+        }
+
+        return null;
+    }
+
+    private static async Task InitPage(FeedEntry[] items)
     {
         Entries.Clear();
         foreach (var entry in items)
         {
-            Entries.Add(ProcessEntry(entry));
+            Entries.Add(await ProcessEntry(entry));
         }
     }
 
@@ -244,7 +298,7 @@ public sealed partial class FeedView
                     return;
                 }
 
-                InitPage(feedResult.Value);
+                await InitPage(feedResult.Value);
 
                 // setup refresh timer for this page
                 Timer tmm = new();
@@ -326,7 +380,7 @@ public sealed partial class FeedView
                 // add the missing items to the observable collection in reverse order
                 for (int i = added - 1; i >= 0; i--)
                 {
-                    Entries.Insert(0, ProcessEntry(val[i]));
+                    Entries.Insert(0, await ProcessEntry(val[i]));
                 }
 
                 // the list view will automatically update
@@ -474,5 +528,5 @@ public class FeedUIEntry
     public string AuthorAndDate { get; set; } = "";
     public string Id { get; set; } = "";
     public string ContentData { get; set; } = "";
-    public string PicSource { get; set; } = "https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=sao.png";
+    public ImageSource? PicSource { get; set; }
 }
