@@ -251,10 +251,8 @@ public sealed partial class SettingsWindow
             try
             {
                 using Stream s = c.Cropper.Source.PixelBuffer.AsStream();
-                using MemoryStream ms = new();
-                s.CopyTo(ms);
 
-                var result = await Services.ApiClient.SetProfilePicture(ms.ToArray());
+                var result = await Services.ApiClient.SetProfilePicture(s);
 
                 if (!result.OK)
                 {

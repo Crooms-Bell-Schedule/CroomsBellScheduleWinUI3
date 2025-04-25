@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
@@ -292,11 +293,11 @@ namespace CroomsBellScheduleCS.Utils
             return DecodeResponse<UserDetailsResponse>(responseText);
         }
 
-        public async Task<Result<SetProfilePictureResult?>> SetProfilePicture(byte[] image)
+        public async Task<Result<SetProfilePictureResult?>> SetProfilePicture(Stream c)
         {
             try
             {
-                var content = new ByteArrayContent(image);
+                var content = new StreamContent(c);
                 content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
 
                 AddAuthorization();
