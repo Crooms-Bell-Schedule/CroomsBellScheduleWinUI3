@@ -83,9 +83,9 @@
                 </StackPanel>
             </controls:SettingsCard>
 
-            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" />
+            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" Margin="4,0,0,0" />
 
-            <StackPanel Margin="0,8,0,0">
+            <StackPanel Margin="4,8,0,0">
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="App created by Mikhail Tyukin with some contributions from Suvan and Andrew. Crooms Bell Schedule backend was made by Andew Jennings. This application uses WinUI 3.0, C#, HtmlAgilityPack, System.Text.Json, Velopack and H.NotifyIcon.WinUI." TextWrapping="Wrap" />
 
                 <HyperlinkButton Margin="0,4,0,0" Content="Changelog" NavigateUri="https://mikhail.croomssched.tech/updateapiv2/changelog.html" />

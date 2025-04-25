@@ -585,7 +585,7 @@ public sealed partial class MainView
             TxtDuration.FontSize = 14;
             TxtCurrentClass.FontSize = 14;
             TxtClassPercent.FontSize = 14;
-            MainGrid.Margin = new Thickness();
+            MainGrid.Margin = new Thickness(0, 5, 0, 0);
         }
         else
         {
