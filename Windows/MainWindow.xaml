@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     Title="Crooms Bell Schedule">
 
-    <Grid>
+    <Grid Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">
         <views:MainView x:Name="mainView"></views:MainView>
     </Grid>
 </Window>
