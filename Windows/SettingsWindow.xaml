@@ -76,21 +76,35 @@
                             <Grid MinWidth="250">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <PersonPicture x:Name="FlyoutPFP2" Grid.Row="0" Grid.Column="0" Width="64" Height="64" VerticalAlignment="Top" Margin="0, 0, 10, 0"/>
-                                <TextBlock x:Name="FlyoutUsername2"  Grid.Row="0" Grid.Column="1" Text="Username" FontSize="24" Margin="5" VerticalAlignment="Center"/>
-                                <StackPanel Grid.Row="1" Grid.Column="1">
-                                    <HyperlinkButton x:Name="FlyoutChangeUsername" Content="Change Username" Visibility="Collapsed" Click="FlyoutChangeUsername_Click"/>
-                                    <HyperlinkButton x:Name="FlyoutChangePassword" Content="Change Password" Visibility="Collapsed" Click="FlyoutChangePassword_Click"/>
-                                    <HyperlinkButton x:Name="FlyoutChangePFP" Content="Change Profile Picture" Visibility="Collapsed" Click="FlyoutChangePFP_Click"/>
-                                    <HyperlinkButton x:Name="FlyoutSignIn" Content="Sign In" Click="FlyoutLogin_Click"  />
+                                <Button x:Name="FlyoutPFPButton" Grid.Row="0" Grid.Column="0" Padding="0" Margin="0, 0, 10, 0" CornerRadius="32" 
+                                        Click="FlyoutChangePFP_Click">
+                                    <Grid>
+                                        <PersonPicture x:Name="FlyoutPFP2"  Width="64" Height="64" VerticalAlignment="Top" />
+                                    </Grid>
+                                </Button>
+                                    
+                                <StackPanel Grid.Row="0"  Grid.Column="1">
+                                    <Button x:Name="FlyoutChangeUsername" FontSize="22" Margin="0, 0, 0, 0" 
+                                            Padding="12, 5, 10, 5" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" 
+                                            Click="FlyoutChangeUsername_Click">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock x:Name="FlyoutUserName2" Text="User Account"/>
+                                            <FontIcon Glyph="&#xE104;" Margin="10, 2, 0, 0" FontSize="16"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <StackPanel Orientation="Horizontal">
+                                        <HyperlinkButton x:Name="FlyoutSignIn" Content="Sign In" Click="FlyoutLogin_Click"/>
+                                        <HyperlinkButton x:Name="FlyoutChangePassword" Content="Change Password" Visibility="Collapsed" Click="FlyoutChangePassword_Click"/>
+                                    </StackPanel>
                                 </StackPanel>
+
+                                
                             </Grid>
                         </Flyout>
                     </Button.Flyout>

@@ -126,21 +126,22 @@ public sealed partial class SettingsWindow
 
     private void SetLoggedOutMode()
     {
-        FlyoutChangePFP.Visibility = Visibility.Collapsed;
-        FlyoutChangeUsername.Visibility = Visibility.Collapsed;
+        FlyoutPFPButton.IsEnabled = false;
+        //FlyoutChangeUsername.Visibility = Visibility.Collapsed;
         FlyoutChangePassword.Visibility = Visibility.Collapsed;
         FlyoutSignIn.Content = "Sign In";
         FlyoutSignIn.Click -= FlyoutLogout_Click;
         FlyoutSignIn.Click += FlyoutLogin_Click;
+        FlyoutChangeUsername.IsEnabled = false;
         FlyoutUserName.Text = "User Account";
-        FlyoutUsername2.Text = "User Account";
+        FlyoutUserName2.Text = "User Account";
         FlyoutPFP.ProfilePicture = null;
         FlyoutPFP2.ProfilePicture = null;
     }
     private void SetLoggedInMode()
     {
-        FlyoutChangePFP.Visibility = Visibility.Visible;
-        FlyoutChangeUsername.Visibility = Visibility.Visible;
+        FlyoutPFPButton.IsEnabled = true;
+        FlyoutChangeUsername.IsEnabled = true;
         FlyoutSignIn.Content = "Sign Out";
         FlyoutSignIn.Click -= FlyoutLogin_Click;
         FlyoutSignIn.Click += FlyoutLogout_Click;
@@ -158,7 +159,7 @@ public sealed partial class SettingsWindow
 
         FlyoutPFP.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=pfp&size=28"));
         FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=pfp&size=48"));
-        FlyoutUsername2.Text = FlyoutUserName.Text;
+        FlyoutUserName2.Text = FlyoutUserName.Text;
     }
 
     private async Task RunSignInProcess()
