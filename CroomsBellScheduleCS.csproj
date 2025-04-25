@@ -29,6 +29,7 @@
 		<None Remove="Views\SettingsView.xaml" />
 		<None Remove="Views\Settings\AnnouncementsView.xaml" />
 		<None Remove="Views\Settings\BellView.xaml" />
+		<None Remove="Windows\ErrorWindow.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -121,6 +122,9 @@
 		</Page>
 		<Page Update="Windows\MainView.xaml">
 			<SubType>Designer</SubType>
+		</Page>
+		<Page Update="Windows\ErrorWindow.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		</Page>
 		<Page Update="Windows\SettingsWindow.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

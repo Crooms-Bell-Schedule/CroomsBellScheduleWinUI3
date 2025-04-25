@@ -299,7 +299,9 @@ namespace CroomsBellScheduleCS.Utils
                 var content = new ByteArrayContent(image);
                 content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
 
-                var response = await _client.PutAsync("https://api.croomssched.tech/setProfilePicture", content);
+                AddAuthorization();
+
+                var response = await _client.PutAsync("https://api.croomssched.tech/users/setProfilePicture", content);
 
                 if (response.StatusCode == HttpStatusCode.NotFound)
                 {

@@ -1,4 +1,5 @@
 ﻿using CroomsBellScheduleCS.Utils;
+using CroomsBellScheduleCS.Windows;
 using HtmlAgilityPack;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
@@ -340,6 +341,11 @@ public sealed partial class FeedView
             dlg2.Content = "Application error: " + ex.Message;
 
             await dlg2.ShowAsync();
+
+            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+
+            if (MainView.Settings != null)
+                MainView.Settings.ShowInAppNotification("Failed to load feed", "Page initialization failed", 0);
         }
     }
 
