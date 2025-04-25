@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using Windows.Graphics.Imaging;
 using Windows.Storage.Streams;
+using static CroomsBellScheduleCS.Provider.APIProvider;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
@@ -252,6 +253,9 @@ public sealed partial class FeedView
             result.Add(new Run() { Text = WebUtility.HtmlDecode(data) });
             return result;
         }
+
+        // remove accidental new lines
+        data = data.TrimEnd(['\r', '\n']);
 
         HtmlDocument doc = new();
         doc.LoadHtml(data);
@@ -491,7 +495,7 @@ public sealed partial class FeedView
 
         content.ShowingLoading = true;
 
-        var result = await Services.ApiClient.PostFeed(content.PostContent, content.PostLink);
+        var result = await Services.ApiClient.PostFeed(content.PostContent.TrimEnd(['\r', '\n']), content.PostLink);
         if (result.OK)
         {
             sender.Hide();

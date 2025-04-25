@@ -27,6 +27,7 @@
 		<None Remove="Styles\TextBlock.xaml" />
 		<None Remove="Styles\Thickness.xaml" />
 		<None Remove="Views\SettingsView.xaml" />
+		<None Remove="Views\Settings\AnnouncementsView.xaml" />
 		<None Remove="Views\Settings\BellView.xaml" />
 	</ItemGroup>
 
@@ -94,6 +95,10 @@
 		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		  <SubType>Designer</SubType>
 		  <Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\Settings\AnnouncementsView.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		  <SubType>Designer</SubType>
 		</Page>
 		<Page Update="Views\Settings\PfpUploadView.xaml">
 		  <SubType>Designer</SubType>

@@ -1,7 +1,9 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Windows;
 using Microsoft.UI.Xaml;
+using Microsoft.Win32;
 using static CroomsBellScheduleCS.Utils.SettingsManager;
 
 namespace CroomsBellScheduleCS.Views.Settings;
@@ -133,6 +135,43 @@ public sealed partial class PersonalizationView
         SettingsManager.Settings.Show5MinNotification = chk5MinNotif.IsOn;
         SettingsManager.Settings.Show1MinNotification = chk1MinNotif.IsOn;
         await SaveSettings();
+    }
+
+    private void CheckStartup()
+    {
+        RegistryKey? rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+        if (rk != null)
+        {
+            if (rk.GetValue("Crooms Bell Schedule App") != null)
+            {
+                chkTaskbar.IsOn = true;
+            }
+            else
+            {
+                chkTaskbar.IsOn = false;
+            }
+        }
+    }
+    private void chkStartup_Checked(object sender, RoutedEventArgs e)
+    {
+        if (!_initialized) return;
+
+        RegistryKey? rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+        if (rk != null && Environment.ProcessPath != null)
+        {
+            if (chkTaskbar.IsOn)
+                rk.SetValue("Crooms Bell Schedule App", Environment.ProcessPath);
+            else
+                rk.DeleteValue("Crooms Bell Schedule App", false);
+        }
+        else
+        {
+            _initialized = false;
+            chkTaskbar.IsOn = false;
+            _initialized = true;
+        }
     }
 
     private ElementTheme GetSelection()

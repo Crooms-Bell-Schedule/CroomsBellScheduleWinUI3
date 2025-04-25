@@ -33,7 +33,6 @@ public sealed partial class MainView
 
     private static IntPtr _oldWndProc;
     private static Delegate? _newWndProcDelegate;
-    private double? _defaultProgressbarMinHeight;
     private bool _isTransition;
     private int _lunchOffset;
     private BellScheduleReader? _reader;
@@ -70,7 +69,7 @@ public sealed partial class MainView
             {
                 await SettingsManager.LoadSettings();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageDialog dlg = new MessageDialog($"Exception:{Environment.NewLine}{ex}")
                 {
@@ -83,6 +82,15 @@ public sealed partial class MainView
             SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
             if (_windowApp == null) throw new Exception("WinUI init failed");
 
+
+            XamlRoot.Changed += (a, b) =>
+            {
+                if (XamlRoot.RasterizationScale != RasterizationScale)
+                {
+                    RasterizationScale = XamlRoot.RasterizationScale;
+                    SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
+                }
+            };
 
             // Set window to be always on top
             _windowApp.SetPresenter(AppWindowPresenterKind.Overlapped);
@@ -214,7 +222,8 @@ public sealed partial class MainView
                 var newVersion = await _updateManager.CheckForUpdatesAsync();
                 if (newVersion != null)
                 {
-                    await _updateManager.DownloadUpdatesAsync(newVersion, delegate (int progress) {
+                    await _updateManager.DownloadUpdatesAsync(newVersion, delegate (int progress)
+                    {
                         DispatcherQueue.TryEnqueue(() =>
                         {
                             TxtCurrentClass.Text = "Downloading updates";
@@ -290,7 +299,7 @@ public sealed partial class MainView
                         .AddText("Bell rings soon")
                         .AddText("The bell rings in less than 1 minute")
                         //.AddButton(new AppNotificationButton
-                       // { InputId = "doCancelClassProc", Content = "Cancel class" })
+                        // { InputId = "doCancelClassProc", Content = "Cancel class" })
                         .AddProgressBar(
                             new AppNotificationProgressBar
                             {
@@ -307,9 +316,9 @@ public sealed partial class MainView
 
             if (duration.Minutes == 0)
             {
-                TxtCurrentClass.Foreground = (duration.Seconds & 1) != 0
-                    ? Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush
-                    : Application.Current.Resources["TextFillColorPrimaryBrush"] as SolidColorBrush;
+                TxtCurrentClass.Style = (duration.Seconds & 1) != 0
+                    ? TxtCurrentClass.Style = (Style)Resources["CriticalTime"]
+                    : TxtCurrentClass.Style = (Style)Resources["NormalTime"];
                 return $"00:{duration.Seconds:D2}";
             }
 
@@ -467,7 +476,7 @@ public sealed partial class MainView
 
     public static int GetDpi()
     {
-        return Win32.GetDpiForWindow(WindowNative.GetWindowHandle(MainWindow.Instance));
+        return GetDpiForWindow(WindowNative.GetWindowHandle(MainWindow.Instance));
     }
 
     private async Task UpdateBellSchedule()
@@ -518,27 +527,28 @@ public sealed partial class MainView
             IntPtr taskbarUIHWnd =
                 FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
 
-            SetParent(handle, taskbarUIHWnd);   
+            SetParent(handle, taskbarUIHWnd);
 
 
             RECT rc = new();
             GetClientRect(trayHWnd, ref rc);
             var taskbarHeight = rc.bottom - rc.top;
 
-            if (_windowApp != null)
-                _windowApp.MoveAndResize(
-                    new RectInt32 {
-                        Width = GetDpi() * 4,
-                        Height = taskbarHeight + (int)(14* XamlRoot.RasterizationScale)
-                    }
-                );
+            if (_windowApp != null && taskbarHeight != 0)
+            {
+                _windowApp.Resize(
+                        new SizeInt32
+                        {
+                            Width = GetDpi() * 4,
+                            Height = taskbarHeight
+                        });
+                _windowApp.Move(new());
+            }
 
             MainButton.Visibility = Visibility.Collapsed;
             TxtDuration.FontSize = 14;
             TxtCurrentClass.FontSize = 14;
             TxtClassPercent.FontSize = 14;
-            _defaultProgressbarMinHeight = ProgressBar.MinHeight;
-            ProgressBar.MinHeight = 0;// 1 * XamlRoot.RasterizationScale;
         }
         else
         {
@@ -548,8 +558,6 @@ public sealed partial class MainView
             TxtDuration.FontSize = 16;
             TxtCurrentClass.FontSize = 16;
             TxtClassPercent.FontSize = 16;
-            if (_defaultProgressbarMinHeight != null)
-                ProgressBar.MinHeight = _defaultProgressbarMinHeight.Value;
         }
     }
 
@@ -575,12 +583,12 @@ public sealed partial class MainView
 
     private IntPtr WndProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
     {
-        if (msg == Win32.WM_SYSCOMMAND && wParam == Win32.SC_MAXIMIZE)
+        if (msg == WM_SYSCOMMAND && wParam == SC_MAXIMIZE)
             // Ignore WM_SYSCOMMAND SC_MAXIMIZE message
             // Thank you Microsoft :)
             return 1;
 
-        if (msg == Win32.WM_GETMINMAXINFO)
+        if (msg == WM_GETMINMAXINFO)
         {
             int dpi = GetDpi();
             float scalingFactor = (float)dpi / 96;
@@ -664,7 +672,7 @@ public sealed partial class MainView
 
     private void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
-        DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low,async () => { await Init(); });
+        DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, async () => { await Init(); });
     }
 
     internal async Task UpdateScheduleSource()

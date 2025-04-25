@@ -14,7 +14,7 @@
 
 
     <Grid>
-        <Grid x:Name="FeedUI">
+        <Grid x:Name="FeedUI" Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>

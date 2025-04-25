@@ -32,7 +32,7 @@
             <Setter Property="Foreground" Value="{ThemeResource SystemFillColorAttentionBrush}" />
         </Style>
     </UserControl.Resources>
-    
+
     <Grid Margin="5, 5, 5, 2.5">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -50,7 +50,7 @@
             BorderThickness="0">
             <Button.Flyout>
                 <MenuFlyout>
-                    <MenuFlyoutItem Text="Settings" Click="Settings_Click" />
+                    <MenuFlyoutItem Text="Options" Click="Settings_Click" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem Text="Quit" Click="Quit_Click" />
                 </MenuFlyout>
@@ -58,13 +58,13 @@
             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe700;" />
         </Button>
 
-        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" Text="Downloading bell schedule" />
-        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" Text="" />
+        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" Text="Downloading bell schedule" FontSize="8"/>
+        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" Text="" FontSize="8"/>
 
         <TextBlock x:Name="TxtClassPercent" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
-               HorizontalAlignment="Right" Text="" />
+               HorizontalAlignment="Right" Text="" FontSize="8"/>
 
-        <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Height="10" Grid.ColumnSpan="2" />
+        <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" />
         <ProgressRing x:Name="LoadingThing" Grid.Row="1" Grid.Column="1" />
 
         <tb:TaskbarIcon
@@ -76,7 +76,7 @@
         >
             <tb:TaskbarIcon.ContextFlyout>
                 <MenuFlyout>
-                    <MenuFlyoutItem Text="Settings" Click="Settings_Click"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Options" Click="Settings_Click"></MenuFlyoutItem>
                     <MenuFlyoutItem Text="Quit" Click="Quit_Click"></MenuFlyoutItem>
                 </MenuFlyout>
             </tb:TaskbarIcon.ContextFlyout>

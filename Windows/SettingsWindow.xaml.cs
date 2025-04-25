@@ -1,20 +1,17 @@
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using CroomsBellScheduleCS.Utils;
-using CroomsBellScheduleCS.Views;
 using CroomsBellScheduleCS.Views.Settings;
-using Microsoft.Security.Authentication.OAuth;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Graphics;
-using Windows.UI.Xaml.Media;
 using WinRT.Interop;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -365,6 +362,7 @@ public sealed partial class SettingsWindow
         content.ShowingLoading = true;
 
         content.IsEnabled = false;
+        await Task.Delay(5);
 
         /*if (true)
         {*/
@@ -419,16 +417,28 @@ public sealed partial class SettingsWindow
     {
         if (!(await Services.ApiClient.LogoutAsync()).OK)
         {
-            ContentDialog dlg2 = new() { Title = "Server/App error" };
-            dlg2.XamlRoot = Content.XamlRoot;
-            dlg2.CloseButtonText = "OK";
-            dlg2.Content = "Failed to logout";
+            ContentDialog dlg = new() { Title = "Server/App error" };
+            dlg.XamlRoot = Content.XamlRoot;
+            dlg.CloseButtonText = "OK";
+            dlg.Content = "Failed to logout";
 
-            await dlg2.ShowAsync();
+            await dlg.ShowAsync();
         }
         else
         {
             SetLoggedOutMode();
         }
+    }
+
+    private async void Annc_Click(object sender, RoutedEventArgs e)
+    {
+        await new ContentDialog()
+        {
+            Title = "Announcements",
+            PrimaryButtonText = "OK",
+            DefaultButton = ContentDialogButton.Primary,
+            Content = new AnnouncementsView(),
+            XamlRoot = Content.XamlRoot
+        }.ShowAsync();
     }
 }

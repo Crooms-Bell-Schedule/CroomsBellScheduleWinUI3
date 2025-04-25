@@ -8,5 +8,5 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <TextBlock x:Name="blk" TextWrapping="Wrap"></TextBlock>
+    <TextBlock x:Name="blk" TextWrapping="Wrap" IsTextSelectionEnabled="True"></TextBlock>
 </UserControl>

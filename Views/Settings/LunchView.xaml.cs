@@ -46,7 +46,7 @@ public sealed partial class LunchView
 
         lunchGrid.Children.Clear();
 
-        int row = 0;
+        int row = 1;
 
         void AddLunch(LunchEntry? e, string dow)
         {
@@ -71,13 +71,17 @@ public sealed partial class LunchView
         }
 
         // TODO: this is not good code
+        lunchGrid.Children.Add(lunchTitle);
         AddLunch(data.lunch.Monday, "Monday");
         AddLunch(data.lunch.Tuesday, "Tuesday");
         AddLunch(data.lunch.Wednesday, "Wednesday");
         AddLunch(data.lunch.Thursday, "Thursday");
         AddLunch(data.lunch.Friday, "Friday");
 
+
         lunchGrid.Children.Add(lunchImageToday);
+        lunchGrid.Children.Add(quickBitsTitle);
+        lunchGrid.Children.Add(quickBits);
         quickBits.Text = "";
         int i = 1;
         foreach (var item in data.quickBits)

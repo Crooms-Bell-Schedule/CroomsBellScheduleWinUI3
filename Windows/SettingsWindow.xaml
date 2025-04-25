@@ -54,43 +54,51 @@
                        TextWrapping="NoWrap"
                        Style="{StaticResource CaptionTextBlockStyle}" Text="Crooms Bell Schedule"
                        Margin="15,0,0,0" Grid.Column="1"/>
-            <Button Grid.Column="3" Padding="5" HorizontalAlignment="Right" MaxHeight="40" Visibility="Visible">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <PersonPicture x:Name="FlyoutPFP" MaxHeight="28" MaxWidth="28" Grid.Column="0"/>
-                    <TextBlock x:Name="FlyoutUserName" Grid.Column="1" Text="User Account" VerticalAlignment="Center" Margin="15,0,15,0"></TextBlock>
+            <StackPanel Grid.Column="3" HorizontalAlignment="Right" Orientation="Horizontal">
 
-                </Grid>
+                <Button Height="40" Visibility="Visible" Margin="5,0,5,0" Click="Annc_Click">
+                    <StackPanel Orientation="Horizontal">
+                        <FontIcon Glyph="&#xE789;" Margin="0,0,10,0" />
+                        <TextBlock>Announcements</TextBlock>
+                    </StackPanel>
+                </Button>
+                <Button MaxHeight="40" Visibility="Visible">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <PersonPicture x:Name="FlyoutPFP" MaxHeight="28" MaxWidth="28" Grid.Column="0"/>
+                        <TextBlock x:Name="FlyoutUserName" Grid.Column="1" Text="User Account" VerticalAlignment="Center" Margin="10,0,10,0"></TextBlock>
+                    </Grid>
 
-                <Button.Flyout>
-                    <Flyout>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
+                    <Button.Flyout>
+                        <Flyout>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                            <PersonPicture x:Name="FlyoutPFP2" Grid.Row="0" Grid.Column="0" Width="64" Height="64" VerticalAlignment="Top"/>
+                                <PersonPicture x:Name="FlyoutPFP2" Grid.Row="0" Grid.Column="0" Width="64" Height="64" VerticalAlignment="Top"/>
 
-                            <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
-                                <TextBlock x:Name="FlyoutUsername2"  Grid.Row="0" Grid.Column="1" Text="Username" FontSize="18" Margin="5" VerticalAlignment="Center"/>
-                                <Button x:Name="FlyoutLogin" Content="Login" Click="FlyoutLogin_Click" Margin="5"/>
-                                <Button x:Name="FlyoutLogout" Content="Logout" Visibility="Collapsed" Click="FlyoutLogout_Click" Margin="5"/>
-                                <Button x:Name="FlyoutChangePFP" Content="Change Profile Picture" Click="FlyoutChangePFP_Click" Margin="5"/>
-                                <Button x:Name="FlyoutChangeUsername" Content="Change Username" Click="FlyoutChangeUsername_Click" Margin="5"/>
-                                <Button x:Name="FlyoutChangePW" Content="Change Password" Click="FlyoutChangePW_Click" Margin="5"/>
-                            </StackPanel>
-                        </Grid>
-                    </Flyout>
-                </Button.Flyout>
-            </Button>
+                                <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="1">
+                                    <TextBlock x:Name="FlyoutUsername2"  Grid.Row="0" Grid.Column="1" Text="Username" FontSize="18" Margin="5" VerticalAlignment="Center"/>
+                                    <Button x:Name="FlyoutLogin" Content="Login" Click="FlyoutLogin_Click" Margin="5"/>
+                                    <Button x:Name="FlyoutLogout" Content="Logout" Visibility="Collapsed" Click="FlyoutLogout_Click" Margin="5"/>
+                                    <Button x:Name="FlyoutChangePFP" Content="Change Profile Picture" Click="FlyoutChangePFP_Click" Margin="5"/>
+                                    <Button x:Name="FlyoutChangeUsername" Content="Change Username" Click="FlyoutChangeUsername_Click" Margin="5"/>
+                                    <Button x:Name="FlyoutChangePW" Content="Change Password" Click="FlyoutChangePW_Click" Margin="5"/>
+                                </StackPanel>
+                            </Grid>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
         </Grid>
         <NavigationView
             x:Name="NavigationViewControl"
@@ -113,7 +121,7 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEA8F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Lunch Menu" x:Name="LunchMenuItem">
+                <NavigationViewItem Content="Misc" x:Name="LunchMenuItem">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED56;" />
                     </NavigationViewItem.Icon>

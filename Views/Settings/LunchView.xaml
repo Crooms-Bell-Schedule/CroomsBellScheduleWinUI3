@@ -10,39 +10,38 @@
 
     <Grid>
         <Grid x:Name="LunchUI" Visibility="Collapsed">
-            <Pivot x:Name="tabView" Title="Lunch/Quick Bits">
-                <PivotItem x:Name="lunchTab" Header="Lunch Menu">
-                    <Grid x:Name="lunchGrid">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"></ColumnDefinition>
-                            <ColumnDefinition Width="5"/>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
+            <Grid x:Name="lunchGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"></ColumnDefinition>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock x:Name="lunchTitle" Grid.Row="0" Style="{ThemeResource SubtitleTextBlockStyle}">Lunch</TextBlock>
 
 
-                        <Image x:Name="lunchImageToday"
+                <Image x:Name="lunchImageToday"
                                    Grid.RowSpan="15"
                                    Grid.ColumnSpan="5"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
                                    MaxWidth="200" MaxHeight="150"/>
-                    </Grid>
-                </PivotItem>
-                <PivotItem x:Name="quickBitsTab" Header="Quick Bits">
-                    <TextBlock x:Name="quickBits">Loading</TextBlock>
-                </PivotItem>
-            </Pivot>
+
+                <TextBlock x:Name="quickBitsTitle" Grid.Row="6" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,15,0,0">Quick Bits</TextBlock>
+                <TextBlock x:Name="quickBits" Grid.Row="7" Grid.ColumnSpan="15">Loading</TextBlock>
+            </Grid>
         </Grid>
 
         <StackPanel x:Name="Loader" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">

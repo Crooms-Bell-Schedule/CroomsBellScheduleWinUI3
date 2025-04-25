@@ -299,7 +299,7 @@ namespace CroomsBellScheduleCS.Utils
                 var content = new ByteArrayContent(image);
                 content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
 
-                var response = await _client.PostAsync("https://api.croomssched.tech/setProfilePicture", content);
+                var response = await _client.PutAsync("https://api.croomssched.tech/setProfilePicture", content);
 
                 if (response.StatusCode == HttpStatusCode.NotFound)
                 {
@@ -315,8 +315,35 @@ namespace CroomsBellScheduleCS.Utils
                 return new() { Exception = ex, OK = false };
             }
         }
+
+        internal async Task<Result<AnnouncementData?>> GetAnnouncements()
+        {
+            try
+            {
+                var response = await _glitchClient.GetAsync("https://mikhail.croomssched.tech/annc.json");
+
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                return new Result<AnnouncementData?>() { OK = true, Value = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.AnnouncementData) };
+            }
+            catch (Exception ex)
+            {
+                return new Result<AnnouncementData?>() { OK = false, Exception = ex };
+            }
+        }
     }
 
+    public class AnnouncementData
+    {
+        public List<Announcement> Announcements { get; set; } = [];
+    }
+    public class Announcement
+    {
+        public int ID { get; set; }
+        public string Date { get; set; } = "";
+        public string Title { get; set; } = "";
+        public string Content { get; set; } = "";
+    }
     public class LoginRequest
     {
         public string username { get; set; } = "";

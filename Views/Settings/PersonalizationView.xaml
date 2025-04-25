@@ -66,6 +66,10 @@
                 </TeachingTip.HeroContent>
             </TeachingTip>
 
+            <controls:SettingsCard Header="Start when Windows starts" Description="Automatically open the Crooms Bell Schedule app when Windows starts.">
+                <ToggleSwitch x:Name="chkStartup" Toggled="chkStartup_Checked"></ToggleSwitch>
+            </controls:SettingsCard>
+
             <controls:SettingsCard Header="5-Minute notification" Description="Show 5 minutes remaining notification">
                 <ToggleSwitch x:Name="chk5MinNotif" Toggled="chk5MinNotif_Checked"></ToggleSwitch>
             </controls:SettingsCard>
