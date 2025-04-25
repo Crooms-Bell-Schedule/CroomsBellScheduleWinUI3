@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using CroomsBellScheduleCS.Provider;
 using CroomsBellScheduleCS.Utils;
@@ -78,17 +79,24 @@ public sealed partial class MainView
                 InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
                 await dlg.ShowAsync();
             }
+
+            RasterizationScale = XamlRoot.RasterizationScale;
+
             SetTheme(SettingsManager.Settings.Theme);
-            SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
+            await SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
             if (_windowApp == null) throw new Exception("WinUI init failed");
 
-
-            XamlRoot.Changed += (a, b) =>
+            XamlRoot.Changed += async (a, b) =>
             {
                 if (XamlRoot.RasterizationScale != RasterizationScale)
                 {
                     RasterizationScale = XamlRoot.RasterizationScale;
-                    SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
+
+                    if (SettingsManager.Settings.ShowInTaskbar)
+                    {
+                        await SetTaskbarMode(false);
+                        await SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
+                    }
                 }
             };
 
@@ -508,7 +516,7 @@ public sealed partial class MainView
         UpdateCurrentClass();
     }
 
-    public void SetTaskbarMode(bool showInTaskbar)
+    public async Task SetTaskbarMode(bool showInTaskbar)
     {
         nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
         WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
@@ -523,32 +531,61 @@ public sealed partial class MainView
         if (showInTaskbar)
         {
             MainWindow.Instance.RemoveMica();
-            IntPtr trayHWnd = FindWindowW("Shell_TrayWnd", null);
-            IntPtr taskbarUIHWnd =
-                FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
 
-            SetParent(handle, taskbarUIHWnd);
+            IntPtr trayHWnd;
+            IntPtr taskbarUIHWnd;
 
-
-            RECT rc = new();
-            GetClientRect(trayHWnd, ref rc);
-            var taskbarHeight = rc.bottom - rc.top;
-
-            if (_windowApp != null && taskbarHeight != 0)
+            int taskbarHeight = 0;
+            int attempts = 0;
+            while (taskbarHeight == 0)
             {
-                _windowApp.Resize(
-                        new SizeInt32
-                        {
-                            Width = GetDpi() * 4,
-                            Height = taskbarHeight
-                        });
-                _windowApp.Move(new());
+                if (attempts >= 300)
+                {
+                    // exit taskbar mode if taskbar height is still zero
+                    // this could occur when DPI is changing
+                    await SetTaskbarMode(false);
+                    return;
+                }
+
+                trayHWnd = FindWindowW("Shell_TrayWnd", null);
+                taskbarUIHWnd =
+                    FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
+
+                RECT rc = new();
+                GetClientRect(taskbarUIHWnd, ref rc);
+                taskbarHeight = rc.bottom - rc.top;
+
+                if (taskbarHeight == 0)
+                {
+                    attempts++;
+                    await Task.Delay(200);
+                }
+                else
+                {
+                    SetParent(handle, taskbarUIHWnd);
+                }
+            }
+
+
+
+            if (_windowApp != null)
+            {
+                //_windowApp.Resize(
+                //        new SizeInt32
+                //        {
+                //            Width = (int)(350 * RasterizationScale),
+                //            Height = (int)(taskbarHeight * RasterizationScale)
+                //        });
+                //_windowApp.Move(new());
+
+                SetWindowPos(handle, 0, 0, 0, (int)(350 * RasterizationScale), (int)(taskbarHeight + 8), 0);
             }
 
             MainButton.Visibility = Visibility.Collapsed;
             TxtDuration.FontSize = 14;
             TxtCurrentClass.FontSize = 14;
             TxtClassPercent.FontSize = 14;
+            MainGrid.Margin = new Thickness();
         }
         else
         {
@@ -558,6 +595,7 @@ public sealed partial class MainView
             TxtDuration.FontSize = 16;
             TxtCurrentClass.FontSize = 16;
             TxtClassPercent.FontSize = 16;
+            MainGrid.Margin = new Thickness(5, 5, 5, 2.5);
         }
     }
 
@@ -595,12 +633,8 @@ public sealed partial class MainView
 
             MINMAXINFO minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
             minMaxInfo.ptMinTrackSize.X = (int)(100 * scalingFactor); // TODO SUVAN
-            minMaxInfo.ptMinTrackSize.Y = (int)(100 * scalingFactor); // TODO SUVAN
+            minMaxInfo.ptMinTrackSize.Y = (int)(50 * scalingFactor); // TODO SUVAN
             Marshal.StructureToPtr(minMaxInfo, lParam, true);
-        }
-        else if (msg == WM_DPICHANGED)
-        {
-            SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
         }
 
         return CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
@@ -660,7 +694,7 @@ public sealed partial class MainView
         _lunchOffset = DetermineLunchOffsetFromToday();
         SetLunch(_lunchOffset);
     }
-
+    
     private int DetermineLunchOffsetFromToday()
     {
         if (_reader == null) return SettingsManager.Settings.LunchOffset;

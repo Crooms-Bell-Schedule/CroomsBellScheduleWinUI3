@@ -75,8 +75,8 @@ public static partial class Win32
     [LibraryImport("user32.dll")]
     [return:MarshalAs(UnmanagedType.Bool)]
     public static partial bool GetMonitorInfoW(IntPtr hwnd, ref MONITORINFO data);
-    [DllImport("Microsoft.Internal.FrameworkUdk.dll")]
-    public static extern int Windowing_GetWindowIdFromWindow(
-    IntPtr hwnd,
-    out WindowId windowId);
+    [LibraryImport("user32.dll")]
+    public static partial int SetWindowPos(IntPtr hwnd, IntPtr after, int x, int y, int cx, int cy, int flags);
+    [LibraryImport("user32.dll")]
+    public static partial int IsProcessDPIAware();
 }

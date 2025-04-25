@@ -19,7 +19,7 @@
                    Header="Theme">
                 <ComboBox x:Name="ThemeCombo" SelectionChanged="ThemeCombo_SelectionChanged">
                     <ComboBox.Items>
-                        <ComboBoxItem Content="Default"/>
+                        <ComboBoxItem Content="System"/>
                         <ComboBoxItem Content="Light"/>
                         <ComboBoxItem Content="Dark"/>
                     </ComboBox.Items>
@@ -44,13 +44,13 @@
                 </ComboBox>
             </controls:SettingsCard>
 
-            <controls:SettingsCard Header="5th Period Lunch">
+            <controls:SettingsCard Header="5th Period Lunch" Description="Lunch for all 7, activity and odd block days">
                 <StackPanel Orientation="Horizontal">
                     <ToggleButton x:Name="p5LunchA" Margin="5" Checked="p5LunchA_Checked" Unchecked="Lunch_Unchecked">A</ToggleButton>
                     <ToggleButton x:Name="p5LunchB" Margin="5" Checked="p5LunchB_Checked" Unchecked="Lunch_Unchecked">B</ToggleButton>
                 </StackPanel>
             </controls:SettingsCard>
-            <controls:SettingsCard Header="Homeroom Lunch">
+            <controls:SettingsCard Header="Homeroom Lunch" Description="Lunch for even block days">
                 <StackPanel Orientation="Horizontal">
                     <ToggleButton x:Name="pHLunchA" Margin="5" Checked="pHLunchA_Checked" Unchecked="Lunch_Unchecked">A</ToggleButton>
                     <ToggleButton x:Name="pHLunchB" Margin="5" Checked="pHLunchB_Checked" Unchecked="Lunch_Unchecked">B</ToggleButton>
@@ -77,7 +77,7 @@
                 <ToggleSwitch x:Name="chk1MinNotif" Toggled="chk5MinNotif_Checked"></ToggleSwitch>
             </controls:SettingsCard>
 
-            <controls:SettingsCard Header="Version" Description="v1.0" x:Name="VersionCard">
+            <controls:SettingsCard Header="Version" Description="Loading" x:Name="VersionCard">
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="ButtonCheckForUpdates" Click="ButtonCheckForUpdates_Click">Check for updates</Button>
                 </StackPanel>

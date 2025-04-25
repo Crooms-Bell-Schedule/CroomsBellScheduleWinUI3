@@ -33,7 +33,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Margin="5, 5, 5, 2.5">
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />

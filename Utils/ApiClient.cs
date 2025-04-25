@@ -303,7 +303,7 @@ namespace CroomsBellScheduleCS.Utils
 
                 if (response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    return new() { OK = false, Exception = new Exception("Coming soon!") };
+                    return new() { OK = false, Exception = new Exception("Server error: API endpoint not found.") };
                 }
 
                 var responseText = await response.Content.ReadAsStringAsync();

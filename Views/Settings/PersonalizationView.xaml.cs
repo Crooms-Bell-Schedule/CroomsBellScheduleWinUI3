@@ -66,7 +66,7 @@ public sealed partial class PersonalizationView
         }
         await SaveSettings();
 
-        MainWindow.ViewInstance.SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
+        await MainWindow.ViewInstance.SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
     }
 
     private async void p5LunchA_Checked(object sender, RoutedEventArgs e)

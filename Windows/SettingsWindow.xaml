@@ -55,20 +55,19 @@
                        Style="{StaticResource CaptionTextBlockStyle}" Text="Crooms Bell Schedule"
                        Margin="15,0,0,0" Grid.Column="1"/>
             <StackPanel Grid.Column="3" HorizontalAlignment="Right" Orientation="Horizontal">
-
-                <Button Height="40" Visibility="Visible" Margin="5,0,5,0" Click="Annc_Click">
+                <Button Height="33" Visibility="Visible" Margin="5,0,5,0" Click="Annc_Click">
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE789;" Margin="0,0,10,0" />
                         <TextBlock>Announcements</TextBlock>
                     </StackPanel>
                 </Button>
-                <Button MaxHeight="40" Visibility="Visible">
+                <Button Height="33" Visibility="Visible" Padding="5,0,0,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <PersonPicture x:Name="FlyoutPFP" MaxHeight="28" MaxWidth="28" Grid.Column="0"/>
+                        <PersonPicture x:Name="FlyoutPFP" MaxHeight="25" MaxWidth="25" Grid.Column="0"/>
                         <TextBlock x:Name="FlyoutUserName" Grid.Column="1" Text="User Account" VerticalAlignment="Center" Margin="10,0,10,0"></TextBlock>
                     </Grid>
 
