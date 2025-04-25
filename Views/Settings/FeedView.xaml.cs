@@ -152,7 +152,7 @@ public sealed partial class FeedView
         var ch = ParseTheHtml(node.ChildNodes);
 
         Span? rootElem;
-        if (node.Name == "b" || node.Name == "strong")
+        if (node.Name == "b" || node.Name == "strong" || node.Name == "bold")
         {
             rootElem = new Bold();
         }
