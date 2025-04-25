@@ -88,6 +88,7 @@
                                 <StackPanel Grid.Row="1" Grid.Column="1">
                                     <HyperlinkButton x:Name="FlyoutChangeUsername" Content="Change Username" Visibility="Collapsed" Click="FlyoutChangeUsername_Click"/>
                                     <HyperlinkButton x:Name="FlyoutChangePassword" Content="Change Password" Visibility="Collapsed" Click="FlyoutChangePassword_Click"/>
+                                    <HyperlinkButton x:Name="FlyoutChangePFP" Content="Change Profile Picture" Visibility="Collapsed" Click="FlyoutChangePFP_Click"/>
                                     <HyperlinkButton x:Name="FlyoutSignIn" Content="Sign In" Click="FlyoutLogin_Click"  />
                                 </StackPanel>
                             </Grid>

@@ -126,7 +126,7 @@ public sealed partial class SettingsWindow
 
     private void SetLoggedOutMode()
     {
-        //FlyoutChangePFP.IsEnabled = false;
+        FlyoutChangePFP.Visibility = Visibility.Collapsed;
         FlyoutChangeUsername.Visibility = Visibility.Collapsed;
         FlyoutChangePassword.Visibility = Visibility.Collapsed;
         FlyoutSignIn.Content = "Sign In";
@@ -139,7 +139,7 @@ public sealed partial class SettingsWindow
     }
     private void SetLoggedInMode()
     {
-        //FlyoutChangePFP.IsEnabled = true;
+        FlyoutChangePFP.Visibility = Visibility.Visible;
         FlyoutChangeUsername.Visibility = Visibility.Visible;
         FlyoutSignIn.Content = "Sign Out";
         FlyoutSignIn.Click -= FlyoutLogin_Click;
