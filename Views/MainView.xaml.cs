@@ -364,7 +364,7 @@ public sealed partial class MainView
                 TxtClassPercent.Text = "";
                 break;
             case SettingsManager.PercentageSetting.SigFig2:
-                TxtClassPercent.Text = Math.Floor(percent) + "%";
+                TxtClassPercent.Text = $"{percent:0}%";
                 break;
             case SettingsManager.PercentageSetting.SigFig3:
                 TxtClassPercent.Text = Math.Round(percent, 1).ToString("0.0") + "%";
