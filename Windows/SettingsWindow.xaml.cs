@@ -30,6 +30,7 @@ public sealed partial class SettingsWindow
         appWindow.Title = "Crooms Bell Schedule Settings";
         appWindow.SetIcon("Assets\\croomsBellSchedule.ico");
         ExtendsContentIntoTitleBar = true;
+        appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         SetTitleBar(AppTitleBar);
 
         SetRegionsForCustomTitleBar();
@@ -125,11 +126,12 @@ public sealed partial class SettingsWindow
 
     private void SetLoggedOutMode()
     {
-        FlyoutLogout.Visibility = Visibility.Collapsed;
-        FlyoutLogin.Visibility = Visibility.Visible;
-        FlyoutChangePFP.IsEnabled = false;
-        FlyoutChangeUsername.IsEnabled = false;
-        FlyoutChangePW.IsEnabled = false;
+        //FlyoutChangePFP.IsEnabled = false;
+        FlyoutChangeUsername.Visibility = Visibility.Collapsed;
+        FlyoutChangePassword.Visibility = Visibility.Collapsed;
+        FlyoutSignIn.Content = "Sign In";
+        FlyoutSignIn.Click -= FlyoutLogout_Click;
+        FlyoutSignIn.Click += FlyoutLogin_Click;
         FlyoutUserName.Text = "User Account";
         FlyoutUsername2.Text = "User Account";
         FlyoutPFP.ProfilePicture = null;
@@ -137,11 +139,12 @@ public sealed partial class SettingsWindow
     }
     private void SetLoggedInMode()
     {
-        FlyoutLogout.Visibility = Visibility.Visible;
-        FlyoutLogin.Visibility = Visibility.Collapsed;
-        FlyoutChangePFP.IsEnabled = true;
-        FlyoutChangeUsername.IsEnabled = true;
-        FlyoutChangePW.IsEnabled = Debugger.IsAttached; // TODO backend
+        //FlyoutChangePFP.IsEnabled = true;
+        FlyoutChangeUsername.Visibility = Visibility.Visible;
+        FlyoutSignIn.Content = "Sign Out";
+        FlyoutSignIn.Click -= FlyoutLogin_Click;
+        FlyoutSignIn.Click += FlyoutLogout_Click;
+        FlyoutChangePassword.Visibility = Debugger.IsAttached ? Visibility.Visible : Visibility.Collapsed; // TODO backend
     }
         
     public async Task RefreshUserInfo()
@@ -317,7 +320,7 @@ public sealed partial class SettingsWindow
         await dlg.ShowAsync();
     }
 
-    private async void FlyoutChangePW_Click(object sender, RoutedEventArgs e)
+    private async void FlyoutChangePassword_Click(object sender, RoutedEventArgs e)
     {
         ContentDialog dlg = new()
         {
@@ -329,22 +332,6 @@ public sealed partial class SettingsWindow
             Content = new PasswordChangeView()
         };
         dlg.PrimaryButtonClick += ChangePWDlg_OKClick;
-
-        await dlg.ShowAsync();
-    }
-
-    private async void FlyoutLogin_Click(object sender, RoutedEventArgs e)
-    {
-        ContentDialog dlg = new()
-        {
-            Title = "Login with bell schedule account",
-            XamlRoot = Content.XamlRoot,
-            PrimaryButtonText = "Login",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Primary,
-            Content = new LoginView()
-        };
-        dlg.PrimaryButtonClick += LoginDlg_OKClick;
 
         await dlg.ShowAsync();
     }
@@ -412,6 +399,21 @@ public sealed partial class SettingsWindow
         }
     }
 
+    private async void FlyoutLogin_Click(object sender, RoutedEventArgs e)
+    {
+        ContentDialog dlg = new()
+        {
+            Title = "Login with bell schedule account",
+            XamlRoot = Content.XamlRoot,
+            PrimaryButtonText = "Login",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary,
+            Content = new LoginView()
+        };
+        dlg.PrimaryButtonClick += LoginDlg_OKClick;
+
+        await dlg.ShowAsync();
+    }
 
     private async void FlyoutLogout_Click(object sender, RoutedEventArgs e)
     {
