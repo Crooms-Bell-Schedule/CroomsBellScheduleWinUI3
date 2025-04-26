@@ -1,5 +1,4 @@
 ﻿using CroomsBellScheduleCS.Utils;
-using CroomsBellScheduleCS.Windows;
 using HtmlAgilityPack;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
@@ -12,20 +11,20 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using Windows.Graphics.Imaging;
-using Windows.Storage.Streams;
-using static CroomsBellScheduleCS.Provider.APIProvider;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
 public sealed partial class FeedView
 {
-    internal static ObservableCollection<FeedUIEntry> Entries = [];
+    private static ObservableCollection<FeedUIEntry> Entries = [];
     private static bool _isLoaded = false;
+    private static Dictionary<string, ImageSource> ProfileImageCache = [];
+    private static HttpClient ImageClient = new();
+    private static bool ShownImageError = false;
+    private static bool _loadProfilePictures = true;
     public FeedView()
     {
         InitializeComponent();
@@ -76,26 +75,6 @@ public sealed partial class FeedView
         };
     }
 
-    private static Dictionary<string, ImageSource> ProfileImageCache = [];
-    private static HttpClient ImageClient = new();
-
-    private async Task<WriteableBitmap> UriToWriteableBitmap(Uri uri)
-    {
-        var randomAccessStreamReference = RandomAccessStreamReference.CreateFromUri(uri);
-        using (IRandomAccessStreamWithContentType stream = await randomAccessStreamReference.OpenReadAsync())
-        {
-            return await StreamToWriteableBitmap(stream);
-        }
-    }
-
-    private static async Task<WriteableBitmap> StreamToWriteableBitmap(IRandomAccessStream stream)
-    {
-        var decoder = await BitmapDecoder.CreateAsync(stream);
-        var writeableBitmap = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
-        stream.Seek(0);
-        await writeableBitmap.SetSourceAsync(stream);
-        return writeableBitmap;
-    }
     private static async Task<ImageSource?> RetrieveProfileImage(string uid)
     {
         string path = $"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={uid}.png&default=pfp&size";
@@ -103,22 +82,36 @@ public sealed partial class FeedView
         if (ProfileImageCache.TryGetValue(uid, out ImageSource? value))
             return value;
 
-        var headers = await ImageClient.GetAsync(path);
-        if (headers.IsSuccessStatusCode)
+        if (!_loadProfilePictures) return null;
+
+        try
         {
-            var rsp = await headers.Content.ReadAsByteArrayAsync();
+            var headers = await ImageClient.GetAsync(path);
+            if (headers.IsSuccessStatusCode)
+            {
+                var rsp = await headers.Content.ReadAsByteArrayAsync();
 
-            MemoryStream stream2 = new MemoryStream(rsp);
-            var stream = stream2.AsRandomAccessStream();
+                MemoryStream stream2 = new MemoryStream(rsp);
+                var stream = stream2.AsRandomAccessStream();
 
-            var decoder = await BitmapDecoder.CreateAsync(stream);
-            var writeableBitmap = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
-            stream.Seek(0);
-            await writeableBitmap.SetSourceAsync(stream);
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                var writeableBitmap = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
+                stream.Seek(0);
+                await writeableBitmap.SetSourceAsync(stream);
 
-            ProfileImageCache.Add(uid, writeableBitmap);
+                ProfileImageCache.Add(uid, writeableBitmap);
 
-            return writeableBitmap;
+                return writeableBitmap;
+            }
+        }
+        catch
+        {
+            _loadProfilePictures = false;
+
+            if (MainView.Settings != null)
+                MainView.Settings.ShowInAppNotification("Failed to connect to MikhailHosting. Images will be disabled", "Retrieving image failed", 0);
+
+            return null;
         }
 
         return null;
@@ -283,7 +276,9 @@ public sealed partial class FeedView
     {
         try
         {
-            if (!_isLoaded)
+            bool fullReload = !_loadProfilePictures;
+            _loadProfilePictures = true;
+            if (!_isLoaded || fullReload)
             {
                 var feedResult = await Services.ApiClient.GetFeed();
                 if (!feedResult.OK || feedResult.Value == null)
@@ -513,7 +508,6 @@ public sealed partial class FeedView
             content.ShowingLoading = false;
         }
     }
-    private static bool ShownImageError = false;
     private async void ImageBrush_ImageFailed(object sender, Microsoft.UI.Xaml.ExceptionRoutedEventArgs e)
     {
         if (ShownImageError) return;

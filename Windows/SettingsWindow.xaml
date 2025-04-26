@@ -148,7 +148,7 @@
                 <Frame x:Name="NavigationFrame" Margin="{StaticResource NavigationViewPageContentMargin}"
                        Navigated="NavigationFrame_Navigated" Loaded="NavigationFrame_Loaded" />
 
-                <InfoBar VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Background="Red">
+                <InfoBar VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">
                     <interactivity:Interaction.Behaviors>
                         <behaviors:StackedNotificationsBehavior x:Name="ExampleInAppNotification" />
                     </interactivity:Interaction.Behaviors>
