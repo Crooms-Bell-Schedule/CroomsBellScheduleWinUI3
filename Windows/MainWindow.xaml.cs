@@ -119,6 +119,8 @@ public sealed partial class MainWindow
 
     internal void UpdateTheme(ElementTheme theme)
     {
+        if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
+
         if (SettingsManager.Settings.ShowInTaskbar) return;
         try
         {

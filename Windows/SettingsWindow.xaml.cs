@@ -14,9 +14,6 @@ using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
 namespace CroomsBellScheduleCS.Windows;
 
 public sealed partial class SettingsWindow
@@ -29,11 +26,21 @@ public sealed partial class SettingsWindow
         appWindow.Resize(new SizeInt32(1300, 900));
         appWindow.Title = "Crooms Bell Schedule Settings";
         appWindow.SetIcon("Assets\\croomsBellSchedule.ico");
+        UpdateTheme();
         ExtendsContentIntoTitleBar = true;
         appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
         SetTitleBar(AppTitleBar);
 
         SetRegionsForCustomTitleBar();
+    }
+
+    public void UpdateTheme()
+    {
+        AppWindow appWindow = GetAppWindow();
+        var theme = SettingsManager.Settings.Theme;
+        appWindow.TitleBar.PreferredTheme = (theme == ElementTheme.Default ? TitleBarTheme.UseDefaultAppMode : (SettingsManager.Settings.Theme == ElementTheme.Light ? TitleBarTheme.Light : TitleBarTheme.Dark));
+        
+        if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
     }
 
     private void NavigationViewControl_DisplayModeChanged(NavigationView sender,
@@ -131,6 +138,7 @@ public sealed partial class SettingsWindow
         FlyoutChangePassword.Visibility = Visibility.Collapsed;
         FlyoutSignIn.Content = "Sign In";
         FlyoutSignIn.Click -= FlyoutLogout_Click;
+        FlyoutSignIn.Click -= FlyoutLogin_Click;
         FlyoutSignIn.Click += FlyoutLogin_Click;
         FlyoutChangeUsername.IsEnabled = false;
         FlyoutUserName.Text = "User Account";
@@ -144,6 +152,7 @@ public sealed partial class SettingsWindow
         FlyoutChangeUsername.IsEnabled = true;
         FlyoutSignIn.Content = "Sign Out";
         FlyoutSignIn.Click -= FlyoutLogin_Click;
+        FlyoutSignIn.Click -= FlyoutLogout_Click;
         FlyoutSignIn.Click += FlyoutLogout_Click;
         FlyoutChangePassword.Visibility = Debugger.IsAttached ? Visibility.Visible : Visibility.Collapsed; // TODO backend
     }

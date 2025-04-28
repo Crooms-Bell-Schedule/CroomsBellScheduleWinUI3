@@ -41,6 +41,7 @@ public sealed partial class MainView
     private bool _shown5MinNotif;
     private DispatcherTimer? _timer;
     private AppWindow? _windowApp;
+    private bool _settingsOpen = false;
 
     public BellScheduleReader? Reader { get => _reader; }
     public int LunchOffset { get => _lunchOffset; }
@@ -270,9 +271,9 @@ public sealed partial class MainView
         if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
 
         if (Settings != null)
-            if (Settings.Content is FrameworkElement rootElement2)
-                rootElement2.RequestedTheme = theme;
+            Settings.UpdateTheme();
         MainWindow.Instance.UpdateTheme(theme);
+
     }
 
     #region Bell
@@ -677,13 +678,18 @@ public sealed partial class MainView
 
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
-        Settings = new SettingsWindow();
-        Settings.Closed += _settings_Closed;
+        if (!_settingsOpen || Settings == null)
+        {
+            _settingsOpen = true;
+            Settings = new SettingsWindow();
+            Settings.Closed += _settings_Closed;
+        }
         Settings.Activate();
     }
 
     private void _settings_Closed(object sender, WindowEventArgs args)
     {
+        _settingsOpen = false;
         Settings = null;
     }
 
