@@ -25,11 +25,14 @@ public sealed partial class FeedView
     private static HttpClient ImageClient = new();
     private static bool ShownImageError = false;
     private static bool _loadProfilePictures = true;
+    public Flyout UserFlyoutPub { get => (Flyout)Resources["UserFlyout"]; }
+    internal static FeedView? Instance { get; set; }
     public FeedView()
     {
         InitializeComponent();
 
         FeedViewer.ItemsSource = Entries;
+        Instance = this;
     }
 
 
@@ -124,152 +127,6 @@ public sealed partial class FeedView
         {
             Entries.Add(await ProcessEntry(entry));
         }
-    }
-
-    private static List<Inline> ParseTheHtml(HtmlNodeCollection node)
-    {
-        List<Inline> result = [];
-
-        foreach (var item in node)
-        {
-            result.AddRange(ParseTheHtml(item));
-        }
-
-        return result;
-    }
-
-    private static List<Inline> ParseTheHtml(HtmlNode node)
-    {
-        List<Inline> result = [];
-
-        var ch = ParseTheHtml(node.ChildNodes);
-
-        Span? rootElem;
-        if (node.Name == "b" || node.Name == "strong" || node.Name == "bold")
-        {
-            rootElem = new Bold();
-        }
-        else if (node.Name == "i" || node.Name == "em")
-        {
-            rootElem = new Italic();
-        }
-        else if (node.Name == "del")
-        {
-            rootElem = new Span() { TextDecorations = global::Windows.UI.Text.TextDecorations.Strikethrough };
-        }
-        else if (node.Name == "span" || node.Name == "emoji")
-        {
-            rootElem = new Span();
-        }
-        else if (node.Name == "ins")
-        {
-            rootElem = new Underline();
-        }
-        else if (node.Name == "#text")
-        {
-            return [new Run() { Text = HtmlEntity.DeEntitize(node.InnerText) }];
-        }
-        else if (node.Name == "rainbow")
-        {
-            // TODO
-            rootElem = new Span() { Foreground = new SolidColorBrush(new() { R = 255, A = 255 }) };
-        }
-        else if (node.Name == "eason")
-        {
-            // TODO
-            rootElem = new Span() { Foreground = new SolidColorBrush(new() { R = 255, A = 255, B = 50 }) };
-        }
-        else if (node.Name == "br")
-        {
-            rootElem = new Span();
-            rootElem.Inlines.Add(new LineBreak());
-        }
-        else if (node.Name == "a")
-        {
-            rootElem = new Hyperlink();
-
-            foreach (var item in node.Attributes)
-            {
-                if (item.Name == "href")
-                {
-                    ((Hyperlink)rootElem).NavigateUri = FixLink(item.DeEntitizeValue);
-                }
-                else if (item.Name == "username")
-                {
-                    ((Hyperlink)rootElem).Click += delegate (Hyperlink h, HyperlinkClickEventArgs e)
-                    {
-                        if (MainView.Settings != null)
-                            MainView.Settings.ShowInAppNotification("Coming soon", "", 1);
-                    };
-                }
-            }
-        }
-        else
-        {
-            rootElem = new();
-            rootElem.Inlines.Add(new Run() { Text = "[PARSER ERROR: UNKNOWN ELEMENT " + node.Name + "]", Foreground = new SolidColorBrush(new() { R = 255, A = 255 }) });
-        }
-
-        foreach (var item in node.Attributes)
-        {
-            if (item.Name == "class" && item.Value == "urgent")
-            {
-                rootElem.Foreground = new SolidColorBrush(new() { R = 255, A = 255 });
-            }
-            else if (item.Name == "class" && item.Value == "rainbow")
-            {
-                rootElem.Foreground = new SolidColorBrush(new() { G = 255, A = 255 });
-            }
-        }
-
-        foreach (var item in ch)
-        {
-            rootElem.Inlines.Add(item);
-        }
-
-        result.Add(rootElem);
-
-        return result;
-    }
-    public static List<Inline> ProcessStringContent(string data)
-    {
-        List<Inline> result = [];
-
-        // remove uselss things
-        if (data.Contains("<span class=emoji>"))
-        {
-            data = data.Replace("<span class=emoji>", "").Replace("</span>", "");
-        }
-
-        if (!data.Contains('<'))
-        {
-            // do not parse non-html things to improve preformance
-            result.Add(new Run() { Text = WebUtility.HtmlDecode(data) });
-            return result;
-        }
-
-        // remove accidental new lines
-        data = data.TrimEnd(['\r', '\n']);
-
-        HtmlDocument doc = new();
-        doc.LoadHtml(data);
-
-        var rootNode = doc.DocumentNode;
-
-        foreach (var item in rootNode.ChildNodes)
-        {
-            result.AddRange(ParseTheHtml(item));
-        }
-
-        return result;
-    }
-
-    private static Uri FixLink(string url)
-    {
-        if (!url.StartsWith("https://") && !url.StartsWith("http://"))
-            url = "https://" + url;
-
-        return new(url);
     }
 
     private async void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

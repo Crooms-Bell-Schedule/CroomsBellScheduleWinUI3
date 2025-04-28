@@ -12,6 +12,25 @@
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
+    <Page.Resources>
+        <Flyout x:Key="UserFlyout" Placement="Right">
+            <!-- The flyout's DataContext must be the Image Source
+             of the image the flyout is attached to. -->
+            <Grid MinWidth="250">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <PersonPicture  Width="64" Height="64" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Padding="0" Margin="0, 0, 10, 0" />
+
+            </Grid>
+        </Flyout>
+    </Page.Resources>
+
 
     <Grid>
         <Grid x:Name="FeedUI" Visibility="Collapsed">
@@ -76,6 +95,8 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
+        
+        
 
         <StackPanel x:Name="Loader" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
             <ProgressRing x:Name="LoadingThing" Height="64" Width="64"/>
