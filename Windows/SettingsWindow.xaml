@@ -96,7 +96,7 @@
 
                                                 <Ellipse x:Name="HoverBG" Width="64" Height="64" VerticalAlignment="Top" Opacity="0">
                                                     <Ellipse.Fill>
-                                                        <SolidColorBrush Color="#696b69"></SolidColorBrush>
+                                                        <SolidColorBrush Color="#000000"></SolidColorBrush>
                                                     </Ellipse.Fill>
                                                 </Ellipse>
 
@@ -111,40 +111,32 @@
                                                                     Storyboard.TargetProperty="Opacity"
                                                                     Duration="0:0:0.1"
                                                                     From="0"
-                                                                    To="1">
-
-                                                                </DoubleAnimation>
+                                                                    To="0.5"/>
 
                                                                 <DoubleAnimation 
                                                                     Storyboard.TargetName="HoverFG"
                                                                     Storyboard.TargetProperty="Opacity"
                                                                     Duration="0:0:0.1"
                                                                     From="0"
-                                                                    To="1">
-
-                                                                </DoubleAnimation>
+                                                                    To="1"/>
                                                             </Storyboard>
                                                         </VisualState>
 
                                                         <VisualState x:Name="Normal">
                                                             <Storyboard Duration="0:0:0.1">
                                                                 <DoubleAnimation 
-             Storyboard.TargetName="HoverBG"
-             Storyboard.TargetProperty="Opacity"
-             Duration="0:0:0.1"
-             From="1"
-             To="0">
-
-                                                                </DoubleAnimation>
+                                                                     Storyboard.TargetName="HoverBG"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     Duration="0:0:0.1"
+                                                                     From="0.5"
+                                                                     To="0"/>
 
                                                                 <DoubleAnimation 
-             Storyboard.TargetName="HoverFG"
-             Storyboard.TargetProperty="Opacity"
-             Duration="0:0:0.1"
-             From="1"
-             To="0">
-
-                                                                </DoubleAnimation>
+                                                                     Storyboard.TargetName="HoverFG"
+                                                                     Storyboard.TargetProperty="Opacity"
+                                                                     Duration="0:0:0.1"
+                                                                     From="1"
+                                                                     To="0"/>
                                                             </Storyboard>
                                                         </VisualState>
                                                     </VisualStateGroup>
