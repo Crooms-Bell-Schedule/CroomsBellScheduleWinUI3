@@ -400,18 +400,26 @@ public sealed partial class SettingsWindow
 
     private async void FlyoutLogin_Click(object sender, RoutedEventArgs e)
     {
-        ContentDialog dlg = new()
+        try
         {
-            Title = "Login with bell schedule account",
-            XamlRoot = Content.XamlRoot,
-            PrimaryButtonText = "Login",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Primary,
-            Content = new LoginView()
-        };
-        dlg.PrimaryButtonClick += LoginDlg_OKClick;
+            UserFlyout.Hide();
+            ContentDialog dlg = new()
+            {
+                Title = "Login with bell schedule account",
+                XamlRoot = Content.XamlRoot,
+                PrimaryButtonText = "Login",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary,
+                Content = new LoginView()
+            };
+            dlg.PrimaryButtonClick += LoginDlg_OKClick;
 
-        await dlg.ShowAsync();
+            await dlg.ShowAsync();
+        }
+        catch
+        {
+            // TODO: stupid winui bug
+        }
     }
 
     private async void FlyoutLogout_Click(object sender, RoutedEventArgs e)

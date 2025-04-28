@@ -72,7 +72,7 @@
                     </Grid>
 
                     <Button.Flyout>
-                        <Flyout>
+                        <Flyout x:Name="UserFlyout">
                             <Grid MinWidth="250">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>

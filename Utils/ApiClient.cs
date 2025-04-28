@@ -194,8 +194,8 @@ namespace CroomsBellScheduleCS.Utils
             if (_client.DefaultRequestHeaders.Contains("Authorization"))
                 _client.DefaultRequestHeaders.Remove("Authorization");
 
-            string token = $"\"{SettingsManager.Settings.SessionID}\"";
-            _client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
+
+            _client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"\"{SettingsManager.Settings.SessionID}\"");
         }
         public async Task<Result<CommandResponse?>> ValidateSessionAsync()
         {
@@ -300,9 +300,13 @@ namespace CroomsBellScheduleCS.Utils
                 var content = new StreamContent(c);
                 content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
 
-                AddAuthorization();
+                using var requestMessage =
+            new HttpRequestMessage(HttpMethod.Put, "https://api.croomssched.tech/users/setProfilePicture");
 
-                var response = await _client.PutAsync("https://api.croomssched.tech/users/setProfilePicture", content);
+                requestMessage.Headers.TryAddWithoutValidation("Authorization", $"\"{SettingsManager.Settings.SessionID}\"");
+                requestMessage.Content = content;
+
+                var response = await _client.SendAsync(requestMessage);
 
                 if (response.StatusCode == HttpStatusCode.NotFound)
                 {
@@ -313,7 +317,7 @@ namespace CroomsBellScheduleCS.Utils
 
                 return DecodeResponse<SetProfilePictureResult>(responseText);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new() { Exception = ex, OK = false };
             }
@@ -391,7 +395,7 @@ namespace CroomsBellScheduleCS.Utils
         public string name { get; set; } = "";
         public string image { get; set; } = "";
     }
-    
+
 
     public class TeacherQuote
     {
