@@ -84,11 +84,77 @@
 
                                 <Button x:Name="FlyoutPFPButton" Grid.Row="0" Grid.Column="0" Padding="0" Margin="0, 0, 10, 0" CornerRadius="32" 
                                         Click="FlyoutChangePFP_Click">
+
                                     <Grid>
                                         <PersonPicture x:Name="FlyoutPFP2"  Width="64" Height="64" VerticalAlignment="Top" />
+
                                     </Grid>
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Grid x:Name="RootGrid">
+                                                <ContentPresenter />
+
+                                                <Ellipse x:Name="HoverBG" Width="64" Height="64" VerticalAlignment="Top" Opacity="0">
+                                                    <Ellipse.Fill>
+                                                        <SolidColorBrush Color="#696b69"></SolidColorBrush>
+                                                    </Ellipse.Fill>
+                                                </Ellipse>
+
+                                                <FontIcon x:Name="HoverFG" Glyph="&#xE70F;" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0"/>
+
+                                                <VisualStateManager.VisualStateGroups>
+                                                    <VisualStateGroup x:Name="CommonStates">
+                                                        <VisualState x:Name="PointerOver">
+                                                            <Storyboard Duration="0:0:0.1">
+                                                                <DoubleAnimation 
+                                                                    Storyboard.TargetName="HoverBG"
+                                                                    Storyboard.TargetProperty="Opacity"
+                                                                    Duration="0:0:0.1"
+                                                                    From="0"
+                                                                    To="1">
+
+                                                                </DoubleAnimation>
+
+                                                                <DoubleAnimation 
+                                                                    Storyboard.TargetName="HoverFG"
+                                                                    Storyboard.TargetProperty="Opacity"
+                                                                    Duration="0:0:0.1"
+                                                                    From="0"
+                                                                    To="1">
+
+                                                                </DoubleAnimation>
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                        <VisualState x:Name="Normal">
+                                                            <Storyboard Duration="0:0:0.1">
+                                                                <DoubleAnimation 
+             Storyboard.TargetName="HoverBG"
+             Storyboard.TargetProperty="Opacity"
+             Duration="0:0:0.1"
+             From="1"
+             To="0">
+
+                                                                </DoubleAnimation>
+
+                                                                <DoubleAnimation 
+             Storyboard.TargetName="HoverFG"
+             Storyboard.TargetProperty="Opacity"
+             Duration="0:0:0.1"
+             From="1"
+             To="0">
+
+                                                                </DoubleAnimation>
+                                                            </Storyboard>
+                                                        </VisualState>
+                                                    </VisualStateGroup>
+                                                </VisualStateManager.VisualStateGroups>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Button.Template>
+
                                 </Button>
-                                    
+
                                 <StackPanel Grid.Row="0"  Grid.Column="1">
                                     <Button x:Name="FlyoutChangeUsername" FontSize="22" Margin="0, 0, 0, 0" 
                                             Padding="12, 5, 10, 5" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" 
@@ -104,7 +170,7 @@
                                     </StackPanel>
                                 </StackPanel>
 
-                                
+
                             </Grid>
                         </Flyout>
                     </Button.Flyout>
