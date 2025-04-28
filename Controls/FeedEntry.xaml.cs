@@ -13,8 +13,6 @@ public sealed partial class FeedEntry
         set { SetValue(ContentDataProperty, value); }
     }
 
-    // Using a DependencyProperty as the backing store for Property1.  
-    // This enables animation, styling, binding, etc...
     public static readonly DependencyProperty ContentDataProperty
         = DependencyProperty.Register(
               "ContentDataProperty",
@@ -23,6 +21,7 @@ public sealed partial class FeedEntry
               new PropertyMetadata("", ChangedDataCB)
           );
 
+    private const int CutoffLength = 512;
     public FeedEntry()
     {
         InitializeComponent();
@@ -37,9 +36,41 @@ public sealed partial class FeedEntry
             {
                 t.blk.Inlines.Clear(); // destroy previous data
 
-                foreach (var item in FeedView.ProcessStringContent(n))
+
+                string original = n;
+                bool showExpander = false;
+                if (n.Length > CutoffLength)
+                {
+                    // limit length
+                    n = n.Substring(0, CutoffLength);
+
+                    showExpander = true;
+                }
+
+                var lines = FeedView.ProcessStringContent(n);
+
+                foreach (var item in lines)
                 {
                     t.blk.Inlines.Add(item);
+                }
+
+                if (showExpander)
+                {
+                    var hl = new Hyperlink();
+                    hl.Click += delegate (Hyperlink sender, HyperlinkClickEventArgs e)
+                    {
+                        // TODO move to function
+                        t.blk.Inlines.Clear(); // destroy previous data
+                        var lines = FeedView.ProcessStringContent(original);
+
+                        foreach (var item in lines)
+                        {
+                            t.blk.Inlines.Add(item);
+                        }
+                    };
+                    hl.Inlines.Add(new Run() { Text = "Read more..." });
+                    t.blk.Inlines.Add(new Run() { Text = " " });
+                    t.blk.Inlines.Add(hl);
                 }
             }
             catch
