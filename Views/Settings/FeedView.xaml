@@ -25,8 +25,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <PersonPicture  Width="64" Height="64" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Padding="0" Margin="0, 0, 10, 0" />
-
+                <PersonPicture x:Name="FlyoutPicture" Width="64" Height="64" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Padding="0" Margin="0, 0, 10, 0" />
+                <TextBlock x:Name="FlyoutUserName2" Text="User Account" Grid.Row="0"  Grid.Column="1"/>
             </Grid>
         </Flyout>
     </Page.Resources>

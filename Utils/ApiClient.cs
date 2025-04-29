@@ -312,6 +312,10 @@ namespace CroomsBellScheduleCS.Utils
                 {
                     return new() { OK = false, Exception = new Exception("Server error: API endpoint not found.") };
                 }
+                if (response.StatusCode == HttpStatusCode.BadGateway)
+                {
+                    return new() { OK = false, Exception = new Exception("API server is restarting/stopped. Try again later.") };
+                }
 
                 var responseText = await response.Content.ReadAsStringAsync();
 

@@ -260,9 +260,10 @@ public sealed partial class SettingsWindow
 
             try
             {
-                using Stream s = c.Cropper.Source.PixelBuffer.AsStream();
+                var ms = new MemoryStream();
+                await c.Cropper.SaveAsync(ms.AsRandomAccessStream(), CommunityToolkit.WinUI.Controls.BitmapFileFormat.Png, true);
 
-                var result = await Services.ApiClient.SetProfilePicture(s);
+                var result = await Services.ApiClient.SetProfilePicture(ms);
 
                 if (!result.OK)
                 {

@@ -382,6 +382,12 @@ public sealed partial class FeedView
 
         await dialog.ShowAsync();
     }
+
+    internal void PrepareFlyout(string mention)
+    {
+        string user = mention.TrimStart('@');
+        // TODO
+    }
 }
 public class FeedUIEntry
 {

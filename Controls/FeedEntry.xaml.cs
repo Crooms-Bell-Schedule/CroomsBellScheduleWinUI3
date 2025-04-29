@@ -166,9 +166,10 @@ public sealed partial class FeedEntry
                     ((Hyperlink)rootElem).Click += delegate (Hyperlink h, HyperlinkClickEventArgs e)
                     {
                         if (FeedView.Instance != null)
+                        {
+                            FeedView.Instance.PrepareFlyout(item.DeEntitizeValue);
                             FeedView.Instance.UserFlyoutPub.ShowAt(blk);
-                        if (MainView.Settings != null)
-                            MainView.Settings.ShowInAppNotification("Coming soon", "", 1);
+                        }
                     };
                 }
             }
