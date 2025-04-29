@@ -263,7 +263,7 @@ public sealed partial class SettingsWindow
                 var ms = new MemoryStream();
                 await c.Cropper.SaveAsync(ms.AsRandomAccessStream(), CommunityToolkit.WinUI.Controls.BitmapFileFormat.Png, true);
 
-                var result = await Services.ApiClient.SetProfilePicture(ms);
+                var result = await Services.ApiClient.SetProfilePicture(ms.ToArray());
 
                 if (!result.OK)
                 {

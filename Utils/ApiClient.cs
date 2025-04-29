@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -293,33 +291,34 @@ namespace CroomsBellScheduleCS.Utils
             return DecodeResponse<UserDetailsResponse>(responseText);
         }
 
-        public async Task<Result<SetProfilePictureResult?>> SetProfilePicture(Stream c)
+        public async Task<Result<SetProfilePictureResult?>> SetProfilePicture(byte[] c)
         {
             try
             {
-                var content = new StreamContent(c);
-                content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+                var formContent = new MultipartFormDataContent();
+                formContent.Headers.ContentType.MediaType = "multipart/form-data";
+
+                var b = new ByteArrayContent(c);
+                b.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+                formContent.Add(b, "image", "image");
 
                 using var requestMessage =
             new HttpRequestMessage(HttpMethod.Put, "https://api.croomssched.tech/users/setProfilePicture");
 
                 requestMessage.Headers.TryAddWithoutValidation("Authorization", $"\"{SettingsManager.Settings.SessionID}\"");
-                requestMessage.Content = content;
+                requestMessage.Content = formContent;
 
                 var response = await _client.SendAsync(requestMessage);
-
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return new() { OK = false, Exception = new Exception("Server error: API endpoint not found.") };
-                }
-                if (response.StatusCode == HttpStatusCode.BadGateway)
-                {
-                    return new() { OK = false, Exception = new Exception("API server is restarting/stopped. Try again later.") };
-                }
-
                 var responseText = await response.Content.ReadAsStringAsync();
 
-                return DecodeResponse<SetProfilePictureResult>(responseText);
+                if (response.StatusCode != HttpStatusCode.OK && string.IsNullOrEmpty(responseText))
+                {
+                    return new() { OK = false, Exception = new Exception($"Server error: {response.StatusCode}") };
+                }
+
+                SetProfilePictureResult? resp = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.SetProfilePictureResult);
+
+                return new() { OK = resp.status == "OK", ErrorValue = new ErrorResponse() { error = resp.data }, Value = resp };
             }
             catch (Exception ex)
             {
@@ -464,6 +463,7 @@ namespace CroomsBellScheduleCS.Utils
 
     public class SetProfilePictureResult
     {
-        public string result { get; set; } = "";
+        public string status { get; set; } = "";
+        public string data { get; set; } = "";
     }
 }
