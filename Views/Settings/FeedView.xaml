@@ -19,14 +19,19 @@
             <Grid MinWidth="250">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <PersonPicture x:Name="FlyoutPicture" Width="64" Height="64" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Padding="0" Margin="0, 0, 10, 0" />
-                <TextBlock x:Name="FlyoutUserName2" Text="User Account" Grid.Row="0"  Grid.Column="1"/>
+                <PersonPicture x:Name="FlyoutPicture" Width="64" Height="64" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Grid.RowSpan="10" Padding="0" Margin="0, 0, 10, 0" />
+
+                <TextBlock x:Name="FlyoutUserName2" Text="User Account" Grid.Row="0"  Grid.Column="1"  FontSize="22" Margin="0, 0, 0, 0" 
+                            Padding="12, 5, 10, 5" FontWeight="Bold" TextWrapping="Wrap"/>
+
             </Grid>
         </Flyout>
     </Page.Resources>
@@ -66,9 +71,7 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-
-
-                            <Button Margin="0,0,20,0" Grid.Column="0" VerticalAlignment="Top" Padding="0" BorderThickness="0" Background="Transparent">
+                            <Button Margin="0,0,20,0" Grid.Column="0" VerticalAlignment="Top" Padding="0" BorderThickness="0" Background="Transparent" Tag="{Binding AuthorId}" Click="HandleUserProfile_Click">
                                 <Ellipse Width="32" Height="32">
                                     <Ellipse.Fill>
                                         <ImageBrush ImageSource="{x:Bind PicSource}" ImageFailed="ImageBrush_ImageFailed"/>
@@ -87,7 +90,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Button BorderThickness="0" Padding="0" Background="Transparent">
+                                <Button BorderThickness="0" Padding="0" Background="Transparent" Tag="{Binding AuthorId}" Click="HandleUserProfile_Click">
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Author}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                 </Button>
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Bind Date}" Margin="0, 0, 0, 8" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>

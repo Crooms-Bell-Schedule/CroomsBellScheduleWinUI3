@@ -66,14 +66,25 @@ public sealed partial class FeedView
         };*/
     }
 
+    private static string DetermineProfileAdditions(bool verified, string uid)
+    {
+        if (verified) return "✅";
+        else if (uid == "349051de85") return "📈"; // longpassword
+        else if (uid == "ef6e35c9be") return "📈📈"; // longpassword
+        else if (uid == "1677c1e03f") return "📈📈📈"; // longestpassword
+
+        return "";
+    }
+
     private static async Task<FeedUIEntry> ProcessEntry(FeedEntry entry)
     {
         return new FeedUIEntry()
         {
             Date = AsTimeAgo(entry.create.ToLocalTime()),
-            Author = $"{entry.createdBy}{(entry.verified ? "✅" : "")}",
+            Author = $"{entry.createdBy}{DetermineProfileAdditions(entry.verified, entry.uid)}",
             ContentData = entry.data,
             Id = entry.id,
+            AuthorId = entry.uid,
             PicSource = await RetrieveProfileImage(entry.uid)
         };
     }
@@ -101,6 +112,10 @@ public sealed partial class FeedView
                 var writeableBitmap = new WriteableBitmap((int)decoder.PixelWidth, (int)decoder.PixelHeight);
                 stream.Seek(0);
                 await writeableBitmap.SetSourceAsync(stream);
+
+                // race condition?
+                if (ProfileImageCache.TryGetValue(uid, out ImageSource? value2))
+                    return value2;
 
                 ProfileImageCache.Add(uid, writeableBitmap);
 
@@ -387,13 +402,32 @@ public sealed partial class FeedView
     {
         string user = mention.TrimStart('@');
         // TODO
+        FlyoutPicture.ProfilePicture = null;
+
+        // TODO: Username should be converted to UID server side
+    }
+    internal void PrepareFlyoutWithUID(string uid)
+    {
+        if (ProfileImageCache.TryGetValue(uid, out ImageSource? val) && FlyoutPicture != null)
+            FlyoutPicture.ProfilePicture = val;
+        // TODO retrieve it
+    }
+
+    private void HandleUserProfile_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var uid = ((Button)sender).Tag as string;
+        if (uid == null) return;
+
+        UserFlyoutPub.ShowAt((Button)sender);
+        PrepareFlyoutWithUID(uid);
     }
 }
 public class FeedUIEntry
 {
     public required string Author { get; set; }
-    public string Date { get; set; } = "";
-    public string Id { get; set; } = "";
-    public string ContentData { get; set; } = "";
-    public ImageSource? PicSource { get; set; }
+    public required string Date { get; set; } = "";
+    public required string AuthorId { get; set; } = "";
+    public required string Id { get; set; } = "";
+    public required string ContentData { get; set; } = "";
+    public required ImageSource? PicSource { get; set; }
 }
