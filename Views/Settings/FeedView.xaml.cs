@@ -70,8 +70,8 @@ public sealed partial class FeedView
     {
         return new FeedUIEntry()
         {
-            AuthorAndDate = $"{entry.createdBy}{(entry.verified ? "✅" : "")} - {AsTimeAgo(entry.create.ToLocalTime())}",
-            Author = entry.createdBy,
+            Date = AsTimeAgo(entry.create.ToLocalTime()),
+            Author = $"{entry.createdBy}{(entry.verified ? "✅" : "")}",
             ContentData = entry.data,
             Id = entry.id,
             PicSource = await RetrieveProfileImage(entry.uid)
@@ -392,7 +392,7 @@ public sealed partial class FeedView
 public class FeedUIEntry
 {
     public required string Author { get; set; }
-    public string AuthorAndDate { get; set; } = "";
+    public string Date { get; set; } = "";
     public string Id { get; set; } = "";
     public string ContentData { get; set; } = "";
     public ImageSource? PicSource { get; set; }

@@ -9,19 +9,21 @@
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d">
 
-    <Grid>
-        <StackPanel
+    <ScrollViewer>
+        <Grid>
+            <StackPanel
             x:Name="ContentArea">
-            <controls:WrapPanel Orientation="Horizontal">
-                <TextBlock Margin="0,10,10,10" HorizontalAlignment="Center">Profile Picture:</TextBlock>
-                <Button x:Name="SelectButton" Click="SelectButton_Click">Select</Button>
-            </controls:WrapPanel>
-            <controls:ImageCropper x:Name="cropper" CropShape="Circular" AspectRatio="1" Padding="0" MinHeight="300"/>
-            <TextBlock x:Name="ErrorText" Foreground="{ThemeResource SystemFillColorCriticalBrush}"></TextBlock>
-        </StackPanel>
-        <StackPanel
+                <controls:WrapPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,10,10,10" HorizontalAlignment="Center">Profile Picture:</TextBlock>
+                    <Button x:Name="SelectButton" Click="SelectButton_Click">Select</Button>
+                </controls:WrapPanel>
+                <controls:ImageCropper x:Name="cropper" CropShape="Circular" AspectRatio="1" Padding="0"/>
+                <TextBlock x:Name="ErrorText" Foreground="{ThemeResource SystemFillColorCriticalBrush}" TextWrapping="Wrap"></TextBlock>
+            </StackPanel>
+            <StackPanel
     x:Name="Loader" Visibility="Collapsed">
-            <ProgressRing x:Name="LoadingThing" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </StackPanel>
-    </Grid>
+                <ProgressRing x:Name="LoadingThing" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

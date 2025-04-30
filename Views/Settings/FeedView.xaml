@@ -66,14 +66,19 @@
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Ellipse Margin="0,0,20,0" Grid.Column="0" Width="32" Height="32" VerticalAlignment="Top">
-                                <Ellipse.Fill>
-                                    <ImageBrush ImageSource="{x:Bind PicSource}" ImageFailed="ImageBrush_ImageFailed"/>
-                                </Ellipse.Fill>
-                            </Ellipse>
+
+
+                            <Button Margin="0,0,20,0" Grid.Column="0" VerticalAlignment="Top" Padding="0" BorderThickness="0" Background="Transparent">
+                                <Ellipse Width="32" Height="32">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{x:Bind PicSource}" ImageFailed="ImageBrush_ImageFailed"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </Button>
                             
                             <Grid Grid.Column="1" CornerRadius="{StaticResource ControlCornerRadius}">
                                 <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
@@ -82,13 +87,16 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind AuthorAndDate}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                <Button BorderThickness="0" Padding="0" Background="Transparent">
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Author}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                                </Button>
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Bind Date}" Margin="0, 0, 0, 8" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 
                                 <!-- <Button Grid.Row="0" Grid.Column="1" MaxWidth="16" MaxHeight="16" Margin="0" Padding="0">
                                     <FontIcon Glyph="&#xE97A;" />
                                 </Button>-->
                                 
-                                <cui:FeedEntry Grid.Row="1" Grid.ColumnSpan="2" ContentData="{x:Bind ContentData}" Padding="0, 0, 0, 5" FontSize="18"/>
+                                <cui:FeedEntry Grid.Row="2" Grid.ColumnSpan="2" ContentData="{x:Bind ContentData}" Padding="0, 0, 0, 5" FontSize="18"/>
                             </Grid>
                         </Grid>
                     </DataTemplate>

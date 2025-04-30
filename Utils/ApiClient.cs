@@ -296,7 +296,6 @@ namespace CroomsBellScheduleCS.Utils
             try
             {
                 var formContent = new MultipartFormDataContent();
-                formContent.Headers.ContentType.MediaType = "multipart/form-data";
 
                 var b = new ByteArrayContent(c);
                 b.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
@@ -315,10 +314,19 @@ namespace CroomsBellScheduleCS.Utils
                 {
                     return new() { OK = false, Exception = new Exception($"Server error: {response.StatusCode}") };
                 }
+                ApiSimpleResponse? simple = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.ApiSimpleResponse) ?? throw new Exception("failed to decode json");
 
-                SetProfilePictureResult? resp = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.SetProfilePictureResult);
+                if (simple.status == "OK")
+                {
+                    return new() { OK = true };
 
-                return new() { OK = resp.status == "OK", ErrorValue = new ErrorResponse() { error = resp.data }, Value = resp };
+                }
+                else
+                {
+                    SetProfilePictureResult? resp = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.SetProfilePictureResult) ?? throw new Exception("failed to decode erorr message");
+                    if (resp.data == null) throw new("error data is null");
+                    return new() { OK = false, ErrorValue = new ErrorResponse() { error = resp.data.error }, Value = resp };
+                }
             }
             catch (Exception ex)
             {
@@ -461,9 +469,14 @@ namespace CroomsBellScheduleCS.Utils
         public string Username { get; set; } = "";
     }
 
+    public class SetProfilePictureResultError
+    {
+        public string error { get; set; } = "";
+    }
+
     public class SetProfilePictureResult
     {
         public string status { get; set; } = "";
-        public string data { get; set; } = "";
+        public SetProfilePictureResultError? data { get; set; }
     }
 }
