@@ -72,6 +72,7 @@ public sealed partial class FeedView
         else if (uid == "349051de85") return "📈"; // longpassword
         else if (uid == "ef6e35c9be") return "📈📈"; // longpassword
         else if (uid == "1677c1e03f") return "📈📈📈"; // longestpassword
+        else if (uid == "DuckGames") return "🎢🚝";
 
         return "";
     }

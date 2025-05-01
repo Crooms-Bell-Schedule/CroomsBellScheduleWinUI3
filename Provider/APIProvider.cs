@@ -42,7 +42,7 @@ public class APIProvider : IBellScheduleProvider
             { 112, "Session 2" },
             { 113, "Session 3" },
             { 114, "Session 4" },
-            { 116, "FAST Test or Cafeteria/Gym" },
+            { 116, "Test" },
             { 115, "Field Day" }
         };
 
