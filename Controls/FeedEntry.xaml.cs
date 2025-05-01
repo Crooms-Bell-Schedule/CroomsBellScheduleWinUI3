@@ -167,8 +167,8 @@ public sealed partial class FeedEntry
                     {
                         if (FeedView.Instance != null)
                         {
-                            FeedView.Instance.PrepareFlyout(item.DeEntitizeValue);
                             FeedView.Instance.UserFlyoutPub.ShowAt(blk);
+                            FeedView.Instance.PrepareFlyout(item.DeEntitizeValue);
                         }
                     };
                 }

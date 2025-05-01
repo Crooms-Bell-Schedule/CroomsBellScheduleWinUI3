@@ -181,7 +181,11 @@ public sealed partial class FeedView
                     {
                         DispatcherQueue.TryEnqueue(() =>
                         {
-                            RefreshFeed(true);
+                            try
+                            {
+                                RefreshFeed(true);
+                            }
+                            catch { }
                         });
                     }
                     catch { }
@@ -393,8 +397,7 @@ public sealed partial class FeedView
             PrimaryButtonText = "OK",
             DefaultButton = ContentDialogButton.Primary
         };
-        dialog.Content =
-        e.ErrorMessage;
+        dialog.Content = e.ErrorMessage;
 
         await dialog.ShowAsync();
     }

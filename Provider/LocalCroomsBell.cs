@@ -178,6 +178,57 @@ public class LocalCroomsBell : IBellScheduleProvider
         ""Break"": [""9:25"", ""9:40""],
         ""Period 7"": [""9:45"", ""11:45""]
       }
+    },
+{
+      ""name"": ""modThu51"",
+      ""properName"": ""SLOW test"",
+      ""data"": {
+        ""Before School"": [""00:00"", ""7:15""],
+        ""Welcome"": [""7:15"", ""7:20""],
+        ""Testing"": [""7:20"", ""11:02""],
+        ""Period 5 Lunch A"": [""11:02"", ""11:32""],
+        ""Period 5 A"": [""11:37"", ""12:27""],
+        ""Period 5 B"": [""11:07"", ""11:57""],
+        ""Period 5 Lunch B"": [""11:57"", ""12:27""],
+        ""Period 6"": [""12:32"", ""13:24""],
+        ""Period 7"": [""13:29"", ""14:20""],
+        ""Bus"": [""14:20"", ""14:25""],
+        ""After School!"": [""14:25"", ""23:59""]
+      }
+    },
+    {
+      ""name"": ""modFri52"",
+      ""properName"": ""Testing again"",
+      ""data"": {
+        ""Before School"": [""00:00"", ""7:15""],
+        ""Welcome"": [""7:15"", ""7:20""],
+        ""Testing"": [""7:20"", ""11:02""],
+        ""Period 1 Lunch A"": [""11:02"", ""11:32""],
+        ""Period 1 A"": [""11:37"", ""12:27""],
+        ""Period 1 B"": [""11:07"", ""11:57""],
+        ""Period 1 Lunch B"": [""11:57"", ""12:27""],
+        ""Period 2"": [""12:32"", ""13:24""],
+        ""Period 3"": [""13:29"", ""14:20""],
+        ""Bus"": [""14:20"", ""14:25""],
+        ""After School!"": [""14:25"", ""23:59""]
+      }
+    },
+    {
+      ""name"": ""modMon55"",
+      ""properName"": ""Last day of testing hopefully"",
+      ""data"": {
+        ""Before School"": [""00:00"", ""7:15""],
+        ""Welcome"": [""7:15"", ""7:20""],
+        ""Testing"": [""7:20"", ""11:02""],
+        ""Period 5 Lunch A"": [""11:02"", ""11:32""],
+        ""Period 5 A"": [""11:37"", ""12:27""],
+        ""Period 5 B"": [""11:07"", ""11:57""],
+        ""Period 5 Lunch B"": [""11:57"", ""12:27""],
+        ""Period 6"": [""12:32"", ""13:24""],
+        ""Period 7"": [""13:29"", ""14:20""],
+        ""Bus"": [""14:20"", ""14:25""],
+        ""After School!"": [""14:25"", ""23:59""]
+      }
     }
   ],
   ""defaultWeekMap"": [
@@ -191,40 +242,16 @@ public class LocalCroomsBell : IBellScheduleProvider
   ],
   ""overrides"": [
     {
-      ""date"": ""10-8-2024"",
-      ""scheduleName"": ""modShort7""
+        ""date"": ""5-1-2025"",
+        ""scheduleName"": ""modThu51""
     },
     {
-      ""date"": ""11-22-2024"",
-      ""scheduleName"": ""activity""
+        ""date"": ""5-2-2025"",
+        ""scheduleName"": ""modFri52""
     },
     {
-      ""date"": ""12-13-2024"",
-      ""scheduleName"": ""activity""
-    },
-    {
-      ""date"": ""12-16-2024"",
-      ""scheduleName"": ""mod1stPdEx""
-    },
-    {
-      ""date"": ""12-17-2024"",
-      ""scheduleName"": ""modExam2""
-    },
-    {
-      ""date"": ""12-18-2024"",
-      ""scheduleName"": ""modExam4""
-    },
-    {
-      ""date"": ""12-19-2024"",
-      ""scheduleName"": ""modExam6""
-    },
-    {
-      ""date"": ""2-7-2025"",
-      ""scheduleName"": ""activity""
-    },
-    {
-      ""date"": ""2-14-2025"",
-      ""scheduleName"": ""activity""
+        ""date"": ""5-5-2025"",
+        ""scheduleName"": ""modMon55""
     }
   ]
 }";

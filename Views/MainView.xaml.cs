@@ -406,7 +406,11 @@ public sealed partial class MainView
 
     public async void UpdateCurrentClass()
     {
-        if (_reader == null) throw new InvalidOperationException();
+        if (_reader == null)
+        {
+            _reader = await _provider.GetTodayActivity();
+            return;
+        }
 
         try
         {
