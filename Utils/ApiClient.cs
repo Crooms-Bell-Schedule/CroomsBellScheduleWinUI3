@@ -291,6 +291,17 @@ namespace CroomsBellScheduleCS.Utils
             return DecodeResponse<UserDetailsResponse>(responseText);
         }
 
+        public async Task<Result<GetUserResult?>> GetUserByName(string username)
+        {
+            AddAuthorization();
+
+            var response = await _client.GetAsync("https://api.croomssched.tech/users/" + username);
+
+            var responseText = await response.Content.ReadAsStringAsync();
+
+            return DecodeResponse<GetUserResult>(responseText);
+        }
+
         public async Task<Result<SetProfilePictureResult?>> SetProfilePicture(byte[] c)
         {
             try
@@ -478,5 +489,11 @@ namespace CroomsBellScheduleCS.Utils
     {
         public string status { get; set; } = "";
         public SetProfilePictureResultError? data { get; set; }
+    }
+
+    public class GetUserResult
+    {
+        public string id { get; set; } = "";
+        public string username { get; set; } = "";
     }
 }

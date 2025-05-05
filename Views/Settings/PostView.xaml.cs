@@ -63,4 +63,9 @@ public sealed partial class PostView
     {
         ValidateFields();
     }
+
+    private void Hyperlink_Click(Microsoft.UI.Xaml.Documents.Hyperlink sender, Microsoft.UI.Xaml.Documents.HyperlinkClickEventArgs args)
+    {
+        PostContentBox.Text += "<a class=\"links\" username>@Username</a> ";
+    }
 }

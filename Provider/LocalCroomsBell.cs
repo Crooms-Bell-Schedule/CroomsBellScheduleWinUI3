@@ -215,7 +215,7 @@ public class LocalCroomsBell : IBellScheduleProvider
     },
     {
       ""name"": ""modMon55"",
-      ""properName"": ""Last day of testing hopefully"",
+      ""properName"": ""Some more testing"",
       ""data"": {
         ""Before School"": [""00:00"", ""7:15""],
         ""Welcome"": [""7:15"", ""7:20""],

@@ -402,28 +402,48 @@ public sealed partial class FeedView
         await dialog.ShowAsync();
     }
 
-    internal void PrepareFlyout(string mention)
+    internal async Task PrepareFlyout(string mention)
     {
         string user = mention.TrimStart('@');
-        // TODO
-        FlyoutPicture.ProfilePicture = null;
+        string uid = user;
 
         // TODO: Username should be converted to UID server side
+        var userName = await Services.ApiClient.GetUserByName(user);
+        if (userName.OK && userName.Value != null)
+        {
+            FlyoutUserName2.Text = user;
+            uid = userName.Value.id;
+        }
+        else
+        {
+            FlyoutUserName2.Text = user + " (Unknown)";
+        }
+
+        // set profile picture based on UID
+        if (ProfileImageCache.TryGetValue(uid, out ImageSource? val))
+            FlyoutPicture.ProfilePicture = val;
+        else FlyoutPicture.ProfilePicture = null;
+
     }
     internal void PrepareFlyoutWithUID(string uid)
     {
-        if (ProfileImageCache.TryGetValue(uid, out ImageSource? val) && FlyoutPicture != null)
+        if (ProfileImageCache.TryGetValue(uid, out ImageSource? val))
             FlyoutPicture.ProfilePicture = val;
-        // TODO retrieve it
+        else FlyoutPicture.ProfilePicture = null;
+
+        // TODO retrieve proper username
+        FlyoutUserName2.Text = uid;
     }
 
     private void HandleUserProfile_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         var uid = ((Button)sender).Tag as string;
-        if (uid == null) return;
 
         UserFlyoutPub.ShowAt((Button)sender);
-        PrepareFlyoutWithUID(uid);
+        if (uid != null)
+            PrepareFlyoutWithUID(uid);
+        else
+            FlyoutUserName2.Text = "Button.Tag == null";
     }
 }
 public class FeedUIEntry

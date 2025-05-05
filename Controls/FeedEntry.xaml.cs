@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace CroomsBellScheduleCS.Controls;
 
@@ -163,12 +164,13 @@ public sealed partial class FeedEntry
                 }
                 else if (item.Name == "username")
                 {
-                    ((Hyperlink)rootElem).Click += delegate (Hyperlink h, HyperlinkClickEventArgs e)
+                    ((Hyperlink)rootElem).Click += async delegate (Hyperlink h, HyperlinkClickEventArgs e)
                     {
                         if (FeedView.Instance != null)
                         {
                             FeedView.Instance.UserFlyoutPub.ShowAt(blk);
-                            FeedView.Instance.PrepareFlyout(item.DeEntitizeValue);
+                            if (ch.Count > 0 && ch[0] is Run mentionContent)
+                            await FeedView.Instance.PrepareFlyout(mentionContent.Text);
                         }
                     };
                 }
