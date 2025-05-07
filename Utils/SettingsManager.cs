@@ -75,6 +75,7 @@ public static class SettingsManager
 
         public bool ShowInTaskbar { get; set; }
         public bool ShownTaskbarTip { get; set; }
+        public bool EnableDvdScreensaver { get; set; }
 
         public ElementTheme Theme { get; set; }
         /// <summary>

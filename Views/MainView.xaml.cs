@@ -40,6 +40,7 @@ public sealed partial class MainView
     private bool _shown1MinNotif;
     private bool _shown5MinNotif;
     private DispatcherTimer? _timer;
+    private DispatcherTimer _dvdTimer = new();
     private AppWindow? _windowApp;
     private bool _settingsOpen = false;
 
@@ -112,7 +113,7 @@ public sealed partial class MainView
             nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
             _newWndProcDelegate = (WndProcDelegate)WndProc;
             nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
-            _oldWndProc = Win32.SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
+            _oldWndProc = SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
 
             TxtCurrentClass.Text = "Checking for updates...";
         }
@@ -133,12 +134,19 @@ public sealed partial class MainView
         {
             await UpdateScheduleSource();
 
-            _timer = new DispatcherTimer
+            _timer = new()
             {
                 Interval = TimeSpan.FromMilliseconds(199)
             };
             _timer.Tick += Timer_Tick;
             _timer.Start();
+
+            _dvdTimer = new()
+            {
+                Interval = TimeSpan.FromMilliseconds(1)
+            };
+            UpdateDvd();
+            _dvdTimer.Tick += DvdTimer_Tick;
         }
         catch (Exception ex)
         {
@@ -149,6 +157,17 @@ public sealed partial class MainView
             InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
             await dlg.ShowAsync();
         }
+    }
+
+    private void DvdTimer_Tick(object? sender, object e)
+    {
+        if (_windowApp == null) return;
+
+        double left = _windowApp.Position.X;
+        double top = _windowApp.Position.Y;
+        CalcNewPos(_windowApp.Size.Width, _windowApp.Size.Height, ref left, ref top);
+
+        _windowApp.Move(new PointInt32((int)(left), (int)(top )));
     }
 
     internal async Task RunUpdateCheck()
@@ -781,4 +800,97 @@ public sealed partial class MainView
 
         _reader.UpdateStrings(strings, namesChanged);
     }
+    #region DVD
+    /// <summary>
+    /// 0: x - 5, y - 5
+    /// 1: x + 5, y - 5
+    /// 2: x - 5, y + 5
+    /// 3: x + 5, y + 5
+    /// </summary>
+    private int _dvdDirection = 0;
+    private int _moveSpeed = 1;
+    private Random _rng = new();
+    internal void UpdateDvd()
+    {
+        if (SettingsManager.Settings.EnableDvdScreensaver && !SettingsManager.Settings.ShowInTaskbar)
+        {
+            _dvdTimer.Start();
+        }
+        else
+        {
+            _dvdTimer.Stop();
+        }
+    }
+    private void CalcNewPos(double w, double h, ref double Left, ref double Top)
+    {
+        // check if direction needs to be updated
+        if (_windowApp == null) return;
+
+        var minX = 0;
+        var minY = 0;
+        var mon = DisplayArea.GetFromWindowId(_windowApp.Id, DisplayAreaFallback.Primary);
+
+        double maxX = (double)mon.WorkArea.Width - w;
+        double maxY = (double)mon.WorkArea.Height - h;
+
+        // Check if its at the left edge
+        if (Left <= minX)
+        {
+            Left = minX;
+            ChangeDirection();
+        }
+
+        // Check if its at the top edge
+        if (Top <= minY)
+        {
+            Top = minY;
+            ChangeDirection();
+        }
+
+        // Check if its at the right edge
+        if (Left >= maxX)
+        {
+            Left = maxX;
+            ChangeDirection();
+        }
+
+        // Check if its at the top edge
+        if (Top >= maxY)
+        {
+            Top = maxY;
+            ChangeDirection();
+        }
+
+        switch (_dvdDirection)
+        {
+            case 0:
+                Left -= _moveSpeed;
+                Top -= _moveSpeed;
+                break;
+            case 1:
+                Left += _moveSpeed;
+                Top -= _moveSpeed;
+                break;
+            case 2:
+                Left -= _moveSpeed;
+                Top += _moveSpeed;
+                break;
+            case 3:
+                Left += _moveSpeed;
+                Top += _moveSpeed;
+                break;
+        }
+    }
+
+    private void ChangeDirection()
+    {
+        var org = _dvdDirection;
+        _dvdDirection = _rng.Next(0, 4);
+        if (_dvdDirection == org && org != 0)
+        {
+            _dvdDirection--;
+        }
+    }
+
+    #endregion
 }

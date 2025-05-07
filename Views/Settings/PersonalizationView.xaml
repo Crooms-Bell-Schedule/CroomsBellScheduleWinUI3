@@ -76,6 +76,9 @@
             <controls:SettingsCard Header="1-Minute notification" Description="Show 1 minute remaining notification" >
                 <ToggleSwitch x:Name="chk1MinNotif" Toggled="chk5MinNotif_Checked"></ToggleSwitch>
             </controls:SettingsCard>
+            <controls:SettingsCard Header="DVD Screensaver" Description="Make the bell schedule window move around on the screen. Only works when taskbar mode is disabled. NOTE: This increases CPU usage and decreases battery life." >
+                <ToggleSwitch x:Name="chkDvd" Toggled="chkDvd_Toggled"></ToggleSwitch>
+            </controls:SettingsCard>
 
             <controls:SettingsCard Header="Version" Description="Loading" x:Name="VersionCard">
                 <StackPanel Orientation="Horizontal">

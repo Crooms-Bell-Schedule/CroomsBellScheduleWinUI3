@@ -26,6 +26,7 @@ public sealed partial class PersonalizationView
         ComboPercentage.SelectedIndex = (int)SettingsManager.Settings.PercentageSetting;
         chk1MinNotif.IsOn = SettingsManager.Settings.Show1MinNotification;
         chk5MinNotif.IsOn = SettingsManager.Settings.Show5MinNotification;
+        chkDvd.IsOn = SettingsManager.Settings.EnableDvdScreensaver;
         UpdateCheckState();
 
         // show version
@@ -203,5 +204,15 @@ public sealed partial class PersonalizationView
         await SaveSettings();
 
         MainWindow.ViewInstance.SetTheme(SettingsManager.Settings.Theme);
+    }
+
+    private async void chkDvd_Toggled(object sender, RoutedEventArgs e)
+    {
+        if (!_initialized) return;
+
+        SettingsManager.Settings.EnableDvdScreensaver = chkDvd.IsOn;
+        await SaveSettings();
+
+        MainWindow.ViewInstance.UpdateDvd();
     }
 }
