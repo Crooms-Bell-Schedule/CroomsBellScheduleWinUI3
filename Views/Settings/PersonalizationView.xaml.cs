@@ -228,6 +228,12 @@ public sealed partial class PersonalizationView
         SettingsManager.Settings.EnableDvdScreensaver = chkDvd.IsOn;
         await SaveSettings();
 
+        // disable taskbar mode if dvd mode is enabled
+        if (chkTaskbar.IsOn && chkDvd.IsOn)
+        {
+            chkTaskbar.IsOn = false;
+        }
+
         MainWindow.ViewInstance.UpdateDvd();
     }
 }
