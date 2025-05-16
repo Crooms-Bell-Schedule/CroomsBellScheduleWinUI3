@@ -1,15 +1,4 @@
 ﻿//#define MIGRATION_CODE // uncomment to enable migration code from old bell schedule app (2.1.0 -> 2.9.9 -> 3.x)
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using CroomsBellScheduleCS.Provider;
 using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Windows;
@@ -19,6 +8,14 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI.Popups;
 using WinRT.Interop;
@@ -43,6 +40,8 @@ public sealed partial class MainView
     private DispatcherTimer _dvdTimer = new();
     private AppWindow? _windowApp;
     private bool _settingsOpen = false;
+    private bool _checkDPIUpdates = false;
+    private double _prevDPI = 0;
 
     public BellScheduleReader? Reader { get => _reader; }
     public int LunchOffset { get => _lunchOffset; }
@@ -82,21 +81,28 @@ public sealed partial class MainView
                 await dlg.ShowAsync();
             }
 
-            RasterizationScale = XamlRoot.RasterizationScale;
+            _prevDPI = XamlRoot.RasterizationScale;
 
             SetTheme(SettingsManager.Settings.Theme);
             await SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
             if (_windowApp == null) throw new Exception("WinUI init failed");
 
+            // TODO: event gets fired when SetTaskbarMode() is called?
             XamlRoot.Changed += async (a, b) =>
             {
-                if (XamlRoot.RasterizationScale != RasterizationScale)
+                if (!_checkDPIUpdates)
                 {
-                    RasterizationScale = XamlRoot.RasterizationScale;
-
+                    _checkDPIUpdates = true;
+                    return;
+                }
+                //if (XamlRoot.RasterizationScale != RasterizationScale)
+                {
+                    _prevDPI = XamlRoot.RasterizationScale;
+                    
                     if (SettingsManager.Settings.ShowInTaskbar)
                     {
                         await SetTaskbarMode(false);
+                        await Task.Delay(100);
                         await SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
                     }
                 }
@@ -113,7 +119,7 @@ public sealed partial class MainView
             nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
             _newWndProcDelegate = (WndProcDelegate)WndProc;
             nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
-            _oldWndProc = SetWindowLongPtrW(handle, Win32.GWLP_WNDPROC, pWndProc);
+            _oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
 
             TxtCurrentClass.Text = "Checking for updates...";
         }
@@ -542,6 +548,7 @@ public sealed partial class MainView
 
     public async Task SetTaskbarMode(bool showInTaskbar)
     {
+        _checkDPIUpdates = false; // TODO HACK
         nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
         WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
         AppWindow appWindow = AppWindow.GetFromWindowId(id);
@@ -602,7 +609,7 @@ public sealed partial class MainView
                 //        });
                 //_windowApp.Move(new());
 
-                SetWindowPos(handle, 0, 0, 0, (int)(350 * RasterizationScale), (int)(taskbarHeight + 8), 0);
+                SetWindowPos(handle, 0, 0, 0, (int)(350 * _prevDPI), taskbarHeight + 8, 0);
             }
 
             MainButton.Visibility = Visibility.Collapsed;

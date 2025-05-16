@@ -27,6 +27,7 @@ public sealed partial class PersonalizationView
         chk1MinNotif.IsOn = SettingsManager.Settings.Show1MinNotification;
         chk5MinNotif.IsOn = SettingsManager.Settings.Show5MinNotification;
         chkDvd.IsOn = SettingsManager.Settings.EnableDvdScreensaver;
+        chkStartup.IsOn = GetStartup();
         UpdateCheckState();
 
         // show version
@@ -153,6 +154,20 @@ public sealed partial class PersonalizationView
                 chkTaskbar.IsOn = false;
             }
         }
+    }
+    private bool GetStartup()
+    {
+        RegistryKey? rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+        if (rk != null && Environment.ProcessPath != null)
+        {
+            if(rk.GetValue("Crooms Bell Schedule App") != null)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
     private void chkStartup_Checked(object sender, RoutedEventArgs e)
     {

@@ -91,8 +91,11 @@
             <StackPanel Margin="4,8,0,0">
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="App created by Mikhail Tyukin with some contributions from Suvan and Andrew. Crooms Bell Schedule backend was made by Andew Jennings. This application uses WinUI 3.0, C#, HtmlAgilityPack, System.Text.Json, Velopack and H.NotifyIcon.WinUI." TextWrapping="Wrap" />
 
-                <HyperlinkButton Margin="0,4,0,0" Content="Changelog" NavigateUri="https://mikhail.croomssched.tech/updateapiv2/changelog.html" />
-                <HyperlinkButton Margin="0,4,0,0" Content="Source code" NavigateUri="https://github.com/thealmighyderpybird/CroomsBellScheduleWinUI3" />
+                <controls:WrapPanel Orientation="Horizontal">
+                    <HyperlinkButton Margin="0,4,0,0" Content="Changelog" NavigateUri="https://mikhail.croomssched.tech/updateapiv2/changelog.html" />
+                    <HyperlinkButton Margin="0,4,0,0" Content="Source code" NavigateUri="https://github.com/thealmighyderpybird/CroomsBellScheduleWinUI3" />
+                    <HyperlinkButton Margin="0,4,0,0" Content="Report a bug" NavigateUri="https://docs.google.com/forms/d/e/1FAIpQLSfGggFDrvK-qi6ABCiBDFG6ZVaTc6AvLMNHAvQeWFPAd1YOdw/viewform?usp=header" />
+                </controls:WrapPanel>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
