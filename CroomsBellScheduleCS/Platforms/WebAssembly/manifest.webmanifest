@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "CroomsBellScheduleCS",
+  "display": "standalone",
+  "name": "CroomsBellScheduleCS",
+  "short_name": "CroomsBellScheduleCS",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}
