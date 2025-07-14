@@ -38,10 +38,12 @@ public sealed partial class MainView
     private bool _shown5MinNotif;
     private DispatcherTimer? _timer;
     private DispatcherTimer _dvdTimer = new();
+    private DispatcherTimer _updateChecker = new();
     private AppWindow? _windowApp;
     private bool _settingsOpen = false;
     private bool _checkDPIUpdates = false;
     private double _prevDPI = 0;
+    public int UnreadAnnouncementCount { get; set; }
 
     public BellScheduleReader? Reader { get => _reader; }
     public int LunchOffset { get => _lunchOffset; }
@@ -98,7 +100,7 @@ public sealed partial class MainView
                 //if (XamlRoot.RasterizationScale != RasterizationScale)
                 {
                     _prevDPI = XamlRoot.RasterizationScale;
-                    
+
                     if (SettingsManager.Settings.ShowInTaskbar)
                     {
                         await SetTaskbarMode(false);
@@ -153,6 +155,14 @@ public sealed partial class MainView
             };
             UpdateDvd();
             _dvdTimer.Tick += DvdTimer_Tick;
+
+            _updateChecker = new DispatcherTimer()
+            {
+                Interval = TimeSpan.FromHours(1)
+            };
+            _updateChecker.Tick += _updateChecker_Tick;
+            _updateChecker.Start();
+            await CheckAnnouncements();
         }
         catch (Exception ex)
         {
@@ -165,6 +175,38 @@ public sealed partial class MainView
         }
     }
 
+    private async Task CheckAnnouncements()
+    {
+        try
+        {
+            var data = await Services.ApiClient.GetAnnouncements();
+
+            int importantAnncCount = 0;
+            if (data.OK && data.Value != null)
+            {
+                foreach (var item in data.Value.announcements)
+                {
+                    if (item.important && !SettingsManager.Settings.ViewedAnnouncementIds.Contains(item.id))
+                    {
+                        importantAnncCount++;
+                    }
+                }
+
+                UnreadAnnouncementCount = importantAnncCount;
+                if (Settings != null)
+                {
+                    Settings.UnreadAnnouncementCount = UnreadAnnouncementCount;
+                }
+            }
+        }
+        catch { }
+    }
+
+    private async void _updateChecker_Tick(object? sender, object e)
+    {
+        await CheckAnnouncements();
+    }
+
     private void DvdTimer_Tick(object? sender, object e)
     {
         if (_windowApp == null) return;
@@ -173,7 +215,7 @@ public sealed partial class MainView
         double top = _windowApp.Position.Y;
         CalcNewPos(_windowApp.Size.Width, _windowApp.Size.Height, ref left, ref top);
 
-        _windowApp.Move(new PointInt32((int)(left), (int)(top )));
+        _windowApp.Move(new PointInt32((int)(left), (int)(top)));
     }
 
     internal async Task RunUpdateCheck()
@@ -714,6 +756,7 @@ public sealed partial class MainView
             Settings = new SettingsWindow();
             Settings.Closed += _settings_Closed;
         }
+        Settings.UnreadAnnouncementCount = UnreadAnnouncementCount;
         Settings.Activate();
     }
 
@@ -730,7 +773,7 @@ public sealed partial class MainView
         _lunchOffset = DetermineLunchOffsetFromToday();
         SetLunch(_lunchOffset);
     }
-    
+
     private int DetermineLunchOffsetFromToday()
     {
         if (_reader == null) return SettingsManager.Settings.LunchOffset;

@@ -103,6 +103,7 @@ public static class SettingsManager
         [DefaultValue((int)PercentageSetting.SigFig4)]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public PercentageSetting PercentageSetting { get; set; } = PercentageSetting.SigFig4;
+        public List<int> ViewedAnnouncementIds { get; set; } = [];
     }
     public enum PercentageSetting
     {

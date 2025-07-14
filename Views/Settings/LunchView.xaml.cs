@@ -16,6 +16,9 @@ public sealed partial class LunchView
 
     private async void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
+        Loader.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+        ErrorView.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+
         var data = await Services.ApiClient.GetLunchData();
         if (data.OK && data.Value != null)
         {
@@ -23,19 +26,14 @@ public sealed partial class LunchView
         }
         else
         {
-            ContentDialog dlg2 = new()
-            {
-                Title = "Failed to get lunch",
-                XamlRoot = XamlRoot,
-                CloseButtonText = "OK"
-            };
             var ex = data.Exception;
             if (ex != null)
-                dlg2.Content = $"Failed to get latest lunch information. Details: {ex.Message}";
+                ErrorText.Text = $"Failed to get latest lunch information. Details: {ex.Message}";
             else
-                dlg2.Content = "Failed to get latest lunch information. Details: (Unknown)";
-            await dlg2.ShowAsync();
+                ErrorText.Text = "Failed to get latest lunch information. Details: (Unknown)";
+           
             Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+            ErrorView.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
             return;
         }
     }
@@ -90,6 +88,12 @@ public sealed partial class LunchView
         }
 
         Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+        ErrorView.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
         LunchUI.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+    }
+
+    private  void Button_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        Page_Loaded(sender, e);
     }
 }

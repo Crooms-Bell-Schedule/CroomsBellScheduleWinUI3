@@ -44,6 +44,13 @@
             </Grid>
         </Grid>
 
+        <Grid x:Name="ErrorView" Visibility="Collapsed">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock x:Name="ErrorText" Foreground="Red" TextWrapping="WrapWholeWords">A error has occured while retrieving this page's data.</TextBlock>
+                <Button VerticalAlignment="Center" Click="Button_Click">Reload</Button>
+            </StackPanel>
+        </Grid>
+
         <StackPanel x:Name="Loader" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
             <ProgressRing x:Name="LoadingThing" Height="64" Width="64"/>
             <TextBlock x:Name="LoadingText" HorizontalAlignment="Center">Retrieving lunch data</TextBlock>

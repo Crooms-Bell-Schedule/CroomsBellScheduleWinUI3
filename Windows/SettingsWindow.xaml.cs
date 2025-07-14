@@ -1,4 +1,5 @@
 using CroomsBellScheduleCS.Utils;
+using CroomsBellScheduleCS.Views;
 using CroomsBellScheduleCS.Views.Settings;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -18,6 +19,21 @@ namespace CroomsBellScheduleCS.Windows;
 
 public sealed partial class SettingsWindow
 {
+    public int UnreadAnnouncementCount
+    {
+        set
+        {
+            if (value == 0)
+            {
+                AnncBadge.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                AnncBadge.Value = value;
+                AnncBadge.Visibility = Visibility.Visible;
+            }
+        }
+    }
     public SettingsWindow()
     {
         InitializeComponent();
@@ -451,13 +467,19 @@ public sealed partial class SettingsWindow
 
     private async void Annc_Click(object sender, RoutedEventArgs e)
     {
+        AnnouncementsView content = new();
         await new ContentDialog()
         {
             Title = "Announcements",
             PrimaryButtonText = "OK",
             DefaultButton = ContentDialogButton.Primary,
-            Content = new AnnouncementsView(),
+            Content = content,
             XamlRoot = Content.XamlRoot
         }.ShowAsync();
+
+        UnreadAnnouncementCount = content.UnreadRemaining;
+
+        // update remaining unread count if settings window is opened again
+        MainWindow.ViewInstance.UnreadAnnouncementCount = content.UnreadRemaining;
     }
 }

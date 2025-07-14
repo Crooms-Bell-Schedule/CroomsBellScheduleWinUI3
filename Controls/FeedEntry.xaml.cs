@@ -110,6 +110,8 @@ public sealed partial class FeedEntry
     {
         List<Inline> result = [];
 
+        bool addLineBreak = false;
+
         var ch = ParseTheHtml(node.ChildNodes);
 
         Span? rootElem;
@@ -136,6 +138,12 @@ public sealed partial class FeedEntry
         else if (node.Name == "#text")
         {
             return [new Run() { Text = HtmlEntity.DeEntitize(node.InnerText) }];
+        }
+        else if (node.Name == "h3")
+        {
+            rootElem = new();
+            rootElem.FontSize = 26;
+            addLineBreak = true;
         }
         else if (node.Name == "rainbow")
         {
@@ -170,11 +178,21 @@ public sealed partial class FeedEntry
                         {
                             FeedView.Instance.UserFlyoutPub.ShowAt(blk);
                             if (ch.Count > 0 && ch[0] is Run mentionContent)
-                            await FeedView.Instance.PrepareFlyout(mentionContent.Text);
+                                await FeedView.Instance.PrepareFlyout(mentionContent.Text);
                         }
                     };
                 }
             }
+        }
+        else if (node.Name == "ul")
+        {
+            rootElem = new Span();
+        }
+        else if (node.Name == "li")
+        {
+            rootElem = new();
+            rootElem.Inlines.Add(new Run() { Text = "• " });
+            addLineBreak = true;
         }
         else
         {
@@ -198,6 +216,9 @@ public sealed partial class FeedEntry
         {
             rootElem.Inlines.Add(item);
         }
+
+        if (addLineBreak)
+            rootElem.Inlines.Add(new LineBreak());
 
         result.Add(rootElem);
 

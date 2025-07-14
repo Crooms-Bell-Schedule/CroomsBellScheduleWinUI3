@@ -31,7 +31,8 @@ public sealed partial class PersonalizationView
         UpdateCheckState();
 
         // show version
-        VersionCard.Description = "" + Assembly.GetExecutingAssembly().GetName().Version;
+        var ver = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0, 0);
+        VersionCard.Description = $"{ver.Major}.{ver.Minor}.{ver.Build}";
 
         _initialized = true;
     }
@@ -161,7 +162,7 @@ public sealed partial class PersonalizationView
 
         if (rk != null && Environment.ProcessPath != null)
         {
-            if(rk.GetValue("Crooms Bell Schedule App") != null)
+            if (rk.GetValue("Crooms Bell Schedule App") != null)
             {
                 return true;
             }

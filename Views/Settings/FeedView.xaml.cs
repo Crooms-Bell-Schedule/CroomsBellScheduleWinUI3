@@ -335,7 +335,7 @@ public sealed partial class FeedView
 
     private void MA_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        Process.Start(new ProcessStartInfo() { FileName = "https://mikhail.croomssched.tech/advice.html", UseShellExecute = true });
+        Process.Start(new ProcessStartInfo() { FileName = "https://mikhail.croomssched.tech/advice", UseShellExecute = true });
     }
     private async void AppBarButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {

@@ -59,6 +59,8 @@
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE789;" Margin="0,0,10,0" />
                         <TextBlock>Announcements</TextBlock>
+
+                        <InfoBadge x:Name="AnncBadge" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource AttentionDotInfoBadgeStyle}" Value="1" Margin="5,0,0,0"/>
                     </StackPanel>
                 </Button>
                 <Button Height="33" Visibility="Visible" Padding="5,0,0,0">
