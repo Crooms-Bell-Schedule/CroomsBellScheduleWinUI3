@@ -10,9 +10,9 @@
 
     <Grid>
         <ScrollViewer x:Name="ContentArea" Visibility="Collapsed" Height="300">
-            <WrapPanel x:Name="ContentBox" Orientation="Vertical">
+            <StackPanel x:Name="ContentBox" Orientation="Vertical">
 
-            </WrapPanel>
+            </StackPanel>
         </ScrollViewer>
         <StackPanel
     x:Name="Loader" Padding="50">

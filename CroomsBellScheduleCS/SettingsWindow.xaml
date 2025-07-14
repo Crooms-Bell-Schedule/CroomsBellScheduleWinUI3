@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Window
     x:Class="CroomsBellScheduleCS.Windows.SettingsWindow"
@@ -45,7 +45,7 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
             </Grid.ColumnDefinitions>
-            <Image Source="/Assets/croomsBellSchedule.ico"
+            <Image Source="/Assets/Icons/croomsBellSchedule.ico"
                    HorizontalAlignment="Left"
                    Width="16"
                    Height="16" Grid.Column="0" />
@@ -203,7 +203,7 @@
             </NavigationView.MenuItems>
 
             <Grid>
-                <Frame x:Name="NavigationFrame" Margin="{StaticResource NavigationViewPageContentMargin}"
+                <Frame x:Name="NavigationFrame" Margin="56,24,56,0"
                        Navigated="NavigationFrame_Navigated" Loaded="NavigationFrame_Loaded" />
 
                 <InfoBar VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">

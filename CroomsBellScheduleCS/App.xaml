@@ -1,4 +1,4 @@
-<Application x:Class="CroomsBellScheduleCS.App"
+﻿<Application x:Class="CroomsBellScheduleCS.App"
        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -12,8 +12,10 @@
       </ResourceDictionary.MergedDictionaries>
 
       <!-- Add resources here -->
-
-    </ResourceDictionary>
+            <ResourceDictionary Source="/Styles/FontSizes.xaml" x:Key="F" />
+            <ResourceDictionary Source="/Styles/Thickness.xaml" x:Key="T"/>
+            <ResourceDictionary Source="/Styles/TextBlock.xaml" x:Key="B"/>
+        </ResourceDictionary>
   </Application.Resources>
 
 </Application>
