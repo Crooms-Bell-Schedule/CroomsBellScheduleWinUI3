@@ -164,11 +164,17 @@ namespace CroomsBellScheduleCS.Utils
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
-                return new Result<BellScheduleProperties?>() { OK = true, Value = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.BellScheduleProperties) };
+                if (responseText.StartsWith("<"))
+                {
+                    // not JSON
+                    return new() { OK = false, Exception = new Exception("This service is currently unavailable due to the shutdown of Glitch hosting") };
+                }
+
+                return new() { OK = true, Value = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.BellScheduleProperties) };
             }
             catch (Exception ex)
             {
-                return new Result<BellScheduleProperties?>() { OK = false, Exception = ex };
+                return new() { OK = false, Exception = ex };
             }
         }
         public async Task<Result<LunchData?>> GetLunchData()
@@ -178,6 +184,12 @@ namespace CroomsBellScheduleCS.Utils
                 var response = await _glitchClient.GetAsync("https://croomssched.glitch.me/infoFetch.json");
 
                 var responseText = await response.Content.ReadAsStringAsync();
+
+                if (responseText.StartsWith("<"))
+                {
+                    // not JSON
+                    return new() { OK = false, Exception = new Exception("This service is currently unavailable due to the shutdown of Glitch hosting") };
+                }
 
                 return new Result<LunchData?>() { OK = true, Value = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.LunchData) };
             }
@@ -325,6 +337,7 @@ namespace CroomsBellScheduleCS.Utils
                 {
                     return new() { OK = false, Exception = new Exception($"Server error: {response.StatusCode}") };
                 }
+
                 ApiSimpleResponse? simple = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.ApiSimpleResponse) ?? throw new Exception("failed to decode json");
 
                 if (simple.status == "OK")
@@ -349,7 +362,7 @@ namespace CroomsBellScheduleCS.Utils
         {
             try
             {
-                var response = await _glitchClient.GetAsync("https://mikhail.croomssched.tech/annc.json");
+                var response = await _glitchClient.GetAsync("https://mikhail.croomssched.tech/crfsapi/AppController/Announcements\r\n");
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
@@ -364,14 +377,15 @@ namespace CroomsBellScheduleCS.Utils
 
     public class AnnouncementData
     {
-        public List<Announcement> Announcements { get; set; } = [];
+        public List<Announcement> announcements { get; set; } = [];
     }
     public class Announcement
     {
-        public int ID { get; set; }
-        public string Date { get; set; } = "";
-        public string Title { get; set; } = "";
-        public string Content { get; set; } = "";
+        public int id { get; set; }
+        public string date { get; set; } = "";
+        public string title { get; set; } = "";
+        public string content { get; set; } = "";
+        public bool important { get; set; }
     }
     public class LoginRequest
     {

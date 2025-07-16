@@ -11,12 +11,14 @@
     <!-- App Identifier -->
     <ApplicationId>com.mikhailproductions.CroomsBellScheduleCS</ApplicationId>
     <!-- Versions -->
-    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>5.0.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
     <!-- Package Publisher -->
     <ApplicationPublisher>CroomsBellScheduleCS</ApplicationPublisher>
     <!-- Package Description -->
     <Description>CroomsBellScheduleCS powered by Uno Platform.</Description>
+
+    <ApplicationIcon>Assets/Icons/croomsBellSchedule.ico</ApplicationIcon>
     <!--
       If you encounter this error message:
 
@@ -43,6 +45,7 @@
     <PackageReference Include="CommunityToolkit.WinUI.Behaviors" />
     <PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" />
     <PackageReference Include="CommunityToolkit.WinUI.Extensions" />
+    <PackageReference Include="CommunityToolkit.WinUI.Notifications" />
     <PackageReference Include="HtmlAgilityPack" />
     <PackageReference Include="System.Text.Json" />
     <PackageReference Include="Velopack" />

@@ -1,4 +1,5 @@
 using CroomsBellScheduleCS.Utils;
+using CroomsBellScheduleCS.Views;
 using CroomsBellScheduleCS.Views.Settings;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -18,6 +19,22 @@ namespace CroomsBellScheduleCS.Windows;
 
 public sealed partial class SettingsWindow : Window
 {
+    public int UnreadAnnouncementCount
+    {
+        set
+        {
+            if (value == 0)
+            {
+                AnncBadge.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                AnncBadge.Value = value;
+                AnncBadge.Visibility = Visibility.Visible;
+            }
+        }
+    }
+
     public SettingsWindow()
     {
         InitializeComponent();
@@ -96,9 +113,7 @@ public sealed partial class SettingsWindow : Window
     // Helper method to get AppWindow
     private AppWindow GetAppWindow()
     {
-        IntPtr hWnd = WindowNative.GetWindowHandle(this);
-        //WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-        return AppWindow;//.GetFromWindowId(windowId);
+        return AppWindow;
     }
 
     internal void ShowInAppNotification(string message, string? title, int durationSeconds)
@@ -108,14 +123,13 @@ public sealed partial class SettingsWindow : Window
 
     private void SetRegionsForCustomTitleBar()
     {
-        // Specify the interactive regions of the title bar.
+        if (MainWindow.ViewInstance.XamlRoot == null) return;
 
+        // Specify the interactive regions of the title bar.
         double scaleAdjustment = MainWindow.ViewInstance.XamlRoot.RasterizationScale;
 
-
         if (OperatingSystem.IsWindows())
-        RightPaddingColumn.Width = new GridLength(AppWindow.TitleBar.RightInset / scaleAdjustment);
-
+            RightPaddingColumn.Width = new GridLength(AppWindow.TitleBar.RightInset / scaleAdjustment);
     }
 
     #endregion
@@ -230,6 +244,14 @@ public sealed partial class SettingsWindow : Window
 
     private async void FlyoutChangePFP_Click(object sender, RoutedEventArgs e)
     {
+#if __UNO__
+        // Uno platform does not support ImageCropper control
+        Process.Start(new ProcessStartInfo() { FileName = "https://admin.croomssched.tech/dashboard/change-pfp", UseShellExecute = true });
+
+        MainView.Settings?.ShowInAppNotification("Opened in browser", "Profile picture can only be changed in your web browser at this time.", 0);
+
+        await Task.Delay(1); // Remove async warning
+#else
         var txt = new TextBox();
         var error = new TextBlock() { Text = "" };
         var content = new PfpUploadView();
@@ -249,7 +271,7 @@ public sealed partial class SettingsWindow : Window
             args.Cancel = true;
 
             var c = ((PfpUploadView)sender.Content);
-            /*if (c.Cropper.Source == null)
+            if (c.Cropper.Source == null)
             {
                 c.Error = "Please select an image";
                 return;
@@ -288,10 +310,11 @@ public sealed partial class SettingsWindow : Window
                 sender.Title = "Change Profile Picture";
                 sender.IsPrimaryButtonEnabled = true;
                 sender.IsSecondaryButtonEnabled = true;
-            }*/
+            }
         };
 
         await dlg.ShowAsync();
+#endif
     }
 
     private async void FlyoutChangeUsername_Click(object sender, RoutedEventArgs e)
@@ -453,13 +476,19 @@ public sealed partial class SettingsWindow : Window
 
     private async void Annc_Click(object sender, RoutedEventArgs e)
     {
+         AnnouncementsView content = new();
         await new ContentDialog()
         {
             Title = "Announcements",
             PrimaryButtonText = "OK",
             DefaultButton = ContentDialogButton.Primary,
-            Content = new AnnouncementsView(),
+            Content = content,
             XamlRoot = Content.XamlRoot
         }.ShowAsync();
+
+        UnreadAnnouncementCount = content.UnreadRemaining;
+
+        // update remaining unread count if settings window is opened again
+        MainWindow.ViewInstance.UnreadAnnouncementCount = content.UnreadRemaining;
     }
 }

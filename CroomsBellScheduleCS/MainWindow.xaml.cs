@@ -13,9 +13,10 @@ public sealed partial class MainWindow : Window
 {
     internal static MainWindow Instance = null!;
     internal static MainView ViewInstance = null!;
-    //WindowsSystemDispatcherQueueHelper? m_wsdqHelper; // See below for implementation.
+#if !__UNO__
     MicaController? m_backdropController;
     SystemBackdropConfiguration? m_configurationSource;
+#endif
     private bool SendInputNotification = true;
     public MainWindow()
     {
@@ -28,9 +29,11 @@ public sealed partial class MainWindow : Window
         LoadSettings();
 
         Application.Current.UnhandledException += Current_UnhandledException;
-        this.Activated += Window_Activated;
-        this.Closed += Window_Closed;
-        ((FrameworkElement)this.Content).ActualThemeChanged += Window_ThemeChanged;
+        Activated += Window_Activated;
+        Closed += Window_Closed;
+
+        if (Content != null)
+            ((FrameworkElement)Content).ActualThemeChanged += Window_ThemeChanged;
     }
     private static async void LoadSettings()
     {
@@ -45,6 +48,7 @@ public sealed partial class MainWindow : Window
     }
     public void RemoveMica()
     {
+#if !__UNO__
         // Make sure any Mica/Acrylic controller is disposed
         // so it doesn't try to use this closed window.
         if (m_backdropController != null)
@@ -54,6 +58,7 @@ public sealed partial class MainWindow : Window
         }
         this.Activated -= Window_Activated;
         m_configurationSource = null;
+#endif
     }
 
     public void TrySetSystemBackdrop(bool input)
@@ -87,14 +92,12 @@ public sealed partial class MainWindow : Window
 
     private void Window_ThemeChanged(FrameworkElement sender, object args)
     {
-        if (m_configurationSource != null)
-        {
-            SetConfigurationSourceTheme();
-        }
+        SetConfigurationSourceTheme();
     }
 
     private void Window_Closed(object sender, WindowEventArgs args)
     {
+#if !__UNO__
         // Make sure any Mica/Acrylic controller is disposed
         // so it doesn't try to use this closed window.
         if (m_backdropController != null)
@@ -104,6 +107,7 @@ public sealed partial class MainWindow : Window
         }
         this.Activated -= Window_Activated;
         m_configurationSource = null;
+#endif
     }
 
     private static void SetConfigurationSourceTheme()
@@ -113,7 +117,7 @@ public sealed partial class MainWindow : Window
     }
     private void Window_Activated(object sender, WindowActivatedEventArgs args)
     {
-        if (m_configurationSource == null || SendInputNotification) return;
+        //if (m_configurationSource == null || SendInputNotification) return;
         //m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
     }
 
@@ -122,6 +126,8 @@ public sealed partial class MainWindow : Window
         if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
 
         if (SettingsManager.Settings.ShowInTaskbar) return;
+
+#if !__UNO__
         try
         {
             if (m_configurationSource == null) return;
@@ -136,6 +142,7 @@ public sealed partial class MainWindow : Window
         {
 
         }
+#endif
     }
 
     private static int ErrorCount = 0;
@@ -153,42 +160,5 @@ public sealed partial class MainWindow : Window
             InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
             await dlg.ShowAsync();
         }
-        
     }
-    //class WindowsSystemDispatcherQueueHelper
-    //{
-    //    [StructLayout(LayoutKind.Sequential)]
-    //    struct DispatcherQueueOptions
-    //    {
-    //        internal int dwSize;
-    //        internal int threadType;
-    //        internal int apartmentType;
-    //    }
-
-    //    [DllImport("CoreMessaging.dll")]
-    //    private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object? dispatcherQueueController);
-
-    //    object? m_dispatcherQueueController = null;
-    //    public void EnsureWindowsSystemDispatcherQueueController()
-    //    {
-    //        if (global::Windows.System.DispatcherQueue.GetForCurrentThread() != null)
-    //        {
-    //            // one already exists, so we'll just use it.
-    //            return;
-    //        }
-
-    //        if (m_dispatcherQueueController == null)
-    //        {
-    //            DispatcherQueueOptions options = new();
-    //            options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
-    //            options.threadType = 2;    // DQTYPE_THREAD_CURRENT
-    //            options.apartmentType = 2; // DQTAT_COM_STA
-
-    //            if (CreateDispatcherQueueController(options, ref m_dispatcherQueueController) != 0)
-    //            {
-    //                // TODO: show error
-    //            }
-    //        }
-    //    }
-    //}
 }

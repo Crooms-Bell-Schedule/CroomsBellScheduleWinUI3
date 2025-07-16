@@ -31,7 +31,15 @@ public sealed partial class PersonalizationView : Page
         UpdateCheckState();
 
         // show version
-        VersionCard.Description = "" + Assembly.GetExecutingAssembly().GetName().Version;
+        var ver = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0, 0);
+        VersionCard.Description = $"{ver.Major}.{ver.Minor}.{ver.Build}";
+
+        if (!OperatingSystem.IsWindows())
+        {
+            chkStartup.IsEnabled = false;
+            chkTaskbar.IsEnabled = false;
+            chkDvd.IsEnabled = false;
+        }
 
         _initialized = true;
     }
