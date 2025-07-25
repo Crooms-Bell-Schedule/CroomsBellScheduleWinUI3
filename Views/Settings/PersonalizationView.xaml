@@ -29,7 +29,7 @@
             <controls:SettingsCard Description="Put the bell schedule in your Windows Taskbar. To exit from this mode, find the Crooms Bell Schedule Icon in the right area of your taskbar."
                                Header="Show inside of taskbar" Margin="0,7,0,0" CornerRadius="5">
                 <ToggleSwitch x:Name="chkTaskbar" Header="" Toggled="chkTaskbar_Toggled"
-                          ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Does not function on Windows 10 currently, and the bell schedule is not shown when an app is fullscreen." />
+                          ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Compatible with Windows 10 and 11." />
             </controls:SettingsCard>
 
             <controls:SettingsCard Description="Change how many digits are shown"
@@ -92,7 +92,7 @@
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="App created by Mikhail Tyukin with some contributions from Suvan and Andrew. Crooms Bell Schedule backend was made by Andew Jennings. This application uses WinUI 3.0, C#, HtmlAgilityPack, System.Text.Json, Velopack and H.NotifyIcon.WinUI." TextWrapping="Wrap" />
 
                 <controls:WrapPanel Orientation="Horizontal" HorizontalSpacing="5">
-                    <HyperlinkButton Margin="0,4,0,0" Content="Changelog" NavigateUri="https://mikhail.croomssched.tech/updateapiv2/changelog.html" />
+                    <HyperlinkButton Margin="0,4,0,0" Content="Changelog" Click="Changelog_Click" />
                     <HyperlinkButton Margin="0,4,0,0" Content="Source code" NavigateUri="https://github.com/thealmighyderpybird/CroomsBellScheduleWinUI3" />
                     <HyperlinkButton Margin="0,4,0,0" Content="Report a bug" NavigateUri="https://docs.google.com/forms/d/e/1FAIpQLSfGggFDrvK-qi6ABCiBDFG6ZVaTc6AvLMNHAvQeWFPAd1YOdw/viewform?usp=header" />
                 </controls:WrapPanel>

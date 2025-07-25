@@ -624,6 +624,12 @@ public sealed partial class MainView
                 taskbarUIHWnd =
                     FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
 
+                // Check if Windows 10
+                if (taskbarUIHWnd == 0 && Environment.OSVersion.Version.Build < 22000)
+                {
+                    taskbarUIHWnd = trayHWnd;
+                }
+
                 RECT rc = new();
                 GetClientRect(taskbarUIHWnd, ref rc);
                 taskbarHeight = rc.bottom - rc.top;
@@ -643,14 +649,6 @@ public sealed partial class MainView
 
             if (_windowApp != null)
             {
-                //_windowApp.Resize(
-                //        new SizeInt32
-                //        {
-                //            Width = (int)(350 * RasterizationScale),
-                //            Height = (int)(taskbarHeight * RasterizationScale)
-                //        });
-                //_windowApp.Move(new());
-
                 SetWindowPos(handle, 0, 0, 0, (int)(350 * _prevDPI), taskbarHeight + 8, 0);
             }
 
@@ -701,12 +699,9 @@ public sealed partial class MainView
 
         if (msg == WM_GETMINMAXINFO)
         {
-            int dpi = GetDpi();
-            float scalingFactor = (float)dpi / 96;
-
             MINMAXINFO minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
-            minMaxInfo.ptMinTrackSize.X = (int)(100 * scalingFactor); // TODO SUVAN
-            minMaxInfo.ptMinTrackSize.Y = (int)(50 * scalingFactor); // TODO SUVAN
+            minMaxInfo.ptMinTrackSize.X = (int)(100 * XamlRoot.RasterizationScale);
+            minMaxInfo.ptMinTrackSize.Y = (int)(50 * XamlRoot.RasterizationScale);
             Marshal.StructureToPtr(minMaxInfo, lParam, true);
         }
 

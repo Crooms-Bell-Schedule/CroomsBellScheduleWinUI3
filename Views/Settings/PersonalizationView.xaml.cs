@@ -237,4 +237,9 @@ public sealed partial class PersonalizationView
 
         MainWindow.ViewInstance.UpdateDvd();
     }
+
+    private void Changelog_Click(object sender, RoutedEventArgs e)
+    {
+        MainView.Settings?.ShowAnnouncementsAsync();
+    }
 }

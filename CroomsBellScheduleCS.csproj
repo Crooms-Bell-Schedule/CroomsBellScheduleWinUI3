@@ -16,7 +16,7 @@
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
-		<Version>4.1.1</Version>
+		<Version>4.1.9</Version>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -63,10 +63,10 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
 		<PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.250402" />
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
-		<PackageReference Include="HtmlAgilityPack" Version="1.12.1" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250410001-experimental1" />
-		<PackageReference Include="System.Text.Json" Version="10.0.0-preview.3.25171.5" />
-		<PackageReference Include="Velopack" Version="0.0.1213-g57cf68d" />
+		<PackageReference Include="HtmlAgilityPack" Version="1.12.2" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250702007-experimental4" />
+		<PackageReference Include="System.Text.Json" Version="10.0.0-preview.6.25358.103" />
+		<PackageReference Include="Velopack" Version="0.0.1350-g3ba32af" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Content Update="Assets\croomsBellSchedule.ico">
@@ -104,6 +104,11 @@
 		  <SubType>Designer</SubType>
 		</Page>
 		<Page Update="Views\Settings\PostView.xaml">
+		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		  <SubType>Designer</SubType>
+		  <Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\Settings\WebView.xaml">
 		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		  <SubType>Designer</SubType>
 		  <Generator>MSBuild:Compile</Generator>

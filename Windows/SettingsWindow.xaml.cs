@@ -1,5 +1,8 @@
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 using CroomsBellScheduleCS.Utils;
-using CroomsBellScheduleCS.Views;
 using CroomsBellScheduleCS.Views.Settings;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -7,11 +10,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
 
@@ -38,10 +36,12 @@ public sealed partial class SettingsWindow
     {
         InitializeComponent();
 
+        // Configure window
         AppWindow appWindow = GetAppWindow();
         appWindow.Resize(new SizeInt32(1300, 900));
         appWindow.Title = "Crooms Bell Schedule Settings";
         appWindow.SetIcon("Assets\\croomsBellSchedule.ico");
+
         UpdateTheme();
         ExtendsContentIntoTitleBar = true;
         appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
@@ -55,7 +55,7 @@ public sealed partial class SettingsWindow
         AppWindow appWindow = GetAppWindow();
         var theme = SettingsManager.Settings.Theme;
         appWindow.TitleBar.PreferredTheme = (theme == ElementTheme.Default ? TitleBarTheme.UseDefaultAppMode : (SettingsManager.Settings.Theme == ElementTheme.Light ? TitleBarTheme.Light : TitleBarTheme.Dark));
-        
+
         if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
     }
 
@@ -134,19 +134,6 @@ public sealed partial class SettingsWindow
 
     #endregion
 
-    /*private void AppTitleBar_PaneToggleRequested(TitleBar sender, object args)
-    {
-        NavigationViewControl.IsPaneOpen = !NavigationViewControl.IsPaneOpen;
-    }
-
-    private void AppTitleBar_BackRequested(TitleBar sender, object args)
-    {
-        if (NavigationFrame.CanGoBack)
-        {
-            NavigationFrame.GoBack();
-        }
-    */
-
     private void SetLoggedOutMode()
     {
         FlyoutPFPButton.IsEnabled = false;
@@ -172,7 +159,7 @@ public sealed partial class SettingsWindow
         FlyoutSignIn.Click += FlyoutLogout_Click;
         FlyoutChangePassword.Visibility = Debugger.IsAttached ? Visibility.Visible : Visibility.Collapsed; // TODO backend
     }
-        
+
     public async Task RefreshUserInfo()
     {
         var details = await Services.ApiClient.GetUserDetails();
@@ -221,7 +208,7 @@ public sealed partial class SettingsWindow
             await RefreshUserInfo();
             SetLoggedInMode();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             ContentDialog dlg = new()
             {
@@ -376,10 +363,12 @@ public sealed partial class SettingsWindow
         content.IsEnabled = false;
         await Task.Delay(5);
 
+        ShowInAppNotification("Not implemented", "", 3);
+
         /*if (true)
         {*/
-            sender.Hide();
-            ShowInAppNotification("Changed password successfully.", "", 3);
+        sender.Hide();
+        ShowInAppNotification("Changed password successfully.", "", 3);
         /*}
         else
         {
@@ -467,6 +456,11 @@ public sealed partial class SettingsWindow
 
     private async void Annc_Click(object sender, RoutedEventArgs e)
     {
+        await ShowAnnouncementsAsync();
+    }
+
+    internal async Task ShowAnnouncementsAsync()
+    {
         AnnouncementsView content = new();
         await new ContentDialog()
         {
@@ -481,5 +475,11 @@ public sealed partial class SettingsWindow
 
         // update remaining unread count if settings window is opened again
         MainWindow.ViewInstance.UnreadAnnouncementCount = content.UnreadRemaining;
+    }
+
+    public void NavigateTo(Type t)
+    {
+        FrameNavigationOptions navOptions = new();
+        NavigationFrame.NavigateToType(t, null, navOptions);
     }
 }
