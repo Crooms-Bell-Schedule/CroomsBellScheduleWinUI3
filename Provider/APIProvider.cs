@@ -13,7 +13,7 @@ public class APIProvider : IBellScheduleProvider
 
     public async Task<BellScheduleReader> GetTodayActivity()
     {
-        // fetch data from esrver
+        // fetch data from server
         HttpResponseMessage dataBody = await _client.GetAsync("https://api.croomssched.tech/today");
         if (!dataBody.IsSuccessStatusCode)
             throw new Exception("failed to fetch todays schedule: " + dataBody.StatusCode);

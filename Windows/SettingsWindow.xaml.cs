@@ -477,9 +477,13 @@ public sealed partial class SettingsWindow
         MainWindow.ViewInstance.UnreadAnnouncementCount = content.UnreadRemaining;
     }
 
-    public void NavigateTo(Type t)
+    public void NavigateTo(Type t, object parameter)
     {
         FrameNavigationOptions navOptions = new();
-        NavigationFrame.NavigateToType(t, null, navOptions);
+        NavigationFrame.NavigateToType(t, parameter, navOptions);
+    }
+    public void NavigateBack()
+    {
+        NavigationFrame.GoBack();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using CroomsBellScheduleCS.Utils;
 using HtmlAgilityPack;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
@@ -164,7 +165,7 @@ public sealed partial class FeedView
                     };
 
                     LoginView content = new();
-                    dlg2.Content = "Failed to reconnect to server. Check your internet connection, or the server may be under maintainence.";
+                    dlg2.Content = "Failed to reconnect to server. Check your internet connection, or the server may be under maintenance.";
 
                     await dlg2.ShowAsync();
                     Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
@@ -335,8 +336,11 @@ public sealed partial class FeedView
 
     private void MA_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        MainView.Settings?.NavigateTo(typeof(WebView));
-        //Process.Start(new ProcessStartInfo() { FileName = "", UseShellExecute = true });
+        MainView.Settings?.NavigateTo(typeof(WebView), "https://mikhail.croomssched.tech/advice");
+    }
+    private void CBSHLive_Click(object sender, RoutedEventArgs e)
+    {
+        MainView.Settings?.NavigateTo(typeof(WebView), "https://www.youtube-nocookie.com/embed/Lzz1CV-KxeI?si=9wDY-sao20sc5eBl");
     }
     private async void AppBarButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
@@ -436,7 +440,7 @@ public sealed partial class FeedView
         FlyoutUserName2.Text = uid;
     }
 
-    private void HandleUserProfile_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void HandleUserProfile_Click(object sender, RoutedEventArgs e)
     {
         var uid = ((Button)sender).Tag as string;
 

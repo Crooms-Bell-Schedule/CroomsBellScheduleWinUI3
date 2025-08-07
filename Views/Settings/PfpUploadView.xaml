@@ -13,6 +13,7 @@
         <Grid>
             <StackPanel
             x:Name="ContentArea">
+                <TextBlock>Please make sure that the profile picture does not<LineBreak/>violate the Terms of Service/school rules, or<LineBreak/>you could lose the ability to change profile pictures</TextBlock>
                 <controls:WrapPanel Orientation="Horizontal">
                     <TextBlock Margin="0,10,10,10" HorizontalAlignment="Center">Profile Picture:</TextBlock>
                     <Button x:Name="SelectButton" Click="SelectButton_Click">Select</Button>

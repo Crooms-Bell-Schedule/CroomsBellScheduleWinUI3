@@ -118,10 +118,13 @@ public sealed partial class MainView
             Services.NotificationManager.Init();
 
             // Workaround a bug when window maximizes when you double click.
-            nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
-            _newWndProcDelegate = (WndProcDelegate)WndProc;
-            nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
-            _oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
+            if (OperatingSystem.IsWindows())
+            {
+                nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
+                _newWndProcDelegate = (WndProcDelegate)WndProc;
+                nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
+                _oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
+            }
 
             TxtCurrentClass.Text = "Checking for updates...";
         }
@@ -144,7 +147,7 @@ public sealed partial class MainView
 
             _timer = new()
             {
-                Interval = TimeSpan.FromMilliseconds(199)
+                Interval = TimeSpan.FromMilliseconds(500)
             };
             _timer.Tick += Timer_Tick;
             _timer.Start();

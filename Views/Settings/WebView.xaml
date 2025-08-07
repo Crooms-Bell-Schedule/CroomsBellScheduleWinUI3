@@ -10,8 +10,18 @@
     mc:Ignorable="d">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0">
+            <Button Content="Return" Click="Return_Click"></Button>
+            <HyperlinkButton x:Name="OpenInBrowser" Content="Open in browser" VerticalAlignment="Center" HorizontalAlignment="Right"></HyperlinkButton>
+        </Grid>
+        
          <controls:WebView2 x:Name="TheWebView"  Grid.Row="1" Grid.ColumnSpan="2"
         Source="https://mikhail.croomssched.tech/advice" HorizontalAlignment="Stretch" 
-        VerticalAlignment="Stretch"/>
+        VerticalAlignment="Stretch" Margin="0,5,0,0"/>
     </Grid>
 </Page>
