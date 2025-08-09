@@ -60,14 +60,6 @@ public sealed partial class MainView
             // Window setup
             OverlappedPresenter? presenter = MainWindow.Instance.AppWindow.Presenter as OverlappedPresenter;
             if (presenter == null) return;
-            presenter.IsMaximizable = false;
-            presenter.IsMinimizable = false;
-            presenter.IsResizable = true;
-            presenter.IsAlwaysOnTop = true;
-            presenter.SetBorderAndTitleBar(true, false);
-            MainWindow.Instance.ExtendsContentIntoTitleBar = true;
-            MainWindow.Instance.AppWindow.IsShownInSwitchers = false;
-            MainWindow.Instance.SetTitleBar(Content);
 
             try
             {
@@ -82,6 +74,17 @@ public sealed partial class MainView
                 InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
                 await dlg.ShowAsync();
             }
+
+            presenter.IsMaximizable = false;
+            presenter.IsMinimizable = false;
+            presenter.IsResizable = true;
+            presenter.IsAlwaysOnTop = true;
+            presenter.SetBorderAndTitleBar(true, SettingsManager.Settings.IsLivestreamMode);
+            MainWindow.Instance.ExtendsContentIntoTitleBar = true;
+            MainWindow.Instance.AppWindow.IsShownInSwitchers = false;
+            MainWindow.Instance.SetTitleBar(Content);
+
+            Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
 
             _prevDPI = XamlRoot.RasterizationScale;
 
@@ -594,9 +597,9 @@ public sealed partial class MainView
     public async Task SetTaskbarMode(bool showInTaskbar)
     {
         _checkDPIUpdates = false; // TODO HACK
-        nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
-        WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
-        AppWindow appWindow = AppWindow.GetFromWindowId(id);
+        AppWindow appWindow = MainWindow.Instance.AppWindow;
+        var handle = WindowNative.GetWindowHandle(MainWindow.Instance);
+
         if (appWindow != null)
             _windowApp = appWindow;
         if (_windowApp == null) return; // What?
@@ -675,9 +678,10 @@ public sealed partial class MainView
 
     public void PositionWindow()
     {
+        if (!OperatingSystem.IsWindows()) return;
+
         nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
-        WindowId id = Win32Interop.GetWindowIdFromWindow(handle);
-        AppWindow appWindow = AppWindow.GetFromWindowId(id);
+        AppWindow appWindow = MainWindow.Instance.AppWindow;
         if (appWindow != null)
             _windowApp = appWindow;
         if (_windowApp == null) return; // What?

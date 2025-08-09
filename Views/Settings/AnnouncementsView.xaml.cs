@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using CroomsBellScheduleCS.Utils;
 using System.Linq;
 using Microsoft.UI.Xaml;
+using CroomsBellScheduleCS.Controls;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
@@ -79,7 +80,7 @@ public sealed partial class AnnouncementsView
 
             ex.Content = new StackPanel();
             ((StackPanel)ex.Content).Children.Add(new TextBlock() { Text = item.date });
-            ((StackPanel)ex.Content).Children.Add(new TextBlock() { Text = item.content, TextWrapping = TextWrapping.WrapWholeWords, IsTextSelectionEnabled = true });
+            ((StackPanel)ex.Content).Children.Add(new Controls.FeedEntry() { ContentData = item.content });
 
             if (item.important && !SettingsManager.Settings.ViewedAnnouncementIds.Contains(item.id))
             {

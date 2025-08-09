@@ -77,7 +77,13 @@ public static class SettingsManager
         public bool ShownTaskbarTip { get; set; }
         public bool EnableDvdScreensaver { get; set; }
 
+        public bool IsLivestreamMode { get; set; }
+
         public ElementTheme Theme { get; set; }
+        /// <summary>
+        /// Theme ID of themes in Themes class
+        /// </summary>
+        public int ThemeIndex { get; set; }
         /// <summary>
         /// lunch for wenesday schedule
         /// </summary>

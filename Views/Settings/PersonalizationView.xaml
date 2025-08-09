@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
     <ScrollViewer>
@@ -14,9 +15,9 @@
             x:Name="ContentArea">
             <TextBlock x:Uid="Settings_Personalization" Margin="0, 20, 0, 26" Style="{ThemeResource TitleTextBlockStyle}"
                        Text="Personalization" />
-
-            <controls:SettingsCard Description=""
-                   Header="Theme" Margin="0,7,0,0">
+            <TextBlock Margin="0,2,0,0" Style="{ThemeResource SubtitleTextBlockStyle}" Text="Appearance" />
+            <controls:SettingsCard Description="Change the base color scheme of the Crooms Bell Schedule App"
+                   Header="Choose your mode" Margin="0,7,0,0">
                 <ComboBox x:Name="ThemeCombo" SelectionChanged="ThemeCombo_SelectionChanged" CornerRadius="5">
                     <ComboBox.Items>
                         <ComboBoxItem Content="System"/>
@@ -26,7 +27,20 @@
                 </ComboBox>
             </controls:SettingsCard>
 
-            <controls:SettingsCard Description="Put the bell schedule in your Windows Taskbar. To exit from this mode, find the Crooms Bell Schedule Icon in the right area of your taskbar."
+            <controls:SettingsCard Header="Theme"
+                                   Description="Coming soon: choose a combination of backgrounds and colors to give the Crooms Bell Schedule more personality. Some colors can be changed by changing the system accent color."
+                                   Margin="0,7,0,0">
+                <controls:WrapPanel x:Name="ThemesContainer">
+                    <!--<ToggleButton  Padding="2">
+                        <Image  Source="/Assets/default.png" Height="40" Width="40"></Image>
+                    </ToggleButton>
+                    <ToggleButton  Padding="2">
+                        <Image  Source="/Assets/landonscamp.png" Height="40" Width="40"></Image>
+                    </ToggleButton>-->
+                </controls:WrapPanel>
+            </controls:SettingsCard>
+
+            <controls:SettingsCard Description="Put the bell schedule in your Windows Taskbar. To exit from this mode, find the Crooms Bell Schedule Icon in the right area of your taskbar. Not supported on Linux platforms."
                                Header="Show inside of taskbar" Margin="0,7,0,0" CornerRadius="5">
                 <ToggleSwitch x:Name="chkTaskbar" Header="" Toggled="chkTaskbar_Toggled"
                           ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Compatible with Windows 10 and 11." />
@@ -44,19 +58,24 @@
                 </ComboBox>
             </controls:SettingsCard>
 
+            <TextBlock Margin="0,10,0,5" Style="{ThemeResource SubtitleTextBlockStyle}" Text="Bell schedule" />
             <controls:SettingsCard Header="5th Period Lunch" Description="Lunch for all 7, activity and odd block days" Margin="0,7,0,0" CornerRadius="5">
                 <StackPanel Orientation="Horizontal">
                     <ToggleButton x:Name="p5LunchA" Margin="5" Checked="p5LunchA_Checked" Unchecked="Lunch_Unchecked">A</ToggleButton>
                     <ToggleButton x:Name="p5LunchB" Margin="5" Checked="p5LunchB_Checked" Unchecked="Lunch_Unchecked">B</ToggleButton>
                 </StackPanel>
             </controls:SettingsCard>
-            <controls:SettingsCard Header="Homeroom Lunch" Description="Lunch for even block days" Margin="0,7,0,0" CornerRadius="5">
+            <controls:SettingsCard Header="Homeroom Lunch" Description="Lunch for even block days/Wednesdays" Margin="0,7,0,0" CornerRadius="5">
                 <StackPanel Orientation="Horizontal">
                     <ToggleButton x:Name="pHLunchA" Margin="5" Checked="pHLunchA_Checked" Unchecked="Lunch_Unchecked">A</ToggleButton>
                     <ToggleButton x:Name="pHLunchB" Margin="5" Checked="pHLunchB_Checked" Unchecked="Lunch_Unchecked">B</ToggleButton>
                 </StackPanel>
             </controls:SettingsCard>
 
+            <controls:SettingsCard Header="Change class names" ActionIcon="{ui:SymbolIcon Symbol=Go}" IsActionIconVisible="True" Margin="0,7,0,0" IsClickEnabled="True" CornerRadius="5" Click="GoToSchedule_Click">
+                
+            </controls:SettingsCard>
+            
             <TeachingTip x:Name="ToggleThemeTeachingTip1"
     Target="{x:Bind chkTaskbar}"
     Title="Tip"
@@ -66,6 +85,7 @@
                 </TeachingTip.HeroContent>
             </TeachingTip>
 
+            <TextBlock Margin="0,10,0,5" Style="{ThemeResource SubtitleTextBlockStyle}" Text="Behavior" />
             <controls:SettingsCard Header="Start when Windows starts" CornerRadius="5" Description="Automatically open the Crooms Bell Schedule app when Windows starts." Margin="0,7,0,0">
                 <ToggleSwitch x:Name="chkStartup" Toggled="chkStartup_Checked"></ToggleSwitch>
             </controls:SettingsCard>
@@ -80,7 +100,7 @@
                 <ToggleSwitch x:Name="chkDvd" Toggled="chkDvd_Toggled"></ToggleSwitch>
             </controls:SettingsCard>
 
-            <controls:SettingsCard Header="Version" Description="Loading" x:Name="VersionCard" Margin="0,7,0,0" CornerRadius="5">
+            <controls:SettingsCard Header="App version" Description="Loading" x:Name="VersionCard" Margin="0,7,0,0" CornerRadius="5">
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="ButtonCheckForUpdates" Click="ButtonCheckForUpdates_Click">Check for updates</Button>
                 </StackPanel>

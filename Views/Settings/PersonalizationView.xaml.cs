@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Reflection;
+using CroomsBellScheduleCS.Themes;
 using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Windows;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
 using static CroomsBellScheduleCS.Utils.SettingsManager;
 
@@ -33,6 +37,67 @@ public sealed partial class PersonalizationView
         // show version
         var ver = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0, 0);
         VersionCard.Description = $"{ver.Major}.{ver.Minor}.{ver.Build}";
+
+        bool updating = true;
+        foreach (var item in Themes.Themes.ThemeList)
+        {
+            ToggleButton button = new()
+            {
+                Padding = new(2),
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+
+            if (!string.IsNullOrEmpty(item.PreviewResource))
+            {
+                button.Content = new Image()
+                {
+                    Source = new BitmapImage(new Uri($"ms-appx:///Assets/" + item.PreviewResource)),
+                    Height = 40,
+                    Width = 40
+                };
+            }
+
+            button.Checked += async delegate (object sender, RoutedEventArgs e)
+            {
+                // deselect other options
+                if (updating) return;
+
+                foreach(var control in ThemesContainer.Children)
+                {
+                    if (control is ToggleButton toggle && control != (ToggleButton)sender)
+                    {
+                        updating = true;
+                        toggle.IsChecked = false;
+                        updating = false;
+
+                        SettingsManager.Settings.ThemeIndex = item.ID;
+                        await SettingsManager.SaveSettings();
+
+                        Themes.Themes.Apply(item.ID);
+                    }
+                }
+            };
+
+            button.Unchecked += delegate (object sender, RoutedEventArgs e)
+            {
+                // do not allow it to be unchecked if data is not being updated
+                if (updating) return;
+                ((ToggleButton)sender).IsChecked = true;
+            };
+
+            // set the theme option to the one in the settings
+            if (SettingsManager.Settings.ThemeIndex == item.ID)
+            {
+                updating = true;
+                button.IsChecked = true;
+                updating = false;
+            }
+
+
+            ThemesContainer.Children.Add(button);
+        }
+
+        updating = false;
 
         _initialized = true;
     }
@@ -241,5 +306,10 @@ public sealed partial class PersonalizationView
     private void Changelog_Click(object sender, RoutedEventArgs e)
     {
         MainView.Settings?.ShowAnnouncementsAsync();
+    }
+
+    private void GoToSchedule_Click(object sender, RoutedEventArgs e)
+    {
+        MainView.Settings?.NavigateTo(typeof(BellView), new());
     }
 }

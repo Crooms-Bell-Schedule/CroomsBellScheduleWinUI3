@@ -112,9 +112,7 @@ public sealed partial class SettingsWindow
     // Helper method to get AppWindow
     private AppWindow GetAppWindow()
     {
-        IntPtr hWnd = WindowNative.GetWindowHandle(this);
-        WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-        return AppWindow.GetFromWindowId(windowId);
+        return AppWindow;
     }
 
     internal void ShowInAppNotification(string message, string? title, int durationSeconds)
