@@ -16,7 +16,7 @@
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
-		<Version>4.2.0</Version>
+		<Version>4.2.2</Version>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -26,7 +26,6 @@
 		<None Remove="Styles\FontSizes.xaml" />
 		<None Remove="Styles\TextBlock.xaml" />
 		<None Remove="Styles\Thickness.xaml" />
-		<None Remove="Views\SettingsView.xaml" />
 		<None Remove="Views\Settings\AnnouncementsView.xaml" />
 		<None Remove="Views\Settings\BellView.xaml" />
 	</ItemGroup>
@@ -70,6 +69,15 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <Content Update="Assets\croomsBellSchedule.ico">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="Assets\default.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="Assets\kone.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="Assets\landonscamp.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Update="Assets\teach1.png">

@@ -2,6 +2,7 @@
 using CroomsBellScheduleCS.Provider;
 using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Windows;
+using H.NotifyIcon;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -26,7 +27,8 @@ namespace CroomsBellScheduleCS.Views;
 public sealed partial class MainView
 {
     private static CacheProvider _provider = new(new APIProvider());
-    public static SettingsWindow? Settings { get; private set; }
+    public static SettingsWindow? SettingsWindow { get; set; }
+    public static SettingsView? Settings { get => SettingsWindow?.SettingsView ?? throw new Exception("SettingsView not created"); }
     private static Velopack.UpdateManager? _updateManager;
 
     private static IntPtr _oldWndProc;
@@ -43,7 +45,6 @@ public sealed partial class MainView
     private bool _settingsOpen = false;
     private bool _checkDPIUpdates = false;
     private double _prevDPI = 0;
-    public int UnreadAnnouncementCount { get; set; }
 
     public BellScheduleReader? Reader { get => _reader; }
     public int LunchOffset { get => _lunchOffset; }
@@ -80,8 +81,8 @@ public sealed partial class MainView
             presenter.IsResizable = true;
             presenter.IsAlwaysOnTop = true;
             presenter.SetBorderAndTitleBar(true, SettingsManager.Settings.IsLivestreamMode);
-            MainWindow.Instance.ExtendsContentIntoTitleBar = true;
-            MainWindow.Instance.AppWindow.IsShownInSwitchers = false;
+            MainWindow.Instance.ExtendsContentIntoTitleBar = !SettingsManager.Settings.IsLivestreamMode;
+            MainWindow.Instance.AppWindow.IsShownInSwitchers = SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.SetTitleBar(Content);
 
             Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
@@ -168,7 +169,6 @@ public sealed partial class MainView
             };
             _updateChecker.Tick += _updateChecker_Tick;
             _updateChecker.Start();
-            await CheckAnnouncements();
         }
         catch (Exception ex)
         {
@@ -181,36 +181,10 @@ public sealed partial class MainView
         }
     }
 
-    private async Task CheckAnnouncements()
-    {
-        try
-        {
-            var data = await Services.ApiClient.GetAnnouncements();
-
-            int importantAnncCount = 0;
-            if (data.OK && data.Value != null)
-            {
-                foreach (var item in data.Value.announcements)
-                {
-                    if (item.important && !SettingsManager.Settings.ViewedAnnouncementIds.Contains(item.id))
-                    {
-                        importantAnncCount++;
-                    }
-                }
-
-                UnreadAnnouncementCount = importantAnncCount;
-                if (Settings != null)
-                {
-                    Settings.UnreadAnnouncementCount = UnreadAnnouncementCount;
-                }
-            }
-        }
-        catch { }
-    }
-
     private async void _updateChecker_Tick(object? sender, object e)
     {
-        await CheckAnnouncements();
+        if (SettingsWindow != null && SettingsWindow.SettingsView != null)
+            await SettingsWindow.SettingsView.CheckAnnouncementsAsync();
     }
 
     private void DvdTimer_Tick(object? sender, object e)
@@ -343,8 +317,8 @@ public sealed partial class MainView
     {
         if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
 
-        if (Settings != null)
-            Settings.UpdateTheme();
+        if (SettingsWindow != null && SettingsWindow.SettingsView != null)
+            SettingsWindow.SettingsView.UpdateTheme();
         MainWindow.Instance.UpdateTheme(theme);
 
     }
@@ -752,20 +726,19 @@ public sealed partial class MainView
 
     private void Settings_Click(object sender, RoutedEventArgs e)
     {
-        if (!_settingsOpen || Settings == null)
+        if (SettingsWindow == null)
         {
-            _settingsOpen = true;
-            Settings = new SettingsWindow();
-            Settings.Closed += _settings_Closed;
+            SettingsWindow = new();
+            SettingsWindow.Closed += _settings_Closed;
         }
-        Settings.UnreadAnnouncementCount = UnreadAnnouncementCount;
-        Settings.Activate();
+        SettingsWindow.Activate();
     }
 
     private void _settings_Closed(object sender, WindowEventArgs args)
     {
         _settingsOpen = false;
-        Settings = null;
+        args.Handled = true;
+        SettingsWindow?.Hide();
     }
 
     #endregion
