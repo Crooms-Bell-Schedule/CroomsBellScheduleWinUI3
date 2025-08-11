@@ -156,11 +156,11 @@ namespace CroomsBellScheduleCS.Utils
             return DecodeResponse<LoginResponse>(responseText);
         }
 
-        public async Task<Result<BellScheduleProperties?>> GetProperties()
+        public async Task<Result<string?>> GetDailyPollURL()
         {
             try
             {
-                var response = await _glitchClient.GetAsync("https://g-chrome-dino.glitch.me/cbsh.json");
+                var response = await _glitchClient.GetAsync("https://api.croomssched.tech/infofetch/daily-poll");
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
@@ -170,7 +170,7 @@ namespace CroomsBellScheduleCS.Utils
                     return new() { OK = false, Exception = new Exception("This service is currently unavailable due to the shutdown of Glitch hosting") };
                 }
 
-                return new() { OK = true, Value = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.BellScheduleProperties) };
+                return new() { OK = true, Value = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.BellScheduleProperties)?.data };
             }
             catch (Exception ex)
             {
@@ -403,8 +403,8 @@ namespace CroomsBellScheduleCS.Utils
     }
     public class BellScheduleProperties
     {
-        public string senseless { get; set; } = "";
-        public string dailypoll { get; set; } = "";
+        public string data { get; set; } = "";
+        public string status { get; set; } = "";
     }
     public class LunchEntries
     {

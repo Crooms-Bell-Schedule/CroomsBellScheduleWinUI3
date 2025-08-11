@@ -280,15 +280,15 @@ public sealed partial class FeedView
     private async void DailyPoll_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         DailyPollBtn.IsEnabled = false;
-        var x = await Services.ApiClient.GetProperties();
+        var x = await Services.ApiClient.GetDailyPollURL();
         DailyPollBtn.IsEnabled = true;
         if (x.OK && x.Value != null)
         {
-            if (!string.IsNullOrEmpty(x.Value.dailypoll))
+            if (!string.IsNullOrEmpty(x.Value))
             {
                 try
                 {
-                    Process.Start(new ProcessStartInfo() { FileName = x.Value.dailypoll, UseShellExecute = true });
+                    Process.Start(new ProcessStartInfo() { FileName = x.Value, UseShellExecute = true });
                 }
                 catch (Exception ex)
                 {
