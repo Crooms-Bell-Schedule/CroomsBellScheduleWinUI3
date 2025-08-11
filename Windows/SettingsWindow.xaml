@@ -17,5 +17,5 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <local:SettingsView x:Name="View"></local:SettingsView>
+    <local:SettingsView x:Name="TheView"></local:SettingsView>
 </Window>

@@ -18,7 +18,7 @@ namespace CroomsBellScheduleCS.Windows;
 
 public sealed partial class SettingsWindow
 {
-    public SettingsView SettingsView { get => SettingsView; }
+    public SettingsView SettingsView { get => TheView; }
     public SettingsWindow()
     {
         InitializeComponent();
