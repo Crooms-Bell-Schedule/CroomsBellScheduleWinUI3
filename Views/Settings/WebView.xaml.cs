@@ -1,5 +1,5 @@
-using System;
 using Microsoft.UI.Xaml.Navigation;
+using System;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 

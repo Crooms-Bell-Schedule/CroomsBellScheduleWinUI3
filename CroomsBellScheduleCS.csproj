@@ -16,7 +16,7 @@
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
-		<Version>4.2.3</Version>
+		<Version>4.2.5</Version>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -115,6 +115,9 @@
 		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		  <SubType>Designer</SubType>
 		  <Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Views\Settings\Livestream.xaml">
+		  <SubType>Designer</SubType>
 		</Page>
 		<Page Update="Views\Settings\WebView.xaml">
 		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
