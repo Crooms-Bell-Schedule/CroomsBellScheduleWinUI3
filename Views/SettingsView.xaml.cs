@@ -8,6 +8,7 @@ using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
@@ -22,6 +23,8 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Graphics;
+using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using WinRT.Interop;
 using static CroomsBellScheduleCS.Utils.Win32;
@@ -30,6 +33,8 @@ namespace CroomsBellScheduleCS.Views;
 
 public sealed partial class SettingsView
 {
+    private IntPtr _oldWndProc;
+    private Delegate? _newWndProcDelegate;
     public int UnreadAnnouncementCount
     {
         set
@@ -53,14 +58,24 @@ public sealed partial class SettingsView
         MainView.SettingsWindow?.SetTitleBar(AppTitleBar);
     }
 
+    private void TryGoForward()
+    {
+        if (MainView.Settings != null && MainView.SettingsWindow?.Visible == true) return;
+        MainView.Settings?.NavigateForward();
+    }
+    private void TryGoBack()
+    {
+        if (MainView.Settings != null && MainView.SettingsWindow?.Visible == true) return;
+        MainView.Settings?.NavigateBack();
+    }
+
     private async void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
         SetRegionsForCustomTitleBar();
         UpdateTheme();
-        await RunSignInProcess();
+
+        await RunSignInProcessAsync();
     }
-
-
 
     public void UpdateTheme()
     {
@@ -89,8 +104,10 @@ public sealed partial class SettingsView
         {
             TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
         };
-        if (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top) navOptions.IsNavigationStackEnabled = false;
-        else navOptions.IsNavigationStackEnabled = true;
+        // i/f (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top) navOptions.IsNavigationStackEnabled = false;
+        //else navOptions.IsNavigationStackEnabled = true;
+
+        navOptions.IsNavigationStackEnabled = true;
 
         if (args.InvokedItemContainer == PersonalizationViewItem)
             NavigationFrame.NavigateToType(typeof(PersonalizationView), null, navOptions);
@@ -100,6 +117,8 @@ public sealed partial class SettingsView
             NavigationFrame.NavigateToType(typeof(FeedView), null, navOptions);
         else if (args.InvokedItemContainer == LunchMenuItem)
             NavigationFrame.NavigateToType(typeof(LunchView), null, navOptions);
+
+        
     }
 
     private void NavigationFrame_Navigated(object sender, NavigationEventArgs e)
@@ -112,6 +131,10 @@ public sealed partial class SettingsView
             NavigationViewControl.SelectedItem = FeedItem;
         else if (e.SourcePageType == typeof(LunchView))
             NavigationViewControl.SelectedItem = LunchMenuItem;
+
+        
+        //if (NavigationFrame.BackStack.Any() && NavigationFrame.BackStack.Count > 1)
+        //    NavigationFrame.BackStack.RemoveAt(NavigationFrame.BackStackDepth - 2);
     }
 
     private void NavigationFrame_Loaded(object sender, RoutedEventArgs e)
@@ -209,7 +232,7 @@ public sealed partial class SettingsView
         FlyoutUserName2.Text = FlyoutUserName.Text;
     }
 
-    private async Task RunSignInProcess()
+    private async Task RunSignInProcessAsync()
     {
         try
         {
@@ -509,10 +532,22 @@ public sealed partial class SettingsView
     public void NavigateTo(Type t, object parameter)
     {
         FrameNavigationOptions navOptions = new();
+        navOptions.IsNavigationStackEnabled = true;
         NavigationFrame.NavigateToType(t, parameter, navOptions);
     }
     public void NavigateBack()
     {
-        NavigationFrame.GoBack();
+        if (NavigationFrame.CanGoBack)
+            NavigationFrame.GoBack();
+    }
+    public void NavigateForward()
+    {
+        if (NavigationFrame.CanGoForward)
+            NavigationFrame.GoForward();
+    }
+
+    private void NavigationViewControl_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+    {
+        NavigateBack();
     }
 }

@@ -12,12 +12,6 @@ namespace CroomsBellScheduleCS.Utils
     public class ApiClient
     {
         private readonly HttpClient _client = new();
-        private readonly HttpClient _glitchClient = new();
-
-        public ApiClient()
-        {
-            _glitchClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36");
-        }
         public static Result<T?> DecodeResponse<T>(string responseText)
         {
             Result<T?> result = new();
@@ -160,7 +154,7 @@ namespace CroomsBellScheduleCS.Utils
         {
             try
             {
-                var response = await _glitchClient.GetAsync("https://api.croomssched.tech/infofetch/daily-poll");
+                var response = await _client.GetAsync("https://api.croomssched.tech/infofetch/daily-poll");
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
@@ -177,11 +171,11 @@ namespace CroomsBellScheduleCS.Utils
                 return new() { OK = false, Exception = ex };
             }
         }
-        public async Task<Result<LunchData?>> GetLunchData()
+        public async Task<Result<LunchEntry[]?>> GetLunchData()
         {
             try
             {
-                var response = await _glitchClient.GetAsync("https://croomssched.glitch.me/infoFetch.json");
+                var response = await _client.GetAsync("https://api.croomssched.tech/infofetch/lunch");
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
@@ -191,11 +185,11 @@ namespace CroomsBellScheduleCS.Utils
                     return new() { OK = false, Exception = new Exception("This service is currently unavailable due to the shutdown of Glitch hosting") };
                 }
 
-                return new Result<LunchData?>() { OK = true, Value = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.LunchData) };
+                return DecodeResponse<LunchEntry[]?>(responseText);
             }
             catch (Exception ex)
             {
-                return new Result<LunchData?>() { OK = false, Exception = ex };
+                return new() { OK = false, Exception = ex };
             }
         }
 
@@ -362,7 +356,7 @@ namespace CroomsBellScheduleCS.Utils
         {
             try
             {
-                var response = await _glitchClient.GetAsync("https://mikhail.croomssched.tech/crfsapi/AppController/Announcements\r\n");
+                var response = await _client.GetAsync("https://mikhail.croomssched.tech/crfsapi/AppController/Announcements\r\n");
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
@@ -406,32 +400,11 @@ namespace CroomsBellScheduleCS.Utils
         public string data { get; set; } = "";
         public string status { get; set; } = "";
     }
-    public class LunchEntries
-    {
-        [JsonPropertyName("1")]
-        public LunchEntry? Monday { get; set; }
-        [JsonPropertyName("2")]
-        public LunchEntry? Tuesday { get; set; }
-        [JsonPropertyName("3")]
-        public LunchEntry? Wednesday { get; set; }
-        [JsonPropertyName("4")]
-        public LunchEntry? Thursday { get; set; }
-        [JsonPropertyName("5")]
-        public LunchEntry? Friday { get; set; }
-        [JsonPropertyName("6")]
-        public string All { get; set; } = "";
-    }
-    public class LunchData
-    {
-        public LunchEntries lunch { get; set; } = new();
-        public List<string> quickBits { get; set; } = [];
-    }
     public class LunchEntry
     {
         public string name { get; set; } = "";
         public string image { get; set; } = "";
     }
-
 
     public class TeacherQuote
     {

@@ -171,6 +171,8 @@
         x:Name="NavigationViewControl"
         Canvas.ZIndex="0"
         IsBackButtonVisible="Auto"
+        IsBackEnabled="{Binding ElementName=NavigationFrame, Path=CanGoBack}"
+        BackRequested="NavigationViewControl_BackRequested"
         IsPaneToggleButtonVisible="True"
         IsSettingsVisible="False"
         Grid.Row="1"

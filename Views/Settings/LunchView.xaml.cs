@@ -38,10 +38,8 @@ public sealed partial class LunchView
         }
     }
 
-    private void InitLunch(LunchData data)
+    private void InitLunch(LunchEntry[] data)
     {
-        if (data.lunch == null) return;
-
         lunchGrid.Children.Clear();
 
         int row = 1;
@@ -70,22 +68,22 @@ public sealed partial class LunchView
 
         // TODO: this is not good code
         lunchGrid.Children.Add(lunchTitle);
-        AddLunch(data.lunch.Monday, "Monday");
-        AddLunch(data.lunch.Tuesday, "Tuesday");
-        AddLunch(data.lunch.Wednesday, "Wednesday");
-        AddLunch(data.lunch.Thursday, "Thursday");
-        AddLunch(data.lunch.Friday, "Friday");
+        AddLunch(data[0], "Monday");
+        AddLunch(data[1], "Tuesday");
+        AddLunch(data[2], "Wednesday");
+        AddLunch(data[3], "Thursday");
+        AddLunch(data[4], "Friday");
 
 
         lunchGrid.Children.Add(lunchImageToday);
         lunchGrid.Children.Add(quickBitsTitle);
         lunchGrid.Children.Add(quickBits);
-        quickBits.Text = "";
-        int i = 1;
-        foreach (var item in data.quickBits)
-        {
-            quickBits.Text += $"{i++}. {item}{Environment.NewLine}";
-        }
+        quickBits.Text = "Coming soon";
+        //int i = 1;
+        //foreach (var item in data.quickBits)
+        //{
+        //    quickBits.Text += $"{i++}. {item}{Environment.NewLine}";
+        //}
 
         Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
         ErrorView.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;

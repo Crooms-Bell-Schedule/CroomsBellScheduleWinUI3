@@ -668,9 +668,6 @@ public sealed partial class MainView
         _windowApp.MoveAndResize(new RectInt32(mWidth - _windowApp.Size.Width - 20, mHeight - _windowApp.Size.Height - 20, GetDpi() * 4, GetDpi()));
     }
 
-
-    private delegate IntPtr WndProcDelegate(IntPtr hwnd, uint msg, UIntPtr wParam, IntPtr lParam);
-
     private IntPtr WndProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
     {
         if (msg == WM_SYSCOMMAND && wParam == SC_MAXIMIZE)

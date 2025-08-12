@@ -79,4 +79,7 @@ public static partial class Win32
     public static partial int SetWindowPos(IntPtr hwnd, IntPtr after, int x, int y, int cx, int cy, int flags);
     [LibraryImport("user32.dll")]
     public static partial int IsProcessDPIAware();
+
+
+    public delegate IntPtr WndProcDelegate(IntPtr hwnd, uint msg, UIntPtr wParam, IntPtr lParam);
 }

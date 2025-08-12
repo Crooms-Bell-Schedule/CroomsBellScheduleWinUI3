@@ -334,7 +334,7 @@ public sealed partial class FeedView
         }
     }
 
-    private void MA_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void MA_Click(object sender, RoutedEventArgs e)
     {
         MainView.Settings?.NavigateTo(typeof(WebView), "https://mikhail.croomssched.tech/advice");
     }
@@ -342,7 +342,7 @@ public sealed partial class FeedView
     {
         MainView.Settings?.NavigateTo(typeof(Livestream), "");
     }
-    private async void AppBarButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private async void AppBarButton_Click(object sender, RoutedEventArgs e)
     {
         ContentDialog dialog = new()
         {
