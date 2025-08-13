@@ -88,7 +88,7 @@ public sealed partial class FeedEntry
             catch
             {
                 blk.Inlines.Clear();
-                blk.Text = "FAILED TO RENDER CONTENT";
+                blk.Text = "[Failed to render]";
             }
         }
     }
@@ -150,7 +150,7 @@ public sealed partial class FeedEntry
             // TODO
             rootElem = new Span() { Foreground = new SolidColorBrush(new() { R = 255, A = 255 }) };
         }
-        else if (node.Name == "eason")
+        else if (node.Name == "eason" || node.Name == "urgent")
         {
             // TODO
             rootElem = new Span() { Foreground = new SolidColorBrush(new() { R = 255, A = 255, B = 50 }) };
@@ -197,7 +197,7 @@ public sealed partial class FeedEntry
         else
         {
             rootElem = new();
-            rootElem.Inlines.Add(new Run() { Text = "[PARSER ERROR: UNKNOWN ELEMENT " + node.Name + "]", Foreground = new SolidColorBrush(new() { R = 255, A = 255 }) });
+            rootElem.Inlines.Add(new Run() { Text = "[Unknown element " + node.Name + "]", Foreground = new SolidColorBrush(new() { R = 255, A = 255 }) });
         }
 
         foreach (var item in node.Attributes)
@@ -259,6 +259,10 @@ public sealed partial class FeedEntry
 
     private static Uri FixLink(string url)
     {
+        if (url.StartsWith("\""))
+            url = url.Substring(1);
+        if (url.EndsWith("\""))
+            url = url.Substring(0, url.Length - 1);
         if (!url.StartsWith("https://") && !url.StartsWith("http://"))
             url = "https://" + url;
 

@@ -38,9 +38,8 @@
         </Flyout>
     </Page.Resources>
 
-
     <Grid>
-        <Grid x:Name="FeedUI" Visibility="Collapsed">
+        <Grid x:Name="FeedUI">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
@@ -57,6 +56,9 @@
                 <AppBarButton x:Name="MAdvice" Grid.Row="0" Label="Mikhail's Advice" Click="MA_Click" Icon="PhoneBook"/>
                 <AppBarButton x:Name="BellLive" Grid.Row="0" Label="CBSH Live Stream" Click="CBSHLive_Click" Icon="Video"/>
             </StackPanel>
+
+            <ProgressBar x:Name="ProgressUI" IsIndeterminate="True" Grid.Row="0" VerticalAlignment="Bottom"></ProgressBar>
+            
             <ListView x:Name="FeedViewer" Grid.Row="1"
                   ScrollViewer.ZoomMode="Enabled"
                   ScrollViewer.HorizontalScrollMode="Enabled"
@@ -64,7 +66,7 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
                   HorizontalAlignment="Stretch"
-                  SelectionMode="None">
+                  SelectionMode="None" Visibility="Collapsed">
                
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="views:FeedUIEntry">
@@ -109,12 +111,6 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
-        
-        
-
-        <StackPanel x:Name="Loader" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <ProgressRing x:Name="LoadingThing" Height="64" Width="64"/>
-            <TextBlock x:Name="LoadingText" HorizontalAlignment="Center" Margin="0,5,0,0">Retrieving data</TextBlock>
-        </StackPanel>
+       
     </Grid>
 </Page>

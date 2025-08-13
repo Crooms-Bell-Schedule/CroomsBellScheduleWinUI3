@@ -117,8 +117,8 @@ public sealed partial class SettingsView
             NavigationFrame.NavigateToType(typeof(FeedView), null, navOptions);
         else if (args.InvokedItemContainer == LunchMenuItem)
             NavigationFrame.NavigateToType(typeof(LunchView), null, navOptions);
-
-        
+        else if (args.InvokedItemContainer == LiveStreamItem)
+            NavigationFrame.NavigateToType(typeof(Livestream), null, navOptions);
     }
 
     private void NavigationFrame_Navigated(object sender, NavigationEventArgs e)
@@ -131,8 +131,10 @@ public sealed partial class SettingsView
             NavigationViewControl.SelectedItem = FeedItem;
         else if (e.SourcePageType == typeof(LunchView))
             NavigationViewControl.SelectedItem = LunchMenuItem;
+        else if (e.SourcePageType == typeof(Livestream))
+            NavigationViewControl.SelectedItem = LiveStreamItem;
 
-        
+
         //if (NavigationFrame.BackStack.Any() && NavigationFrame.BackStack.Count > 1)
         //    NavigationFrame.BackStack.RemoveAt(NavigationFrame.BackStackDepth - 2);
     }

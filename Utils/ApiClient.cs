@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CroomsBellScheduleCS.Utils
@@ -14,6 +15,14 @@ namespace CroomsBellScheduleCS.Utils
         private readonly HttpClient _client = new();
         public static Result<T?> DecodeResponse<T>(string responseText)
         {
+            if (responseText.StartsWith("<"))
+            {
+                return new()
+                {
+                    OK = false,
+                    Exception = new("Ratelimit reached")
+                };
+            }
             Result<T?> result = new();
             try
             {
@@ -232,6 +241,22 @@ namespace CroomsBellScheduleCS.Utils
         public async Task<Result<FeedEntry[]?>> GetFeed()
         {
             var response = await _client.GetAsync("https://api.croomssched.tech/feed");
+
+            var responseText = await response.Content.ReadAsStringAsync();
+
+            return DecodeResponse<FeedEntry[]?>(responseText);
+        }
+        public async Task<Result<FeedEntry[]?>> GetFeedAfter(string id)
+        {
+            var response = await _client.GetAsync("https://api.croomssched.tech/feed/after/" + id);
+
+            var responseText = await response.Content.ReadAsStringAsync();
+
+            return DecodeResponse<FeedEntry[]?>(responseText);
+        }
+        public async Task<Result<FeedEntry[]?>> GetFeedPart(int start, int end, CancellationToken cancel = default)
+        {
+            var response = await _client.GetAsync($"https://api.croomssched.tech/feed/part/{start}/{end}", cancel);
 
             var responseText = await response.Content.ReadAsStringAsync();
 

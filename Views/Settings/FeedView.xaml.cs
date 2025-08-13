@@ -15,12 +15,15 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
 using Windows.Graphics.Imaging;
+using CommunityToolkit.WinUI.Collections;
+using System.Linq;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
 public sealed partial class FeedView
 {
-    private static ObservableCollection<FeedUIEntry> Entries = [];
+    private readonly IncrementalLoadingCollection<ProwlerSource, FeedUIEntry> Entries;
+
     private static bool _isLoaded = false;
     private static Dictionary<string, ImageSource> ProfileImageCache = [];
     private static HttpClient ImageClient = new();
@@ -32,8 +35,24 @@ public sealed partial class FeedView
     {
         InitializeComponent();
 
+        Entries = new(new ProwlerSource(), 25, StartLoading, EndLoading, OnError);
         FeedViewer.ItemsSource = Entries;
         Instance = this;
+    }
+
+    private void OnError(Exception exception)
+    {
+        
+    }
+
+    private void EndLoading()
+    {
+        ProgressUI.Visibility = Visibility.Collapsed;
+    }
+
+    private void StartLoading()
+    {
+        ProgressUI.Visibility = Visibility.Visible;
     }
 
 
@@ -78,7 +97,7 @@ public sealed partial class FeedView
         return "";
     }
 
-    private static async Task<FeedUIEntry> ProcessEntry(FeedEntry entry)
+    public static async Task<FeedUIEntry> ProcessEntry(FeedEntry entry)
     {
         return new FeedUIEntry()
         {
@@ -137,15 +156,6 @@ public sealed partial class FeedView
         return null;
     }
 
-    private static async Task InitPage(FeedEntry[] items)
-    {
-        Entries.Clear();
-        foreach (var entry in items)
-        {
-            Entries.Add(await ProcessEntry(entry));
-        }
-    }
-
     private async void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         try
@@ -154,25 +164,25 @@ public sealed partial class FeedView
             _loadProfilePictures = true;
             if (!_isLoaded || fullReload)
             {
-                var feedResult = await Services.ApiClient.GetFeed();
-                if (!feedResult.OK || feedResult.Value == null)
-                {
-                    ContentDialog dlg2 = new()
-                    {
-                        Title = "Failed to get feed",
-                        XamlRoot = XamlRoot,
-                        CloseButtonText = "OK"
-                    };
+                //var feedResult = await Services.ApiClient.GetFeedPart(0, 25);
+                //if (!feedResult.OK || feedResult.Value == null)
+                //{
+                //    ContentDialog dlg2 = new()
+                //    {
+                //        Title = "Failed to get feed",
+                //        XamlRoot = XamlRoot,
+                //        CloseButtonText = "OK"
+                //    };
 
-                    LoginView content = new();
-                    dlg2.Content = "Failed to reconnect to server. Check your internet connection, or the server may be under maintenance.";
+                //    LoginView content = new();
+                //    dlg2.Content = "Failed to reconnect to server. Check your internet connection, or the server may be under maintenance.";
 
-                    await dlg2.ShowAsync();
-                    Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-                    return;
-                }
+                //    await dlg2.ShowAsync();
+                //    Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+                //    return;
+                //}
 
-                await InitPage(feedResult.Value);
+                //await InitPage(feedResult.Value);
 
                 // setup refresh timer for this page
                 Timer tmm = new();
@@ -198,8 +208,7 @@ public sealed partial class FeedView
             }
 
             // load feed
-            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-            FeedUI.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            FeedViewer.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
         }
         catch (Exception ex)
         {
@@ -215,8 +224,6 @@ public sealed partial class FeedView
 
             await dlg2.ShowAsync();
 
-            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-
             if (MainView.Settings != null)
                 MainView.Settings.ShowInAppNotification("Failed to load feed", "Page initialization failed", 0);
         }
@@ -225,9 +232,11 @@ public sealed partial class FeedView
     private async void RefreshFeed(bool automatic)
     {
         RefreshBtn.IsEnabled = false;
-        var feedResult = await Services.ApiClient.GetFeed();
+        Result<FeedEntry[]?> feedResult = Entries.Count == 0 ? await Services.ApiClient.GetFeed() :
+                     await Services.ApiClient.GetFeedAfter(Entries[0].Id);
         if (!feedResult.OK || feedResult.Value == null)
         {
+            RefreshBtn.IsEnabled = true;
             if (!automatic)
             {
                 ContentDialog dlg2 = new()
@@ -240,7 +249,6 @@ public sealed partial class FeedView
 
                 await dlg2.ShowAsync();
             }
-            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             return;
         }
 
@@ -449,6 +457,27 @@ public sealed partial class FeedView
             PrepareFlyoutWithUID(uid);
         else
             FlyoutUserName2.Text = "Button.Tag == null";
+    }
+}
+public class ProwlerSource : IIncrementalSource<FeedUIEntry>
+{
+    public async Task<IEnumerable<FeedUIEntry>> GetPagedItemsAsync(int pageIndex, int pageSize, System.Threading.CancellationToken cancellationToken = default)
+    {
+        int startIdx = pageIndex * pageSize;
+        var feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
+        if (!feedResult.OK || feedResult.Value == null)
+        {
+            return [];
+        }
+
+        List<FeedUIEntry> result = [];
+
+        foreach (var entry in feedResult.Value)
+        {
+            result.Add(await FeedView.ProcessEntry(entry));
+        }
+
+        return result;
     }
 }
 public class FeedUIEntry
