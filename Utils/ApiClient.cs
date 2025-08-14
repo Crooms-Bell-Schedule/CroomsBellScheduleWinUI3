@@ -392,6 +392,31 @@ namespace CroomsBellScheduleCS.Utils
                 return new Result<AnnouncementData?>() { OK = false, Exception = ex };
             }
         }
+
+        internal async Task<Result<LoginResponse?>> UseSSO(string id)
+        {
+            try
+            {
+                var b = new ByteArrayContent([]);
+                b.Headers.ContentType = new("application/json");
+
+                using var requestMessage =
+              new HttpRequestMessage(HttpMethod.Post, "https://api.croomssched.tech/sso/use/crooms-bell-app");
+
+                requestMessage.Headers.TryAddWithoutValidation("Authorization", $"\"{id}\"");
+                requestMessage.Content = b;
+
+                var response = await _client.SendAsync(requestMessage);
+
+                var str = await response.Content.ReadAsStringAsync();
+
+                return DecodeResponse<LoginResponse>(str);
+            }
+            catch(Exception ex)
+            {
+                return new() { Exception = ex, OK = false };
+            }
+        }
     }
 
     public class AnnouncementData

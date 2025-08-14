@@ -219,7 +219,6 @@ public sealed partial class FeedView
                 CloseButtonText = "OK"
             };
 
-            LoginView content = new();
             dlg2.Content = "Application error: " + ex.Message;
 
             await dlg2.ShowAsync();
@@ -344,7 +343,7 @@ public sealed partial class FeedView
 
     private void MA_Click(object sender, RoutedEventArgs e)
     {
-        MainView.Settings?.NavigateTo(typeof(WebView), "https://mikhail.croomssched.tech/advice");
+        MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://mikhail.croomssched.tech/advice", true, true));
     }
     private void CBSHLive_Click(object sender, RoutedEventArgs e)
     {

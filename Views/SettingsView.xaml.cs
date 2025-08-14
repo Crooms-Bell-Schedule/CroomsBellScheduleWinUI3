@@ -1,33 +1,16 @@
 ﻿//#define MIGRATION_CODE // uncomment to enable migration code from old bell schedule app (2.1.0 -> 2.9.9 -> 3.x)
-using CroomsBellScheduleCS.Provider;
 using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Views.Settings;
 using CroomsBellScheduleCS.Windows;
-using H.NotifyIcon;
-using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
-using Microsoft.Windows.AppNotifications;
-using Microsoft.Windows.AppNotifications.Builder;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using Windows.Graphics;
-using Windows.System;
-using Windows.UI.Core;
-using Windows.UI.Popups;
-using WinRT.Interop;
-using static CroomsBellScheduleCS.Utils.Win32;
 
 namespace CroomsBellScheduleCS.Views;
 
@@ -437,6 +420,12 @@ public sealed partial class SettingsView
             //content.Error = ApiClient.FormatResult(result);
         }*/
     }
+
+    internal async Task SetLoggedIn()
+    {
+        SetLoggedInMode();
+        await RefreshUserInfo();
+    }
     private async void LoginDlg_OKClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         args.Cancel = true;
@@ -457,8 +446,7 @@ public sealed partial class SettingsView
             if (result.OK)
             {
                 sender.Hide();
-                SetLoggedInMode();
-                await RefreshUserInfo();
+                await SetLoggedIn();
             }
             else
             {
@@ -476,18 +464,25 @@ public sealed partial class SettingsView
         try
         {
             UserFlyout.Hide();
-            ContentDialog dlg = new()
+            if (OperatingSystem.IsWindows())
             {
-                Title = "Login with bell schedule account",
-                XamlRoot = Content.XamlRoot,
-                PrimaryButtonText = "Login",
-                CloseButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary,
-                Content = new LoginView()
-            };
-            dlg.PrimaryButtonClick += LoginDlg_OKClick;
+                NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomssched.tech/auth/sso-callback?clientId=crooms-bell-app", false, false));
+            }
+            else
+            {
+                ContentDialog dlg = new()
+                {
+                    Title = "Login with bell schedule account",
+                    XamlRoot = Content.XamlRoot,
+                    PrimaryButtonText = "Login",
+                    CloseButtonText = "Cancel",
+                    DefaultButton = ContentDialogButton.Primary,
+                    Content = new LoginView()
+                };
+                dlg.PrimaryButtonClick += LoginDlg_OKClick;
 
-            await dlg.ShowAsync();
+                await dlg.ShowAsync();
+            }
         }
         catch
         {
@@ -552,5 +547,12 @@ public sealed partial class SettingsView
     private void NavigationViewControl_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
     {
         NavigateBack();
+    }
+
+    internal void ClearHistory()
+    {
+        // clear navigation history in the settings window
+        NavigationFrame.BackStack.Clear();
+        NavigationFrame.ForwardStack.Clear();
     }
 }
