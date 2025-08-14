@@ -42,7 +42,6 @@ public sealed partial class MainView
     private DispatcherTimer _dvdTimer = new();
     private DispatcherTimer _updateChecker = new();
     private AppWindow? _windowApp;
-    private bool _settingsOpen = false;
     private bool _checkDPIUpdates = false;
     private double _prevDPI = 0;
 
@@ -733,7 +732,6 @@ public sealed partial class MainView
 
     private void _settings_Closed(object sender, WindowEventArgs args)
     {
-        _settingsOpen = false;
         args.Handled = true;
         SettingsWindow?.Hide();
     }

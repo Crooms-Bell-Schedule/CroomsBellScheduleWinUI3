@@ -33,8 +33,8 @@ namespace CroomsBellScheduleCS.Views;
 
 public sealed partial class SettingsView
 {
-    private IntPtr _oldWndProc;
-    private Delegate? _newWndProcDelegate;
+    //private IntPtr _oldWndProc;
+    //private Delegate? _newWndProcDelegate;
     public int UnreadAnnouncementCount
     {
         set
@@ -149,6 +149,7 @@ public sealed partial class SettingsView
     // Helper method to get AppWindow
     private AppWindow GetAppWindow()
     {
+        if (MainView.SettingsWindow == null) throw new Exception("cannot be null"); // should not happen
         return MainView.SettingsWindow.AppWindow;
     }
 
