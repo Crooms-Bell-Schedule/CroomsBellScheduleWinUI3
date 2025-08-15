@@ -25,6 +25,13 @@ namespace CroomsBellScheduleCS.Themes
                     PreviewResource = "landonscamp.png",
                     BackgroundResource = "landon.png"
                 },
+                new Theme()
+                {
+                    ID = 2,
+                    Name = "Test",
+                    PreviewResource = "kone.png",
+                    BackgroundResource = "5eddfcb467e19.jpg"
+                }
             ];
 
         internal static void Apply(int id)

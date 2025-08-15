@@ -22,9 +22,6 @@
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	</PropertyGroup>
 	<ItemGroup>
-	  <Content Remove="Assets\5eddfcb467e19.jpg" />
-	</ItemGroup>
-	<ItemGroup>
 		<None Remove="Controls\FeedEntry.xaml" />
 		<None Remove="Styles\FontSizes.xaml" />
 		<None Remove="Styles\TextBlock.xaml" />
@@ -70,9 +67,6 @@
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250702007-experimental4" />
 		<PackageReference Include="System.Text.Json" Version="10.0.0-preview.6.25358.103" />
 		<PackageReference Include="Velopack" Version="0.0.1350-g3ba32af" />
-	</ItemGroup>
-	<ItemGroup>
-	  <Resource Include="Assets\5eddfcb467e19.jpg" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Content Update="Assets\croomsBellSchedule.ico">
