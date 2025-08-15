@@ -726,6 +726,7 @@ public sealed partial class MainView
         {
             SettingsWindow = new();
             SettingsWindow.Closed += _settings_Closed;
+            Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
         }
         SettingsWindow.Activate();
     }

@@ -39,8 +39,7 @@ public sealed partial class WebView
             ButtonReturn.Visibility = p.AllowBack ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
             TheWebView.Source = uri;
 
-
-            await ConfigureWebview();
+            await ConfigureWebview(p);
             OpenInBrowser.NavigateUri = uri;
         }
     }
@@ -134,7 +133,18 @@ public sealed partial class WebView
         TheWebView.NavigationCompleted += TheWebView_NavigationCompleted;
     }
 
-    private async Task ConfigureWebview()
+    private async void CoreWebView2_HistoryChanged(Microsoft.Web.WebView2.Core.CoreWebView2 sender, object args)
+    {
+        if (sender.Source == "https://account.croomssched.tech/account-center/profile-picture")
+        {
+            sender.GoBack();
+
+            if (MainView.SettingsWindow != null && MainView.Settings != null)
+                await MainView.Settings.OpenPFPViewAsync();
+        }
+    }
+
+    private async Task ConfigureWebview(WebViewNavigationArgs args)
     {
         await TheWebView.EnsureCoreWebView2Async();
 
@@ -157,11 +167,26 @@ public sealed partial class WebView
         }
 
 
-        await TheWebView.CoreWebView2.Profile.ClearBrowsingDataAsync(Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.LocalStorage | Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.Cookies);
+        if (args.ClearCookies)
+            await TheWebView.CoreWebView2.Profile.ClearBrowsingDataAsync(Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.LocalStorage | Microsoft.Web.WebView2.Core.CoreWebView2BrowsingDataKinds.Cookies);
 
         TheWebView.CoreWebView2.Settings.AreDevToolsEnabled = false;
         TheWebView.CoreWebView2.Settings.IsReputationCheckingRequired = false;
+        TheWebView.CoreWebView2.Settings.IsPasswordAutosaveEnabled = false;
+
+        // register various event handlers
+        TheWebView.CoreWebView2.HistoryChanged += CoreWebView2_HistoryChanged;
+        TheWebView.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+    }
+
+    private void CoreWebView2_NewWindowRequested(Microsoft.Web.WebView2.Core.CoreWebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs args)
+    {
+        // disable creation of new window
+        if (args.Uri.StartsWith("https://docs.google.com/forms/d/e/"))
+            args.NewWindow = sender;
+        else
+            args.Handled = true;
     }
 }
 
-public record WebViewNavigationArgs(string Url, bool AllowExitToBrowser, bool AllowBack);
+public record WebViewNavigationArgs(string Url, bool AllowExitToBrowser, bool AllowBack, bool ClearCookies);

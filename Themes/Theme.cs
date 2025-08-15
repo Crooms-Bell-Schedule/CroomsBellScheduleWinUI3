@@ -11,5 +11,6 @@ namespace CroomsBellScheduleCS.Themes
         public required int ID { get; set; }
         public string Name { get; set; } = "";
         public string PreviewResource { get; set; } = "";
+        public string? BackgroundResource { get; set; } = "";
     }
 }

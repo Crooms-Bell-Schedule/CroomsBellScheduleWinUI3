@@ -17,6 +17,7 @@ using System.Timers;
 using Windows.Graphics.Imaging;
 using CommunityToolkit.WinUI.Collections;
 using System.Linq;
+using CroomsBellScheduleCS.Windows;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
@@ -42,7 +43,7 @@ public sealed partial class FeedView
 
     private void OnError(Exception exception)
     {
-        
+
     }
 
     private void EndLoading()
@@ -295,7 +296,10 @@ public sealed partial class FeedView
             {
                 try
                 {
-                    Process.Start(new ProcessStartInfo() { FileName = x.Value, UseShellExecute = true });
+                    if (OperatingSystem.IsWindows() && MainView.SettingsWindow != null && MainView.Settings != null)
+                        MainView.Settings.NavigateTo(typeof(WebView), new WebViewNavigationArgs(x.Value, true, true, false));
+                    else
+                        Process.Start(new ProcessStartInfo() { FileName = x.Value, UseShellExecute = true });
                 }
                 catch (Exception ex)
                 {
@@ -343,7 +347,7 @@ public sealed partial class FeedView
 
     private void MA_Click(object sender, RoutedEventArgs e)
     {
-        MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://mikhail.croomssched.tech/advice", true, true));
+        MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://mikhail.croomssched.tech/advice", true, true, false));
     }
     private void CBSHLive_Click(object sender, RoutedEventArgs e)
     {
@@ -466,6 +470,8 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
         var feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
         if (!feedResult.OK || feedResult.Value == null)
         {
+            if (MainView.Settings != null)
+                MainView.Settings.ShowInAppNotification($"Failed to load Prowler data [{startIdx}-{startIdx + pageIndex}]", "Error", 10);
             return [];
         }
 

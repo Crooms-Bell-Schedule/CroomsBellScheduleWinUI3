@@ -248,11 +248,18 @@ namespace CroomsBellScheduleCS.Utils
         }
         public async Task<Result<FeedEntry[]?>> GetFeedAfter(string id)
         {
-            var response = await _client.GetAsync("https://api.croomssched.tech/feed/after/" + id);
+            try
+            {
+                var response = await _client.GetAsync("https://api.croomssched.tech/feed/after/" + id);
 
-            var responseText = await response.Content.ReadAsStringAsync();
+                var responseText = await response.Content.ReadAsStringAsync();
 
-            return DecodeResponse<FeedEntry[]?>(responseText);
+                return DecodeResponse<FeedEntry[]?>(responseText);
+            }
+            catch(Exception ex)
+            {
+                return new() { Exception = ex };
+            }
         }
         public async Task<Result<FeedEntry[]?>> GetFeedPart(int start, int end, CancellationToken cancel = default)
         {

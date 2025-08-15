@@ -28,19 +28,12 @@
             </controls:SettingsCard>
 
             <controls:SettingsCard Header="Theme"
-                                   Description="Coming soon: choose a combination of backgrounds and colors to give the Crooms Bell Schedule more personality. Some colors can be changed by changing the system accent color."
+                                   Description="Choose a variety of backgrounds to give the Crooms Bell Schedule more personality (beta)"
                                    Margin="0,7,0,0">
-                <controls:WrapPanel x:Name="ThemesContainer">
-                    <!--<ToggleButton  Padding="2">
-                        <Image  Source="/Assets/default.png" Height="40" Width="40"></Image>
-                    </ToggleButton>
-                    <ToggleButton  Padding="2">
-                        <Image  Source="/Assets/landonscamp.png" Height="40" Width="40"></Image>
-                    </ToggleButton>-->
-                </controls:WrapPanel>
+                <controls:WrapPanel x:Name="ThemesContainer"/>
             </controls:SettingsCard>
 
-            <controls:SettingsCard Description="Put the bell schedule in your Windows Taskbar. To exit from this mode, find the Crooms Bell Schedule Icon in the right area of your taskbar. Not supported on Linux platforms."
+            <controls:SettingsCard Description="Put the bell schedule in your Windows Taskbar. To exit from this mode, find the Crooms Bell Schedule Icon in the right area of your taskbar."
                                Header="Show inside of taskbar" Margin="0,7,0,0" CornerRadius="5">
                 <ToggleSwitch x:Name="chkTaskbar" Header="" Toggled="chkTaskbar_Toggled"
                           ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Compatible with Windows 10 and 11." />

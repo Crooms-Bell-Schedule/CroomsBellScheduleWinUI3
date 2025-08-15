@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CroomsBellScheduleCS.Views;
+using CroomsBellScheduleCS.Windows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,17 +18,23 @@ namespace CroomsBellScheduleCS.Themes
                     Name = "Default",
                     PreviewResource = "default.png"
                 },
-                /*new Theme()
+                new Theme()
                 {
                     ID = 1,
                     Name = "Landon's Camp",
-                    PreviewResource = "landonscamp.png"
-                },*/
+                    PreviewResource = "landonscamp.png",
+                    BackgroundResource = "landon.png"
+                },
             ];
 
         internal static void Apply(int id)
         {
-            // TODO          
+            if (MainView.SettingsWindow == null || MainView.Settings == null) return;
+
+            var theme = ThemeList.Where(x => x.ID == id).FirstOrDefault();
+            if (theme == null) return;
+
+            MainView.Settings.ApplyTheme(theme);
         }
     }
 }

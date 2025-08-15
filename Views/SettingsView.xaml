@@ -12,7 +12,7 @@
      xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
     Loaded="UserControl_Loaded">
-    <Grid>
+    <Grid x:Name="MainGrid">
         <!--<TitleBar x:Name="AppTitleBar" Subtitle="Preview"
     Background="Transparent" 
     IsPaneToggleButtonVisible="True" Grid.Row="0"
@@ -28,6 +28,7 @@
             <Button HorizontalAlignment="Right" Margin="0,90,0,0">Test</Button>
         </TitleBar.RightHeader>
     </TitleBar>-->
+
         <Grid x:Name="AppTitleBar"
           Canvas.ZIndex="1"
           Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"
@@ -156,7 +157,7 @@
                                     </Button>
                                     <StackPanel Orientation="Horizontal">
                                         <HyperlinkButton x:Name="FlyoutSignIn" Content="Sign In" Click="FlyoutLogin_Click"/>
-                                        <HyperlinkButton x:Name="FlyoutChangePassword" Content="Change Password" Visibility="Collapsed" Click="FlyoutChangePassword_Click"/>
+                                        <HyperlinkButton x:Name="FlyoutChangePassword" Content="Manage account" Visibility="Collapsed" Click="FlyoutChangePassword_Click"/>
                                     </StackPanel>
                                 </StackPanel>
 

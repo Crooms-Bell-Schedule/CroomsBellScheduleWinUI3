@@ -1,10 +1,12 @@
 ﻿//#define MIGRATION_CODE // uncomment to enable migration code from old bell schedule app (2.1.0 -> 2.9.9 -> 3.x)
+using CroomsBellScheduleCS.Themes;
 using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Views.Settings;
 using CroomsBellScheduleCS.Windows;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using System;
@@ -270,7 +272,7 @@ public sealed partial class SettingsView
         LoadingUI.Visibility = Visibility.Collapsed;
     }
 
-    private async void FlyoutChangePFP_Click(object sender, RoutedEventArgs e)
+    internal async Task OpenPFPViewAsync()
     {
         var txt = new TextBox();
         var error = new TextBlock() { Text = "" };
@@ -335,6 +337,10 @@ public sealed partial class SettingsView
 
         await dlg.ShowAsync();
     }
+    private async void FlyoutChangePFP_Click(object sender, RoutedEventArgs e)
+    {
+        await OpenPFPViewAsync();
+    }
 
     private async void FlyoutChangeUsername_Click(object sender, RoutedEventArgs e)
     {
@@ -375,18 +381,23 @@ public sealed partial class SettingsView
 
     private async void FlyoutChangePassword_Click(object sender, RoutedEventArgs e)
     {
-        ContentDialog dlg = new()
+        if (!OperatingSystem.IsWindows())
         {
-            Title = "Change password",
-            XamlRoot = Content.XamlRoot,
-            PrimaryButtonText = "Save",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Primary,
-            Content = new PasswordChangeView()
-        };
-        dlg.PrimaryButtonClick += ChangePWDlg_OKClick;
+            ContentDialog dlg = new()
+            {
+                Title = "Manage Account",
+                XamlRoot = Content.XamlRoot,
+                PrimaryButtonText = "OK",
+                DefaultButton = ContentDialogButton.Primary,
+                Content = "This feature is unsupported on this platform"
+            };
 
-        await dlg.ShowAsync();
+            await dlg.ShowAsync();
+            return;
+        }
+
+
+        NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomssched.tech/account-center", false, true, false));
     }
     private async void ChangePWDlg_OKClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
@@ -466,7 +477,7 @@ public sealed partial class SettingsView
             UserFlyout.Hide();
             if (OperatingSystem.IsWindows())
             {
-                NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomssched.tech/auth/sso-callback?clientId=crooms-bell-app", false, false));
+                NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomssched.tech/auth/sso-callback?clientId=crooms-bell-app", false, false, true));
             }
             else
             {
@@ -554,5 +565,28 @@ public sealed partial class SettingsView
         // clear navigation history in the settings window
         NavigationFrame.BackStack.Clear();
         NavigationFrame.ForwardStack.Clear();
+    }
+
+    internal void ApplyTheme(Theme theme)
+    {
+        if (string.IsNullOrWhiteSpace(theme.BackgroundResource))
+        {
+            MainGrid.Background = null;
+        }
+        else
+        {
+            var src = new BitmapImage();
+            src.UriSource = new("ms-appx:///Assets/" + theme.BackgroundResource);
+            src.ImageFailed += Src_ImageFailed;
+            MainGrid.Background = new ImageBrush()
+            {
+                ImageSource = src
+            };
+        }
+    }
+
+    private void Src_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+    {
+        throw new NotImplementedException();
     }
 }

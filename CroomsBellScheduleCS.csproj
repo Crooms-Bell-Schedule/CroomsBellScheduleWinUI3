@@ -16,11 +16,14 @@
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
-		<Version>4.2.9</Version>
+		<Version>4.3.0</Version>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Content Remove="Assets\5eddfcb467e19.jpg" />
+	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Controls\FeedEntry.xaml" />
 		<None Remove="Styles\FontSizes.xaml" />
@@ -69,6 +72,9 @@
 		<PackageReference Include="Velopack" Version="0.0.1350-g3ba32af" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Resource Include="Assets\5eddfcb467e19.jpg" />
+	</ItemGroup>
+	<ItemGroup>
 	  <Content Update="Assets\croomsBellSchedule.ico">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
@@ -76,6 +82,9 @@
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Update="Assets\kone.png">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="Assets\landon.png">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Update="Assets\landonscamp.png">
