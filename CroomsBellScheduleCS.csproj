@@ -80,6 +80,11 @@
 	  </Content>
 	</ItemGroup>
 	<ItemGroup>
+	  <None Update="bellschedule.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+	<ItemGroup>
 		<Page Update="Controls\FeedEntry.xaml">
 		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		  <SubType>Designer</SubType>
