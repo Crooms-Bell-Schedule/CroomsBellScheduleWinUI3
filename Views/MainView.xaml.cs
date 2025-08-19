@@ -196,7 +196,7 @@ public sealed partial class MainView
         double top = _windowApp.Position.Y;
         CalcNewPos(_windowApp.Size.Width, _windowApp.Size.Height, ref left, ref top);
 
-        _windowApp.Move(new PointInt32((int)(left), (int)(top)));
+        _windowApp.Move(new PointInt32((int)left, (int)top));
     }
 
     internal async Task RunUpdateCheck()
@@ -634,7 +634,13 @@ public sealed partial class MainView
                 }
                 else
                 {
-                    SetParent(handle, taskbarUIHWnd);
+                    if (SetParent(handle, taskbarUIHWnd) == 0)
+                    {
+                        // something went wrong, taskbar still initializing?
+                        taskbarHeight = 0;
+                        attempts++;
+                        await Task.Delay(200);
+                    }
                 }
             }
 
@@ -712,16 +718,6 @@ public sealed partial class MainView
     {
         Application.Current.Exit();
         Environment.Exit(0);
-    }
-
-    private void ALunch_Click(object sender, RoutedEventArgs e)
-    {
-        SetLunch(0);
-    }
-
-    private void BLunch_Click(object sender, RoutedEventArgs e)
-    {
-        SetLunch(1);
     }
 
     private void SetLunch(int index)
