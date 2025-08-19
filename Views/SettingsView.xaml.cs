@@ -3,15 +3,19 @@ using CroomsBellScheduleCS.Themes;
 using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Views.Settings;
 using CroomsBellScheduleCS.Windows;
+using Microsoft.Graphics.Canvas.Effects;
+using Microsoft.UI.Composition;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Numerics;
 using System.Threading.Tasks;
 
 namespace CroomsBellScheduleCS.Views;
@@ -20,6 +24,9 @@ public sealed partial class SettingsView
 {
     //private IntPtr _oldWndProc;
     //private Delegate? _newWndProcDelegate;
+    private CompositionEffectBrush brush;
+    private Compositor compositor;
+    private bool _useBlur = false;
     public int UnreadAnnouncementCount
     {
         set
@@ -41,6 +48,46 @@ public sealed partial class SettingsView
     {
         InitializeComponent();
         MainView.SettingsWindow?.SetTitleBar(AppTitleBar);
+
+        BackgroundGrid.SizeChanged += BackgroundGrid_SizeChanged;
+        compositor = ElementCompositionPreview.GetElementVisual(MainGrid).Compositor;
+        // we create the effect. 
+        // Notice the Source parameter definition. Here we tell the effect that the source will come from another element/object
+        var blurEffect = new GaussianBlurEffect
+        {
+            Name = "Blur",
+            Source = new CompositionEffectSourceParameter("background"),
+            BlurAmount = 10f,
+            BorderMode = EffectBorderMode.Hard,
+        };
+
+        // we convert the effect to a brush that can be used to paint the visual layer
+        var blurEffectFactory = compositor.CreateEffectFactory(blurEffect);
+        brush = blurEffectFactory.CreateBrush();
+
+        // We create a special brush to get the image output of the previous layer.
+        // we are basically chaining the layers (xaml grid definition -> rendered bitmap of the grid -> blur effect -> screen)
+        var destinationBrush = compositor.CreateBackdropBrush();
+        brush.SetSourceParameter("background", destinationBrush);
+
+        // we create the visual sprite that will hold our generated bitmap (the blurred grid)
+        // Visual Sprite are "raw" elements so there is no automatic layouting. You have to specify the size yourself
+        var blurSprite = compositor.CreateSpriteVisual();
+        blurSprite.Size = new Vector2((float)BackgroundGrid.ActualWidth, (float)BackgroundGrid.ActualHeight);
+        blurSprite.Brush = brush;
+
+        // we add our sprite to the rendering pipeline
+        ElementCompositionPreview.SetElementChildVisual(BackgroundGrid, blurSprite);
+    }
+
+    private void BackgroundGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        SpriteVisual blurVisual = (SpriteVisual)ElementCompositionPreview.GetElementChildVisual(BackgroundGrid);
+
+        if (blurVisual != null && _useBlur)
+        {
+            blurVisual.Size = e.NewSize.ToVector2();
+        }
     }
 
     private void TryGoForward()
@@ -68,7 +115,7 @@ public sealed partial class SettingsView
         var theme = SettingsManager.Settings.Theme;
         appWindow.TitleBar.PreferredTheme = (theme == ElementTheme.Default ? TitleBarTheme.UseDefaultAppMode : (SettingsManager.Settings.Theme == ElementTheme.Light ? TitleBarTheme.Light : TitleBarTheme.Dark));
 
-        if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
+        RequestedTheme = theme;
     }
 
     private void NavigationViewControl_DisplayModeChanged(NavigationView sender,
@@ -567,26 +614,54 @@ public sealed partial class SettingsView
         NavigationFrame.ForwardStack.Clear();
     }
 
+    private void SetBlur(bool enable)
+    {
+        SpriteVisual blurVisual = (SpriteVisual)ElementCompositionPreview.GetElementChildVisual(BackgroundGrid);
+
+        _useBlur = enable;
+
+        if (blurVisual != null)
+        {
+            if (enable)
+                blurVisual.Size = MainGrid.ActualSize;
+            else
+                blurVisual.Size = Vector2.Zero;
+        }
+    }
+
     internal void ApplyTheme(Theme theme)
     {
         if (string.IsNullOrWhiteSpace(theme.BackgroundResource))
         {
-            MainGrid.Background = null;
+            BackgroundGrid.Background = null;
         }
         else
         {
             var src = new BitmapImage();
-            src.UriSource = new("ms-appx:///Assets/" + theme.BackgroundResource);
-            src.ImageFailed += Src_ImageFailed;
-            MainGrid.Background = new ImageBrush()
+            if (theme.HasSeperateLightDarkBgs)
             {
-                ImageSource = src
+                if (SettingsManager.UseDark)
+                    src.UriSource = new("ms-appx:///Assets/Theme/" + theme.BackgroundResource + "_dark.png");
+                else src.UriSource = new("ms-appx:///Assets/Theme/" + theme.BackgroundResource + "_light.png");
+            }
+            else
+            {
+                src.UriSource = new("ms-appx:///Assets/Theme/" + theme.BackgroundResource);
+            }
+
+            src.ImageFailed += Src_ImageFailed;
+            BackgroundGrid.Background = new ImageBrush()
+            {
+                ImageSource = src,
+                Stretch = Stretch.UniformToFill
             };
         }
+
+        SetBlur(theme.UseBlur);
     }
 
     private void Src_ImageFailed(object sender, ExceptionRoutedEventArgs e)
     {
-        throw new NotImplementedException();
+        
     }
 }

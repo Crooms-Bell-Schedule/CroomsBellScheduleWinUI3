@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.UI.Xaml;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
-using Microsoft.VisualBasic;
-using static CroomsBellScheduleCS.Utils.SettingsManager;
 
 namespace CroomsBellScheduleCS.Utils;
 
@@ -27,6 +25,17 @@ public static class SettingsManager
             if (_settings == null)
                 _settings = new SettingsRoot();
             return _settings;
+        }
+    }
+
+    public static bool UseDark
+    {
+        get
+        {
+            if (Settings.Theme == ElementTheme.Dark) return true;
+            else if (Settings.Theme == ElementTheme.Light) return false;
+
+            return Application.Current.RequestedTheme == ApplicationTheme.Dark;
         }
     }
 
@@ -68,15 +77,9 @@ public static class SettingsManager
 
     public class SettingsRoot
     {
-        /// <summary>
-        /// TODO remove
-        /// </summary>
-        public int LunchOffset { get; set; }
-
         public bool ShowInTaskbar { get; set; }
         public bool ShownTaskbarTip { get; set; }
         public bool EnableDvdScreensaver { get; set; }
-
         public bool IsLivestreamMode { get; set; }
 
         public ElementTheme Theme { get; set; }

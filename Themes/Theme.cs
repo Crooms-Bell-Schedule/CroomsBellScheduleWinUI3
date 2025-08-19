@@ -12,5 +12,7 @@ namespace CroomsBellScheduleCS.Themes
         public string Name { get; set; } = "";
         public string PreviewResource { get; set; } = "";
         public string? BackgroundResource { get; set; } = "";
+        public bool HasSeperateLightDarkBgs { get; set; }
+        public bool UseBlur { get; set; }
     }
 }

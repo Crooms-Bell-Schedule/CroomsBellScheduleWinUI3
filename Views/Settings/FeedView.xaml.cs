@@ -349,10 +349,6 @@ public sealed partial class FeedView
     {
         MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://mikhail.croomssched.tech/advice", true, true, false));
     }
-    private void CBSHLive_Click(object sender, RoutedEventArgs e)
-    {
-        MainView.Settings?.NavigateTo(typeof(Livestream), "");
-    }
     private async void AppBarButton_Click(object sender, RoutedEventArgs e)
     {
         ContentDialog dialog = new()

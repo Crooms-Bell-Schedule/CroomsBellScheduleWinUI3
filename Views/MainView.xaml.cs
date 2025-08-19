@@ -75,6 +75,8 @@ public sealed partial class MainView
                 await dlg.ShowAsync();
             }
 
+            SetLoadingText("Initialize MainWindow");
+
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsResizable = true;
@@ -87,6 +89,8 @@ public sealed partial class MainView
             Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
 
             _prevDPI = XamlRoot.RasterizationScale;
+
+            SetLoadingText("Loading theme");
 
             SetTheme(SettingsManager.Settings.Theme);
             await SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
@@ -107,7 +111,7 @@ public sealed partial class MainView
                     if (SettingsManager.Settings.ShowInTaskbar)
                     {
                         await SetTaskbarMode(false);
-                        await Task.Delay(100);
+                        await Task.Delay(200);
                         await SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
                     }
                 }
@@ -128,8 +132,6 @@ public sealed partial class MainView
                 nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
                 _oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
             }
-
-            TxtCurrentClass.Text = "Checking for updates...";
         }
         catch (Exception ex)
         {
@@ -208,6 +210,8 @@ public sealed partial class MainView
                 if (wasRunning) _timer.Stop();
             }
 
+            SetLoadingText("Checking for updates");
+
             string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]) ?? AppDomain.CurrentDomain.BaseDirectory;
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             _updateManager = new($"https://mikhail.croomssched.tech/updateapiv2/");
@@ -272,6 +276,8 @@ public sealed partial class MainView
             }
 #endif
 
+            ProgressBar.IsIndeterminate = false;
+
             if (_updateManager.IsInstalled)
             {
                 var newVersion = await _updateManager.CheckForUpdatesAsync();
@@ -301,6 +307,7 @@ public sealed partial class MainView
         }
         catch (Exception ex)
         {
+            ProgressBar.IsIndeterminate = false;
             MessageDialog dlg = new MessageDialog($"{ex.ToString()}")
             {
                 Title = "Failed to install update"
@@ -319,7 +326,7 @@ public sealed partial class MainView
         if (SettingsWindow != null && SettingsWindow.SettingsView != null)
             SettingsWindow.SettingsView.UpdateTheme();
         MainWindow.Instance.UpdateTheme(theme);
-
+        Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
     }
 
     #region Bell
@@ -538,10 +545,17 @@ public sealed partial class MainView
         return GetDpiForWindow(WindowNative.GetWindowHandle(MainWindow.Instance));
     }
 
+    private void SetLoadingText(string progress)
+    {
+        ProgressBar.IsIndeterminate = true;
+        TxtClassPercent.Text = "";
+        TxtCurrentClass.Text = $"App version: {Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0, 0)}";
+        TxtDuration.Text = progress;
+    }
+
     private async Task UpdateBellSchedule()
     {
-        TxtCurrentClass.Text = "Retrieving bell schedule";
-        TxtDuration.Text = "Please wait";
+        SetLoadingText("Loading bell schedule");
         try
         {
             _reader = await _provider.GetTodayActivity();
@@ -562,7 +576,7 @@ public sealed partial class MainView
         }
         UpdateStrings(true);
 
-        LoadingThing.Visibility = Visibility.Collapsed;
+        ProgressBar.IsIndeterminate = false;
         UpdateLunch();
         UpdateCurrentClass();
     }
@@ -715,8 +729,6 @@ public sealed partial class MainView
         //ALunchOption.IsChecked = index == 0;
         //BLunchOption.IsChecked = index == 1;
         _lunchOffset = index;
-        if (SettingsManager.Settings.LunchOffset != index)
-            SettingsManager.Settings.LunchOffset = index;
         UpdateCurrentClass();
     }
 
@@ -747,7 +759,7 @@ public sealed partial class MainView
 
     private int DetermineLunchOffsetFromToday()
     {
-        if (_reader == null) return SettingsManager.Settings.LunchOffset;
+        if (_reader == null) return 0;
         if (_reader.GetUnfilteredClasses().Where(x => x.ScheduleName.ToLower().Contains("even")).Any())
             return SettingsManager.Settings.HomeroomLunch;
         else

@@ -16,14 +16,14 @@
     IsIconVisible="True"
     IsClosable="False"
     Title="Note"
-    Message="The on-device bell schedule will be used if the server is inaccessible or under maintenance." Margin="0,8,0,8"/>
+    Message="The offline bell schedule source will be used if the server is inaccessible or under maintenance." Margin="0,8,0,8"/>
 
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="0,8,0,0" Text="Source: "/>
                 <ComboBox x:Name="CmbPreferredSchedule" Margin="8,0,0,0" SelectedIndex="0" SelectionChanged="CmbPreferredSchedule_SelectionChanged">
                     <ComboBox.Items>
                         <ComboBoxItem>croomssched.tech</ComboBoxItem>
-                        <ComboBoxItem>On-device</ComboBoxItem>
+                        <ComboBoxItem>Offline</ComboBoxItem>
                     </ComboBox.Items>
                 </ComboBox>
             </StackPanel>

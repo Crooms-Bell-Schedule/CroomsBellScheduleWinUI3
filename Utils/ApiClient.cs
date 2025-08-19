@@ -424,6 +424,22 @@ namespace CroomsBellScheduleCS.Utils
                 return new() { Exception = ex, OK = false };
             }
         }
+
+        internal async Task<Result<Survey[]?>> GetSurveys()
+        {
+            try
+            {
+                var response = await _client.GetAsync("https://api.croomssched.tech/surveys/");
+
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                return DecodeResponse<Survey[]>(responseText);
+            }
+            catch (Exception ex)
+            {
+                return new() { OK = false, Exception = ex };
+            }
+        }
     }
 
     public class AnnouncementData
@@ -539,5 +555,11 @@ namespace CroomsBellScheduleCS.Utils
     {
         public string id { get; set; } = "";
         public string username { get; set; } = "";
+    }
+    public class Survey
+    {
+        public string name { get; set; } = "";
+        public string id { get; set; } = "";
+        public string link { get; set; } = "";
     }
 }

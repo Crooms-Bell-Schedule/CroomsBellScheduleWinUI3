@@ -23,6 +23,7 @@ namespace CroomsBellScheduleCS.Utils
     [JsonSerializable(typeof(ApiSimpleResponse))]
     [JsonSerializable(typeof(UsernameChangeRequest))]
     [JsonSerializable(typeof(AnnouncementData))]
+    [JsonSerializable(typeof(ApiResponse<Survey[]>))]
     [JsonSerializable(typeof(ApiResponse<SetProfilePictureResult>))]
     [JsonSerializable(typeof(ApiResponse<GetUserResult>))]
     internal partial class SourceGenerationContext : JsonSerializerContext

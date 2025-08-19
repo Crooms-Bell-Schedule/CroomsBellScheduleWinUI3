@@ -29,6 +29,8 @@
         </TitleBar.RightHeader>
     </TitleBar>-->
 
+        <Grid x:Name="BackgroundGrid" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+
         <Grid x:Name="AppTitleBar"
           Canvas.ZIndex="1"
           Height="{Binding ElementName=NavigationViewControl, Path=CompactPaneLength}"

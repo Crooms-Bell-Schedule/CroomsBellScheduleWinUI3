@@ -21,7 +21,7 @@ public class APIProvider : IBellScheduleProvider
         string? dataResp = await dataBody.Content.ReadAsStringAsync() ??
                            throw new Exception("server response is empty");
 
-        Root parsed = JsonSerializer.Deserialize<Root>(dataResp, SourceGenerationContext.Default.Root) ?? throw new Exception("server response is malformed");
+        Root parsed = JsonSerializer.Deserialize(dataResp, SourceGenerationContext.Default.Root) ?? throw new Exception("server response is malformed");
 
         // convert response to the better format
         BellSchedule bellSchedule = new();

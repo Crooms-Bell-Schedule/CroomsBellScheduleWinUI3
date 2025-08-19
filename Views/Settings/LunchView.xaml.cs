@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
-using System.Drawing;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
@@ -18,6 +17,7 @@ public sealed partial class LunchView
     {
         Loader.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
         ErrorView.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+        bool error = false;
 
         var data = await Services.ApiClient.GetLunchData();
         if (data.OK && data.Value != null)
@@ -26,16 +26,46 @@ public sealed partial class LunchView
         }
         else
         {
+            error = true;
             var ex = data.Exception;
             if (ex != null)
                 ErrorText.Text = $"Failed to get latest lunch information. Details: {ex.Message}";
             else
                 ErrorText.Text = "Failed to get latest lunch information. Details: (Unknown)";
-           
-            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+
             ErrorView.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
-            return;
         }
+
+        if (!error)
+        {
+            var a = await Services.ApiClient.GetSurveys();
+
+            if (a.OK && a.Value != null)
+            {
+                foreach (var item in a.Value)
+                {
+                    try
+                    {
+                        surveys.Children.Add(new HyperlinkButton()
+                        {
+                            Content = item.name,
+                            NavigateUri = new Uri(item.link)
+                        });
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+
+
+            LunchUI.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            LunchUI.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+        }
+
+
+        Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
     }
 
     private void InitLunch(LunchEntry[] data)
@@ -78,20 +108,26 @@ public sealed partial class LunchView
         lunchGrid.Children.Add(lunchImageToday);
         lunchGrid.Children.Add(quickBitsTitle);
         lunchGrid.Children.Add(quickBits);
+        lunchGrid.Children.Add(surveyTitle);
+        lunchGrid.Children.Add(surveyAdd);
+        lunchGrid.Children.Add(surveys);
         quickBits.Text = "Coming soon";
+
         //int i = 1;
         //foreach (var item in data.quickBits)
         //{
         //    quickBits.Text += $"{i++}. {item}{Environment.NewLine}";
         //}
-
-        Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-        ErrorView.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-        LunchUI.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
     }
 
-    private  void Button_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    private void Button_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         Page_Loaded(sender, e);
+    }
+
+    private void Button_Click_1(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        if (MainView.Settings != null)
+            MainView.Settings.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://api.croomssched.tech/survey/", true, true, false));
     }
 }

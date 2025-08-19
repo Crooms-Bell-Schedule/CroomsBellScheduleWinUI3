@@ -47,11 +47,14 @@ public sealed partial class PersonalizationView
                 Margin = new Thickness(5, 0, 5, 0)
             };
 
+            ToolTip tip = new() { Content = item.Name };
+            ToolTipService.SetToolTip(button, tip);
+
             if (!string.IsNullOrEmpty(item.PreviewResource))
             {
                 button.Content = new Image()
                 {
-                    Source = new BitmapImage(new Uri($"ms-appx:///Assets/" + item.PreviewResource)),
+                    Source = new BitmapImage(new Uri($"ms-appx:///Assets/Theme/" + item.PreviewResource)),
                     Height = 40,
                     Width = 40
                 };

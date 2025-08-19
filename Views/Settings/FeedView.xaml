@@ -54,7 +54,6 @@
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <AppBarButton x:Name="MAdvice" Grid.Row="0" Label="Mikhail's Advice" Click="MA_Click" Icon="PhoneBook"/>
-                <AppBarButton x:Name="BellLive" Grid.Row="0" Label="CBSH Live Stream" Click="CBSHLive_Click" Icon="Video"/>
             </StackPanel>
 
             <ProgressBar x:Name="ProgressUI" IsIndeterminate="True" Grid.Row="0" VerticalAlignment="Bottom"></ProgressBar>

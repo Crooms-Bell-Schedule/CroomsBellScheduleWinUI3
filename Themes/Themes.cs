@@ -1,10 +1,6 @@
 ﻿using CroomsBellScheduleCS.Views;
-using CroomsBellScheduleCS.Windows;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CroomsBellScheduleCS.Themes
 {
@@ -18,19 +14,37 @@ namespace CroomsBellScheduleCS.Themes
                     Name = "Default",
                     PreviewResource = "default.png"
                 },
-                new Theme()
+             new Theme()
                 {
                     ID = 1,
-                    Name = "Landon's Camp",
-                    PreviewResource = "landonscamp.png",
-                    BackgroundResource = "landon.png"
+                    Name = "Christmas",
+                    PreviewResource = "Christmas_preview.png",
+                    BackgroundResource = "DrummerBoyChristmasWide.png",
+                    UseBlur = true
+                },
+            new Theme()
+                {
+                    ID = 2,
+                    Name = "What are we waiting for",
+                    PreviewResource = "WAWWF_preview.png",
+                    BackgroundResource = "WAWWF_bg",
+                    HasSeperateLightDarkBgs = true
+                },
+             new Theme()
+                {
+                    ID = 3,
+                    Name = "Camp Landon",
+                    PreviewResource = "landonscamp_preview.png",
+                    BackgroundResource = "landonscamp_bg.png",
+                    UseBlur = true
                 },
                 new Theme()
                 {
-                    ID = 2,
-                    Name = "Test",
-                    PreviewResource = "kone.png",
-                    BackgroundResource = "5eddfcb467e19.jpg"
+                    ID = 4,
+                    Name = "Burn the Ships",
+                    PreviewResource = "BurnTheShips_bg.png",
+                    BackgroundResource = "BurnTheShips_bg.png",
+                    UseBlur = true
                 }
             ];
 

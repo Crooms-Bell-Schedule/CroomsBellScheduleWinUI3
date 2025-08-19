@@ -59,15 +59,14 @@
             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe700;" />
         </Button>
         
-        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" Text="Downloading bell schedule" FontSize="8"/>
+        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" Text="Loading settings" FontSize="8"/>
         <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" Text="" FontSize="8"/>
 
 
         <TextBlock x:Name="TxtClassPercent" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                HorizontalAlignment="Right" Text="" FontSize="8"/>
 
-        <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" />
-        <ProgressRing x:Name="LoadingThing" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="5" Grid.RowSpan="5" VerticalAlignment="Center" />
+        <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" IsIndeterminate="True" />
 
         <tb:TaskbarIcon
         ToolTipText="Crooms Bell Schedule"

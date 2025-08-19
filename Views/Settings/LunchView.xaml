@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
@@ -22,8 +23,10 @@
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -41,6 +44,10 @@
 
                 <TextBlock x:Name="quickBitsTitle" Grid.Row="6" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,15,0,0">Quick Bits</TextBlock>
                 <TextBlock x:Name="quickBits" Grid.Row="7" Grid.ColumnSpan="15">Loading</TextBlock>
+
+                <TextBlock x:Name="surveyTitle" Grid.Row="8" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,15,0,0">Surveys</TextBlock>
+                <Button x:Name="surveyAdd" Grid.Row="8" Grid.Column="3" HorizontalAlignment="Right" Click="Button_Click_1">Add</Button>
+                <controls:WrapPanel x:Name="surveys" Grid.Row="9" Grid.ColumnSpan="15" Orientation="Vertical"></controls:WrapPanel>
             </Grid>
         </Grid>
 
