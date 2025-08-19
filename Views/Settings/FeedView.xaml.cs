@@ -237,6 +237,10 @@ public sealed partial class FeedView
         if (!feedResult.OK || feedResult.Value == null)
         {
             RefreshBtn.IsEnabled = true;
+
+            if (MainView.Settings != null)
+                MainView.Settings.ShowInAppNotification("Failed to load feed", ApiClient.FormatResult(feedResult), 20);
+
             if (!automatic)
             {
                 ContentDialog dlg2 = new()
