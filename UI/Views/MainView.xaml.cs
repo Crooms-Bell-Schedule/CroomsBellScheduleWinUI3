@@ -66,7 +66,6 @@ public sealed partial class MainView
             try
             {
                 await SettingsManager.LoadSettings();
-                throw new();
             }
             catch (Exception ex)
             {
