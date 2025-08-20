@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Reflection;
+using CroomsBellScheduleCS.Service;
 using CroomsBellScheduleCS.Themes;
-using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Windows;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
-using static CroomsBellScheduleCS.Utils.SettingsManager;
+using static CroomsBellScheduleCS.Service.SettingsManager;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using CroomsBellScheduleCS.Utils;
+using Microsoft.UI.Xaml;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -6,7 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace CroomsBellScheduleCS.Utils;
+namespace CroomsBellScheduleCS.Service;
 
 public static class SettingsManager
 {
@@ -71,8 +72,6 @@ public static class SettingsManager
     {
         using Stream s = LocalSettingsService.Open(true);
         await JsonSerializer.SerializeAsync(s, _settings, SourceGenerationContext.Default.SettingsRoot);
-
-        LocalSettingsService.Save(s);
     }
 
     public class SettingsRoot

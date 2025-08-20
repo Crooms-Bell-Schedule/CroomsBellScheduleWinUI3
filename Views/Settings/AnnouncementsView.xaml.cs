@@ -5,11 +5,11 @@ using WinRT.Interop;
 using CroomsBellScheduleCS.Windows;
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml.Controls;
-using CroomsBellScheduleCS.Utils;
 using System.Linq;
 using Microsoft.UI.Xaml;
 using CroomsBellScheduleCS.Controls;
-using CroomsBellScheduleCS.Web;
+using CroomsBellScheduleCS.Service.Web;
+using CroomsBellScheduleCS.Service;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 

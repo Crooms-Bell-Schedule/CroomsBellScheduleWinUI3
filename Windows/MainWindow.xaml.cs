@@ -1,4 +1,4 @@
-using CroomsBellScheduleCS.Utils;
+using CroomsBellScheduleCS.Service;
 using CroomsBellScheduleCS.Views;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
