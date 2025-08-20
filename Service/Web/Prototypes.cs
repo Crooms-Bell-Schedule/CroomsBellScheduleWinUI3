@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace CroomsBellScheduleCS.Web
+namespace CroomsBellScheduleCS.Service.Web
 {
     public class AnnouncementData
     {

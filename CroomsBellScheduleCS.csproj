@@ -26,8 +26,8 @@
 		<None Remove="Styles\FontSizes.xaml" />
 		<None Remove="Styles\TextBlock.xaml" />
 		<None Remove="Styles\Thickness.xaml" />
-		<None Remove="Views\Settings\AnnouncementsView.xaml" />
-		<None Remove="Views\Settings\BellView.xaml" />
+		<None Remove="UI\Views\Settings\AnnouncementsView.xaml" />
+		<None Remove="UI\Views\Settings\BellView.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -96,57 +96,14 @@
 		<Page Update="Styles\TextBlock.xaml">
 			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
 		</Page>
-		<Page Update="Views\Settings\FeedView.xaml">
-		  <SubType>Designer</SubType>
-		</Page>
-		<Page Update="Views\Settings\PasswordChangeView.xaml">
-		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		  <SubType>Designer</SubType>
-		  <Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\Settings\AnnouncementsView.xaml">
-		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		  <SubType>Designer</SubType>
-		</Page>
-		<Page Update="Views\Settings\PfpUploadView.xaml">
-		  <SubType>Designer</SubType>
-		</Page>
-		<Page Update="Views\Settings\PostView.xaml">
-		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		  <SubType>Designer</SubType>
-		  <Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\Settings\Livestream.xaml">
-		  <SubType>Designer</SubType>
-		</Page>
-		<Page Update="Views\Settings\WebView.xaml">
-		  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		  <SubType>Designer</SubType>
-		  <Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\Settings\LunchView.xaml">
-		  <SubType>Designer</SubType>
-		</Page>
-		<Page Update="Views\Settings\LoginView.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-			<SubType>Designer</SubType>
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-		<Page Update="Views\Settings\BellView.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-		</Page>
-		<Page Update="Windows\MainView.xaml">
-			<SubType>Designer</SubType>
-		</Page>
-		<Page Update="Windows\SettingsWindow.xaml">
-			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
 	</ItemGroup>
 	<ItemGroup>
 		<Page Update="Styles\FontSizes.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="UI\" />
 	</ItemGroup>
 
 	<!--

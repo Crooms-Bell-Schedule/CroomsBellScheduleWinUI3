@@ -1,4 +1,4 @@
-﻿using CroomsBellScheduleCS.Views;
+﻿using CroomsBellScheduleCS.UI.Views;
 using System.Collections.Generic;
 using System.Linq;
 

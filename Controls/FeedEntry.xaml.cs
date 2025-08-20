@@ -1,5 +1,4 @@
-﻿using CroomsBellScheduleCS.Views;
-using CroomsBellScheduleCS.Views.Settings;
+﻿using CroomsBellScheduleCS.UI.Views.Settings;
 using HtmlAgilityPack;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Documents;
@@ -7,7 +6,6 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace CroomsBellScheduleCS.Controls;
 

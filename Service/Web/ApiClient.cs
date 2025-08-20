@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CroomsBellScheduleCS.Web
+namespace CroomsBellScheduleCS.Service.Web
 {
     public class ApiClient
     {

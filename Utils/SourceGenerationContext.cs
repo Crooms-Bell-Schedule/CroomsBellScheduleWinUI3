@@ -1,8 +1,8 @@
 ﻿using CroomsBellScheduleCS.Provider;
-using CroomsBellScheduleCS.Web;
+using CroomsBellScheduleCS.Service.Web;
 using System.Text.Json.Serialization;
 using static CroomsBellScheduleCS.Provider.APIProvider;
-using static CroomsBellScheduleCS.Utils.SettingsManager;
+using static CroomsBellScheduleCS.Service.SettingsManager;
 
 namespace CroomsBellScheduleCS.Utils
 {
