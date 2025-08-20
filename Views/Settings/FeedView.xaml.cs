@@ -18,6 +18,7 @@ using Windows.Graphics.Imaging;
 using CommunityToolkit.WinUI.Collections;
 using System.Linq;
 using CroomsBellScheduleCS.Windows;
+using CroomsBellScheduleCS.Web;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 
@@ -195,7 +196,7 @@ public sealed partial class FeedView
                         {
                             try
                             {
-                                RefreshFeed(true);
+                                RefreshFeed();
                             }
                             catch { }
                         });
@@ -229,30 +230,17 @@ public sealed partial class FeedView
         }
     }
 
-    private async void RefreshFeed(bool automatic)
+    private async void RefreshFeed()
     {
         RefreshBtn.IsEnabled = false;
-        Result<FeedEntry[]?> feedResult = Entries.Count == 0 ? await Services.ApiClient.GetFeed() :
+        Result<FeedEntry[]?> feedResult = Entries.Count == 0 ? await Services.ApiClient.GetFeedFull() :
                      await Services.ApiClient.GetFeedAfter(Entries[0].Id);
         if (!feedResult.OK || feedResult.Value == null)
         {
             RefreshBtn.IsEnabled = true;
 
             if (MainView.Settings != null)
-                MainView.Settings.ShowInAppNotification("Failed to load feed", ApiClient.FormatResult(feedResult), 20);
-
-            if (!automatic)
-            {
-                ContentDialog dlg2 = new()
-                {
-                    Title = "Failed to get feed",
-                    XamlRoot = XamlRoot,
-                    CloseButtonText = "OK",
-                    Content = "Failed to download feed information. The server may be under maintenance or you refreshed too many times."
-                };
-
-                await dlg2.ShowAsync();
-            }
+                MainView.Settings.ShowInAppNotification(ApiClient.FormatResult(feedResult), "Failed to load feed", 20);
             return;
         }
 
@@ -286,7 +274,7 @@ public sealed partial class FeedView
     }
     private void Refresh_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
-        RefreshFeed(false);
+        RefreshFeed();
     }
 
     private async void DailyPoll_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -393,7 +381,7 @@ public sealed partial class FeedView
         if (result.OK)
         {
             sender.Hide();
-            RefreshFeed(true);
+            RefreshFeed();
         }
         else
         {
@@ -467,7 +455,21 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
     public async Task<IEnumerable<FeedUIEntry>> GetPagedItemsAsync(int pageIndex, int pageSize, System.Threading.CancellationToken cancellationToken = default)
     {
         int startIdx = pageIndex * pageSize;
-        var feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
+        Result<FeedEntry[]?> feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
+
+        // Retry if ratelimit reached
+        if (feedResult.IsRateLimitReached)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                await Task.Delay(3000);
+                feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
+
+                if (!feedResult.IsRateLimitReached)
+                    break;
+            }
+        }
+
         if (!feedResult.OK || feedResult.Value == null)
         {
             if (MainView.Settings != null)

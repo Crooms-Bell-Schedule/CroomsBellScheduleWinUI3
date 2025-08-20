@@ -1,4 +1,5 @@
 ﻿using CroomsBellScheduleCS.Provider;
+using CroomsBellScheduleCS.Web;
 using System.Text.Json.Serialization;
 using static CroomsBellScheduleCS.Provider.APIProvider;
 using static CroomsBellScheduleCS.Utils.SettingsManager;

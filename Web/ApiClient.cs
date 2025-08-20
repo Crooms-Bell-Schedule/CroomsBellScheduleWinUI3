@@ -1,20 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CroomsBellScheduleCS.Utils;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CroomsBellScheduleCS.Utils
+namespace CroomsBellScheduleCS.Web
 {
     public class ApiClient
     {
         private readonly HttpClient _client = new();
+        private const string ApiBase = "https://api.croomssched.tech";
+        private const string MikhailHostingBase = "https://mikhail.croomssched.tech";
+        #region Utils
         public static Result<T?> DecodeResponse<T>(string responseText)
         {
+            if (responseText.Contains("Too many requests, please try again later."))
+            {
+                return new() { IsRateLimitReached = true };
+            }
             if (responseText.StartsWith("<"))
             {
                 return new()
@@ -75,27 +81,12 @@ namespace CroomsBellScheduleCS.Utils
 
             return result;
         }
-
-        public async Task<Result> LoginAsync(string user, string pass)
-        {
-            var req = await RunLoginAsync(new LoginRequest() { username = user, password = pass });
-            if (req.OK && req.Value != null)
-            {
-                SettingsManager.Settings.UserID = req.Value.uid;
-                SettingsManager.Settings.SessionID = req.Value.sid;
-                await SettingsManager.SaveSettings();
-                return Result.Ok;
-            }
-            else
-            {
-                return new Result() { OK = false, Exception = req.Exception, Message = req.ErrorValue == null ? "" : req.ErrorValue.error };
-            }
-        }
-
         internal static string FormatResult<T>(Result<T> result)
         {
             if (result.OK)
                 return "Server returned OK";
+            if (result.IsRateLimitReached)
+                return "Too many requests, try again later";
             if (result.ErrorValue != null)
                 return result.ErrorValue.error.Contains("permissions") ? "Your login information has expired or is incorrect. Please login again." : result.ErrorValue.error;
             if (result.Exception != null)
@@ -111,11 +102,12 @@ namespace CroomsBellScheduleCS.Utils
             }
             return "Unspecified error";
         }
-
         internal static string FormatResult(Result result)
         {
             if (result.OK)
                 return "Server returned OK";
+            if (result.IsRateLimitReached)
+                return "Too many requests, try again later";
             if (result.Message != null)
                 return result.Message;
             if (result.Exception != null)
@@ -131,7 +123,6 @@ namespace CroomsBellScheduleCS.Utils
             }
             return "Unspecified error";
         }
-
         private static string SHA512(string input)
         {
             var bytes = System.Text.Encoding.UTF8.GetBytes(input);
@@ -143,6 +134,48 @@ namespace CroomsBellScheduleCS.Utils
             foreach (var b in hashedInputBytes)
                 hashedInputStringBuilder.Append(b.ToString("X2"));
             return hashedInputStringBuilder.ToString();
+        }
+        private void AddAuthorization()
+        {
+            if (_client.DefaultRequestHeaders.Contains("Authorization"))
+                _client.DefaultRequestHeaders.Remove("Authorization");
+
+
+            _client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"\"{SettingsManager.Settings.SessionID}\"");
+        }
+        #endregion
+
+        private async Task<Result<T?>> DoGetRequestAsync<T>(string url, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var response = await _client.GetAsync(url, cancellationToken);
+
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                return DecodeResponse<T>(responseText);
+            }
+            catch (Exception ex)
+            {
+                return new() { Exception = ex };
+            }
+        }
+
+
+        public async Task<Result> LoginAsync(string user, string pass)
+        {
+            var req = await RunLoginAsync(new LoginRequest() { username = user, password = pass });
+            if (req.OK && req.Value != null)
+            {
+                SettingsManager.Settings.UserID = req.Value.uid;
+                SettingsManager.Settings.SessionID = req.Value.sid;
+                await SettingsManager.SaveSettings();
+                return Result.Ok;
+            }
+            else
+            {
+                return new Result() { OK = false, Exception = req.Exception, Message = req.ErrorValue == null ? "" : req.ErrorValue.error };
+            }
         }
 
         private async Task<Result<LoginResponse?>> RunLoginAsync(LoginRequest req)
@@ -182,34 +215,9 @@ namespace CroomsBellScheduleCS.Utils
         }
         public async Task<Result<LunchEntry[]?>> GetLunchData()
         {
-            try
-            {
-                var response = await _client.GetAsync("https://api.croomssched.tech/infofetch/lunch");
-
-                var responseText = await response.Content.ReadAsStringAsync();
-
-                if (responseText.StartsWith("<"))
-                {
-                    // not JSON
-                    return new() { OK = false, Exception = new Exception("This service is currently unavailable due to the shutdown of Glitch hosting") };
-                }
-
-                return DecodeResponse<LunchEntry[]?>(responseText);
-            }
-            catch (Exception ex)
-            {
-                return new() { OK = false, Exception = ex };
-            }
+            return await DoGetRequestAsync<LunchEntry[]>(ApiBase + "/infofetch/lunch");
         }
 
-        private void AddAuthorization()
-        {
-            if (_client.DefaultRequestHeaders.Contains("Authorization"))
-                _client.DefaultRequestHeaders.Remove("Authorization");
-
-
-            _client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"\"{SettingsManager.Settings.SessionID}\"");
-        }
         public async Task<Result<CommandResponse?>> ValidateSessionAsync()
         {
             StringContent content = new("");
@@ -228,7 +236,7 @@ namespace CroomsBellScheduleCS.Utils
             AddAuthorization();
             var response = await _client.DeleteAsync("https://api.croomssched.tech/users/logout/" + SettingsManager.Settings.UserID);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            if (response.StatusCode == HttpStatusCode.NoContent)
             {
                 SettingsManager.Settings.UserID = null;
                 SettingsManager.Settings.SessionID = null;
@@ -238,43 +246,17 @@ namespace CroomsBellScheduleCS.Utils
             return new Result() { OK = false };
         }
 
-        public async Task<Result<FeedEntry[]?>> GetFeed()
+        public async Task<Result<FeedEntry[]?>> GetFeedFull()
         {
-            try
-            {
-                var response = await _client.GetAsync("https://api.croomssched.tech/feed");
-
-                var responseText = await response.Content.ReadAsStringAsync();
-
-                return DecodeResponse<FeedEntry[]?>(responseText);
-            }
-            catch(Exception ex)
-            {
-                return new() { Exception = ex };
-            }
+            return await DoGetRequestAsync<FeedEntry[]>(ApiBase + "/feed");
         }
         public async Task<Result<FeedEntry[]?>> GetFeedAfter(string id)
         {
-            try
-            {
-                var response = await _client.GetAsync("https://api.croomssched.tech/feed/after/" + id);
-
-                var responseText = await response.Content.ReadAsStringAsync();
-
-                return DecodeResponse<FeedEntry[]?>(responseText);
-            }
-            catch(Exception ex)
-            {
-                return new() { Exception = ex };
-            }
+            return await DoGetRequestAsync<FeedEntry[]>($"{ApiBase}/feed/after/{id}");
         }
         public async Task<Result<FeedEntry[]?>> GetFeedPart(int start, int end, CancellationToken cancel = default)
         {
-            var response = await _client.GetAsync($"https://api.croomssched.tech/feed/part/{start}/{end}", cancel);
-
-            var responseText = await response.Content.ReadAsStringAsync();
-
-            return DecodeResponse<FeedEntry[]?>(responseText);
+            return await DoGetRequestAsync<FeedEntry[]>($"https://api.croomssched.tech/feed/part/{start}/{end}", cancel);
         }
 
         public async Task<Result<FeedEntry?>> PostFeed(string postContent, string postLink)
@@ -339,12 +321,7 @@ namespace CroomsBellScheduleCS.Utils
         public async Task<Result<GetUserResult?>> GetUserByName(string username)
         {
             AddAuthorization();
-
-            var response = await _client.GetAsync("https://api.croomssched.tech/users/" + username);
-
-            var responseText = await response.Content.ReadAsStringAsync();
-
-            return DecodeResponse<GetUserResult>(responseText);
+            return await DoGetRequestAsync<GetUserResult>($"{ApiBase}/users/{username}");
         }
 
         public async Task<Result<SetProfilePictureResult?>> SetProfilePicture(byte[] c)
@@ -395,7 +372,7 @@ namespace CroomsBellScheduleCS.Utils
         {
             try
             {
-                var response = await _client.GetAsync("https://mikhail.croomssched.tech/crfsapi/AppController/Announcements\r\n");
+                var response = await _client.GetAsync($"{MikhailHostingBase}/crfsapi/AppController/Announcements\r\n");
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
@@ -434,139 +411,7 @@ namespace CroomsBellScheduleCS.Utils
 
         internal async Task<Result<Survey[]?>> GetSurveys()
         {
-            try
-            {
-                var response = await _client.GetAsync("https://api.croomssched.tech/surveys/");
-
-                var responseText = await response.Content.ReadAsStringAsync();
-
-                return DecodeResponse<Survey[]>(responseText);
-            }
-            catch (Exception ex)
-            {
-                return new() { OK = false, Exception = ex };
-            }
+            return await DoGetRequestAsync<Survey[]>($"{ApiBase}/surveys/");
         }
-    }
-
-    public class AnnouncementData
-    {
-        public List<Announcement> announcements { get; set; } = [];
-    }
-    public class Announcement
-    {
-        public int id { get; set; }
-        public string date { get; set; } = "";
-        public string title { get; set; } = "";
-        public string content { get; set; } = "";
-        public bool important { get; set; }
-    }
-    public class LoginRequest
-    {
-        public string username { get; set; } = "";
-        public string password { get; set; } = "";
-    }
-    public class CommandResponse
-    {
-        public bool result { get; set; } = false;
-    }
-    public class LoginResponse
-    {
-        public string sid { get; set; } = "";
-        public string uid { get; set; } = "";
-    }
-    public class BellScheduleProperties
-    {
-        public string data { get; set; } = "";
-        public string status { get; set; } = "";
-    }
-    public class LunchEntry
-    {
-        public string name { get; set; } = "";
-        public string image { get; set; } = "";
-    }
-
-    public class TeacherQuote
-    {
-        public string quote { get; set; } = "";
-        public string teacher { get; set; } = "";
-    }
-    public class FeedEntry
-    {
-        public string data { get; set; } = "";
-        public string store { get; set; } = "";
-        public string id { get; set; } = "";
-        public string uid { get; set; } = "";
-        public DateTime create { get; set; }
-        public DateTime delete { get; set; }
-        public string createdBy { get; set; } = "";
-        public bool verified { get; set; } = false;
-    }
-    public class SubmitFeedRequest
-    {
-        public string data { get; set; } = "";
-    }
-    public class UsernameChangeRequest
-    {
-        public string username { get; set; } = "";
-    }
-    public class ApiSimpleResponse
-    {
-        public string status { get; set; } = "";
-    }
-    public class ApiResponse<T>
-    {
-        public string status { get; set; } = "";
-        public T? data { get; set; }
-    }
-    public class ErrorResponse
-    {
-        public string error { get; set; } = "No response from server";
-    }
-    public class Result
-    {
-        public bool OK { get; set; }
-        public string Message { get; set; } = "Command OK";
-        public Exception? Exception { get; set; }
-
-        public static readonly Result Ok = new() { OK = true };
-    }
-    public class Result<T>
-    {
-        public bool OK { get; set; }
-        public T? Value { get; set; }
-        public ErrorResponse? ErrorValue { get; set; }
-        public Exception? Exception { get; set; }
-    }
-
-    public class UserDetailsResponse
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = "";
-        [JsonPropertyName("username")]
-        public string Username { get; set; } = "";
-    }
-
-    public class SetProfilePictureResultError
-    {
-        public string error { get; set; } = "";
-    }
-
-    public class SetProfilePictureResult
-    {
-        public string status { get; set; } = "";
-        public SetProfilePictureResultError? data { get; set; }
-    }
-
-    public class GetUserResult
-    {
-        public string id { get; set; } = "";
-        public string username { get; set; } = "";
-    }
-    public class Survey
-    {
-        public string name { get; set; } = "";
-        public string id { get; set; } = "";
-        public string link { get; set; } = "";
     }
 }

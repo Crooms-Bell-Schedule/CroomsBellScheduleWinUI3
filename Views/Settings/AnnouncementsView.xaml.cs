@@ -9,6 +9,7 @@ using CroomsBellScheduleCS.Utils;
 using System.Linq;
 using Microsoft.UI.Xaml;
 using CroomsBellScheduleCS.Controls;
+using CroomsBellScheduleCS.Web;
 
 namespace CroomsBellScheduleCS.Views.Settings;
 

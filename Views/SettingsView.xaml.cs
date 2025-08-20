@@ -2,6 +2,7 @@
 using CroomsBellScheduleCS.Themes;
 using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.Views.Settings;
+using CroomsBellScheduleCS.Web;
 using CroomsBellScheduleCS.Windows;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI.Composition;
