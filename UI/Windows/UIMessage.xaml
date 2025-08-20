@@ -19,7 +19,6 @@
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
@@ -47,10 +46,9 @@
              Margin="15,0,0,0" Grid.Column="1"/>
         </Grid>
 
-        <TextBlock x:Name="TitleControl" FontSize="24" Grid.Row="1"/>
-        <ScrollView Grid.Row="2" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled">
+        <ScrollView Grid.Row="1" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled">
             <TextBlock x:Name="TextContent" IsTextSelectionEnabled="True" TextWrapping="WrapWholeWords"/>
         </ScrollView>
-        <Button Click="Button_Click" Padding="30,10,30,10" Style="{StaticResource AccentButtonStyle}" Grid.Row="3" HorizontalAlignment="Right">OK</Button>
+        <Button Click="Button_Click" Padding="30,10,30,10" Style="{StaticResource AccentButtonStyle}" Grid.Row="2" HorizontalAlignment="Right">OK</Button>
     </Grid>
 </Window>

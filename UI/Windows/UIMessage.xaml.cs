@@ -20,7 +20,6 @@ public sealed partial class UIMessage
         set
         {
             AppWindow.Title = value;
-            TitleControl.Text = value;
             AppTitleBarText.Text = value;
         }
     }
