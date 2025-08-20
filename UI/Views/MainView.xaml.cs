@@ -19,6 +19,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Graphics;
+using Windows.UI;
 using Windows.UI.Popups;
 using WinRT.Interop;
 using static CroomsBellScheduleCS.Utils.Win32;
@@ -65,15 +66,11 @@ public sealed partial class MainView
             try
             {
                 await SettingsManager.LoadSettings();
+                throw new();
             }
             catch (Exception ex)
             {
-                MessageDialog dlg = new MessageDialog($"Exception:{Environment.NewLine}{ex}")
-                {
-                    Title = "Failed to load your settings"
-                };
-                InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
-                await dlg.ShowAsync();
+                await UIMessage.ShowMsgAsync($"Exception:{Environment.NewLine}{ex}", "Failed to load your settings");
             }
 
             SetLoadingText("Initialize MainWindow");
@@ -136,12 +133,7 @@ public sealed partial class MainView
         }
         catch (Exception ex)
         {
-            MessageDialog dlg = new MessageDialog($"Failed to load application:{Environment.NewLine}{ex}")
-            {
-                Title = "Failed to initialize application"
-            };
-            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
-            await dlg.ShowAsync();
+            await UIMessage.ShowMsgAsync($"Failed to load application:{Environment.NewLine}{ex}", "Failed to initialize application");
         }
 
         await RunUpdateCheck();
@@ -174,12 +166,7 @@ public sealed partial class MainView
         }
         catch (Exception ex)
         {
-            MessageDialog dlg = new MessageDialog($"Failed to load schedule:{Environment.NewLine}{ex}")
-            {
-                Title = "Failed to initialize schedule"
-            };
-            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
-            await dlg.ShowAsync();
+            await UIMessage.ShowMsgAsync($"Error:{Environment.NewLine}{ex}", "Failed to initialize schedule");
         }
     }
 
@@ -298,23 +285,13 @@ public sealed partial class MainView
             }
             else if (!Debugger.IsAttached)
             {
-                MessageDialog dlg = new MessageDialog($"The Crooms Bell Schedule application is not properly installed. Please download and reinstall it again. Details: {Path.Combine(executablePath, "../Update.exe")} is missing.")
-                {
-                    Title = "Failed to install update"
-                };
-                InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
-                await dlg.ShowAsync();
+                await UIMessage.ShowMsgAsync($"The Crooms Bell Schedule application is not properly installed. Please download and reinstall it again. Details: {Path.Combine(executablePath, "../Update.exe")} is missing.", "Failed to install update");
             }
         }
         catch (Exception ex)
         {
             ProgressBar.IsIndeterminate = false;
-            MessageDialog dlg = new MessageDialog($"{ex.ToString()}")
-            {
-                Title = "Failed to install update"
-            };
-            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
-            await dlg.ShowAsync();
+            await UIMessage.ShowMsgAsync(ex.ToString(), "Failed to install update");
         }
 
         if (wasRunning && _timer != null) _timer.Start();
@@ -563,14 +540,7 @@ public sealed partial class MainView
         }
         catch (Exception ex)
         {
-            MessageDialog dlg =
-                new MessageDialog(
-                    $"Failed to load schedule:{Environment.NewLine}{ex.Message}. A copy of the bell schedule will be used, which may not be up to date.")
-                {
-                    Title = "Failed to download schedule"
-                };
-            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(MainWindow.Instance));
-            await dlg.ShowAsync();
+            await UIMessage.ShowMsgAsync($"Failed to load schedule:{Environment.NewLine}{ex.Message}. A copy of the bell schedule will be used, which may not be up to date.", "Failed to download schedule");
 
             _provider = new CacheProvider(new LocalCroomsBell());
             _reader = await _provider.GetTodayActivity();
@@ -645,8 +615,6 @@ public sealed partial class MainView
                 }
             }
 
-
-
             if (_windowApp != null)
             {
                 SetWindowPos(handle, 0, 0, 0, (int)(350 * _prevDPI), taskbarHeight + 8, 0);
@@ -675,17 +643,20 @@ public sealed partial class MainView
         if (!OperatingSystem.IsWindows()) return;
 
         nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
+        Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(handle);
+
         AppWindow appWindow = MainWindow.Instance.AppWindow;
         if (appWindow != null)
             _windowApp = appWindow;
         if (_windowApp == null) return; // What?
 
-        IntPtr monitor = MonitorFromWindow(handle, 0);
-        MONITORINFO data = new() { size = Marshal.SizeOf<MONITORINFO>() };
-        GetMonitorInfoW(monitor, ref data);
-        var mWidth = data.rcWork.right - data.rcWork.left;
-        var mHeight = data.rcWork.bottom - data.rcWork.top;
-        _windowApp.MoveAndResize(new RectInt32(mWidth - _windowApp.Size.Width - 20, mHeight - _windowApp.Size.Height - 20, GetDpi() * 4, GetDpi()));
+        if (DisplayArea.GetFromWindowId(windowId, DisplayAreaFallback.Nearest) is DisplayArea displayArea)
+        {
+            PointInt32 CenteredPosition = _windowApp.Position;
+            CenteredPosition.X = (displayArea.WorkArea.Width - _windowApp.Size.Width) / 2;
+            CenteredPosition.Y = (displayArea.WorkArea.Height - _windowApp.Size.Height) / 2;
+            _windowApp.MoveAndResize(new RectInt32(displayArea.WorkArea.Width - _windowApp.Size.Width - 20, displayArea.WorkArea.Height - _windowApp.Size.Height - 20, GetDpi() * 4, GetDpi()));
+        }
     }
 
     private IntPtr WndProc(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)

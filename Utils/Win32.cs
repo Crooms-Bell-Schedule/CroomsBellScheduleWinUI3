@@ -61,23 +61,19 @@ public static partial class Win32
         public int right;
         public int bottom;
     }
-    [StructLayout(LayoutKind.Sequential)]
-    public struct MONITORINFO
-    {
-        public int size;
-        public RECT rcMonitor;
-        public RECT rcWork;
-        public int dwFlags;
-    }
-    [LibraryImport("user32.dll")]
-    public static partial IntPtr MonitorFromWindow(IntPtr hwnd, int flags);
-    [LibraryImport("user32.dll")]
-    [return:MarshalAs(UnmanagedType.Bool)]
-    public static partial bool GetMonitorInfoW(IntPtr hwnd, ref MONITORINFO data);
     [LibraryImport("user32.dll")]
     public static partial int SetWindowPos(IntPtr hwnd, IntPtr after, int x, int y, int cx, int cy, int flags);
     [LibraryImport("user32.dll")]
     public static partial int IsProcessDPIAware();
+
+    // Import the Windows API function SetWindowLongPtr for modifying window properties on 64-bit systems.
+    [DllImport("User32.dll", CharSet = CharSet.Auto, EntryPoint = "SetWindowLongPtr")]
+    public static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+    // Import the Windows API function SetWindowLong for modifying window properties on 32-bit systems.
+    [DllImport("User32.dll", CharSet = CharSet.Auto, EntryPoint = "SetWindowLong")]
+    public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
 
 
     public delegate IntPtr WndProcDelegate(IntPtr hwnd, uint msg, UIntPtr wParam, IntPtr lParam);

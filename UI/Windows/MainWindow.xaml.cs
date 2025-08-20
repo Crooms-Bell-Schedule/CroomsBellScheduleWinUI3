@@ -145,12 +145,7 @@ public sealed partial class MainWindow
         if (ErrorCount < 3)
         {
             ErrorCount++;
-            MessageDialog dlg = new($"{e.Exception}")
-            {
-                Title = "Unhandled runtime error"
-            };
-            InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
-            await dlg.ShowAsync();
+            await UIMessage.ShowMsgAsync(e.Exception.ToString(), "Unhandled runtime error");
         }
     }
 }
