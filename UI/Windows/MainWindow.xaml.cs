@@ -13,7 +13,6 @@ public sealed partial class MainWindow
 {
     internal static MainWindow Instance = null!;
     internal static MainView ViewInstance = null!;
-    //WindowsSystemDispatcherQueueHelper? m_wsdqHelper; // See below for implementation.
     MicaController? m_backdropController;
     SystemBackdropConfiguration? m_configurationSource;
     private bool SendInputNotification = true;
@@ -153,42 +152,5 @@ public sealed partial class MainWindow
             InitializeWithWindow.Initialize(dlg, WindowNative.GetWindowHandle(this));
             await dlg.ShowAsync();
         }
-        
     }
-    //class WindowsSystemDispatcherQueueHelper
-    //{
-    //    [StructLayout(LayoutKind.Sequential)]
-    //    struct DispatcherQueueOptions
-    //    {
-    //        internal int dwSize;
-    //        internal int threadType;
-    //        internal int apartmentType;
-    //    }
-
-    //    [DllImport("CoreMessaging.dll")]
-    //    private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object? dispatcherQueueController);
-
-    //    object? m_dispatcherQueueController = null;
-    //    public void EnsureWindowsSystemDispatcherQueueController()
-    //    {
-    //        if (global::Windows.System.DispatcherQueue.GetForCurrentThread() != null)
-    //        {
-    //            // one already exists, so we'll just use it.
-    //            return;
-    //        }
-
-    //        if (m_dispatcherQueueController == null)
-    //        {
-    //            DispatcherQueueOptions options = new();
-    //            options.dwSize = Marshal.SizeOf(typeof(DispatcherQueueOptions));
-    //            options.threadType = 2;    // DQTYPE_THREAD_CURRENT
-    //            options.apartmentType = 2; // DQTAT_COM_STA
-
-    //            if (CreateDispatcherQueueController(options, ref m_dispatcherQueueController) != 0)
-    //            {
-    //                // TODO: show error
-    //            }
-    //        }
-    //    }
-    //}
 }

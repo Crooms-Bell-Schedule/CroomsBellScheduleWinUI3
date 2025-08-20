@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,6 +21,8 @@ public sealed partial class FeedView
 {
     private readonly IncrementalLoadingCollection<ProwlerSource, FeedUIEntry> Entries;
 
+    private Timer refreshTimer;
+
     private static bool _isLoaded = false;
     private static Dictionary<string, ImageSource> ProfileImageCache = [];
     private static HttpClient ImageClient = new();
@@ -34,6 +37,36 @@ public sealed partial class FeedView
         Entries = new(new ProwlerSource(), 25, StartLoading, EndLoading, OnError);
         FeedViewer.ItemsSource = Entries;
         Instance = this;
+
+        refreshTimer = new();
+        refreshTimer.Elapsed += delegate (object? sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    try
+                    {
+                        RefreshFeed();
+                    }
+                    catch { }
+                });
+            }
+            catch { }
+        };
+        refreshTimer.Interval = 1000 * 60; // 1 minute = 60 seconds
+    }
+
+    protected override void OnNavigatedTo(NavigationEventArgs e)
+    {
+        base.OnNavigatedTo(e);
+        refreshTimer.Start();
+    }
+
+    protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+    {
+        base.OnNavigatingFrom(e);
+        refreshTimer.Stop();
     }
 
     private void OnError(Exception exception)
@@ -179,26 +212,6 @@ public sealed partial class FeedView
                 //}
 
                 //await InitPage(feedResult.Value);
-
-                // setup refresh timer for this page
-                Timer tmm = new();
-                tmm.Elapsed += delegate (object? sender, ElapsedEventArgs e)
-                {
-                    try
-                    {
-                        DispatcherQueue.TryEnqueue(() =>
-                        {
-                            try
-                            {
-                                RefreshFeed();
-                            }
-                            catch { }
-                        });
-                    }
-                    catch { }
-                };
-                tmm.Interval = 1000 * 60; // 1 minute = 60 seconds
-                tmm.Start();
 
                 _isLoaded = true;
             }

@@ -1,8 +1,8 @@
 ﻿//#define MIGRATION_CODE // uncomment to enable migration code from old bell schedule app (2.1.0 -> 2.9.9 -> 3.x)
 using CroomsBellScheduleCS.Provider;
 using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.Utils;
 using CroomsBellScheduleCS.UI.Windows;
+using CroomsBellScheduleCS.Utils;
 using H.NotifyIcon;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -22,7 +22,6 @@ using Windows.Graphics;
 using Windows.UI.Popups;
 using WinRT.Interop;
 using static CroomsBellScheduleCS.Utils.Win32;
-using CroomsBellScheduleCS.UI.Views;
 
 namespace CroomsBellScheduleCS.UI.Views;
 
