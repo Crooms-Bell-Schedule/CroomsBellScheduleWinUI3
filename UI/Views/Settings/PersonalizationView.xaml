@@ -39,6 +39,14 @@
                           ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Compatible with Windows 10 and 11." />
             </controls:SettingsCard>
 
+
+            <controls:SettingsCard Description="Change font size. Setting is ignored in taskbar mode."
+                               Header="Font size" Margin="0,7,0,0" CornerRadius="5">
+                <Slider x:Name="sliderFont" Minimum="16" Maximum="48" Header="" ValueChanged="sliderFont_ValueChanged"
+                          ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Compatible with Windows 10 and 11." />
+            </controls:SettingsCard>
+
+
             <controls:SettingsCard Description="Change how many digits are shown"
        Header="Percentage" Margin="0,7,0,0" CornerRadius="5">
                 <ComboBox x:Name="ComboPercentage" SelectedItem="2" SelectionChanged="ComboPercentage_SelectionChanged">

@@ -315,4 +315,14 @@ public sealed partial class PersonalizationView
     {
         MainView.Settings?.NavigateTo(typeof(BellView), new());
     }
+
+    private async void sliderFont_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+    {
+        if (!_initialized) return;
+
+        SettingsManager.Settings.FontSize = sliderFont.Value;
+        await SaveSettings();
+
+        MainWindow.ViewInstance.UpdateFontSize();
+    }
 }

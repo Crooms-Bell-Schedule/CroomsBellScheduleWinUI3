@@ -627,14 +627,19 @@ public sealed partial class MainView
         }
         else
         {
-            Background = new SolidColorBrush(new global::Windows.UI.Color() { A = 255 });
+            Background = new SolidColorBrush(new Color() { A = 255 });
             SetParent(handle, 0);
             MainButton.Visibility = Visibility.Visible;
-            TxtDuration.FontSize = 16;
-            TxtCurrentClass.FontSize = 16;
-            TxtClassPercent.FontSize = 16;
+            UpdateFontSize();
             MainGrid.Margin = new Thickness(5, 5, 5, 2.5);
         }
+    }
+
+    public void UpdateFontSize()
+    {
+        TxtDuration.FontSize = SettingsManager.Settings.FontSize;
+        TxtCurrentClass.FontSize = SettingsManager.Settings.FontSize;
+        TxtClassPercent.FontSize = SettingsManager.Settings.FontSize;
     }
 
     public void PositionWindow()
