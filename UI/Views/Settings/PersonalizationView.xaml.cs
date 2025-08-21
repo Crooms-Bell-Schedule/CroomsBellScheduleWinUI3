@@ -1,13 +1,12 @@
-﻿using System;
-using System.Reflection;
-using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.Themes;
+﻿using CroomsBellScheduleCS.Service;
 using CroomsBellScheduleCS.UI.Windows;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
+using System;
+using System.Reflection;
 using static CroomsBellScheduleCS.Service.SettingsManager;
 
 namespace CroomsBellScheduleCS.UI.Views.Settings;
@@ -208,22 +207,6 @@ public sealed partial class PersonalizationView
         await SaveSettings();
     }
 
-    private void CheckStartup()
-    {
-        RegistryKey? rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-
-        if (rk != null)
-        {
-            if (rk.GetValue("Crooms Bell Schedule App") != null)
-            {
-                chkTaskbar.IsOn = true;
-            }
-            else
-            {
-                chkTaskbar.IsOn = false;
-            }
-        }
-    }
     private bool GetStartup()
     {
         RegistryKey? rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
