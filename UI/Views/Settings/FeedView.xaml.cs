@@ -23,7 +23,7 @@ public sealed partial class FeedView
 {
     private readonly IncrementalLoadingCollection<ProwlerSource, FeedUIEntry> Entries;
 
-    private Timer refreshTimer;
+    private System.Timers.Timer refreshTimer;
 
     private static bool _isLoaded = false;
     private static Dictionary<string, ImageSource> ProfileImageCache = [];
