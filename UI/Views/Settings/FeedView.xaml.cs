@@ -9,8 +9,10 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Printing;
 using System.IO;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Windows.Graphics.Imaging;
@@ -54,7 +56,7 @@ public sealed partial class FeedView
             }
             catch { }
         };
-        refreshTimer.Interval = 1000 * 60; // 1 minute = 60 seconds
+        refreshTimer.Interval = 1000 * 40; // 1 minute = 40 seconds
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -242,6 +244,22 @@ public sealed partial class FeedView
         RefreshBtn.IsEnabled = false;
         Result<FeedEntry[]?> feedResult = Entries.Count == 0 ? await Services.ApiClient.GetFeedFull() :
                      await Services.ApiClient.GetFeedAfter(Entries[0].Id);
+
+        // Retry if ratelimit reached
+        if (feedResult.IsRateLimitReached)
+        {
+            ProgressUI.Visibility = Visibility.Visible;
+            for (int i = 0; i < 10; i++)
+            {
+                await Task.Delay(2000);
+                feedResult = Entries.Count == 0 ? await Services.ApiClient.GetFeedFull() :
+                     await Services.ApiClient.GetFeedAfter(Entries[0].Id);
+
+                if (!feedResult.IsRateLimitReached)
+                    break;
+            }
+            ProgressUI.Visibility = Visibility.Collapsed;
+        }
         if (!feedResult.OK || feedResult.Value == null)
         {
             RefreshBtn.IsEnabled = true;
@@ -467,9 +485,9 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
         // Retry if ratelimit reached
         if (feedResult.IsRateLimitReached)
         {
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
             {
-                await Task.Delay(3000);
+                await Task.Delay(2000);
                 feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
 
                 if (!feedResult.IsRateLimitReached)
