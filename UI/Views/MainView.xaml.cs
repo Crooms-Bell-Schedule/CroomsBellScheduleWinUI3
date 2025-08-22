@@ -637,6 +637,7 @@ public sealed partial class MainView
 
     public void UpdateFontSize()
     {
+        if (SettingsManager.Settings.ShowInTaskbar) return;
         TxtDuration.FontSize = SettingsManager.Settings.FontSize;
         TxtCurrentClass.FontSize = SettingsManager.Settings.FontSize;
         TxtClassPercent.FontSize = SettingsManager.Settings.FontSize;
