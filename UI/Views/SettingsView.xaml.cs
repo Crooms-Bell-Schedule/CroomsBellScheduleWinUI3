@@ -25,8 +25,8 @@ public sealed partial class SettingsView
 {
     //private IntPtr _oldWndProc;
     //private Delegate? _newWndProcDelegate;
-    private CompositionEffectBrush brush;
-    private Compositor compositor;
+    private readonly CompositionEffectBrush brush;
+    private readonly Compositor compositor;
     private bool _useBlur = false;
     public int UnreadAnnouncementCount
     {
@@ -45,6 +45,7 @@ public sealed partial class SettingsView
             }
         }
     }
+    public bool IsAuthenticated { get; set; }
     public SettingsView()
     {
         InitializeComponent();
@@ -135,12 +136,9 @@ public sealed partial class SettingsView
     {
         FrameNavigationOptions navOptions = new()
         {
-            TransitionInfoOverride = args.RecommendedNavigationTransitionInfo
+            TransitionInfoOverride = args.RecommendedNavigationTransitionInfo,
+            IsNavigationStackEnabled = true
         };
-        // i/f (sender.PaneDisplayMode == NavigationViewPaneDisplayMode.Top) navOptions.IsNavigationStackEnabled = false;
-        //else navOptions.IsNavigationStackEnabled = true;
-
-        navOptions.IsNavigationStackEnabled = true;
 
         if (args.InvokedItemContainer == PersonalizationViewItem)
             NavigationFrame.NavigateToType(typeof(PersonalizationView), null, navOptions);
@@ -180,7 +178,7 @@ public sealed partial class SettingsView
     #region UI
 
     // Helper method to get AppWindow
-    private AppWindow GetAppWindow()
+    private static AppWindow GetAppWindow()
     {
         if (MainView.SettingsWindow == null) throw new Exception("cannot be null"); // should not happen
         return MainView.SettingsWindow.AppWindow;
@@ -230,8 +228,8 @@ public sealed partial class SettingsView
 
     private void SetLoggedOutMode()
     {
+        IsAuthenticated = false;
         FlyoutPFPButton.IsEnabled = false;
-        //FlyoutChangeUsername.Visibility = Visibility.Collapsed;
         FlyoutChangePassword.Visibility = Visibility.Collapsed;
         FlyoutSignIn.Content = "Sign In";
         FlyoutSignIn.Click -= FlyoutLogout_Click;
@@ -245,13 +243,14 @@ public sealed partial class SettingsView
     }
     private void SetLoggedInMode()
     {
+        IsAuthenticated = true;
         FlyoutPFPButton.IsEnabled = true;
         FlyoutChangeUsername.IsEnabled = true;
         FlyoutSignIn.Content = "Sign Out";
         FlyoutSignIn.Click -= FlyoutLogin_Click;
         FlyoutSignIn.Click -= FlyoutLogout_Click;
         FlyoutSignIn.Click += FlyoutLogout_Click;
-        FlyoutChangePassword.Visibility = Debugger.IsAttached ? Visibility.Visible : Visibility.Collapsed; // TODO backend
+        FlyoutChangePassword.Visibility = Visibility.Visible;
     }
 
     public async Task RefreshUserInfo()
@@ -318,6 +317,11 @@ public sealed partial class SettingsView
             await dlg.ShowAsync();
         }
         LoadingUI.Visibility = Visibility.Collapsed;
+
+        if (TimeService.IsTimeWrong)
+        {
+            ShowInAppNotification("The system clock is " + TimeService.GetOffsetString()+ ". The app has automatically compensated for this difference.", "System clock", 20);
+        }
     }
 
     internal async Task OpenPFPViewAsync()
@@ -553,10 +557,13 @@ public sealed partial class SettingsView
     {
         if (!(await Services.ApiClient.LogoutAsync()).OK)
         {
-            ContentDialog dlg = new() { Title = "Server/App error" };
-            dlg.XamlRoot = Content.XamlRoot;
-            dlg.CloseButtonText = "OK";
-            dlg.Content = "Failed to logout";
+            ContentDialog dlg = new()
+            {
+                Title = "Server/App error",
+                XamlRoot = Content.XamlRoot,
+                CloseButtonText = "OK",
+                Content = "Failed to logout"
+            };
 
             await dlg.ShowAsync();
         }
@@ -588,8 +595,10 @@ public sealed partial class SettingsView
 
     public void NavigateTo(Type t, object parameter)
     {
-        FrameNavigationOptions navOptions = new();
-        navOptions.IsNavigationStackEnabled = true;
+        FrameNavigationOptions navOptions = new()
+        {
+            IsNavigationStackEnabled = true
+        };
         NavigationFrame.NavigateToType(t, parameter, navOptions);
     }
     public void NavigateBack()

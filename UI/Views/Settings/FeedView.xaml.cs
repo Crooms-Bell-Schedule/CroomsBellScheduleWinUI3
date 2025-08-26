@@ -9,10 +9,8 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing.Printing;
 using System.IO;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using Windows.Graphics.Imaging;
@@ -23,11 +21,11 @@ public sealed partial class FeedView
 {
     private readonly IncrementalLoadingCollection<ProwlerSource, FeedUIEntry> Entries;
 
-    private System.Timers.Timer refreshTimer;
+    private readonly Timer refreshTimer;
 
     private static bool _isLoaded = false;
-    private static Dictionary<string, ImageSource> ProfileImageCache = [];
-    private static HttpClient ImageClient = new();
+    private static readonly Dictionary<string, ImageSource> ProfileImageCache = [];
+    private static readonly HttpClient ImageClient = new();
     private static bool ShownImageError = false;
     private static bool _loadProfilePictures = true;
     public Flyout UserFlyoutPub { get => (Flyout)Resources["UserFlyout"]; }
@@ -157,7 +155,7 @@ public sealed partial class FeedView
             {
                 var rsp = await headers.Content.ReadAsByteArrayAsync();
 
-                MemoryStream stream2 = new MemoryStream(rsp);
+                MemoryStream stream2 = new(rsp);
                 var stream = stream2.AsRandomAccessStream();
 
                 var decoder = await BitmapDecoder.CreateAsync(stream);
@@ -178,8 +176,7 @@ public sealed partial class FeedView
         {
             _loadProfilePictures = false;
 
-            if (MainView.Settings != null)
-                MainView.Settings.ShowInAppNotification("Failed to connect to MikhailHosting. Images will be disabled", "Retrieving image failed", 0);
+            MainView.Settings?.ShowInAppNotification("Failed to connect to MikhailHosting. Images will be disabled", "Retrieving image failed", 0);
 
             return null;
         }
@@ -227,15 +224,13 @@ public sealed partial class FeedView
             {
                 Title = "Failed to get feed",
                 XamlRoot = XamlRoot,
-                CloseButtonText = "OK"
+                CloseButtonText = "OK",
+                Content = "Application error: " + ex.Message
             };
-
-            dlg2.Content = "Application error: " + ex.Message;
 
             await dlg2.ShowAsync();
 
-            if (MainView.Settings != null)
-                MainView.Settings.ShowInAppNotification("Failed to load feed", "Page initialization failed", 0);
+            MainView.Settings?.ShowInAppNotification("Failed to load feed", "Page initialization failed", 0);
         }
     }
 
@@ -264,8 +259,7 @@ public sealed partial class FeedView
         {
             RefreshBtn.IsEnabled = true;
 
-            if (MainView.Settings != null)
-                MainView.Settings.ShowInAppNotification(ApiClient.FormatResult(feedResult), "Failed to load feed", 20);
+            MainView.Settings?.ShowInAppNotification(ApiClient.FormatResult(feedResult), "Failed to load feed", 20);
             return;
         }
 
@@ -368,6 +362,19 @@ public sealed partial class FeedView
     }
     private async void AppBarButton_Click(object sender, RoutedEventArgs e)
     {
+        if (MainView.Settings?.IsAuthenticated == false)
+        {
+            await new ContentDialog()
+            {
+                Title = "Not logged in",
+                Content = "Please login using the User Account button in the titlebar to post things to Prowler.",
+                XamlRoot = XamlRoot,
+                PrimaryButtonText = "OK",
+                DefaultButton = ContentDialogButton.Primary
+            }.ShowAsync();
+            return;
+        }
+
         ContentDialog dialog = new()
         {
             Title = "Create new post",
@@ -424,9 +431,9 @@ public sealed partial class FeedView
             Title = "Image load failure",
             XamlRoot = XamlRoot,
             PrimaryButtonText = "OK",
-            DefaultButton = ContentDialogButton.Primary
+            DefaultButton = ContentDialogButton.Primary,
+            Content = e.ErrorMessage
         };
-        dialog.Content = e.ErrorMessage;
 
         await dialog.ShowAsync();
     }
@@ -466,10 +473,8 @@ public sealed partial class FeedView
 
     private void HandleUserProfile_Click(object sender, RoutedEventArgs e)
     {
-        var uid = ((Button)sender).Tag as string;
-
         UserFlyoutPub.ShowAt((Button)sender);
-        if (uid != null)
+        if (((Button)sender).Tag is string uid)
             PrepareFlyoutWithUID(uid);
         else
             FlyoutUserName2.Text = "Button.Tag == null";
@@ -487,7 +492,7 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
         {
             for (int i = 0; i < 10; i++)
             {
-                await Task.Delay(2000);
+                await Task.Delay(2000, cancellationToken);
                 feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
 
                 if (!feedResult.IsRateLimitReached)
@@ -497,8 +502,7 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
 
         if (!feedResult.OK || feedResult.Value == null)
         {
-            if (MainView.Settings != null)
-                MainView.Settings.ShowInAppNotification($"Failed to load Prowler data [{startIdx}-{startIdx + pageIndex}]", "Error", 10);
+            MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data [{startIdx}-{startIdx + pageIndex}]", "Error", 10);
             return [];
         }
 

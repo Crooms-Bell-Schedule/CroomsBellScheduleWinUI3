@@ -129,6 +129,9 @@ public sealed partial class MainView
                 nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
                 _oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
             }
+
+            SetLoadingText("Syncing time...");
+            TimeService.Sync();
         }
         catch (Exception ex)
         {
@@ -463,7 +466,7 @@ public sealed partial class MainView
 
             nextClass = classes.Count - 1 == i ? null : classes[i + 1];
 
-            DateTime current = DateTime.Now;
+            DateTime current = TimeService.Now;
 
             DateTime start = new(current.Year, current.Month, current.Day, data.StartHour, data.StartMin, 0);
             DateTime end = new(current.Year, current.Month, current.Day, data.EndHour, data.EndMin, 0);

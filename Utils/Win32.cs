@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using Windows.Networking.Connectivity;
 
 namespace CroomsBellScheduleCS.Utils;
 
@@ -77,4 +78,20 @@ public static partial class Win32
 
 
     public delegate IntPtr WndProcDelegate(IntPtr hwnd, uint msg, UIntPtr wParam, IntPtr lParam);
+
+    public static bool HasNetworkAccessAndIsUnrestricted()
+    {
+        var connectivity = CheckConnectivity();
+        if (connectivity.Item1 == NetworkConnectivityLevel.InternetAccess &&
+              connectivity.Item2 == NetworkCostType.Unrestricted)
+            return true;
+        else return false;
+    }
+    public static (NetworkConnectivityLevel, NetworkCostType) CheckConnectivity()
+    {
+        var profile = NetworkInformation.GetInternetConnectionProfile();
+        if (profile == null) return (NetworkConnectivityLevel.None, NetworkCostType.Unknown);
+
+        return (profile.GetNetworkConnectivityLevel(), profile.GetConnectionCost().NetworkCostType);
+    }
 }

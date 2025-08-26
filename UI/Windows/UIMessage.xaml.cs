@@ -44,7 +44,7 @@ public sealed partial class UIMessage
         AppWindow.SetIcon("Assets\\croomsBellSchedule.ico");
 
         ExtendsContentIntoTitleBar = true;
-        AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Tall;
+        AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Standard;
 
         OverlappedPresenter presenter = OverlappedPresenter.CreateForDialog();
         presenter.PreferredMinimumWidth = presenter.PreferredMaximumWidth = 500;
@@ -107,10 +107,12 @@ public sealed partial class UIMessage
 
     public static async Task ShowMsgAsync(string message, string title)
     {
-        var msg = new UIMessage();
-        msg.MsgTitle = title;
-        msg.Message = message;
-        msg.IsOpen = true;
+        var msg = new UIMessage
+        {
+            MsgTitle = title,
+            Message = message,
+            IsOpen = true
+        };
 
         msg.AppWindow.Show();
         Center(msg);

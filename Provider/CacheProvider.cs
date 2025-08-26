@@ -21,7 +21,7 @@ public class CacheProvider(IBellScheduleProvider actualProvider) : IBellSchedule
             return _cache;
         }
 
-        if (CacheDay != DateTime.Now.DayOfYear)
+        if (RequiresUpdate)
         {
             _cache = await _bellScheduleProvider.GetTodayActivity();
             CacheDay = DateTime.Now.DayOfYear;

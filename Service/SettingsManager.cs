@@ -81,6 +81,10 @@ public static class SettingsManager
         public bool EnableDvdScreensaver { get; set; }
         public bool IsLivestreamMode { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [DefaultValue(true)]
+        public bool EnableNTPTimeSync { get; set; } = true;
+
         public ElementTheme Theme { get; set; }
         /// <summary>
         /// Theme ID of themes in Themes class
@@ -103,8 +107,10 @@ public static class SettingsManager
         public string? UserID { get; set; }
 
         [DefaultValue(true)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool Show5MinNotification { get; set; } = true;
         [DefaultValue(true)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public bool Show1MinNotification { get; set; } = true;
 
         public Dictionary<int, string> PeriodNames { get; set; } = [];
