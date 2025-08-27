@@ -34,7 +34,7 @@ public sealed partial class MainView
     private static Velopack.UpdateManager? _updateManager;
 
     private static IntPtr _oldWndProc;
-    private static Delegate? _newWndProcDelegate;
+    private static WndProcDelegate? _newWndProcDelegate;
     private bool _isTransition;
     private int _lunchOffset;
     private BellScheduleReader? _reader;
@@ -125,7 +125,7 @@ public sealed partial class MainView
             if (OperatingSystem.IsWindows())
             {
                 nint handle = WindowNative.GetWindowHandle(MainWindow.Instance);
-                _newWndProcDelegate = (WndProcDelegate)WndProc;
+                _newWndProcDelegate = WndProc;
                 nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
                 _oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
             }
@@ -673,14 +673,6 @@ public sealed partial class MainView
             // Ignore WM_SYSCOMMAND SC_MAXIMIZE message
             // Thank you Microsoft :)
             return 1;
-
-        if (msg == WM_GETMINMAXINFO)
-        {
-            MINMAXINFO minMaxInfo = Marshal.PtrToStructure<MINMAXINFO>(lParam);
-            minMaxInfo.ptMinTrackSize.X = (int)(100 * XamlRoot.RasterizationScale);
-            minMaxInfo.ptMinTrackSize.Y = (int)(50 * XamlRoot.RasterizationScale);
-            Marshal.StructureToPtr(minMaxInfo, lParam, true);
-        }
 
         return CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
     }

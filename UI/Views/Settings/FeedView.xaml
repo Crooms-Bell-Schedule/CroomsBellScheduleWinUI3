@@ -94,7 +94,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Button BorderThickness="0" Padding="0" Background="Transparent" Tag="{Binding AuthorId}" Click="HandleUserProfile_Click">
+                                <Button BorderThickness="0" Padding="0" Background="Transparent" Tag="{x:Bind AuthorId}" Click="HandleUserProfile_Click">
                                     <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Author}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
                                 </Button>
                                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Bind Date}" Margin="0, 0, 0, 8" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>

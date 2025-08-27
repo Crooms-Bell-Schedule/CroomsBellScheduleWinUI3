@@ -4,22 +4,6 @@ using Windows.Networking.Connectivity;
 
 namespace CroomsBellScheduleCS.Utils;
 
-[StructLayout(LayoutKind.Sequential)]
-internal struct POINT
-{
-    public int X;
-    public int Y;
-}
-
-[StructLayout(LayoutKind.Sequential)]
-internal struct MINMAXINFO
-{
-    public POINT ptReserved;
-    public POINT ptMaxSize;
-    public POINT ptMaxPosition;
-    public POINT ptMinTrackSize;
-    public POINT ptMaxTrackSize;
-}
 
 public static partial class Win32
 {
