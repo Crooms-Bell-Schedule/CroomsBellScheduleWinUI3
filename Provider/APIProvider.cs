@@ -32,7 +32,7 @@ public class APIProvider : IBellScheduleProvider
             { 100, "Morning" },
             { 101, "Welcome" },
             { 102, "Lunch" },
-            { 103, "Homeroom" },
+            { 8, "Homeroom" },
             { 104, "Dismissal" },
             { 105, "After school" },
             { 106, "End" },
