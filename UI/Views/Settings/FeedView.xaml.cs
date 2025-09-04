@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
@@ -21,10 +22,10 @@ public sealed partial class FeedView
 {
     private readonly IncrementalLoadingCollection<ProwlerSource, FeedUIEntry> Entries;
 
-    private readonly Timer refreshTimer;
+    private readonly System.Timers.Timer refreshTimer;
 
     private static bool _isLoaded = false;
-    private static readonly Dictionary<string, ImageSource> ProfileImageCache = [];
+    private static readonly Dictionary<string, Dictionary<string, ImageSource>> ImageCache = [];
     private static readonly HttpClient ImageClient = new();
     private static bool ShownImageError = false;
     private static bool _loadProfilePictures = true;
@@ -135,15 +136,17 @@ public sealed partial class FeedView
             ContentData = entry.data,
             Id = entry.id,
             AuthorId = entry.uid,
-            PicSource = await RetrieveProfileImage(entry.uid)
+            PicSource = await RetrieveImageByTypeAsync(entry.uid)
         };
     }
 
-    private static async Task<ImageSource?> RetrieveProfileImage(string uid)
+    private static async Task<ImageSource?> RetrieveImageByTypeAsync(string uid, string type = "pfp")
     {
-        string path = $"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={uid}.png&default=pfp&size";
+        string path = $"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={uid}.png&default={type}";
 
-        if (ProfileImageCache.TryGetValue(uid, out ImageSource? value))
+        ImageCache.TryAdd(type, []);
+
+        if (ImageCache[type].TryGetValue(uid, out ImageSource? value))
             return value;
 
         if (!_loadProfilePictures) return null;
@@ -164,10 +167,10 @@ public sealed partial class FeedView
                 await writeableBitmap.SetSourceAsync(stream);
 
                 // race condition?
-                if (ProfileImageCache.TryGetValue(uid, out ImageSource? value2))
+                if (ImageCache[type].TryGetValue(uid, out ImageSource? value2))
                     return value2;
 
-                ProfileImageCache.Add(uid, writeableBitmap);
+                ImageCache[type].Add(uid, writeableBitmap);
 
                 return writeableBitmap;
             }
@@ -456,44 +459,61 @@ public sealed partial class FeedView
         }
 
         // set profile picture based on UID
-        if (ProfileImageCache.TryGetValue(uid, out ImageSource? val))
-            FlyoutPicture.ProfilePicture = val;
-        else FlyoutPicture.ProfilePicture = null;
+        if (ImageCache.ContainsKey("pfp"))
+        {
+            if (ImageCache["pfp"].TryGetValue(uid, out ImageSource? val))
+                FlyoutPicture.ProfilePicture = val;
+            else FlyoutPicture.ProfilePicture = null;
+        }
+
+        FlyoutBanner.Source = await RetrieveImageByTypeAsync(uid, "profile_banner");
 
     }
-    internal void PrepareFlyoutWithUID(string uid)
+    internal async Task PrepareFlyoutWithUID(string uid)
     {
-        if (ProfileImageCache.TryGetValue(uid, out ImageSource? val))
-            FlyoutPicture.ProfilePicture = val;
-        else FlyoutPicture.ProfilePicture = null;
+        try
+        {
+            string auth = uid.Split("####")[0];
+            string id = uid.Split("####")[1];
 
-        // TODO retrieve proper username
-        FlyoutUserName2.Text = uid;
+            if (ImageCache.ContainsKey("pfp"))
+            {
+                if (ImageCache["pfp"].TryGetValue(id, out ImageSource? val))
+                    FlyoutPicture.ProfilePicture = val;
+                else FlyoutPicture.ProfilePicture = null;
+            }
+
+            FlyoutUserName2.Text = auth;
+            FlyoutBanner.Source = await RetrieveImageByTypeAsync(id, "profile_banner");
+        }
+        catch
+        {
+
+        }
     }
 
-    private void HandleUserProfile_Click(object sender, RoutedEventArgs e)
+    private async void HandleUserProfile_Click(object sender, RoutedEventArgs e)
     {
         UserFlyoutPub.ShowAt((Button)sender);
         if (((Button)sender).Tag is string uid)
-            PrepareFlyoutWithUID(uid);
+            await PrepareFlyoutWithUID(uid);
         else
             FlyoutUserName2.Text = "Button.Tag == null";
     }
 }
 public class ProwlerSource : IIncrementalSource<FeedUIEntry>
 {
-    public async Task<IEnumerable<FeedUIEntry>> GetPagedItemsAsync(int pageIndex, int pageSize, System.Threading.CancellationToken cancellationToken = default)
-    {
-        int startIdx = pageIndex * pageSize;
-        Result<FeedEntry[]?> feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
+    private List<FeedUIEntry> Entries { get; set; } = [];
 
-        // Retry if ratelimit reached
+    public async Task<bool> LoadAllFromServer()
+    {
+        Result<FeedEntry[]?> feedResult = await Services.ApiClient.GetFeedFull();
         if (feedResult.IsRateLimitReached)
         {
             for (int i = 0; i < 10; i++)
             {
-                await Task.Delay(2000, cancellationToken);
-                feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
+                await Task.Delay(1000);
+                feedResult = await Services.ApiClient.GetFeedFull();
 
                 if (!feedResult.IsRateLimitReached)
                     break;
@@ -502,18 +522,64 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
 
         if (!feedResult.OK || feedResult.Value == null)
         {
-            MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data [{startIdx}-{startIdx + pageIndex}]", "Error", 10);
-            return [];
+            MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data (all)", "Error", 10);
+            return false;
         }
 
-        List<FeedUIEntry> result = [];
+        Entries.Clear();
+
 
         foreach (var entry in feedResult.Value)
         {
-            result.Add(await FeedView.ProcessEntry(entry));
+            Entries.Add(await FeedView.ProcessEntry(entry));
         }
 
-        return result;
+        return true;
+    }
+
+    public async Task<IEnumerable<FeedUIEntry>> GetPagedItemsAsync(int pageIndex, int pageSize, System.Threading.CancellationToken cancellationToken = default)
+    {
+        if (Entries.Count == 0)
+        {
+            if (!await LoadAllFromServer())
+            {
+                MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data [{pageIndex} to {pageIndex + pageIndex}]", "Error", 10);
+                return [];
+            }
+        }
+
+        return (from p in Entries select p).Skip(pageIndex * pageSize).Take(pageSize);
+
+        //int startIdx = pageIndex * pageSize;
+        //Result<FeedEntry[]?> feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
+
+        //// Retry if ratelimit reached
+        //if (feedResult.IsRateLimitReached)
+        //{
+        //    for (int i = 0; i < 10; i++)
+        //    {
+        //        await Task.Delay(2000, cancellationToken);
+        //        feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
+
+        //        if (!feedResult.IsRateLimitReached)
+        //            break;
+        //    }
+        //}
+
+        //if (!feedResult.OK || feedResult.Value == null)
+        //{
+        //    MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data [{startIdx}-{startIdx + pageIndex}]", "Error", 10);
+        //    return [];
+        //}
+
+        //List<FeedUIEntry> result = [];
+
+        //foreach (var entry in feedResult.Value)
+        //{
+        //    result.Add(await FeedView.ProcessEntry(entry));
+        //}
+
+        //return result;
     }
 }
 public class FeedUIEntry
@@ -524,4 +590,5 @@ public class FeedUIEntry
     public required string Id { get; set; } = "";
     public required string ContentData { get; set; } = "";
     public required ImageSource? PicSource { get; set; }
+    public string AuthorAndID { get => $"{Author}####{AuthorId}"; }
 }

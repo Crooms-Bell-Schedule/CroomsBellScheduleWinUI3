@@ -37,11 +37,27 @@ public sealed partial class PfpUploadView
         InitializeComponent();
     }
 
+    public void SetMode(UploadViewMode mode)
+    {
+        switch (mode)
+        {
+            case UploadViewMode.ProfilePicture:
+                cropper.AspectRatio = 1d / 1d;
+                cropper.CropShape = CropShape.Circular;
+                break;
+            case UploadViewMode.ProfileBanner:
+                cropper.AspectRatio = 4d / 1d;
+                cropper.CropShape = CropShape.Rectangular;
+                break;
+            default:
+                break;
+        }
+    }
+
     private async void SelectButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         try
         {
-            cropper.AspectRatio = 1d / 1d;
             FileOpenPicker fileOpenPicker = new()
             {
                 ViewMode = PickerViewMode.Thumbnail,
@@ -63,5 +79,11 @@ public sealed partial class PfpUploadView
         {
             ErrorText.Text = ex.Message;
         }
+    }
+
+    public enum UploadViewMode
+    {
+        ProfilePicture,
+        ProfileBanner
     }
 }

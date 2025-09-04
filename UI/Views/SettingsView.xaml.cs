@@ -240,6 +240,7 @@ public sealed partial class SettingsView
         FlyoutUserName2.Text = "User Account";
         FlyoutPFP.ProfilePicture = null;
         FlyoutPFP2.ProfilePicture = null;
+        FlyoutBanner.Source = null;
     }
     private void SetLoggedInMode()
     {
@@ -262,8 +263,9 @@ public sealed partial class SettingsView
         else
             FlyoutUserName.Text = $"Unknown";
 
-        FlyoutPFP.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=pfp&size=28"));
-        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=pfp&size=48"));
+        FlyoutPFP.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=pfp"));
+        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=pfp"));
+        FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=profile_banner"));
         FlyoutUserName2.Text = FlyoutUserName.Text;
     }
 
@@ -323,16 +325,19 @@ public sealed partial class SettingsView
             ShowInAppNotification("The system clock is " + TimeService.GetOffsetString()+ ". The app has automatically compensated for this difference.", "System clock", 20);
         }
     }
-
-    internal async Task OpenPFPViewAsync()
+ 
+    internal async Task OpenPFPViewAsync(PfpUploadView.UploadViewMode mode)
     {
         var txt = new TextBox();
         var error = new TextBlock() { Text = "" };
         var content = new PfpUploadView();
+        content.SetMode(mode);
+
+        string title = mode == PfpUploadView.UploadViewMode.ProfilePicture ? "Profile Picture" : "Profile Banner";
 
         ContentDialog dlg = new()
         {
-            Title = "Change Profile Picture",
+            Title = $"Change {title}",
             PrimaryButtonText = "Save",
             SecondaryButtonText = "Cancel",
             DefaultButton = ContentDialogButton.Primary,
@@ -361,19 +366,19 @@ public sealed partial class SettingsView
                 using MemoryStream ms = new();
                 await c.Cropper.SaveAsync(ms.AsRandomAccessStream(), CommunityToolkit.WinUI.Controls.BitmapFileFormat.Png, true);
 
-                var result = await Services.ApiClient.SetProfilePicture(ms.ToArray());
+                var result = await Services.ApiClient.SetProfileImage(ms.ToArray(), mode);
 
                 if (!result.OK)
                 {
                     c.Error = ApiClient.FormatResult(result);
                     c.ShowingLoading = false;
-                    sender.Title = "Change Profile Picture";
+                    sender.Title = $"Change {title}";
                     sender.IsPrimaryButtonEnabled = true;
                     sender.IsSecondaryButtonEnabled = true;
                 }
                 else
                 {
-                    ShowInAppNotification("Changed profile picture. Restart the app to see changes", "Success", 5);
+                    ShowInAppNotification($"Changed {title.ToLower()}. Restart the app to see changes", "Success", 5);
                     sender.Hide();
                 }
             }
@@ -381,7 +386,7 @@ public sealed partial class SettingsView
             {
                 c.ShowingLoading = false;
                 c.Error = ex.Message;
-                sender.Title = "Change Profile Picture";
+                sender.Title = $"Change {title}";
                 sender.IsPrimaryButtonEnabled = true;
                 sender.IsSecondaryButtonEnabled = true;
             }
@@ -391,7 +396,7 @@ public sealed partial class SettingsView
     }
     private async void FlyoutChangePFP_Click(object sender, RoutedEventArgs e)
     {
-        await OpenPFPViewAsync();
+        await OpenPFPViewAsync(PfpUploadView.UploadViewMode.ProfilePicture);
     }
 
     private async void FlyoutChangeUsername_Click(object sender, RoutedEventArgs e)

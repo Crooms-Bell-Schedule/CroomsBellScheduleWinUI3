@@ -1,4 +1,5 @@
-﻿using CroomsBellScheduleCS.Utils;
+﻿using CroomsBellScheduleCS.UI.Views.Settings;
+using CroomsBellScheduleCS.Utils;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -324,7 +325,7 @@ namespace CroomsBellScheduleCS.Service.Web
             return await DoGetRequestAsync<GetUserResult>($"{ApiBase}/users/{username}");
         }
 
-        public async Task<Result<SetProfilePictureResult?>> SetProfilePicture(byte[] c)
+        public async Task<Result<SetProfilePictureResult?>> SetProfileImage(byte[] c, PfpUploadView.UploadViewMode mode)
         {
             try
             {
@@ -334,8 +335,9 @@ namespace CroomsBellScheduleCS.Service.Web
                 b.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
                 formContent.Add(b, "image", "image");
 
-                using var requestMessage =
-            new HttpRequestMessage(HttpMethod.Put, "https://api.croomssched.tech/users/setProfilePicture");
+                string modeApi = mode == PfpUploadView.UploadViewMode.ProfilePicture ? "setProfilePicture" : "setProfileBanner";
+
+                using var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"https://api.croomssched.tech/users/{modeApi}");
 
                 requestMessage.Headers.TryAddWithoutValidation("Authorization", $"\"{SettingsManager.Settings.SessionID}\"");
                 requestMessage.Content = formContent;

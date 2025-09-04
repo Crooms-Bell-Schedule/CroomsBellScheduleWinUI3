@@ -68,6 +68,7 @@
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        
                         <PersonPicture x:Name="FlyoutPFP" MaxHeight="25" MaxWidth="25" Grid.Column="0"/>
                         <TextBlock x:Name="FlyoutUserName" Grid.Column="1" Text="User Account" VerticalAlignment="Center" Margin="10,0,10,0"></TextBlock>
                     </Grid>
@@ -82,6 +83,9 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
+
+                                <Image x:Name="FlyoutBanner" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Height="128" Stretch="UniformToFill"/>
+
 
                                 <Button x:Name="FlyoutPFPButton" Grid.Row="0" Grid.Column="0" Padding="0" Margin="0, 0, 10, 0" CornerRadius="32" 
                                     Click="FlyoutChangePFP_Click">
@@ -162,8 +166,6 @@
                                         <HyperlinkButton x:Name="FlyoutChangePassword" Content="Manage account" Visibility="Collapsed" Click="FlyoutChangePassword_Click"/>
                                     </StackPanel>
                                 </StackPanel>
-
-
                             </Grid>
                         </Flyout>
                     </Button.Flyout>

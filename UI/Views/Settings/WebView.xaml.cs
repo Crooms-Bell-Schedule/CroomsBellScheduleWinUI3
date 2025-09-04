@@ -141,7 +141,7 @@ public sealed partial class WebView
             sender.GoBack();
 
             if (MainView.SettingsWindow != null && MainView.Settings != null)
-                await MainView.Settings.OpenPFPViewAsync();
+                await MainView.Settings.OpenPFPViewAsync(PfpUploadView.UploadViewMode.ProfilePicture);
         }
     }
 
