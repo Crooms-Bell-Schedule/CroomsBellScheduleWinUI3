@@ -268,7 +268,7 @@ public sealed partial class FeedView
 
         var val = feedResult.Value;
 
-        if (val.Length > 0)
+        if (val.Length > 0 && Entries.Count > 0)
         {
             if (val[0].id != Entries[0].Id)
             {
