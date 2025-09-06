@@ -734,9 +734,9 @@ public sealed partial class MainView
             return SettingsManager.Settings.Period5Lunch;
     }
 
-    private void UserControl_Loaded(object sender, RoutedEventArgs e)
+    private async void UserControl_Loaded(object sender, RoutedEventArgs e)
     {
-        DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, async () => { await Init(); });
+        await Init();
     }
 
     internal async Task UpdateScheduleSource()

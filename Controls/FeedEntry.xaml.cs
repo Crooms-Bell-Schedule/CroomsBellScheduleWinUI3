@@ -1,11 +1,17 @@
 ﻿using CroomsBellScheduleCS.UI.Views.Settings;
+using CroomsBellScheduleCS.Utils;
 using HtmlAgilityPack;
+using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CroomsBellScheduleCS.Controls;
 
@@ -265,5 +271,139 @@ public sealed partial class FeedEntry
             url = "https://" + url;
 
         return new(url);
+    }
+
+    internal static string CreateHtml(RichEditBox postContentBox)
+    {
+        // get the story length
+        ITextRange documentRange = postContentBox.Document.GetRange(0, TextConstants.MaxUnitCount);
+
+        List<Format> Items = [];
+
+        Format? previous = null;
+
+        string result = "";
+
+        // Pass 1: Convert document to an array of different styles with the text
+
+        for (int i = 0; i < documentRange.StoryLength; i++)
+        {
+            // get single item
+            var entry = postContentBox.Document.GetRange(i, i + 1);
+
+            if (previous != null)
+            {
+                // check if formatting is the same as the previous
+                var f = CreateFormat(entry);
+                var last = Items[Items.Count - 1];
+
+                if (CmpFormat(previous, f))
+                {
+                    // format is the same, extend the previous item
+
+                    previous.FullText += f.FullText;
+
+                    last.Range = new Range(last.Range.Start, i);
+                }
+                else
+                {
+                    // format is different, add new item to Items
+                    f.Range = new Range(i, i + 1);
+                    Items.Add(f);
+                    previous = f;
+                }
+            }
+            else
+            {
+                var f = CreateFormat(entry);
+                f.Range = new Range(i, i + 1);
+                previous = f;
+                Items.Add(f);
+            }
+        }
+
+        HtmlWriter writer = new();
+        writer.BeginTag("p");
+
+        ITextParagraphFormat previousFormat = null!;
+
+        string prevTags = string.Empty;
+        foreach (var item in Items)
+        {
+            if (previousFormat == null)
+            {
+                previousFormat = item.Style.ParagraphFormat;
+            }
+
+            if (!previousFormat.IsEqual(item.Style.ParagraphFormat))
+            {
+                 
+            }
+
+            // Bold
+            if (item.IsBold)
+                writer.BeginTag("b");
+
+            // Link
+            if (item.IsLink)
+            {
+                writer.BeginTag("a", [
+                    new("href", item.Style.Link)
+                    ]);
+            }
+
+            writer.AppendString(item.FullText);
+
+            // End link
+            if (item.IsLink)
+                writer.EndTag("a");
+
+            // End bold
+            if (item.IsBold)
+                writer.EndTag("b");
+        }
+
+        writer.EndTag("p");
+        result = writer.GetHTML();
+
+        return result;
+    }
+
+    private static bool CmpFormat(Format a, Format b)
+    {
+        if (!a.Style.CharacterFormat.IsEqual(b.Style.CharacterFormat)) return false;
+
+        if (a.Style.Link != b.Style.Link) return false;
+
+        return true;
+    }
+
+    private static bool CmpFormatParagraph(Format a, Format b)
+    {
+        if (!a.Style.ParagraphFormat.IsEqual(b.Style.ParagraphFormat)) return false;
+
+        if (a.Style.Link != b.Style.Link) return false;
+
+        return true;
+    }
+
+    private static Format CreateFormat(ITextRange entry)
+    {
+        return new()
+        {
+            FullText = entry.Character.ToString(),
+            Style = entry.FormattedText
+        };
+    }
+
+
+    class Format
+    {
+        public ITextRange Style { get; set; } = null!;
+        public string FullText { get; set; } = null!;
+        public Range Range { get; set; }
+
+        public bool IsLink => !string.IsNullOrEmpty(Style.Link);
+        public bool IsBold => Style.CharacterFormat.Bold == FormatEffect.On;
     }
 }
