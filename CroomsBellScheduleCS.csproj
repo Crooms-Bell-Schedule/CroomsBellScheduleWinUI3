@@ -5,8 +5,8 @@
 		<WindowsSdkPackageVersion>10.0.26100.57</WindowsSdkPackageVersion>
 		<RootNamespace>CroomsBellScheduleCS</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
-		<Platforms>x86;x64;ARM64</Platforms>
-		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+		<Platforms>x64</Platforms>
+		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
 		<PublishProfile>win-$(Platform).pubxml</PublishProfile>
 		<UseWinUI>true</UseWinUI>
 		<Nullable>enable</Nullable>
@@ -66,7 +66,7 @@
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.2" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250814004-preview" />
 		<PackageReference Include="System.Text.Json" Version="9.0.8" />
-		<PackageReference Include="Velopack" Version="0.0.1350-g3ba32af" />
+		<PackageReference Include="Velopack" Version="0.0.1362-gfa48e3c" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Content Update="Assets\croomsBellSchedule.ico">

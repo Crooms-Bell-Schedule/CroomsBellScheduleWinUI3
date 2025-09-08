@@ -16,10 +16,10 @@ public class APIProvider : IBellScheduleProvider
         // fetch data from server
         HttpResponseMessage dataBody = await _client.GetAsync("https://api.croomssched.tech/today");
         if (!dataBody.IsSuccessStatusCode)
-            throw new Exception("failed to fetch todays schedule: " + dataBody.StatusCode);
+            throw new Exception("Failed to get today's schedule: " + dataBody.StatusCode);
 
         string? dataResp = await dataBody.Content.ReadAsStringAsync() ??
-                           throw new Exception("server response is empty");
+                           throw new Exception("The server response is empty");
 
         Root parsed = JsonSerializer.Deserialize(dataResp, SourceGenerationContext.Default.Root) ?? throw new Exception("server response is malformed");
 

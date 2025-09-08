@@ -131,7 +131,8 @@ public sealed partial class MainView
             }
 
             SetLoadingText("Syncing time...");
-            TimeService.Sync();
+            try { TimeService.Sync(); }
+            catch { } // does not really matter if this fails
         }
         catch (Exception ex)
         {
@@ -170,6 +171,18 @@ public sealed partial class MainView
         {
             await UIMessage.ShowMsgAsync($"Error:{Environment.NewLine}{ex}", "Failed to initialize schedule");
         }
+    }
+
+
+
+    internal void CorrectLayer()
+    {
+        // yet another stupid WinUI bug, when a modal is opened, for some reason, IsAlwaysOnTop gets set to false after it closes
+        if (_windowApp == null) return;
+
+        _windowApp.SetPresenter(AppWindowPresenterKind.Overlapped);
+        if (_windowApp.Presenter != null && _windowApp.Presenter is OverlappedPresenter presenter)
+            presenter.IsAlwaysOnTop = true;
     }
 
     private async void _updateChecker_Tick(object? sender, object e)

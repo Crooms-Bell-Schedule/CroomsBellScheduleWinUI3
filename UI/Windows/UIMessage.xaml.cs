@@ -1,3 +1,4 @@
+using CroomsBellScheduleCS.UI.Views;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -118,6 +119,8 @@ public sealed partial class UIMessage
         Center(msg);
 
         while (msg.IsOpen) await Task.Delay(10);
+
+        MainWindow.ViewInstance.CorrectLayer();
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
