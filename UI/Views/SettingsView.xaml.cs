@@ -11,6 +11,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using System;
@@ -268,6 +269,11 @@ public sealed partial class SettingsView
         FlyoutUserName2.Text = FlyoutUserName.Text;
     }
 
+    private void HideLoader()
+    {
+        ExitStoryboard.Begin();
+    }
+
     private async Task RunSignInProcessAsync()
     {
         try
@@ -277,8 +283,8 @@ public sealed partial class SettingsView
             if (string.IsNullOrEmpty(SettingsManager.Settings.SessionID) || string.IsNullOrEmpty(SettingsManager.Settings.UserID))
             {
                 // logged out
-                LoadingUI.Visibility = Visibility.Collapsed;
                 SetLoggedOutMode();
+                HideLoader();
                 return;
             }
 
@@ -290,15 +296,15 @@ public sealed partial class SettingsView
             if (tokenResponse.Value != null && !tokenResponse.Value.result)
             {
                 ShowInAppNotification("Your login information has expired. Please login again.", "Login Failed", 0);
-                LoadingUI.Visibility = Visibility.Collapsed;
                 SetLoggedOutMode();
+                HideLoader();
                 return;
             }
             if (!tokenResponse.OK)
             {
                 ShowInAppNotification("Failed to connect to the server. Check your internet connection.", "Login Failed", 0);
-                LoadingUI.Visibility = Visibility.Collapsed;
                 SetLoggedOutMode();
+                HideLoader();
                 return;
             }
 
@@ -319,14 +325,20 @@ public sealed partial class SettingsView
 
             await dlg.ShowAsync();
         }
-        LoadingUI.Visibility = Visibility.Collapsed;
+
+        HideLoader();
 
         if (TimeService.IsTimeWrong)
         {
-            ShowInAppNotification("The system clock is " + TimeService.GetOffsetString()+ ". The app has automatically compensated for this difference.", "System clock", 20);
+            ShowInAppNotification("The system clock is " + TimeService.GetOffsetString() + ". The app has automatically compensated for this difference with Crooms Pro.", "System clock", 20);
         }
     }
- 
+
+    private void LoadingAnimation_Completed(object? sender, object e)
+    {
+        LoadingUI.Visibility = Visibility.Collapsed;
+    }
+
     internal async Task OpenPFPViewAsync(PfpUploadView.UploadViewMode mode)
     {
         var txt = new TextBox();

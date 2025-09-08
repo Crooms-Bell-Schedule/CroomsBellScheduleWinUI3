@@ -13,6 +13,12 @@
     mc:Ignorable="d"
     Loaded="UserControl_Loaded">
     <Grid x:Name="MainGrid">
+        <Grid.Resources>
+            <Storyboard x:Name="ExitStoryboard">
+                <FadeOutThemeAnimation Storyboard.TargetName="LoadingUI" Completed="LoadingAnimation_Completed" />
+            </Storyboard>
+        </Grid.Resources>
+
         <!--<TitleBar x:Name="AppTitleBar" Subtitle="Preview"
     Background="Transparent" 
     IsPaneToggleButtonVisible="True" Grid.Row="0"

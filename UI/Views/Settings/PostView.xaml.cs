@@ -74,11 +74,43 @@ public sealed partial class PostView
     {
         PostContentBox.Document.Selection.ParagraphFormat.ListType = MarkerType.Bullet;
     }
-    
+
 
     private void ItalicButton_Click(object sender, RoutedEventArgs e)
     {
         PostContentBox.Document.Selection.CharacterFormat.Italic = FormatEffect.Toggle;
+    }
+
+    private void ClearFormatting_Click(object sender, RoutedEventArgs e)
+    {
+        PostContentBox.Document.Selection.ParagraphFormat = PostContentBox.Document.GetDefaultParagraphFormat();
+        PostContentBox.Document.Selection.CharacterFormat = PostContentBox.Document.GetDefaultCharacterFormat();
+        PostContentBox.Document.Selection.Link = "";
+    }
+
+    private void LinkFlyoutInsert_Click(object sender, RoutedEventArgs e)
+    {
+        if (!Uri.TryCreate(LinkFlyoutURL.Text, UriKind.Absolute, out Uri? result))
+        {
+            LinkFlyoutError.Text = "Invaild URL";
+            return;
+        }
+
+        LinkFlyoutError.Text = "";
+        try
+        {
+
+            // Ensure there's selected text to apply the link to
+            if (string.IsNullOrEmpty(PostContentBox.Document.Selection.Text))
+                PostContentBox.Document.Selection.SetText(TextSetOptions.None, "Inserted link");
+            PostContentBox.Document.Selection.Link = "\""+LinkFlyoutURL.Text+"\"";
+        }
+        catch
+        {
+    
+}
+
+        InsertLink.Flyout.Hide();
     }
 
     private void ColorButton_Click(object sender, RoutedEventArgs e)
@@ -108,4 +140,15 @@ public sealed partial class PostView
         }
     }
 
+    private void LinkFlyout_Opened(object sender, object e)
+    {
+        if (sender is not Flyout flyout ||
+            (flyout.Content as FrameworkElement)?.Parent is not FlyoutPresenter flyoutPresenter)
+        {
+            return;
+        }
+
+        flyoutPresenter.MaxWidth = 250;
+        flyoutPresenter.Width = 250;
+    }
 }

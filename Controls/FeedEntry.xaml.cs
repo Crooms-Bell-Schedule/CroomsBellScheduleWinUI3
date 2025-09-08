@@ -306,7 +306,7 @@ public sealed partial class FeedEntry
                 var f = CreateFormat(entry);
                 var last = Items[Items.Count - 1];
 
-                if (CmpFormat(previous, f))
+                if (CmpFormat(previous, f) && CmpFormatParagraph(previous.Style.ParagraphFormat, f.Style.ParagraphFormat))
                 {
                     // format is the same, extend the previous item
 
@@ -429,8 +429,10 @@ public sealed partial class FeedEntry
             if (item.IsLink)
             {
                 writer.BeginTag("a", [
-                    new("href", item.Style.Link)
+                    new("href", item.Style.Link.Substring(1, item.Style.Link.Length - 1))
                     ]);
+
+                item.FullText = item.FullText.Replace("HYPERLINK " + item.Style.Link, "");
             }
 
             if (isLast)
@@ -475,9 +477,9 @@ public sealed partial class FeedEntry
 
     private static bool CmpFormatParagraph(ITextParagraphFormat a, ITextParagraphFormat b)
     {
-        if (a.ListType != b.ListType) return true;
+        if (a.ListType != b.ListType) return false;
 
-        return false;
+        return true;
     }
 
     private static bool CmpFormat(Format a, Format b)

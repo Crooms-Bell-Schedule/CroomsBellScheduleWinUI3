@@ -33,10 +33,34 @@
                     </Button.Content>
                 </Button>
 
-                <Button x:Name="NumberedList" Click="BulletList_Click" AutomationProperties.Name="Italic" ToolTipService.ToolTip="Italic"
+                <Button x:Name="NumberedList" Click="BulletList_Click" AutomationProperties.Name="Bullet List" ToolTipService.ToolTip="Bullet List"
 RelativePanel.RightOf="italicButton">
                     <Button.Content>
                         <FontIcon Glyph="&#xE8FD;"/>
+                    </Button.Content>
+                </Button>
+
+                <Button x:Name="InsertLink" AutomationProperties.Name="Insert link" ToolTipService.ToolTip="Insert link"
+RelativePanel.RightOf="NumberedList">
+                    <Button.Content>
+                        <FontIcon Glyph="&#xE71B;"/>
+                    </Button.Content>
+
+                    <Button.Flyout>
+                        <Flyout x:Name="LinkFlyout" Opened="LinkFlyout_Opened">
+                            <StackPanel>
+                                <TextBox x:Name="LinkFlyoutURL" PlaceholderText="URL"/>
+                                <TextBlock x:Name="LinkFlyoutError" Foreground="Red"/>
+                                <Button Content="Insert" Click="LinkFlyoutInsert_Click"/>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+                 <Button x:Name="ClearFormatting" AutomationProperties.Name="Clear Formatting" ToolTipService.ToolTip="Clear formatting"
+RelativePanel.RightOf="InsertLink" Click="ClearFormatting_Click">
+                    <Button.Content>
+                        <FontIcon Glyph="&#xED62;"/>
                     </Button.Content>
                 </Button>
 
