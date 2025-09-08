@@ -124,7 +124,7 @@ public sealed partial class WebView
         }
         else
         {
-            LoadingText.Text = "Loading";
+            LoadingText.Text = "Loading page";
         }
     }
 

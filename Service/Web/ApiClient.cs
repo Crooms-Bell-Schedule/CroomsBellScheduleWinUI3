@@ -12,7 +12,10 @@ namespace CroomsBellScheduleCS.Service.Web
 {
     public class ApiClient
     {
-        private readonly HttpClient _client = new();
+        private readonly HttpClient _client = new()
+        {
+            Timeout = TimeSpan.FromSeconds(10)
+        };
         private const string ApiBase = "https://api.croomssched.tech";
         private const string MikhailHostingBase = "https://mikhail.croomssched.tech";
         #region Utils
@@ -260,27 +263,12 @@ namespace CroomsBellScheduleCS.Service.Web
             return await DoGetRequestAsync<FeedEntry[]>($"https://api.croomssched.tech/feed/part/{start}/{end}", cancel);
         }
 
-        public async Task<Result<FeedEntry?>> PostFeed(string postContent, string postLink)
+        public async Task<Result<FeedEntry?>> PostFeed(string postContent)
         {
-            var properContent = WebUtility.HtmlEncode(postContent);
-
-            // allow HTML content (if there is any)
-            // todo improve detection
-            if (properContent.Contains('/'))
+            var req = new SubmitFeedRequest()
             {
-                properContent = properContent.Replace("&lt;", "<").Replace("&gt;", ">");
-            }
-
-            var req = new SubmitFeedRequest();
-
-            if (string.IsNullOrEmpty(postLink))
-            {
-                req.data = properContent;
-            }
-            else
-            {
-                req.data = "<a target=\"CBSHfeed\" href=\"" + postLink + "\">" + properContent + "</a>";
-            }
+                data = postContent
+            };
 
             StringContent content = new(JsonSerializer.Serialize(req, SourceGenerationContext.Default.SubmitFeedRequest));
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");

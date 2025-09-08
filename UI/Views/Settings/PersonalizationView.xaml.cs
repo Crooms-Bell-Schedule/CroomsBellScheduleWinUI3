@@ -64,20 +64,19 @@ public sealed partial class PersonalizationView
                 // deselect other options
                 if (updating) return;
 
-                foreach(var control in ThemesContainer.Children)
+                updating = true;
+                foreach (var control in ThemesContainer.Children)
                 {
                     if (control is ToggleButton toggle && control != (ToggleButton)sender)
                     {
-                        updating = true;
                         toggle.IsChecked = false;
-                        updating = false;
-
-                        SettingsManager.Settings.ThemeIndex = item.ID;
-                        await SettingsManager.SaveSettings();
-
-                        Themes.Themes.Apply(item.ID);
                     }
                 }
+                updating = false;
+
+                SettingsManager.Settings.ThemeIndex = item.ID;
+                await SaveSettings();
+                Themes.Themes.Apply(item.ID);
             };
 
             button.Unchecked += delegate (object sender, RoutedEventArgs e)

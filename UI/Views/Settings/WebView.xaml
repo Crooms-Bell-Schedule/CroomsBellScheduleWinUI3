@@ -27,7 +27,7 @@
 
         <StackPanel x:Name="Loader" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
             <ProgressRing x:Name="LoadingThing" Height="64" Width="64"/>
-            <TextBlock x:Name="LoadingText" HorizontalAlignment="Center" Margin="0,5,0,0">Initializing</TextBlock>
+            <TextBlock x:Name="LoadingText" HorizontalAlignment="Center" Margin="0,5,0,0">Initializing WebView2</TextBlock>
         </StackPanel>
     </Grid>
 </Page>

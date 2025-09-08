@@ -27,7 +27,6 @@ public sealed partial class SettingsView
     //private Delegate? _newWndProcDelegate;
     private readonly CompositionEffectBrush brush;
     private readonly Compositor compositor;
-    private bool _useBlur = false;
     public int UnreadAnnouncementCount
     {
         set
@@ -86,7 +85,7 @@ public sealed partial class SettingsView
     {
         SpriteVisual blurVisual = (SpriteVisual)ElementCompositionPreview.GetElementChildVisual(BackgroundGrid);
 
-        if (blurVisual != null && _useBlur)
+        if (blurVisual != null)
         {
             blurVisual.Size = e.NewSize.ToVector2();
         }
@@ -254,7 +253,7 @@ public sealed partial class SettingsView
         FlyoutChangePassword.Visibility = Visibility.Visible;
     }
 
-    public async Task RefreshUserInfo()
+    public async Task RefreshUserInfoAsync()
     {
         var details = await Services.ApiClient.GetUserDetails();
 
@@ -283,6 +282,8 @@ public sealed partial class SettingsView
                 return;
             }
 
+            LoadingText.Text = "ValidateSessionAsync";
+
             // check the token
             var tokenResponse = await Services.ApiClient.ValidateSessionAsync();
 
@@ -302,7 +303,7 @@ public sealed partial class SettingsView
             }
 
             LoadingText.Text = "Retrieving user info...";
-            await RefreshUserInfo();
+            await RefreshUserInfoAsync();
             SetLoggedInMode();
         }
         catch (Exception ex)
@@ -424,7 +425,7 @@ public sealed partial class SettingsView
             if (result.OK)
             {
                 ShowInAppNotification("Updated username. It may take some time for changes to take into effect.", null, 3);
-                await RefreshUserInfo();
+                await RefreshUserInfoAsync();
             }
             else
             {
@@ -492,7 +493,7 @@ public sealed partial class SettingsView
     internal async Task SetLoggedIn()
     {
         SetLoggedInMode();
-        await RefreshUserInfo();
+        await RefreshUserInfoAsync();
     }
     private async void LoginDlg_OKClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
@@ -633,14 +634,9 @@ public sealed partial class SettingsView
     {
         SpriteVisual blurVisual = (SpriteVisual)ElementCompositionPreview.GetElementChildVisual(BackgroundGrid);
 
-        _useBlur = enable;
-
         if (blurVisual != null)
         {
-            if (enable)
-                blurVisual.Size = MainGrid.ActualSize;
-            else
-                blurVisual.Size = Vector2.Zero;
+            blurVisual.IsVisible = enable;
         }
     }
 

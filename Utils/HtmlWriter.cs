@@ -27,7 +27,7 @@ namespace CroomsBellScheduleCS.Utils
             if (attributes != null)
                 foreach (var item in attributes)
                 {
-                    result.Append($"{item.Name}=\"{item.Value}\"");
+                    result.Append($"{item.Name}={item.Value}");
                 }
             result.Append(">");
             tags.Push(name);
@@ -40,7 +40,7 @@ namespace CroomsBellScheduleCS.Utils
         public void EndTag(string name)
         {
             string tag = tags.Pop();
-            if (tag != name) throw new Exception("unclosed tag " + name);
+            if (tag != name) throw new Exception("unclosed tag " + name+", expected " + tag);
 
             result.Append($"</{name}>");
         }

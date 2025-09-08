@@ -17,13 +17,6 @@ public sealed partial class PostView
             return FeedEntry.CreateHtml(PostContentBox);
         }
     }
-    public string PostLink
-    {
-        get
-        {
-            return "";
-        }
-    }
 
     public bool ShowingLoading
     {
@@ -50,7 +43,7 @@ public sealed partial class PostView
     {
         InitializeComponent();
     }
-    private bool IsContentEmpty()
+    public bool IsContentEmpty()
     {
         // Get the plain text content of the RichEditBox
         PostContentBox.Document.GetText(TextGetOptions.None, out string text);

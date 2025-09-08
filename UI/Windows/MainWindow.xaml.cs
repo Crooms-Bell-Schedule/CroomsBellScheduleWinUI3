@@ -23,8 +23,10 @@ public sealed partial class MainWindow
         Instance = this;
         ViewInstance = mainView;
 
-        ViewInstance.PositionWindow();
         LoadSettings();
+
+        if (!SettingsManager.Settings.ShowInTaskbar)
+            ViewInstance.PositionWindow();
 
         Application.Current.UnhandledException += Current_UnhandledException;
         this.Activated += Window_Activated;

@@ -59,7 +59,7 @@
                         <FontIcon Glyph="&#xE789;" Margin="0,0,10,0" />
                         <TextBlock>Announcements</TextBlock>
 
-                        <InfoBadge x:Name="AnncBadge" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource AttentionDotInfoBadgeStyle}" Value="1" Margin="5,0,0,0"/>
+                        <InfoBadge x:Name="AnncBadge" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource AttentionDotInfoBadgeStyle}" Value="0" Margin="5,0,0,0" Visibility="Collapsed"/>
                     </StackPanel>
                 </Button>
                 <Button Height="33" Visibility="Visible" Padding="5,0,0,0">
@@ -226,10 +226,10 @@
 
         </NavigationView>
 
-        <Grid x:Name="LoadingUI" Background="{ThemeResource SystemColorBackgroundColor}">
+        <Grid x:Name="LoadingUI" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                 <ProgressRing x:Name="RingOfProgress" Height="48" Width="48"></ProgressRing>
-                <TextBlock x:Name="LoadingText">Authenticating</TextBlock>
+                <TextBlock x:Name="LoadingText">Checking announcements</TextBlock>
             </StackPanel>
         </Grid>
     </Grid>

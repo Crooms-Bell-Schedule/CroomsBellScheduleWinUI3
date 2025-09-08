@@ -26,7 +26,10 @@ public sealed partial class FeedView
 
     private static bool _isLoaded = false;
     private static readonly Dictionary<string, Dictionary<string, ImageSource>> ImageCache = [];
-    private static readonly HttpClient ImageClient = new();
+    private static readonly HttpClient ImageClient = new()
+    {
+        Timeout = TimeSpan.FromSeconds(5)
+    };
     private static bool ShownImageError = false;
     private static bool _loadProfilePictures = true;
     public Flyout UserFlyoutPub { get => (Flyout)Resources["UserFlyout"]; }
@@ -388,6 +391,8 @@ public sealed partial class FeedView
         };
         dialog.PrimaryButtonClick += PostDialog_PrimaryButtonClick;
 
+        dialog.RequestedTheme = SettingsManager.Settings.Theme;
+
         PostView content = new();
         dialog.Content = content;
 
@@ -401,26 +406,30 @@ public sealed partial class FeedView
         if (content == null) return;
 
         // validate some things
-        if (string.IsNullOrEmpty(content.PostContent))
-        {
-            return;
-        }
-        if (!string.IsNullOrEmpty(content.PostLink) && !Uri.TryCreate(content.PostLink, UriKind.Absolute, out _))
+        if (content.IsContentEmpty())
         {
             return;
         }
 
         content.ShowingLoading = true;
 
-        var result = await Services.ApiClient.PostFeed(content.PostContent.TrimEnd(['\r', '\n']), content.PostLink);
-        if (result.OK)
+        try
         {
-            sender.Hide();
-            RefreshFeed();
+            var result = await Services.ApiClient.PostFeed(content.PostContent.TrimEnd(['\r', '\n']));
+            if (result.OK)
+            {
+                sender.Hide();
+                RefreshFeed();
+            }
+            else
+            {
+                content.Error = ApiClient.FormatResult(result);
+                content.ShowingLoading = false;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            content.Error = ApiClient.FormatResult(result);
+            content.Error = ex.Message;
             content.ShowingLoading = false;
         }
     }

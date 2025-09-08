@@ -43,7 +43,8 @@ RelativePanel.RightOf="italicButton">
                 <DropDownButton x:Name="fontColorButton" AutomationProperties.Name="Font color"
                                 BorderThickness="0" ToolTipService.ToolTip="Font color"
                                 Background="Transparent"
-                                RelativePanel.RightOf="NumberedList">
+                                RelativePanel.RightOf="NumberedList"
+                                Visibility="Collapsed">
                     <SymbolIcon Symbol="FontColor"/>
                     <DropDownButton.Flyout>
                         <Flyout Placement="Bottom">
@@ -103,6 +104,11 @@ RelativePanel.RightOf="italicButton">
                                 <Button Click="ColorButton_Click" AutomationProperties.Name="Black">
                                     <Button.Content>
                                         <Rectangle Fill="Black"/>
+                                    </Button.Content>
+                                </Button>
+                                <Button Click="ColorButton_Click" AutomationProperties.Name="White">
+                                    <Button.Content>
+                                        <Rectangle Fill="White"/>
                                     </Button.Content>
                                 </Button>
                             </VariableSizedWrapGrid>
