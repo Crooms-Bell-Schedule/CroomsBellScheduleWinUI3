@@ -74,7 +74,7 @@
                             <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <PersonPicture x:Name="FlyoutPFP" MaxHeight="25" MaxWidth="25" Grid.Column="0"/>
                         <TextBlock x:Name="FlyoutUserName" Grid.Column="1" Text="User Account" VerticalAlignment="Center" Margin="10,0,10,0"></TextBlock>
                     </Grid>
@@ -84,21 +84,75 @@
                             <Grid MinWidth="250">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
+<!--250x128-->
+                                <Button x:Name="FlyoutBannerButton" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Padding="0" Click="FlyoutBannerButton_Click">
+                                    <Image x:Name="FlyoutBanner" Height="128" Width="250" Stretch="UniformToFill"/>
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Grid>
+                                                <ContentPresenter/>
 
-                                <Image x:Name="FlyoutBanner" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Height="128" Stretch="UniformToFill"/>
+                                                <Rectangle x:Name="HoverBG2" Height="128" VerticalAlignment="Top" Opacity="0">
+                                                    <Rectangle.Fill>
+                                                        <SolidColorBrush Color="#000000"></SolidColorBrush>
+                                                    </Rectangle.Fill>
+                                                </Rectangle>
+
+                                                <FontIcon x:Name="HoverFG2" Glyph="&#xE70F;" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0"/>
+
+                                                <VisualStateManager.VisualStateGroups>
+                                                    <VisualStateGroup x:Name="CommonStates">
+                                                        <VisualState x:Name="PointerOver">
+                                                            <Storyboard Duration="0:0:0.1">
+                                                                <DoubleAnimation 
+Storyboard.TargetName="HoverBG2"
+Storyboard.TargetProperty="Opacity"
+Duration="0:0:0.1"
+From="0"
+To="0.5"/>
+
+                                                                <DoubleAnimation 
+Storyboard.TargetName="HoverFG2"
+Storyboard.TargetProperty="Opacity"
+Duration="0:0:0.1"
+From="0"
+To="1"/>
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                        <VisualState x:Name="Normal">
+                                                            <Storyboard Duration="0:0:0.1">
+                                                                <DoubleAnimation 
+ Storyboard.TargetName="HoverBG2"
+ Storyboard.TargetProperty="Opacity"
+ Duration="0:0:0.1"
+ From="0.5"
+ To="0"/>
+
+                                                                <DoubleAnimation 
+ Storyboard.TargetName="HoverFG2"
+ Storyboard.TargetProperty="Opacity"
+ Duration="0:0:0.1"
+ From="1"
+ To="0"/>
+                                                            </Storyboard>
+                                                        </VisualState>
+                                                    </VisualStateGroup>
+                                                </VisualStateManager.VisualStateGroups>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
 
 
-                                <Button x:Name="FlyoutPFPButton" Grid.Row="0" Grid.Column="0" Padding="0" Margin="0, 0, 10, 0" CornerRadius="32" 
-                                    Click="FlyoutChangePFP_Click">
+                                <Button x:Name="FlyoutPFPButton" Grid.Row="1" Padding="0" Margin="0, -50, 10, 0" CornerRadius="32" 
+Click="FlyoutChangePFP_Click">
 
                                     <Grid>
                                         <PersonPicture x:Name="FlyoutPFP2"  Width="64" Height="64" VerticalAlignment="Top" />
-
                                     </Grid>
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
@@ -118,36 +172,36 @@
                                                         <VisualState x:Name="PointerOver">
                                                             <Storyboard Duration="0:0:0.1">
                                                                 <DoubleAnimation 
-                                                                Storyboard.TargetName="HoverBG"
-                                                                Storyboard.TargetProperty="Opacity"
-                                                                Duration="0:0:0.1"
-                                                                From="0"
-                                                                To="0.5"/>
+                            Storyboard.TargetName="HoverBG"
+                            Storyboard.TargetProperty="Opacity"
+                            Duration="0:0:0.1"
+                            From="0"
+                            To="0.5"/>
 
                                                                 <DoubleAnimation 
-                                                                Storyboard.TargetName="HoverFG"
-                                                                Storyboard.TargetProperty="Opacity"
-                                                                Duration="0:0:0.1"
-                                                                From="0"
-                                                                To="1"/>
+                            Storyboard.TargetName="HoverFG"
+                            Storyboard.TargetProperty="Opacity"
+                            Duration="0:0:0.1"
+                            From="0"
+                            To="1"/>
                                                             </Storyboard>
                                                         </VisualState>
 
                                                         <VisualState x:Name="Normal">
                                                             <Storyboard Duration="0:0:0.1">
                                                                 <DoubleAnimation 
-                                                                 Storyboard.TargetName="HoverBG"
-                                                                 Storyboard.TargetProperty="Opacity"
-                                                                 Duration="0:0:0.1"
-                                                                 From="0.5"
-                                                                 To="0"/>
+                             Storyboard.TargetName="HoverBG"
+                             Storyboard.TargetProperty="Opacity"
+                             Duration="0:0:0.1"
+                             From="0.5"
+                             To="0"/>
 
                                                                 <DoubleAnimation 
-                                                                 Storyboard.TargetName="HoverFG"
-                                                                 Storyboard.TargetProperty="Opacity"
-                                                                 Duration="0:0:0.1"
-                                                                 From="1"
-                                                                 To="0"/>
+                             Storyboard.TargetName="HoverFG"
+                             Storyboard.TargetProperty="Opacity"
+                             Duration="0:0:0.1"
+                             From="1"
+                             To="0"/>
                                                             </Storyboard>
                                                         </VisualState>
                                                     </VisualStateGroup>
@@ -158,10 +212,12 @@
 
                                 </Button>
 
-                                <StackPanel Grid.Row="0"  Grid.Column="1">
+
+
+                                <StackPanel Grid.Row="2">
                                     <Button x:Name="FlyoutChangeUsername" FontSize="22" Margin="0, 0, 0, 0" 
-                                        Padding="12, 5, 10, 5" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" 
-                                        Click="FlyoutChangeUsername_Click">
+         Padding="12, 5, 10, 5" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" 
+         Click="FlyoutChangeUsername_Click">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock x:Name="FlyoutUserName2" Text="User Account"/>
                                             <FontIcon Glyph="&#xE104;" Margin="10, 2, 0, 0" FontSize="16"/>

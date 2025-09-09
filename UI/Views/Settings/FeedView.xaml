@@ -20,22 +20,19 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
 
                 </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
 
-                <Image x:Name="FlyoutBanner" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Height="64" Stretch="UniformToFill"/>
+                <Image x:Name="FlyoutBanner" Grid.Row="0" Height="128" Stretch="UniformToFill"/>
 
-                <PersonPicture x:Name="FlyoutPicture" Width="64" Height="64" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Grid.RowSpan="10" Padding="0" Margin="0, 0, 10, 0" />
+                <PersonPicture x:Name="FlyoutPicture" Width="64" Height="64" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="1" Padding="0" Margin="0, -50, 10, 0" />
 
-                <TextBlock x:Name="FlyoutUserName2" Text="User Account" Grid.Row="0"  Grid.Column="1"  FontSize="22" Margin="0, 0, 0, 0" 
-                            Padding="12, 5, 10, 5" FontWeight="Bold" TextWrapping="Wrap"/>
-
-
-                <HyperlinkButton Content="View profile" Grid.Row="1" Grid.Column="1" IsEnabled="False"></HyperlinkButton>
+                <StackPanel Grid.Row="2">
+                    <TextBlock x:Name="FlyoutUserName2" Text="User Account"  FontSize="22" Margin="0, 0, 0, 0" 
+             Padding="12, 5, 10, 5" TextWrapping="Wrap"/>
+                    <HyperlinkButton Content="View profile"></HyperlinkButton>
+                </StackPanel>
             </Grid>
         </Flyout>
     </Page.Resources>

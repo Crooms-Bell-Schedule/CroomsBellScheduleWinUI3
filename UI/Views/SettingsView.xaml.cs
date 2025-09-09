@@ -411,6 +411,10 @@ public sealed partial class SettingsView
     {
         await OpenPFPViewAsync(PfpUploadView.UploadViewMode.ProfilePicture);
     }
+    private async void FlyoutBannerButton_Click(object sender, RoutedEventArgs e)
+    {
+        await OpenPFPViewAsync(PfpUploadView.UploadViewMode.ProfileBanner);
+    }
 
     private async void FlyoutChangeUsername_Click(object sender, RoutedEventArgs e)
     {
