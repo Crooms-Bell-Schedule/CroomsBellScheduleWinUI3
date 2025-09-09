@@ -459,12 +459,12 @@ public sealed partial class FeedView
         var userName = await Services.ApiClient.GetUserByName(user);
         if (userName.OK && userName.Value != null)
         {
-            FlyoutUserName2.Text = user;
+            FlyoutUserName2.Text = "@"+user;
             uid = userName.Value.id;
         }
         else
         {
-            FlyoutUserName2.Text = user + " (Unknown)";
+            FlyoutUserName2.Text = "@" + user + " (Unknown)";
         }
 
         // set profile picture based on UID
@@ -492,7 +492,7 @@ public sealed partial class FeedView
                 else FlyoutPicture.ProfilePicture = null;
             }
 
-            FlyoutUserName2.Text = auth;
+            FlyoutUserName2.Text = "@" + auth;
             FlyoutBanner.Source = await RetrieveImageByTypeAsync(id, "profile_banner");
         }
         catch
@@ -507,7 +507,20 @@ public sealed partial class FeedView
         if (((Button)sender).Tag is string uid)
             await PrepareFlyoutWithUID(uid);
         else
-            FlyoutUserName2.Text = "Button.Tag == null";
+            FlyoutUserName2.Text = "@Button.Tag == null";
+    }
+
+    private async void Button_Click(object sender, RoutedEventArgs e)
+    {
+        await new ContentDialog()
+        {
+            Title = "Purchase Crooms Pro",
+            Content = "Do you want to purchase Crooms pro for only $100 per month (limited time deal)?\nHere are the features:\n - Ability to view the time within 20 second accuracy\n - More gacha pulls\n - Premimum Battle Pass\n - Text Formatting\n - Profile Banner\n - Server boost",
+            XamlRoot = XamlRoot,
+            PrimaryButtonText = "Purchase Now",
+            SecondaryButtonText = "Remind me next minute",
+            DefaultButton = ContentDialogButton.Primary
+        }.ShowAsync();
     }
 }
 public class ProwlerSource : IIncrementalSource<FeedUIEntry>

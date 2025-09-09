@@ -81,6 +81,16 @@
 
                     <Button.Flyout>
                         <Flyout x:Name="UserFlyout">
+
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style TargetType="FlyoutPresenter">
+                                    <Setter Property="Margin" Value="0"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="CornerRadius" Value="10"/>
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
+                            
                             <Grid MinWidth="250">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -215,7 +225,7 @@ Click="FlyoutChangePFP_Click">
 
 
                                 <StackPanel Grid.Row="2">
-                                    <Button x:Name="FlyoutChangeUsername" FontSize="22" Margin="0, 0, 0, 0" 
+                                    <Button x:Name="FlyoutChangeUsername" FontSize="22" Margin="5, 0, 0, 0" 
          Padding="12, 5, 10, 5" VerticalAlignment="Center" Background="Transparent" BorderThickness="0" 
          Click="FlyoutChangeUsername_Click">
                                         <StackPanel Orientation="Horizontal">
@@ -223,7 +233,7 @@ Click="FlyoutChangePFP_Click">
                                             <FontIcon Glyph="&#xE104;" Margin="10, 2, 0, 0" FontSize="16"/>
                                         </StackPanel>
                                     </Button>
-                                    <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Margin="10,5,0,10">
                                         <HyperlinkButton x:Name="FlyoutSignIn" Content="Sign In" Click="FlyoutLogin_Click"/>
                                         <HyperlinkButton x:Name="FlyoutChangePassword" Content="Manage account" Visibility="Collapsed" Click="FlyoutChangePassword_Click"/>
                                     </StackPanel>
