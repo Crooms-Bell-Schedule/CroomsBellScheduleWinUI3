@@ -83,9 +83,18 @@ public sealed partial class PostView
 
     private void ClearFormatting_Click(object sender, RoutedEventArgs e)
     {
-        PostContentBox.Document.Selection.ParagraphFormat = PostContentBox.Document.GetDefaultParagraphFormat();
-        PostContentBox.Document.Selection.CharacterFormat = PostContentBox.Document.GetDefaultCharacterFormat();
-        PostContentBox.Document.Selection.Link = "";
+        try
+        {
+            PostContentBox.Document.Selection.ParagraphFormat = PostContentBox.Document.GetDefaultParagraphFormat();
+            PostContentBox.Document.Selection.CharacterFormat = PostContentBox.Document.GetDefaultCharacterFormat();
+            
+            // throws argumentexception for some reason
+            PostContentBox.Document.Selection.Link = "";
+        }
+        catch
+        {
+
+        }
     }
 
     private void LinkFlyoutInsert_Click(object sender, RoutedEventArgs e)

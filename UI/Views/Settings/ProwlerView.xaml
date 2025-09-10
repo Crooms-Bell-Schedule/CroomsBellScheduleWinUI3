@@ -41,7 +41,7 @@
                 <StackPanel Grid.Row="2">
                     <TextBlock x:Name="FlyoutUserName2" Text="User Account"  FontSize="22" Margin="0, 0, 0, 0" 
              Padding="12, 5, 10, 5" TextWrapping="Wrap"/>
-                    <HyperlinkButton Content="View profile" Margin="10,5,0,10"></HyperlinkButton>
+                    <HyperlinkButton Content="View profile" Margin="10,5,0,10" IsEnabled="False"></HyperlinkButton>
                 </StackPanel>
             </Grid>
         </Flyout>
