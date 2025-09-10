@@ -110,7 +110,7 @@ public sealed partial class WebView
             await MainView.SettingsWindow.SettingsView.SetLoggedIn();
 
             MainView.SettingsWindow.SettingsView.ClearHistory();
-            MainView.SettingsWindow.SettingsView.NavigateTo(typeof(FeedView), "");
+            MainView.SettingsWindow.SettingsView.NavigateTo(typeof(ProwlerView), "");
         }
     }
 

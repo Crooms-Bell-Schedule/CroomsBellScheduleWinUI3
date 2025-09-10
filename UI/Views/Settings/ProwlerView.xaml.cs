@@ -18,7 +18,7 @@ using Windows.Graphics.Imaging;
 
 namespace CroomsBellScheduleCS.UI.Views.Settings;
 
-public sealed partial class FeedView
+public sealed partial class ProwlerView
 {
     private readonly IncrementalLoadingCollection<ProwlerSource, FeedUIEntry> Entries;
 
@@ -33,7 +33,7 @@ public sealed partial class FeedView
     private static bool ShownImageError = false;
     private static bool _loadProfilePictures = true;
     public Flyout UserFlyoutPub { get => (Flyout)Resources["UserFlyout"]; }
-    internal static FeedView? Instance { get; set; }
+    internal static ProwlerView? Instance { get; set; }
 
     private static string[] Tips =
     [
@@ -51,7 +51,7 @@ public sealed partial class FeedView
         "Tip: Don't play Genshin and Honkai Star Rail at the same time",
         "Tip: You can change your profile picture and banner in the account menu"
     ];
-    public FeedView()
+    public ProwlerView()
     {
         InitializeComponent();
 
@@ -573,7 +573,7 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
 
         foreach (var entry in feedResult.Value)
         {
-            Entries.Add(await FeedView.ProcessEntry(entry));
+            Entries.Add(await ProwlerView.ProcessEntry(entry));
         }
 
         return true;

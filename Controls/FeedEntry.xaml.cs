@@ -182,11 +182,11 @@ public sealed partial class FeedEntry
                 {
                     ((Hyperlink)rootElem).Click += async delegate (Hyperlink h, HyperlinkClickEventArgs e)
                     {
-                        if (FeedView.Instance != null)
+                        if (ProwlerView.Instance != null)
                         {
-                            FeedView.Instance.UserFlyoutPub.ShowAt(blk);
+                            ProwlerView.Instance.UserFlyoutPub.ShowAt(blk);
                             if (ch.Count > 0 && ch[0] is Run mentionContent)
-                                await FeedView.Instance.PrepareFlyout(mentionContent.Text);
+                                await ProwlerView.Instance.PrepareFlyout(mentionContent.Text);
                         }
                     };
                 }

@@ -145,7 +145,7 @@ public sealed partial class SettingsView
         else if (args.InvokedItemContainer == BellViewItem)
             NavigationFrame.NavigateToType(typeof(BellView), null, navOptions);
         else if (args.InvokedItemContainer == FeedItem)
-            NavigationFrame.NavigateToType(typeof(FeedView), null, navOptions);
+            NavigationFrame.NavigateToType(typeof(ProwlerView), null, navOptions);
         else if (args.InvokedItemContainer == LunchMenuItem)
             NavigationFrame.NavigateToType(typeof(LunchView), null, navOptions);
         else if (args.InvokedItemContainer == LiveStreamItem)
@@ -158,7 +158,7 @@ public sealed partial class SettingsView
             NavigationViewControl.SelectedItem = PersonalizationViewItem;
         else if (e.SourcePageType == typeof(BellView))
             NavigationViewControl.SelectedItem = BellViewItem;
-        else if (e.SourcePageType == typeof(FeedView))
+        else if (e.SourcePageType == typeof(ProwlerView))
             NavigationViewControl.SelectedItem = FeedItem;
         else if (e.SourcePageType == typeof(LunchView))
             NavigationViewControl.SelectedItem = LunchMenuItem;
