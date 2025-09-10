@@ -6,12 +6,14 @@ using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
 using System.Web;
+using Windows.ApplicationModel.DataTransfer;
 
 namespace CroomsBellScheduleCS.UI.Views.Settings;
 
 public sealed partial class WebView
 {
     private bool _sso = false;
+    private string _link = "";
     public WebView()
     {
         InitializeComponent();
@@ -36,9 +38,10 @@ public sealed partial class WebView
         if (e.Parameter is WebViewNavigationArgs p)
         {
             var uri = new Uri(p.Url);
-            OpenInBrowser.Visibility = p.AllowExitToBrowser ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
+            CopyLink.Visibility = OpenInBrowser.Visibility = p.AllowExitToBrowser ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
             ButtonReturn.Visibility = p.AllowBack ? Microsoft.UI.Xaml.Visibility.Visible : Microsoft.UI.Xaml.Visibility.Collapsed;
             TheWebView.Source = uri;
+            _link = uri.ToString();
 
             await ConfigureWebview(p);
             OpenInBrowser.NavigateUri = uri;
@@ -187,6 +190,16 @@ public sealed partial class WebView
             args.NewWindow = sender;
         else
             args.Handled = true;
+    }
+
+    private void CopyLink_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        DataPackage dataPackage = new();
+        dataPackage.RequestedOperation = DataPackageOperation.Copy;
+        dataPackage.SetText(_link);
+        Clipboard.SetContent(dataPackage);
+
+        MainView.Settings?.ShowInAppNotification("", "Copied to clipboard.", 5);
     }
 }
 

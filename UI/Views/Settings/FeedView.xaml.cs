@@ -34,6 +34,23 @@ public sealed partial class FeedView
     private static bool _loadProfilePictures = true;
     public Flyout UserFlyoutPub { get => (Flyout)Resources["UserFlyout"]; }
     internal static FeedView? Instance { get; set; }
+
+    private static string[] Tips =
+    [
+        "Tip: Light mode attracts bugs",
+        "Tip: Use taskbar mode to free up space on your screen",
+        "Tip: Use an adblocker such as ublock origin and use the youtube sponsorblock extension",
+        "Tip: Don't forget your pencil like Anish",
+        "Tip: Don't use the WinUI UI Framework made by Microsoft or you will have problems",
+        "Tip: Prowler supports HTML formatting",
+        "Tip: Use the account center to change your account's settings",
+        "Tip: View the Crooms Bell Schedule Live stream to view additional info",
+        "Tip: Contact Mikhail if you have some kind of issue with the app",
+        "36.4% of people prefer tea than coffee or air",
+        "27.3% of people prefer a Chipmunk for lunch",
+        "Tip: Don't play Genshin and Honkai Star Rail at the same time",
+        "Tip: You can change your profile picture and banner in the account menu"
+    ];
     public FeedView()
     {
         InitializeComponent();
@@ -59,6 +76,7 @@ public sealed partial class FeedView
             catch { }
         };
         refreshTimer.Interval = 1000 * 40; // 1 minute = 40 seconds
+        LoadingTip.Text = Tips[new Random().Next(0, Tips.Length)];
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -81,6 +99,9 @@ public sealed partial class FeedView
     private void EndLoading()
     {
         ProgressUI.Visibility = Visibility.Collapsed;
+
+        LoadingScreen.Visibility = Visibility.Collapsed;
+        FeedViewer.Visibility = Visibility.Visible;
     }
 
     private void StartLoading()
@@ -222,7 +243,6 @@ public sealed partial class FeedView
             }
 
             // load feed
-            FeedViewer.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
         }
         catch (Exception ex)
         {
@@ -250,9 +270,9 @@ public sealed partial class FeedView
         if (feedResult.IsRateLimitReached)
         {
             ProgressUI.Visibility = Visibility.Visible;
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 15; i++)
             {
-                await Task.Delay(2000);
+                await Task.Delay(1000);
                 feedResult = Entries.Count == 0 ? await Services.ApiClient.GetFeedFull() :
                      await Services.ApiClient.GetFeedAfter(Entries[0].Id);
 

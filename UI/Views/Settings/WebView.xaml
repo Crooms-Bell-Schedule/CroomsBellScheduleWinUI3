@@ -18,7 +18,10 @@
 
         <Grid Grid.Row="0">
             <Button Content="Return" Click="Return_Click" x:Name="ButtonReturn"></Button>
-            <HyperlinkButton x:Name="OpenInBrowser" Content="Open in browser" VerticalAlignment="Center" HorizontalAlignment="Right"></HyperlinkButton>
+            <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Horizontal">
+                <Button x:Name="CopyLink" Content="Copy Link" Click="CopyLink_Click"></Button>
+                <HyperlinkButton x:Name="OpenInBrowser" Content="Open in browser"></HyperlinkButton>
+            </StackPanel>
         </Grid>
         
          <controls:WebView2 x:Name="TheWebView"  Grid.Row="1" Grid.ColumnSpan="2"

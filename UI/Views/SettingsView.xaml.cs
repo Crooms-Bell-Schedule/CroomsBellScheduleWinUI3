@@ -240,7 +240,8 @@ public sealed partial class SettingsView
         FlyoutUserName2.Text = "User Account";
         FlyoutPFP.ProfilePicture = null;
         FlyoutPFP2.ProfilePicture = null;
-        FlyoutBanner.Source = null;
+        FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=default.png&default=profile_banner"));
+        FlyoutBannerButton.IsEnabled = false;
     }
     private void SetLoggedInMode()
     {
@@ -252,6 +253,7 @@ public sealed partial class SettingsView
         FlyoutSignIn.Click -= FlyoutLogout_Click;
         FlyoutSignIn.Click += FlyoutLogout_Click;
         FlyoutChangePassword.Visibility = Visibility.Visible;
+        FlyoutBannerButton.IsEnabled = true;
     }
 
     public async Task RefreshUserInfoAsync()
@@ -308,7 +310,7 @@ public sealed partial class SettingsView
                 return;
             }
 
-            LoadingText.Text = "Retrieving user info...";
+            LoadingText.Text = "RefreshUserInfoAsync";
             await RefreshUserInfoAsync();
             SetLoggedInMode();
         }
@@ -472,38 +474,6 @@ public sealed partial class SettingsView
 
 
         NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomssched.tech/account-center", false, true, false));
-    }
-    private async void ChangePWDlg_OKClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-    {
-        args.Cancel = true;
-
-        var content = sender.Content as PasswordChangeView;
-        if (content == null) return;
-
-        if (!content.ValidateFields()) return;
-
-        sender.IsPrimaryButtonEnabled = false;
-        sender.IsSecondaryButtonEnabled = false;
-        content.ShowingLoading = true;
-
-        content.IsEnabled = false;
-        await Task.Delay(5);
-
-        ShowInAppNotification("Not implemented", "", 3);
-
-        /*if (true)
-        {*/
-        sender.Hide();
-        ShowInAppNotification("Changed password successfully.", "", 3);
-        /*}
-        else
-        {
-            sender.IsPrimaryButtonEnabled = true;
-            sender.IsSecondaryButtonEnabled = true;
-            content.ShowingLoading = false;
-            sender.Title = "Change password";
-            //content.Error = ApiClient.FormatResult(result);
-        }*/
     }
 
     internal async Task SetLoggedIn()

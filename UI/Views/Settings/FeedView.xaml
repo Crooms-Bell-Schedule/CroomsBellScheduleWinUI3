@@ -81,7 +81,7 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
                   HorizontalAlignment="Stretch"
-                  SelectionMode="None" Visibility="Collapsed">
+                  SelectionMode="None" Visibility="Visible">
                
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="views:FeedUIEntry">
@@ -125,7 +125,13 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <Grid x:Name="LoadingScreen" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock FontSize="38" HorizontalAlignment="Center">Loading Prowler data...</TextBlock>
+                    <TextBlock x:Name="LoadingTip" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="28" FontWeight="Light"
+                               Margin="0,50,0,0" TextWrapping="WrapWholeWords">Tip: Light mode attracts bugs</TextBlock>
+                </StackPanel>
+            </Grid>
         </Grid>
-       
     </Grid>
 </Page>

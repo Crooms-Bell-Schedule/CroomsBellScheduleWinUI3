@@ -42,8 +42,8 @@
                                    VerticalAlignment="Top"
                                    MaxWidth="200" MaxHeight="150"/>
 
-                <TextBlock x:Name="quickBitsTitle" Grid.Row="6" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,15,0,0">Quick Bits</TextBlock>
-                <TextBlock x:Name="quickBits" Grid.Row="7" Grid.ColumnSpan="15">Loading</TextBlock>
+                <TextBlock x:Name="quickBitsTitle" Grid.Row="6" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,15,0,0">Anime Watch List (previously Quick Bits)</TextBlock>
+                <TextBlock x:Name="quickBits" Grid.Row="7" Grid.ColumnSpan="15">Re:Zero</TextBlock>
 
                 <TextBlock x:Name="surveyTitle" Grid.Row="8" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,15,0,0">Surveys</TextBlock>
                 <Button x:Name="surveyAdd" Grid.Row="8" Grid.Column="3" HorizontalAlignment="Right" Click="Button_Click_1">Add</Button>
