@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -54,7 +55,7 @@ public sealed partial class FeedEntry
             try
             {
                 blk.Inlines.Clear(); // destroy previous data
-
+                blkMedia.Children.Clear();
 
                 string original = n;
                 bool showExpander = false;
@@ -206,6 +207,23 @@ public sealed partial class FeedEntry
         {
             rootElem = null;
             return ch;
+        }
+        else if (node.Name == "img")
+        {
+            rootElem = new Span();
+
+            foreach (var item in node.Attributes)
+            {
+                if (item.Name == "src")
+                {
+                    blkMedia.Children.Add(new Microsoft.UI.Xaml.Controls.Image()
+                    {
+                        Source = new BitmapImage(new(FixLink(item.DeEntitizeValue).ToString()))
+                    });
+
+                    return [];
+                }
+            }
         }
         else
         {

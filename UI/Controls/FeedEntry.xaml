@@ -8,5 +8,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <TextBlock x:Name="blk" TextWrapping="Wrap" IsTextSelectionEnabled="True"></TextBlock>
+    <Grid>
+
+        <TextBlock x:Name="blk" TextWrapping="Wrap" IsTextSelectionEnabled="True"/>
+        <StackPanel x:Name="blkMedia"/>
+    </Grid>
 </UserControl>

@@ -112,7 +112,7 @@ public sealed partial class LunchView
         lunchGrid.Children.Add(surveyTitle);
         lunchGrid.Children.Add(surveyAdd);
         lunchGrid.Children.Add(surveys);
-        quickBits.Text = "Coming soon";
+        //quickBits.Text = "Coming soon";
 
         //int i = 1;
         //foreach (var item in data.quickBits)

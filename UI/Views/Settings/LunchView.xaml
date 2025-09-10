@@ -32,7 +32,7 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock x:Name="lunchTitle" Grid.Row="0" Style="{ThemeResource SubtitleTextBlockStyle}">Lunch</TextBlock>
+                <TextBlock x:Name="lunchTitle" Grid.Row="0" Style="{ThemeResource SubtitleTextBlockStyle}">Lunch for this week</TextBlock>
 
 
                 <Image x:Name="lunchImageToday"

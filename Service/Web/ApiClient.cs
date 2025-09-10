@@ -338,6 +338,11 @@ namespace CroomsBellScheduleCS.Service.Web
                     return new() { OK = false, Exception = new Exception($"Server error: {response.StatusCode}") };
                 }
 
+                if (responseText.StartsWith("<"))
+                {
+                    return new() { OK = false, Exception = new Exception($"You don't have access to this feature") };
+                }
+
                 ApiSimpleResponse? simple = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.ApiSimpleResponse) ?? throw new Exception("failed to decode json");
 
                 if (simple.status == "OK")
@@ -362,7 +367,7 @@ namespace CroomsBellScheduleCS.Service.Web
         {
             try
             {
-                var response = await _client.GetAsync($"{MikhailHostingBase}/crfsapi/AppController/Announcements\r\n");
+                var response = await _client.GetAsync($"{MikhailHostingBase}/crfsapi/AppController/Announcements");
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
