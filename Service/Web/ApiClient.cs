@@ -352,7 +352,7 @@ namespace CroomsBellScheduleCS.Service.Web
 
                 if (responseText.StartsWith("<"))
                 {
-                    return new() { OK = false, Exception = new Exception($"You don't have access to this feature") };
+                    return new() { OK = false, Exception = new Exception($"Coming soon") };
                 }
 
                 ApiSimpleResponse? simple = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.ApiSimpleResponse) ?? throw new Exception("failed to decode json");

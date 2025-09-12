@@ -91,7 +91,7 @@
                                 </Style>
                             </Flyout.FlyoutPresenterStyle>
                             
-                            <Grid MinWidth="250">
+                            <Grid MinWidth="315">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
@@ -99,13 +99,13 @@
                                 </Grid.RowDefinitions>
 <!--250x128-->
                                 <Button x:Name="FlyoutBannerButton" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Padding="0" Click="FlyoutBannerButton_Click">
-                                    <Image x:Name="FlyoutBanner" Height="128" Width="250" Stretch="UniformToFill"/>
+                                    <Image x:Name="FlyoutBanner" Height="175" Stretch="UniformToFill"/>
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Grid>
                                                 <ContentPresenter/>
 
-                                                <Rectangle x:Name="HoverBG2" Height="128" VerticalAlignment="Top" Opacity="0">
+                                                <Rectangle x:Name="HoverBG2" Height="175" VerticalAlignment="Top" Opacity="0">
                                                     <Rectangle.Fill>
                                                         <SolidColorBrush Color="#000000"></SolidColorBrush>
                                                     </Rectangle.Fill>

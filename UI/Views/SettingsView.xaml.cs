@@ -239,7 +239,7 @@ public sealed partial class SettingsView
         FlyoutUserName.Text = "User Account";
         FlyoutUserName2.Text = "User Account";
         FlyoutPFP.ProfilePicture = null;
-        FlyoutPFP2.ProfilePicture = null;
+        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=default.png&default=pfp")); ;
         FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=default.png&default=profile_banner"));
         FlyoutBannerButton.IsEnabled = false;
     }

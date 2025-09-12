@@ -46,7 +46,7 @@ public sealed partial class PfpUploadView
                 cropper.CropShape = CropShape.Circular;
                 break;
             case UploadViewMode.ProfileBanner:
-                cropper.AspectRatio = 4d / 1d;
+                cropper.AspectRatio = 9d / 5d;
                 cropper.CropShape = CropShape.Rectangular;
                 break;
             default:

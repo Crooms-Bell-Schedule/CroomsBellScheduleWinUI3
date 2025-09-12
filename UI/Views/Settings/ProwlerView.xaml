@@ -26,15 +26,14 @@
             
             <!-- The flyout's DataContext must be the Image Source
              of the image the flyout is attached to. -->
-            <Grid MinWidth="250">
+            <Grid MinWidth="315">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-
                 </Grid.RowDefinitions>
 
-                <Image x:Name="FlyoutBanner" Grid.Row="0" Height="128" Stretch="UniformToFill" Margin="0"/>
+                <Image x:Name="FlyoutBanner" Grid.Row="0" Height="175" Stretch="UniformToFill" Margin="0"/>
 
                 <PersonPicture x:Name="FlyoutPicture" Width="64" Height="64" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="1" Padding="0" Margin="0, -50, 10, 0" />
 
