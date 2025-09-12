@@ -222,6 +222,18 @@ namespace CroomsBellScheduleCS.Service.Web
             return await DoGetRequestAsync<LunchEntry[]>(ApiBase + "/infofetch/lunch");
         }
 
+        public async Task AppStartup()
+        {
+            try
+            {
+                await _client.GetAsync(MikhailHostingBase + "/crfsapi/TelemetryController/Startup");
+            }
+            catch
+            {
+
+            }
+        }
+
         public async Task<Result<CommandResponse?>> ValidateSessionAsync()
         {
             StringContent content = new("");

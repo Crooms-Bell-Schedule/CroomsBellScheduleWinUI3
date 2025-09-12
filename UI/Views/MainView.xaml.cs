@@ -96,6 +96,7 @@ public sealed partial class MainView
             MainWindow.Instance.ExtendsContentIntoTitleBar = !SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.AppWindow.IsShownInSwitchers = SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.SetTitleBar(Content);
+
             Debug.WriteLine("mainwindow init end");
 
             Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
@@ -231,6 +232,8 @@ public sealed partial class MainView
             }
 
             SetLoadingText("Checking for updates");
+            await Services.ApiClient.AppStartup();
+
 
             string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]) ?? AppDomain.CurrentDomain.BaseDirectory;
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
