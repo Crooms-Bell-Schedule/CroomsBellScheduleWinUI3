@@ -179,7 +179,7 @@ public sealed partial class FeedEntry
                 {
                     ((Hyperlink)rootElem).NavigateUri = FixLink(item.DeEntitizeValue);
                 }
-                else if (item.Name == "username")
+                else if (item.Name == "username" || item.Name == "mention")
                 {
                     ((Hyperlink)rootElem).Click += async delegate (Hyperlink h, HyperlinkClickEventArgs e)
                     {
