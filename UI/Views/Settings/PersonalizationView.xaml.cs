@@ -27,8 +27,8 @@ public sealed partial class PersonalizationView
 
         chkTaskbar.IsOn = SettingsManager.Settings.ShowInTaskbar;
         ComboPercentage.SelectedIndex = (int)SettingsManager.Settings.PercentageSetting;
-        chk1MinNotif.IsOn = SettingsManager.Settings.Show1MinNotification;
-        chk5MinNotif.IsOn = SettingsManager.Settings.Show5MinNotification;
+        chk1MinNotif.IsOn = !SettingsManager.Settings.Show1MinNotification;
+        chk5MinNotif.IsOn = !SettingsManager.Settings.Show5MinNotification;
         chkDvd.IsOn = SettingsManager.Settings.EnableDvdScreensaver;
         chkStartup.IsOn = GetStartup();
         UpdateCheckState();
@@ -201,8 +201,8 @@ public sealed partial class PersonalizationView
     {
         if (!_initialized) return;
 
-        SettingsManager.Settings.Show5MinNotification = chk5MinNotif.IsOn;
-        SettingsManager.Settings.Show1MinNotification = chk1MinNotif.IsOn;
+        SettingsManager.Settings.Show5MinNotification = !chk5MinNotif.IsOn;
+        SettingsManager.Settings.Show1MinNotification = !chk1MinNotif.IsOn;
         await SaveSettings();
     }
 

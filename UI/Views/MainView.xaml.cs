@@ -349,7 +349,7 @@ public sealed partial class MainView
         if (duration.Hours == 0)
         {
             if (duration.Minutes == 4 && !_isTransition)
-                if (!_shown5MinNotif && SettingsManager.Settings.Show5MinNotification)
+                if (!_shown5MinNotif && !SettingsManager.Settings.Show5MinNotification)
                 {
                     AppNotification toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")
@@ -368,7 +368,7 @@ public sealed partial class MainView
                 }
 
             if (duration.Minutes == 0 && !_isTransition)
-                if (!_shown1MinNotif && SettingsManager.Settings.Show1MinNotification)
+                if (!_shown1MinNotif && !SettingsManager.Settings.Show1MinNotification)
                 {
                     AppNotification toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")

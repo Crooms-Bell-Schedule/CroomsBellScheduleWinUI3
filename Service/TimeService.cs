@@ -17,7 +17,7 @@ namespace CroomsBellScheduleCS.Service
         {
             get
             {
-                if (!SettingsManager.Settings.EnableNTPTimeSync) return DateTime.Now;
+                if (SettingsManager.Settings.DisableNTPTimeSync) return DateTime.Now;
 
                 return DateTime.Now.Subtract(ClientDelay);
             }
@@ -26,7 +26,7 @@ namespace CroomsBellScheduleCS.Service
 
         public static void Sync()
         {
-            if (!SettingsManager.Settings.EnableNTPTimeSync) return;
+            if (SettingsManager.Settings.DisableNTPTimeSync) return;
 
             if (!Win32.HasNetworkAccessAndIsUnrestricted()) return;
 

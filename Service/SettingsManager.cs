@@ -1,8 +1,10 @@
 ﻿using CroomsBellScheduleCS.Utils;
 using Microsoft.UI.Xaml;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -66,6 +68,12 @@ public static class SettingsManager
             _settings = new();
             for (int i = 1; i < 8; i++) _settings.PeriodNames.Add(i, "Period " + i);
         }
+
+        if (string.IsNullOrEmpty(_settings.PreviousVersion))
+        {
+            var ver = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0, 0);
+            _settings.PreviousVersion = $"{ver.Major}.{ver.Minor}.{ver.Build}";
+        }
     }
 
     public static async Task SaveSettings()
@@ -81,9 +89,7 @@ public static class SettingsManager
         public bool EnableDvdScreensaver { get; set; }
         public bool IsLivestreamMode { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        [DefaultValue(true)]
-        public bool EnableNTPTimeSync { get; set; } = true;
+        public bool DisableNTPTimeSync { get; set; }
 
         public ElementTheme Theme { get; set; }
         /// <summary>
@@ -106,12 +112,9 @@ public static class SettingsManager
         public string? SessionID { get; set; }
         public string? UserID { get; set; }
 
-        [DefaultValue(true)]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public bool Show5MinNotification { get; set; } = true;
-        [DefaultValue(true)]
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public bool Show1MinNotification { get; set; } = true;
+        public bool Show5MinNotification { get; set; }
+
+        public bool Show1MinNotification { get; set; }
 
         public Dictionary<int, string> PeriodNames { get; set; } = [];
         [DefaultValue((int)PercentageSetting.SigFig4)]
@@ -121,6 +124,7 @@ public static class SettingsManager
         [DefaultValue(16)]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public double FontSize { get; set; } = 16;
+        public string PreviousVersion { get; set; } = "";
     }
     public enum PercentageSetting
     {
