@@ -262,6 +262,10 @@
     {
       "date": "5-5-2025",
       "scheduleName": "modMon55"
+    },
+    {
+      "date": "8-12-2025",
+      "scheduleName": "activity"
     }
   ]
 }

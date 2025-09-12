@@ -2,25 +2,26 @@
 using CroomsBellScheduleCS.Provider;
 using CroomsBellScheduleCS.Service;
 using CroomsBellScheduleCS.UI.Windows;
-using CroomsBellScheduleCS.Utils;
 using H.NotifyIcon;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI;
-using Windows.UI.Popups;
 using WinRT.Interop;
 using static CroomsBellScheduleCS.Utils.Win32;
 
@@ -46,14 +47,27 @@ public sealed partial class MainView
     private AppWindow? _windowApp;
     private bool _checkDPIUpdates = false;
     private double _prevDPI = 0;
-
     public BellScheduleReader? Reader { get => _reader; }
     public int LunchOffset { get => _lunchOffset; }
+    public XamlUICommand SettingsCommand { get; set; } = new XamlUICommand();
+    public XamlUICommand QuitCommand { get; set; } = new XamlUICommand();
     public MainView()
     {
         InitializeComponent();
+
+        SettingsCommand.ExecuteRequested += SettingsCommand_ExecuteRequested;
+        QuitCommand.ExecuteRequested += QuitCommand_ExecuteRequested;
     }
 
+    private void QuitCommand_ExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args)
+    {
+        Quit_Click(new(), new());
+    }
+
+    private void SettingsCommand_ExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args)
+    {
+        Settings_Click(new(), new());
+    }
 
     private async Task Init()
     {
@@ -73,7 +87,7 @@ public sealed partial class MainView
             }
 
             SetLoadingText("Initialize MainWindow");
-
+            Debug.WriteLine("init mainwindow");
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsResizable = true;
@@ -82,6 +96,7 @@ public sealed partial class MainView
             MainWindow.Instance.ExtendsContentIntoTitleBar = !SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.AppWindow.IsShownInSwitchers = SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.SetTitleBar(Content);
+            Debug.WriteLine("mainwindow init end");
 
             Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
 
@@ -92,6 +107,8 @@ public sealed partial class MainView
             SetTheme(SettingsManager.Settings.Theme);
             await SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
             if (_windowApp == null) throw new Exception("WinUI init failed");
+
+            _windowApp.SetIcon(@"Assets\croomsBellSchedule.ico");
 
             // TODO: event gets fired when SetTaskbarMode() is called?
             XamlRoot.Changed += async (a, b) =>
@@ -570,6 +587,7 @@ public sealed partial class MainView
     public async Task SetTaskbarMode(bool showInTaskbar)
     {
         _checkDPIUpdates = false; // TODO HACK
+
         AppWindow appWindow = MainWindow.Instance.AppWindow;
         var handle = WindowNative.GetWindowHandle(MainWindow.Instance);
 
@@ -577,13 +595,9 @@ public sealed partial class MainView
             _windowApp = appWindow;
         if (_windowApp == null) return; // What?
 
-        _windowApp.SetIcon(@"Assets\croomsBellSchedule.ico");
-
-        MainWindow.Instance.TrySetSystemBackdrop(true);
         if (showInTaskbar)
         {
-            MainWindow.Instance.RemoveMica();
-
+            //MainWindow.Instance.RemoveMica();
             IntPtr trayHWnd;
             IntPtr taskbarUIHWnd;
 
@@ -643,8 +657,8 @@ public sealed partial class MainView
         }
         else
         {
+            IntPtr old = SetParent(handle, 0);
             Background = new SolidColorBrush(new Color() { A = 255 });
-            SetParent(handle, 0);
             MainButton.Visibility = Visibility.Visible;
             UpdateFontSize();
             MainGrid.Margin = new Thickness(5, 5, 5, 2.5);
@@ -686,6 +700,13 @@ public sealed partial class MainView
             // Ignore WM_SYSCOMMAND SC_MAXIMIZE message
             // Thank you Microsoft :)
             return 1;
+
+        if (msg == 130)
+        {
+            // todo fix this
+            SetTaskbarMode(false).Wait();
+            return 0;
+        }    
 
         return CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
     }

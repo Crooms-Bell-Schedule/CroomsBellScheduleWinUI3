@@ -14,21 +14,13 @@ public class CacheProvider(IBellScheduleProvider actualProvider) : IBellSchedule
 
     public async Task<BellScheduleReader> GetTodayActivity()
     {
-        if (_cache == null)
+        if (_cache == null || RequiresUpdate)
         {
             _cache = await _bellScheduleProvider.GetTodayActivity();
             CacheDay = DateTime.Now.DayOfYear;
             return _cache;
         }
-
-        if (RequiresUpdate)
-        {
-            _cache = await _bellScheduleProvider.GetTodayActivity();
-            CacheDay = DateTime.Now.DayOfYear;
-            return _cache;
-        }
-
-        return _cache;
+        else return _cache;
     }
 
     public void SetProvider(IBellScheduleProvider provider)

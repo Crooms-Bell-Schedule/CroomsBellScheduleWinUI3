@@ -94,16 +94,7 @@ public sealed partial class UIMessage
         // Get the HWND of the AppWindow (modal window).
         IntPtr ownedHwnd = Win32Interop.GetWindowFromWindowId(ownedAppWindow.Id);
 
-        // Set the owner window using SetWindowLongPtr for 64-bit systems
-        // or SetWindowLong for 32-bit systems.
-        if (IntPtr.Size == 8) // Check if the system is 64-bit
-        {
-            SetWindowLongPtr(ownedHwnd, -8, parentHwnd); // -8 = GWLP_HWNDPARENT
-        }
-        else // 32-bit system
-        {
-            SetWindowLong(ownedHwnd, -8, parentHwnd);
-        }
+        SetWindowLongPtrW(ownedHwnd, -8, parentHwnd); // -8 = GWLP_HWNDPARENT
     }
 
     public static async Task ShowMsgAsync(string message, string title)

@@ -73,12 +73,12 @@
         IconSource="/Assets/croomsBellSchedule.ico"
         MenuActivation="LeftOrRightClick"
         PopupActivation="DoubleClick"
-        NoLeftClickDelay="True" ContextMenuMode="SecondWindow"
+        NoLeftClickDelay="True"
         >
             <tb:TaskbarIcon.ContextFlyout>
                 <MenuFlyout>
-                    <MenuFlyoutItem Text="Options" Click="Settings_Click"></MenuFlyoutItem>
-                    <MenuFlyoutItem Text="Quit" Click="Quit_Click"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Options" Command="{x:Bind SettingsCommand}" Foreground="Black"></MenuFlyoutItem>
+                    <MenuFlyoutItem Text="Quit" Command="{x:Bind QuitCommand}"></MenuFlyoutItem>
                 </MenuFlyout>
             </tb:TaskbarIcon.ContextFlyout>
         </tb:TaskbarIcon>
