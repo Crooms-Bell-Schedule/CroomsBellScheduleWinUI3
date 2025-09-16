@@ -13,8 +13,16 @@
     <ScrollViewer>
         <StackPanel
             x:Name="ContentArea">
-            <TextBlock x:Uid="Settings_Personalization" Margin="0, 20, 0, 26" Style="{ThemeResource TitleTextBlockStyle}"
-                       Text="Personalization" />
+            <Grid Margin="0,0,10,0">
+                <TextBlock Margin="0, 20, 0, 26" Style="{ThemeResource TitleTextBlockStyle}"
+            Text="Personalization" />
+                <HyperlinkButton Margin="0,4,0,0" Content="Report a bug" 
+                                 HorizontalAlignment="Right"
+                                 VerticalAlignment="Center"
+                                 NavigateUri="https://docs.google.com/forms/d/e/1FAIpQLSfGggFDrvK-qi6ABCiBDFG6ZVaTc6AvLMNHAvQeWFPAd1YOdw/viewform?usp=header" />
+
+            </Grid>
+           
             <TextBlock Margin="0,2,0,0" Style="{ThemeResource SubtitleTextBlockStyle}" Text="Appearance" />
             <controls:SettingsCard Description="Change the base color scheme of the Crooms Bell Schedule App"
                    Header="Choose your mode" Margin="0,7,0,0">
@@ -115,7 +123,6 @@
                 <controls:WrapPanel Orientation="Horizontal" HorizontalSpacing="5">
                     <HyperlinkButton Margin="0,4,0,0" Content="Changelog" Click="Changelog_Click" />
                     <HyperlinkButton Margin="0,4,0,0" Content="Source code" NavigateUri="https://github.com/thealmighyderpybird/CroomsBellScheduleWinUI3" />
-                    <HyperlinkButton Margin="0,4,0,0" Content="Report a bug" NavigateUri="https://docs.google.com/forms/d/e/1FAIpQLSfGggFDrvK-qi6ABCiBDFG6ZVaTc6AvLMNHAvQeWFPAd1YOdw/viewform?usp=header" />
                 </controls:WrapPanel>
             </StackPanel>
         </StackPanel>

@@ -325,6 +325,30 @@ namespace CroomsBellScheduleCS.Service.Web
             return await DoGetRequestAsync<GetUserResult>($"{ApiBase}/users/{username}");
         }
 
+
+        public async Task<Result> DeletePost(string id)
+        {
+            AddAuthorization();
+            var response = await _client.DeleteAsync("https://api.croomssched.tech/admin/prowler/" + id);
+
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return Result.Ok;
+            }
+            return new Result() { OK = false };
+        }
+        public async Task<Result> BanUser(string id)
+        {
+            AddAuthorization();
+            var response = await _client.PostAsync("https://api.croomssched.tech/admin/ban/" + id, new StringContent(""));
+
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return Result.Ok;
+            }
+            return new Result() { OK = false };
+        }
+
         public async Task<Result<SetProfilePictureResult?>> SetProfileImage(byte[] c, PfpUploadView.UploadViewMode mode)
         {
             try

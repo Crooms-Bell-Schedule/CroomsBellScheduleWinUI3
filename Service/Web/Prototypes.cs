@@ -85,6 +85,12 @@ namespace CroomsBellScheduleCS.Service.Web
         public string Id { get; set; } = "";
         [JsonPropertyName("username")]
         public string Username { get; set; } = "";
+        [JsonPropertyName("displayname")]
+        public string DisplayName { get; set; } = "";
+        [JsonPropertyName("role")]
+        public string Role { get; set; } = "";
+        [JsonPropertyName("verified")]
+        public bool Verified { get; set; } 
     }
 
     public class SetProfilePictureResultError

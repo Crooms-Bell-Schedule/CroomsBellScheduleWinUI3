@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.WinUI.Helpers;
-using CroomsBellScheduleCS.Service;
+﻿using CroomsBellScheduleCS.Service;
 using CroomsBellScheduleCS.UI.Views.Settings;
 using CroomsBellScheduleCS.Utils;
 using HtmlAgilityPack;
@@ -11,11 +10,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace CroomsBellScheduleCS.Controls;
 

@@ -46,6 +46,7 @@ public sealed partial class SettingsView
         }
     }
     public bool IsAuthenticated { get; set; }
+    public string UserRole { get; set; } = "";
     public SettingsView()
     {
         InitializeComponent();
@@ -239,8 +240,8 @@ public sealed partial class SettingsView
         FlyoutUserName.Text = "User Account";
         FlyoutUserName2.Text = "User Account";
         FlyoutPFP.ProfilePicture = null;
-        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=default.png&default=pfp")); ;
-        FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name=default.png&default=profile_banner"));
+        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/pfp/default.png")); ;
+        FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/profile_banner/default.png"));
         FlyoutBannerButton.IsEnabled = false;
     }
     private void SetLoggedInMode()
@@ -261,13 +262,17 @@ public sealed partial class SettingsView
         var details = await Services.ApiClient.GetUserDetails();
 
         if (details != null && details.Value != null)
+        {
             FlyoutUserName.Text = string.IsNullOrEmpty(details.Value.Username) ? "User Account" : details.Value.Username;
+            UserRole = details.Value.Role;
+        }
         else
             FlyoutUserName.Text = $"Unknown";
 
-        FlyoutPFP.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=pfp"));
-        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=pfp"));
-        FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomssched.tech/crfsapi/FileController/ReadFile?name={SettingsManager.Settings.UserID}.png&default=profile_banner"));
+
+        FlyoutPFP.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/pfp/{SettingsManager.Settings.UserID}.png"));
+        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/pfp/{SettingsManager.Settings.UserID}.png"));
+        FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/profile_banner/{SettingsManager.Settings.UserID}.png"));
         FlyoutUserName2.Text = FlyoutUserName.Text;
     }
 
