@@ -9,30 +9,6 @@
     xmlns:tb="using:H.NotifyIcon"
     mc:Ignorable="d" Loaded="UserControl_Loaded" Background="Blue">
 
-    <UserControl.Resources>
-        <!--TODO: There is no better way to do this in WinUI-->
-        <!--This is required to allow colors to update properly when switching themes-->
-        <Style x:Key="CriticalTime" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCriticalBrush}" />
-        </Style>
-        <Style x:Key="CautionTime" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCautionBrush}" />
-        </Style>
-        <Style x:Key="NormalTime" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
-        </Style>
-        
-        <Style x:Key="CriticalProgress" TargetType="ProgressBar">
-            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCriticalBrush}" />
-        </Style>
-        <Style x:Key="CautionProgress" TargetType="ProgressBar">
-            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorCautionBrush}" />
-        </Style>
-        <Style x:Key="NormalProgress" TargetType="ProgressBar">
-            <Setter Property="Foreground" Value="{ThemeResource SystemFillColorAttentionBrush}" />
-        </Style>
-    </UserControl.Resources>
-
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -60,13 +36,90 @@
         </Button>
         
         <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" Text="Loading settings" FontSize="8"/>
-        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" Text="" FontSize="8"/>
+        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" Text="" FontSize="8">
+            <TextBlock.Foreground>
+                <SolidColorBrush x:Name="CurrentClassForegroundBrush" Color="{ThemeResource TextFillColorPrimary}"/>
+            </TextBlock.Foreground>
+
+            <TextBlock.Resources>
+                <Storyboard x:Name="CurrentClassRedFlash" >
+                    <!-- Class text -->
+                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="CurrentClassForegroundBrush"
+                                                  Storyboard.TargetProperty="Color"  RepeatBehavior="Forever">
+                        <LinearColorKeyFrame KeyTime="0:0:0" Value="{ThemeResource TextFillColorPrimary}" />
+                        <LinearColorKeyFrame KeyTime="0:0:0.5" Value="{ThemeResource SystemFillColorCritical}" />
+                        <LinearColorKeyFrame KeyTime="0:0:2.2" Value="{ThemeResource TextFillColorPrimary}" />
+                    </ColorAnimationUsingKeyFrames>
+
+                    <!-- Progress bar
+                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarForegroundBrush"
+                               Storyboard.TargetProperty="Color"  RepeatBehavior="Forever">
+                        <LinearColorKeyFrame KeyTime="0:0:0" Value="{ThemeResource AccentTextFillColorPrimary}" />
+                        <LinearColorKeyFrame KeyTime="0:0:0.5" Value="{ThemeResource SystemFillColorCritical}" />
+                        <LinearColorKeyFrame KeyTime="0:0:2.2" Value="{ThemeResource AccentTextFillColorPrimary}" />
+                    </ColorAnimationUsingKeyFrames> -->
+                </Storyboard>
+
+                <Storyboard x:Name="ToYellowUI">
+                    <!-- Class text -->
+                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="CurrentClassForegroundBrush"
+                               Storyboard.TargetProperty="Color">
+                        <LinearColorKeyFrame KeyTime="0:0:0" Value="{ThemeResource TextFillColorPrimary}" />
+                        <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource SystemFillColorCaution}" />
+                    </ColorAnimationUsingKeyFrames>
+
+                    <!-- Progress bar
+                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarForegroundBrush"
+Storyboard.TargetProperty="Color">
+                        <LinearColorKeyFrame  KeyTime="0:0:0" Value="{ThemeResource AccentTextFillColorPrimary}" />
+                        <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource SystemFillColorCaution}" />
+                    </ColorAnimationUsingKeyFrames> -->
+                </Storyboard>
+
+
+                <Storyboard x:Name="ToRedUI">
+                    <!-- Class text
+                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="CurrentClassForegroundBrush"
+                               Storyboard.TargetProperty="Color">
+                        <LinearColorKeyFrame KeyTime="0:0:0" Value="{ThemeResource SystemFillColorCaution}" />
+                        <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource SystemFillColorCritical}" />
+                    </ColorAnimationUsingKeyFrames> -->
+
+                    <!-- Progress bar 
+                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarForegroundBrush"
+Storyboard.TargetProperty="Color">
+                        <LinearColorKeyFrame  KeyTime="0:0:0" Value="{ThemeResource SystemFillColorCaution}" />
+                        <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource SystemFillColorCritical}" />
+                    </ColorAnimationUsingKeyFrames>-->
+                </Storyboard>
+
+                <Storyboard x:Name="ToNormalUI">
+                    <!-- Class text -->
+                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="CurrentClassForegroundBrush"
+               Storyboard.TargetProperty="Color">
+                        <LinearColorKeyFrame  KeyTime="0:0:0" Value="{ThemeResource SystemFillColorCritical}" />
+                        <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource TextFillColorPrimary}" />
+                    </ColorAnimationUsingKeyFrames>
+                    
+                    <!-- Progress bar 
+                    <ColorAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarForegroundBrush"
+Storyboard.TargetProperty="Color">
+                        <LinearColorKeyFrame  KeyTime="0:0:0" Value="{ThemeResource SystemFillColorCritical}" />
+                        <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource AccentTextFillColorPrimary}" />
+                    </ColorAnimationUsingKeyFrames>-->
+                </Storyboard>
+            </TextBlock.Resources>
+        </TextBlock>
 
 
         <TextBlock x:Name="TxtClassPercent" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
                HorizontalAlignment="Right" Text="" FontSize="8"/>
 
-        <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" IsIndeterminate="True" />
+        <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" IsIndeterminate="True">
+            <!--<ProgressBar.Foreground>
+                <SolidColorBrush x:Name="ProgressBarForegroundBrush" Color="{ThemeResource AccentTextFillColorPrimary}"/>
+            </ProgressBar.Foreground>-->
+        </ProgressBar>
 
         <tb:TaskbarIcon
         ToolTipText="Crooms Bell Schedule"

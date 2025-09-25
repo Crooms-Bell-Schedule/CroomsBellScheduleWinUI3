@@ -337,7 +337,7 @@ public sealed partial class SettingsView
 
         if (TimeService.IsTimeWrong)
         {
-            ShowInAppNotification("The system clock is " + TimeService.GetOffsetString() + ". The app has automatically compensated for this difference with Crooms Pro.", "System clock", 20);
+            ShowInAppNotification("The system clock is " + TimeService.GetOffsetString() + ". The app has automatically compensated for this difference.", "System clock", 20);
         }
     }
 

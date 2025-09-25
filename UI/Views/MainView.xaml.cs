@@ -87,7 +87,7 @@ public sealed partial class MainView
             }
 
             SetLoadingText("Initialize MainWindow");
-            Debug.WriteLine("init mainwindow");
+            Debug.WriteLine("Initialize MainWindow...");
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsResizable = true;
@@ -97,7 +97,7 @@ public sealed partial class MainView
             MainWindow.Instance.AppWindow.IsShownInSwitchers = SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.SetTitleBar(Content);
 
-            Debug.WriteLine("mainwindow init end");
+            Debug.WriteLine("End MainWindow init");
 
             Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
 
@@ -389,19 +389,24 @@ public sealed partial class MainView
                     _shown1MinNotif = true;
                 }
 
-            if (duration.Minutes == 0)
-            {
-                TxtCurrentClass.Style = (duration.Seconds & 1) != 0
-                    ? TxtCurrentClass.Style = (Style)Resources["CriticalTime"]
-                    : TxtCurrentClass.Style = (Style)Resources["NormalTime"];
-                return $"00:{duration.Seconds:D2}";
-            }
-
-            return $"{duration.Minutes:D2}:{duration.Seconds:D2}";
+            if (duration.Minutes == 0) return $"00:{duration.Seconds:D2}";
+            else return $"{duration.Minutes:D2}:{duration.Seconds:D2}";
         }
 
         return $"{duration.Hours:D2}:{duration.Minutes:D2}:{duration.Seconds:D2}";
     }
+
+
+    private enum ClassTextState
+    {
+        Undefined,
+        Normal,
+        Yellow,
+        Red,
+        RedFlash
+    }
+
+    private ClassTextState progressBarState = ClassTextState.Normal;
 
     /// <summary>
     /// </summary>
@@ -448,25 +453,60 @@ public sealed partial class MainView
         // update progress bar color. TODO change only if necessesary
         if (transitionDuration.TotalMinutes <= 1)
         {
-            if (transitionDuration.Seconds % 2 == 0)
-                TxtCurrentClass.Style = (Style)Resources["CriticalTime"];
-            else
-                TxtCurrentClass.Style = (Style)Resources["NormalTime"];
+            if (progressBarState != ClassTextState.RedFlash)
+            {
+                progressBarState = ClassTextState.RedFlash;
+                CurrentClassRedFlash.Begin();
+            }
+            return;
         }
-        else if (transitionDuration.TotalMinutes <= 5)
+        else if (transitionDuration.TotalMinutes <= 2 && _isTransition)
         {
-            ProgressBar.Style = (Style)Resources["CriticalProgress"];
-            TxtCurrentClass.Style = (Style)Resources["CriticalTime"];
-        }
-        else if (transitionDuration.TotalMinutes <= 10)
-        {
-            ProgressBar.Style = (Style)Resources["CautionProgress"];
-            TxtCurrentClass.Style = (Style)Resources["CautionTime"];
+            if (progressBarState != ClassTextState.RedFlash)
+            {
+                progressBarState = ClassTextState.RedFlash;
+                CurrentClassRedFlash.Begin();
+            }
+            return;
         }
         else
         {
-            ProgressBar.Style = (Style)Resources["NormalProgress"];
-            TxtCurrentClass.Style = (Style)Resources["NormalTime"];
+            if (progressBarState == ClassTextState.RedFlash)
+            {
+                CurrentClassRedFlash.Stop();
+                progressBarState = ClassTextState.Undefined;
+            }
+        }
+
+        if (transitionDuration.TotalMinutes <= 5)
+        {
+
+
+            if (progressBarState != ClassTextState.Red)
+            {
+                progressBarState = ClassTextState.Red;
+
+                ToRedUI.Begin();
+            }
+        }
+        else if (transitionDuration.TotalMinutes <= 10)
+        {
+
+            if (progressBarState != ClassTextState.Yellow)
+            {
+                progressBarState = ClassTextState.Yellow;
+
+                ToYellowUI.Begin();
+            }
+        }
+        else
+        {
+            if (progressBarState != ClassTextState.Normal)
+            {
+                progressBarState = ClassTextState.Normal;
+
+                ToNormalUI.Begin();
+            }
         }
     }
 
@@ -548,8 +588,6 @@ public sealed partial class MainView
         {
             TxtCurrentClass.Text = "Unknown class";
             TxtDuration.Text = "cannot find current class in data";
-            TxtDuration.Foreground = new SolidColorBrush(Colors.Red);
-            ProgressBar.Foreground = Application.Current.Resources["SystemFillColorCriticalBrush"] as SolidColorBrush;
         }
     }
 
@@ -709,7 +747,7 @@ public sealed partial class MainView
             // todo fix this
             SetTaskbarMode(false).Wait();
             return 0;
-        }    
+        }
 
         return CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
     }
