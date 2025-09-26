@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 52 52">
+  <!-- Generator: Adobe Illustrator 29.8.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 2)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: url(#linear-gradient1);
+        stroke: #7e858d;
+        stroke-width: 2px;
+      }
+
+      .st0, .st1 {
+        stroke-miterlimit: 10;
+      }
+
+      .st2 {
+        fill: #3ccbf4;
+      }
+
+      .st3 {
+        fill: #fffefe;
+      }
+
+      .st4 {
+        fill: #0862b1;
+      }
+
+      .st1 {
+        fill: none;
+        stroke: #45494d;
+      }
+
+      .st5 {
+        fill: url(#linear-gradient);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="7.73" y1="29.84" x2="51.3" y2="29.84" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0782d8"/>
+      <stop offset="1" stop-color="#3facff"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient1" x1="1.44" y1="15" x2="28.65" y2="15" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fffefe"/>
+      <stop offset="1" stop-color="#d3d1d1"/>
+    </linearGradient>
+  </defs>
+  <rect class="st5" x="7.73" y="8.35" width="43.57" height="42.99" rx="2.81" ry="2.81"/>
+  <rect class="st4" x="24.49" y="8.35" width="26.81" height="9.1" rx="1.6" ry="1.6"/>
+  <rect class="st2" x="41.42" y="5.83" width="3.55" height="8.48" rx="1.78" ry="1.78"/>
+  <rect class="st3" x="12.56" y="40.45" width="4.97" height="4.97"/>
+  <rect class="st3" x="22.19" y="40.45" width="4.97" height="4.97"/>
+  <rect class="st3" x="31.82" y="40.45" width="4.97" height="4.97"/>
+  <rect class="st3" x="12.56" y="32.04" width="4.97" height="4.97"/>
+  <rect class="st3" x="22.19" y="32.04" width="4.97" height="4.97"/>
+  <rect class="st3" x="31.82" y="32.04" width="4.97" height="4.97"/>
+  <rect class="st3" x="41.45" y="32.04" width="4.97" height="4.97"/>
+  <rect class="st3" x="41.45" y="23.63" width="4.97" height="4.97"/>
+  <rect class="st3" x="31.82" y="23.63" width="4.97" height="4.97"/>
+  <rect class="st3" x="22.19" y="23.63" width="4.97" height="4.97"/>
+  <rect class="st0" x="1.44" y="1.39" width="27.21" height="27.21" rx="13.61" ry="13.61"/>
+  <line class="st1" x1="7.73" y1="11.62" x2="15.26" y2="15.09"/>
+  <line class="st1" x1="15.05" y1="15.3" x2="21.33" y2="9.18"/>
+  <rect x="13.37" y="13.62" width="3.35" height="3.35" rx="1.68" ry="1.68"/>
+  <rect class="st4" x="48.73" y="14.45" width="2.57" height="3"/>
+</svg>
