@@ -19,6 +19,7 @@ namespace CroomsBellScheduleCS.Service.Web
     {
         public bool OK { get; set; }
         public T? Value { get; set; }
+        public string? ErrorCode { get; set; }
         public ErrorResponse? ErrorValue { get; set; }
         public Exception? Exception { get; set; }
         public bool IsRateLimitReached { get; set; }

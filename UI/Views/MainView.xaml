@@ -78,12 +78,12 @@ Storyboard.TargetProperty="Color">
 
 
                 <Storyboard x:Name="ToRedUI">
-                    <!-- Class text
+                    <!-- Class text -->
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="CurrentClassForegroundBrush"
                                Storyboard.TargetProperty="Color">
                         <LinearColorKeyFrame KeyTime="0:0:0" Value="{ThemeResource SystemFillColorCaution}" />
                         <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource SystemFillColorCritical}" />
-                    </ColorAnimationUsingKeyFrames> -->
+                    </ColorAnimationUsingKeyFrames>
 
                     <!-- Progress bar 
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarForegroundBrush"

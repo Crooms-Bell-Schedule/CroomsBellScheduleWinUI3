@@ -1,5 +1,6 @@
 ﻿using CroomsBellScheduleCS.Service;
 using CroomsBellScheduleCS.Service.Web;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -47,11 +48,17 @@ public sealed partial class LunchView
                 {
                     try
                     {
-                        surveys.Children.Add(new HyperlinkButton()
+                        HyperlinkButton link = new()
                         {
-                            Content = item.name,
-                            NavigateUri = new Uri(item.link)
-                        });
+                            Content = item.name
+                        };
+
+                        link.Click += delegate (object? sender, RoutedEventArgs e)
+                        {
+                            MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs(item.link, true, true, false));
+                        };
+
+                        surveys.Children.Add(link);
                     }
                     catch
                     {

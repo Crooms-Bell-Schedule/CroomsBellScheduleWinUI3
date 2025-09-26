@@ -164,6 +164,11 @@ public sealed partial class FeedEntry
             rootElem = new Span();
             rootElem.Inlines.Add(new LineBreak());
         }
+        else if (node.Name == "div")
+        {
+            rootElem = new Span();
+            addLineBreak = true;
+        }
         else if (node.Name == "a")
         {
             rootElem = new Hyperlink();

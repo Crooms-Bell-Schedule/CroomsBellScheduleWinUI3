@@ -73,6 +73,7 @@ namespace CroomsBellScheduleCS.Service.Web
     {
         public string status { get; set; } = "";
         public T? data { get; set; }
+        public string? code { get; set; }
     }
     public class ErrorResponse
     {

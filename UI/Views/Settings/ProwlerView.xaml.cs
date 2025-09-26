@@ -35,6 +35,7 @@ public sealed partial class ProwlerView
     private static bool _loadProfilePictures = true;
     public Flyout UserFlyoutPub { get => (Flyout)Resources["UserFlyout"]; }
     internal static ProwlerView? Instance { get; set; }
+    internal static ProwlerSource ProwlerSource { get; set; } = new();
 
     private static string[] Tips =
     [
@@ -43,20 +44,19 @@ public sealed partial class ProwlerView
         "Tip: Use an adblocker such as ublock origin and use the youtube sponsorblock extension",
         "Tip: Don't forget your pencil like Anish",
         "Tip: Don't use the WinUI UI Framework made by Microsoft or you will have problems",
-        "Tip: Prowler supports HTML formatting",
         "Tip: Use the account center to change your account's settings",
         "Tip: View the Crooms Bell Schedule Live stream to view additional info",
         "Tip: Contact Mikhail if you have some kind of issue with the app",
         "36.4% of people prefer tea than coffee or air",
         "27.3% of people prefer a Chipmunk for lunch",
         "Tip: Don't play Genshin and Honkai Star Rail at the same time",
-        "Tip: You can change your profile picture and banner in the account menu"
+        "Tip: You can change your profile picture and banner in the account menu",
+        "The Crooms Bell Schedule was created to track the bell schedule"
     ];
     public ProwlerView()
     {
         InitializeComponent();
-
-        Entries = new(new ProwlerSource(), 25, StartLoading, EndLoading, OnError);
+        Entries = new(ProwlerSource, 25, StartLoading, EndLoading, OnError);
         FeedViewer.ItemsSource = Entries;
         Instance = this;
 
@@ -166,7 +166,7 @@ public sealed partial class ProwlerView
         };
     }
 
-    private static async Task<ImageSource?> RetrieveImageByTypeAsync(string uid, string type = "pfp")
+    public static async Task<ImageSource?> RetrieveImageByTypeAsync(string uid, string type = "pfp")
     {
         string path = $"https://mikhail.croomssched.tech/apiv2/fs/{type}/{uid}.png";
 
@@ -278,11 +278,21 @@ public sealed partial class ProwlerView
                 feedResult = Entries.Count == 0 ? await Services.ApiClient.GetFeedFull() :
                      await Services.ApiClient.GetFeedAfter(Entries[0].Id);
 
+                if (feedResult.ErrorCode == "ERR_NO_SUCH_ID")
+                {
+                    RefreshBtn.IsEnabled = true;
+                    ProwlerSource.ForceResync();
+                    await Entries.RefreshAsync();
+                    return;
+                }
+
                 if (!feedResult.IsRateLimitReached)
                     break;
             }
             ProgressUI.Visibility = Visibility.Collapsed;
         }
+
+
         if (!feedResult.OK || feedResult.Value == null)
         {
             RefreshBtn.IsEnabled = true;
@@ -310,7 +320,9 @@ public sealed partial class ProwlerView
                 // add the missing items to the observable collection in reverse order
                 for (int i = added - 1; i >= 0; i--)
                 {
-                    Entries.Insert(0, await ProcessEntry(val[i]));
+                    var x = await ProcessEntry(val[i]);
+                    ProwlerSource.InsertEntry(x);
+                    Entries.Insert(0, x);
                 }
 
                 // the list view will automatically update
@@ -616,6 +628,16 @@ public sealed partial class ProwlerView
 public class ProwlerSource : IIncrementalSource<FeedUIEntry>
 {
     private List<FeedUIEntry> Entries { get; set; } = [];
+
+    public void InsertEntry(FeedUIEntry entry)
+    {
+        Entries.Insert(0, entry);
+    }
+
+    public void ForceResync()
+    {
+        Entries.Clear();
+    }
 
     public async Task<bool> LoadAllFromServer()
     {

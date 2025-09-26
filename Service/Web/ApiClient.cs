@@ -70,11 +70,14 @@ namespace CroomsBellScheduleCS.Service.Web
                     if (apiResp != null)
                     {
                         result.ErrorValue = apiResp.data;
+                        result.ErrorCode = apiResp.code;
                     }
                     else
                     {
                         result.Exception = new("Failed to read error response message");
+                        result.ErrorCode = "ERR_UNKNOWN";
                     }
+
                 }
             }
             catch (Exception ex)
