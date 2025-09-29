@@ -284,6 +284,10 @@ namespace CroomsBellScheduleCS.Service.Web
         {
             return await DoGetRequestAsync<FeedEntry[]>(ApiBase + "/feed");
         }
+        public async Task<Result<FeedEntry[]?>> GetFeedFullUser(string id)
+        {
+            return await DoGetRequestAsync<FeedEntry[]>(ApiBase + "/feed/user/" + id);
+        }
         public async Task<Result<FeedEntry[]?>> GetFeedAfter(string id)
         {
             return await DoGetRequestAsync<FeedEntry[]>($"{ApiBase}/feed/after/{id}");

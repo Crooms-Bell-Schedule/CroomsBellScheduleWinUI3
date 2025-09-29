@@ -7,17 +7,23 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    
+    xmlns:cui="using:CroomsBellScheduleCS.Controls"
     mc:Ignorable="d">
 
     <Grid>
-        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Image x:Name="FlyoutBanner" Grid.Row="0" Height="175" Stretch="UniformToFill" Margin="0"/>
+            <Image x:Name="FlyoutBanner" Grid.Row="0" Height="200" Stretch="Fill" Margin="0"/>
 
             <PersonPicture x:Name="FlyoutPicture" Width="64" Height="64" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="1" Padding="0" Margin="0, -50, 10, 0" />
 
@@ -26,6 +32,32 @@
              Padding="12, 5, 10, 5" TextWrapping="Wrap"/>
             </StackPanel>
         </Grid>
+
+
+        <TextBlock>Recent posts</TextBlock>
+
+            <ListView x:Name="FeedViewer" Grid.Row="2"
+                  ScrollViewer.ZoomMode="Enabled"
+                  ScrollViewer.HorizontalScrollMode="Enabled"
+                  ScrollViewer.VerticalScrollMode="Enabled"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  ScrollViewer.VerticalScrollBarVisibility="Visible"
+                  HorizontalAlignment="Stretch"
+    xmlns:views="using:CroomsBellScheduleCS.UI.Views.Settings"
+                  SelectionMode="None" Visibility="Visible">
+
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="views:FeedUIEntry">
+                        <cui:ProwlerPost Date="{x:Bind Date}"
+                                         Author="{x:Bind Author}"
+                                         AuthorAndID="{x:Bind AuthorAndID}"
+                                         AuthorId="{x:Bind AuthorId}"
+                                         ContentData="{x:Bind ContentData}"
+                                         IsLoggedInUserAdmin="{x:Bind IsLoggedInUserAdmin}"
+                                         Id="{x:Bind Id}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         <ProgressRing x:Name="LoadingRing" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 </Page>

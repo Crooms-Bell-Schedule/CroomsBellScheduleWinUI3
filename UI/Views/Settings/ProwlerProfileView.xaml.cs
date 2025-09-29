@@ -4,6 +4,8 @@ using CroomsBellScheduleCS.UI.Windows;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Windows.ApplicationModel.DataTransfer;
@@ -46,6 +48,21 @@ public sealed partial class ProwlerProfileView
             MainView.Settings?.ShowInAppNotification("Failed to load user information: " + ApiClient.FormatResult(details), "Error", 10);
         }
 
+        var posts = await Services.ApiClient.GetFeedFullUser(uid);
+        if (posts.OK && posts.Value != null)
+        {
+            List<FeedUIEntry> entries = new List<FeedUIEntry>();
+
+            foreach (var entry in posts.Value)
+            {
+                entries.Add(ProwlerView.ProcessEntry(entry));
+            }
+            FeedViewer.ItemsSource = entries;
+        }
+        else
+        {
+            MainView.Settings?.ShowInAppNotification("Failed to load user posts: " + ApiClient.FormatResult(details), "Error", 10);
+        }
 
 
 
