@@ -141,7 +141,7 @@ public sealed partial class ProwlerView
         };*/
     }
 
-    private static string DetermineProfileAdditions(bool verified, string uid)
+    public static string DetermineProfileAdditions(bool verified, string uid)
     {
         if (verified) return "✅";
         else if (uid == "349051de85") return "📈"; // longpassword
@@ -482,6 +482,7 @@ public sealed partial class ProwlerView
 
         await dialog.ShowAsync();
     }
+    private string _currentFlyoutUid = null!;
 
     internal async Task PrepareFlyout(string mention)
     {
@@ -499,6 +500,7 @@ public sealed partial class ProwlerView
         {
             FlyoutUserName2.Text = "@" + user + " (Unknown)";
         }
+        _currentFlyoutUid = uid;
 
         // set profile picture based on UID
         if (ImageCache.ContainsKey("pfp"))
@@ -524,6 +526,7 @@ public sealed partial class ProwlerView
                     FlyoutPicture.ProfilePicture = val;
                 else FlyoutPicture.ProfilePicture = null;
             }
+            _currentFlyoutUid = id;
 
             FlyoutUserName2.Text = "@" + auth;
             FlyoutBanner.Source = await RetrieveImageByTypeAsync(id, "profile_banner");
@@ -546,6 +549,11 @@ public sealed partial class ProwlerView
     internal async Task ForceRefresh()
     {
         await Entries.RefreshAsync();
+    }
+
+    private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
+    {
+        MainView.Settings?.NavigateTo(typeof(ProwlerProfileView), _currentFlyoutUid);
     }
 }
 public class ProwlerSource : IIncrementalSource<FeedUIEntry>

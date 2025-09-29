@@ -337,6 +337,20 @@ namespace CroomsBellScheduleCS.Service.Web
             return DecodeResponse<UserDetailsResponse>(responseText);
         }
 
+        internal async Task<Result<UserDetailsResponse?>> GetUserDetailsByUid(string uid)
+        {
+            AddAuthorization();
+
+            StringContent content = new("{\"UID\": \"" + uid + "\"}");
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+            var response = await _client.PostAsync("https://api.croomssched.tech/users/uidUserDetails", content);
+
+            var responseText = await response.Content.ReadAsStringAsync();
+
+            return DecodeResponse<UserDetailsResponse>(responseText);
+        }
+
         public async Task<Result<GetUserResult?>> GetUserByName(string username)
         {
             AddAuthorization();
@@ -452,7 +466,7 @@ namespace CroomsBellScheduleCS.Service.Web
 
                 return DecodeResponse<LoginResponse>(str);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new() { Exception = ex, OK = false };
             }
