@@ -1,0 +1,228 @@
+﻿using CommunityToolkit.WinUI;
+using CroomsBellScheduleCS.Service;
+using CroomsBellScheduleCS.Service.Web;
+using CroomsBellScheduleCS.UI.Views;
+using CroomsBellScheduleCS.UI.Views.Settings;
+using CroomsBellScheduleCS.Utils;
+using HtmlAgilityPack;
+using Microsoft.UI.Text;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+
+namespace CroomsBellScheduleCS.Controls;
+
+public sealed partial class ProwlerPost
+{
+    public string AuthorAndID
+    {
+        get { return (string)GetValue(AuthorAndIDProperty); }
+        set { SetValue(AuthorAndIDProperty, value); }
+    }
+
+    public static readonly DependencyProperty AuthorAndIDProperty
+        = DependencyProperty.Register(
+              nameof(AuthorAndIDProperty),
+              typeof(string),
+              typeof(ProwlerPost),
+              new PropertyMetadata("", null)
+          );
+    public string Author
+    {
+        get { return (string)GetValue(AuthorProperty); }
+        set { SetValue(AuthorProperty, value); }
+    }
+
+    public static readonly DependencyProperty AuthorProperty
+        = DependencyProperty.Register(
+              nameof(AuthorProperty),
+              typeof(string),
+              typeof(ProwlerPost),
+              new PropertyMetadata("", null)
+          );
+    public string Id
+    {
+        get { return (string)GetValue(IdProperty); }
+        set { SetValue(IdProperty, value); }
+    }
+
+    public static readonly DependencyProperty IdProperty
+        = DependencyProperty.Register(
+              nameof(IdProperty),
+              typeof(string),
+              typeof(ProwlerPost),
+              new PropertyMetadata("", null)
+          );
+    public string AuthorId
+    {
+        get { return (string)GetValue(AuthorIdProperty); }
+        set { SetValue(AuthorIdProperty, value); }
+    }
+
+    public static readonly DependencyProperty AuthorIdProperty
+        = DependencyProperty.Register(
+              nameof(AuthorIdProperty),
+              typeof(string),
+              typeof(ProwlerPost),
+              new PropertyMetadata("", AuthorChanged)
+          );
+
+
+    public string ContentData
+    {
+        get { return (string)GetValue(ContentDataProperty); }
+        set { SetValue(ContentDataProperty, value); }
+    }
+
+    public static readonly DependencyProperty ContentDataProperty
+        = DependencyProperty.Register(
+              nameof(ContentDataProperty),
+              typeof(string),
+              typeof(ProwlerPost),
+              new PropertyMetadata("", null)
+          );
+    public string Date
+    {
+        get { return (string)GetValue(DateProperty); }
+        set { SetValue(DateProperty, value); }
+    }
+
+    public static readonly DependencyProperty DateProperty
+        = DependencyProperty.Register(
+              nameof(DateProperty),
+              typeof(string),
+              typeof(ProwlerPost),
+              new PropertyMetadata("", null)
+          );
+    public bool IsLoggedInUserAdmin
+    {
+        get { return (bool)GetValue(IsLoggedInUserAdminProperty); }
+        set { SetValue(IsLoggedInUserAdminProperty, value); }
+    }
+
+    public static readonly DependencyProperty IsLoggedInUserAdminProperty
+        = DependencyProperty.Register(
+              nameof(IsLoggedInUserAdminProperty),
+              typeof(bool),
+              typeof(ProwlerPost),
+              new PropertyMetadata(false, null)
+          );
+
+    public ProwlerPost()
+    {
+        InitializeComponent();
+    }
+
+    private async static void AuthorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var content = d as ProwlerPost;
+        if (content != null)
+            content.PfpBrush.ImageSource = await ProwlerView.RetrieveImageByTypeAsync((string)e.NewValue);
+    }
+
+
+    private void Grid_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+    {
+        var item = ((Grid)sender).FindDescendant("ProwlerItemMenu");
+        if (item != null)
+            item.Visibility = Visibility.Visible;
+    }
+
+    private void Grid_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
+    {
+        var item = ((Grid)sender).FindDescendant("ProwlerItemMenu");
+        if (item != null)
+            item.Visibility = Visibility.Collapsed;
+    }
+
+    private async void NotImpl_Click(object sender, RoutedEventArgs e)
+    {
+        await new ContentDialog()
+        {
+            Title = "Not implemented",
+            Content = "This function will be added in a later update. Please use the admin panel to do this action.",
+            XamlRoot = XamlRoot,
+            PrimaryButtonText = "OK",
+            DefaultButton = ContentDialogButton.Primary
+        }.ShowAsync();
+    }
+    private async void DeletePost_Click(object sender, RoutedEventArgs e)
+    {
+        var id = ((MenuFlyoutItem)sender).Tag;
+        if (id is string pid)
+        {
+            if ((await Services.ApiClient.DeletePost(pid)).OK)
+            {
+                MainView.Settings?.ShowInAppNotification($"Deleted post.", "Success", 10);
+                await ProwlerView.Instance?.ForceRefresh();
+            }
+            else
+            {
+                MainView.Settings?.ShowInAppNotification($"Failed to delete post", "Error", 15);
+            }
+        }
+    }
+    private async void BanUser_Click(object sender, RoutedEventArgs e)
+    {
+        var id = ((MenuFlyoutItem)sender).Tag;
+        if (id is string uid)
+        {
+            if ((await Services.ApiClient.BanUser(uid)).OK)
+            {
+                MainView.Settings?.ShowInAppNotification($"Banned user.", "Success", 10);
+                await ProwlerView.Instance?.ForceRefresh();
+            }
+            else
+            {
+                MainView.Settings?.ShowInAppNotification($"Failed to ban user", "Error", 15);
+            }
+        }
+    }
+    private async void Report_Click(object sender, RoutedEventArgs e)
+    {
+        var content = new StackPanel()
+        {
+            Orientation = Orientation.Horizontal
+        };
+
+        content.Children.Add(new TextBlock() { Text = "Reason: ", VerticalAlignment = VerticalAlignment.Center });
+        TextBox reasonBox = new();
+        reasonBox.PlaceholderText = "Write a reason here";
+        content.Children.Add(reasonBox);
+
+        if (await new ContentDialog()
+        {
+            Title = "Report",
+            Content = content,
+            XamlRoot = XamlRoot,
+            PrimaryButtonText = "Report",
+            SecondaryButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary
+        }.ShowAsync() == ContentDialogResult.Primary)
+        {
+            var result = await Services.ApiClient.ReportPostAsync(((MenuFlyoutItem)sender).Tag as string, reasonBox.Text);
+            if (result.OK)
+            {
+                if (result.Value)
+                    MainView.Settings?.ShowInAppNotification($"Post has been reported successfully", "Reporting System", 10);
+                else
+                    MainView.Settings?.ShowInAppNotification($"Post has been reported unsuccessfully", "Reporting System", 10);
+            }
+            else
+            {
+                MainView.Settings?.ShowInAppNotification($"Failed to report post: " + ApiClient.FormatResult(result), "Error", 10);
+            }
+        }
+    }
+
+    public void HandleUserProfile_Click(object sender, RoutedEventArgs e)
+    {
+        ProwlerView.Instance?.HandleUserProfile_Click(sender, e);
+    }
+}

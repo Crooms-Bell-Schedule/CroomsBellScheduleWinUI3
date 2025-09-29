@@ -51,29 +51,29 @@
                         <LinearColorKeyFrame KeyTime="0:0:2.2" Value="{ThemeResource TextFillColorPrimary}" />
                     </ColorAnimationUsingKeyFrames>
 
-                    <!-- Progress bar
+                    <!-- Progress bar -->
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarForegroundBrush"
                                Storyboard.TargetProperty="Color"  RepeatBehavior="Forever">
-                        <LinearColorKeyFrame KeyTime="0:0:0" Value="{ThemeResource AccentTextFillColorPrimary}" />
+                        <!--<LinearColorKeyFrame KeyTime="0:0:0" Value="{ThemeResource SystemAccentColor}" />-->
                         <LinearColorKeyFrame KeyTime="0:0:0.5" Value="{ThemeResource SystemFillColorCritical}" />
-                        <LinearColorKeyFrame KeyTime="0:0:2.2" Value="{ThemeResource AccentTextFillColorPrimary}" />
-                    </ColorAnimationUsingKeyFrames> -->
+                        <!--<LinearColorKeyFrame KeyTime="0:0:2.2" Value="{ThemeResource SystemAccentColor}" /> -->
+                    </ColorAnimationUsingKeyFrames>
                 </Storyboard>
 
                 <Storyboard x:Name="ToYellowUI">
                     <!-- Class text -->
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="CurrentClassForegroundBrush"
                                Storyboard.TargetProperty="Color">
-                        <LinearColorKeyFrame KeyTime="0:0:0" Value="{ThemeResource TextFillColorPrimary}" />
+                        <LinearColorKeyFrame KeyTime="0:0:0" Value="{ThemeResource SystemAccentColor}" />
                         <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource SystemFillColorCaution}" />
                     </ColorAnimationUsingKeyFrames>
 
-                    <!-- Progress bar
+                    <!-- Progress bar-->
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarForegroundBrush"
 Storyboard.TargetProperty="Color">
-                        <LinearColorKeyFrame  KeyTime="0:0:0" Value="{ThemeResource AccentTextFillColorPrimary}" />
+                        <LinearColorKeyFrame  KeyTime="0:0:0" Value="{ThemeResource SystemAccentColor}" />
                         <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource SystemFillColorCaution}" />
-                    </ColorAnimationUsingKeyFrames> -->
+                    </ColorAnimationUsingKeyFrames> 
                 </Storyboard>
 
 
@@ -85,12 +85,12 @@ Storyboard.TargetProperty="Color">
                         <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource SystemFillColorCritical}" />
                     </ColorAnimationUsingKeyFrames>
 
-                    <!-- Progress bar 
+                    <!-- Progress bar -->
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarForegroundBrush"
 Storyboard.TargetProperty="Color">
                         <LinearColorKeyFrame  KeyTime="0:0:0" Value="{ThemeResource SystemFillColorCaution}" />
                         <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource SystemFillColorCritical}" />
-                    </ColorAnimationUsingKeyFrames>-->
+                    </ColorAnimationUsingKeyFrames>
                 </Storyboard>
 
                 <Storyboard x:Name="ToNormalUI">
@@ -100,13 +100,13 @@ Storyboard.TargetProperty="Color">
                         <LinearColorKeyFrame  KeyTime="0:0:0" Value="{ThemeResource SystemFillColorCritical}" />
                         <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource TextFillColorPrimary}" />
                     </ColorAnimationUsingKeyFrames>
-                    
-                    <!-- Progress bar 
+
+                    <!-- Progress bar -->
                     <ColorAnimationUsingKeyFrames Storyboard.TargetName="ProgressBarForegroundBrush"
 Storyboard.TargetProperty="Color">
                         <LinearColorKeyFrame  KeyTime="0:0:0" Value="{ThemeResource SystemFillColorCritical}" />
-                        <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource AccentTextFillColorPrimary}" />
-                    </ColorAnimationUsingKeyFrames>-->
+                        <LinearColorKeyFrame KeyTime="0:0:1.0" Value="{ThemeResource SystemAccentColor}" />
+                    </ColorAnimationUsingKeyFrames>
                 </Storyboard>
             </TextBlock.Resources>
         </TextBlock>
@@ -116,9 +116,9 @@ Storyboard.TargetProperty="Color">
                HorizontalAlignment="Right" Text="" FontSize="8"/>
 
         <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" IsIndeterminate="True">
-            <!--<ProgressBar.Foreground>
-                <SolidColorBrush x:Name="ProgressBarForegroundBrush" Color="{ThemeResource AccentTextFillColorPrimary}"/>
-            </ProgressBar.Foreground>-->
+            <ProgressBar.Foreground>
+                <SolidColorBrush x:Name="ProgressBarForegroundBrush" Color="{ThemeResource SystemAccentColor}"/>
+            </ProgressBar.Foreground>
         </ProgressBar>
 
         <tb:TaskbarIcon

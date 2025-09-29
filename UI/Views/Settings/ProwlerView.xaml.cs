@@ -152,7 +152,7 @@ public sealed partial class ProwlerView
         return "";
     }
 
-    public static async Task<FeedUIEntry> ProcessEntry(FeedEntry entry)
+    public static FeedUIEntry ProcessEntry(FeedEntry entry)
     {
         return new FeedUIEntry()
         {
@@ -161,8 +161,7 @@ public sealed partial class ProwlerView
             ContentData = entry.data,
             Id = entry.id,
             AuthorId = entry.uid,
-            IsLoggedInUserAdmin = MainView.Settings?.UserRole == "admin" || MainView.Settings?.UserRole == "mod",
-            PicSource = await RetrieveImageByTypeAsync(entry.uid),
+            IsLoggedInUserAdmin = MainView.Settings?.UserRole == "admin" || MainView.Settings?.UserRole == "mod"
         };
     }
 
@@ -320,7 +319,7 @@ public sealed partial class ProwlerView
                 // add the missing items to the observable collection in reverse order
                 for (int i = added - 1; i >= 0; i--)
                 {
-                    var x = await ProcessEntry(val[i]);
+                    var x = ProcessEntry(val[i]);
                     ProwlerSource.InsertEntry(x);
                     Entries.Insert(0, x);
                 }
@@ -535,7 +534,7 @@ public sealed partial class ProwlerView
         }
     }
 
-    private async void HandleUserProfile_Click(object sender, RoutedEventArgs e)
+    public async void HandleUserProfile_Click(object sender, RoutedEventArgs e)
     {
         UserFlyoutPub.ShowAt((Button)sender);
         if (((Button)sender).Tag is string uid)
@@ -544,85 +543,9 @@ public sealed partial class ProwlerView
             FlyoutUserName2.Text = "@Button.Tag == null";
     }
 
-    private async void Button_Click(object sender, RoutedEventArgs e)
+    internal async Task ForceRefresh()
     {
-        await new ContentDialog()
-        {
-            Title = "Purchase Crooms Pro",
-            Content = "Do you want to purchase Crooms pro for only $100* per month (*limited time deal)?\nHere are the features:\n - Ability to view the time within 20 second accuracy\n - More gacha pulls\n - Premimum Battle Pass\n - Text Formatting\n - Profile Banner\n - Server boost",
-            XamlRoot = XamlRoot,
-            PrimaryButtonText = "Purchase Now",
-            SecondaryButtonText = "Remind me next minute",
-            DefaultButton = ContentDialogButton.Primary
-        }.ShowAsync();
-    }
-
-    private void Grid_PointerEntered(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
-    {
-        var item = ((Grid)sender).FindDescendant("ProwlerItemMenu");
-        if (item != null)
-            item.Visibility = Visibility.Visible;
-    }
-
-    private void Grid_PointerExited(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs e)
-    {
-        var item = ((Grid)sender).FindDescendant("ProwlerItemMenu");
-        if (item != null)
-            item.Visibility = Visibility.Collapsed;
-    }
-    private async void NotImpl_Click(object sender, RoutedEventArgs e)
-    {
-        await new ContentDialog()
-        {
-            Title = "Not implemented",
-            Content = "This function will be added in a later update. Please use the admin panel to do this action.",
-            XamlRoot = XamlRoot,
-            PrimaryButtonText = "OK",
-            DefaultButton = ContentDialogButton.Primary
-        }.ShowAsync();
-    }
-    private async void DeletePost_Click(object sender, RoutedEventArgs e)
-    {
-        var id = ((MenuFlyoutItem)sender).Tag;
-        if (id is string pid)
-        {
-            if ((await Services.ApiClient.DeletePost(pid)).OK)
-            {
-                MainView.Settings?.ShowInAppNotification($"Deleted post.", "Success", 10);
-                await Entries.RefreshAsync();
-            }
-            else
-            {
-                MainView.Settings?.ShowInAppNotification($"Failed to delete post", "Error", 15);
-            }
-        }
-    }
-    private async void BanUser_Click(object sender, RoutedEventArgs e)
-    {
-        var id = ((MenuFlyoutItem)sender).Tag;
-        if (id is string uid)
-        {
-            if ((await Services.ApiClient.BanUser(uid)).OK)
-            {
-                MainView.Settings?.ShowInAppNotification($"Banned user.", "Success", 10);
-                await Entries.RefreshAsync();
-            }
-            else
-            {
-                MainView.Settings?.ShowInAppNotification($"Failed to ban user", "Error", 15);
-            }
-        }
-    }
-    private async void Report_Click(object sender, RoutedEventArgs e)
-    {
-        await new ContentDialog()
-        {
-            Title = "Report",
-            Content = "Reporting content is coming soon. Please contact an admin (@andrew.da.computer.guy, @mikhail, @asurant) to report content.",
-            XamlRoot = XamlRoot,
-            PrimaryButtonText = "OK",
-            DefaultButton = ContentDialogButton.Primary
-        }.ShowAsync();
+        await Entries.RefreshAsync();
     }
 }
 public class ProwlerSource : IIncrementalSource<FeedUIEntry>
@@ -665,7 +588,7 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
 
         foreach (var entry in feedResult.Value)
         {
-            Entries.Add(await ProwlerView.ProcessEntry(entry));
+            Entries.Add(ProwlerView.ProcessEntry(entry));
         }
 
         return true;
@@ -723,7 +646,6 @@ public class FeedUIEntry
     public required string AuthorId { get; set; } = "";
     public required string Id { get; set; } = "";
     public required string ContentData { get; set; } = "";
-    public required ImageSource? PicSource { get; set; }
     public string AuthorAndID { get => $"{Author}####{AuthorId}"; }
     public bool IsLoggedInUserAdmin { get; set; }
 }

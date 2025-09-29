@@ -167,7 +167,22 @@ namespace CroomsBellScheduleCS.Service.Web
                 return new() { Exception = ex };
             }
         }
+        private async Task<Result<T?>> DoPostRequestAsync<T>(string url, CancellationToken cancellationToken = default)
+        {
+            try
+            {
+                var content = new StringContent("{}");
+                var response = await _client.PostAsync(url, content, cancellationToken);
 
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                return DecodeResponse<T>(responseText);
+            }
+            catch (Exception ex)
+            {
+                return new() { Exception = ex };
+            }
+        }
 
         public async Task<Result> LoginAsync(string user, string pass)
         {
@@ -446,6 +461,11 @@ namespace CroomsBellScheduleCS.Service.Web
         internal async Task<Result<Survey[]?>> GetSurveys()
         {
             return await DoGetRequestAsync<Survey[]>($"{ApiBase}/surveys/");
+        }
+
+        internal async Task<Result<bool>> ReportPostAsync(string? id, string reason)
+        {
+            return await DoPostRequestAsync<bool>($"{ApiBase}/feed/report/{id}/{reason}");
         }
     }
 }
