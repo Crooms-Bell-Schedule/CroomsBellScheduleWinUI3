@@ -22,6 +22,10 @@ public sealed partial class ProwlerProfileView
     protected override async void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
+
+
+
+        List<FeedUIEntry> entries = new List<FeedUIEntry>();
         var uid = e.Parameter as string;
         if (uid == null)
         {
@@ -38,26 +42,67 @@ public sealed partial class ProwlerProfileView
         // get additional user details
         var details = await Services.ApiClient.GetUserDetailsByUid(uid);
 
+        string username = uid;
+
         if (details.OK && details.Value != null)
         {
-            // set username
-            FlyoutUsername.Text = details.Value.Username + ProwlerView.DetermineProfileAdditions(details.Value.Verified, details.Value.Id);
+            if (details.Value.Username == "")
+            {
+                FlyoutUsername.Text = "WARNING: Client is newer than the deployed server version!";
+            }
+            else
+            {
+                // set username
+                FlyoutUsername.Text = details.Value.Username + ProwlerView.DetermineProfileAdditions(details.Value.Verified, details.Value.Id);
+
+                username = details.Value.Username;
+            }
         }
         else
         {
+            FlyoutUsername.Text = "Unknown";
             MainView.Settings?.ShowInAppNotification("Failed to load user information: " + ApiClient.FormatResult(details), "Error", 10);
+
+
+            if (entries.Count == 0)
+            {
+                entries.Add(new FeedUIEntry()
+                {
+                    Author = "Crooms Bell Schedule System",
+                    AuthorId = "system",
+                    ContentData = "Failed to retrieve profile information. This user may not exist.",
+                    Date = DateTime.Now.ToString(),
+                    Id = "system",
+                    IsLoggedInUserAdmin = false
+                });
+            }
+
+            FeedViewer.ItemsSource = entries;
         }
 
-        var posts = await Services.ApiClient.GetFeedFullUser(uid);
+        var posts = await Services.ApiClient.GetFeedFullUser(username);
         if (posts.OK && posts.Value != null)
         {
-            List<FeedUIEntry> entries = new List<FeedUIEntry>();
-
             foreach (var entry in posts.Value)
             {
                 entries.Add(ProwlerView.ProcessEntry(entry));
             }
+
+
+            if (entries.Count == 0)
+            {
+                entries.Add(new FeedUIEntry()
+                { Author = "Crooms Bell Schedule System",
+                AuthorId = "system",
+                ContentData = "This user has not posted anything.",
+                Date = DateTime.Now.ToString(),
+                Id = "system",IsLoggedInUserAdmin = false
+                });
+            }
+
             FeedViewer.ItemsSource = entries;
+
+
         }
         else
         {

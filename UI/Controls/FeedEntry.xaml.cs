@@ -446,11 +446,21 @@ public sealed partial class FeedEntry
             // Link
             if (item.IsLink)
             {
-                writer.BeginTag("a", [
-                    new("href", item.Style.Link.Substring(1, item.Style.Link.Length - 1))
-                    ]);
+                if (item.Style.Link.Contains("prowler-mention/"))
+                {
+                    // this is a mention
+                    writer.BeginTag("a", [new("mention", "")]);
 
-                item.FullText = item.FullText.Replace("HYPERLINK " + item.Style.Link, "");
+                    item.FullText = (item.FullText.Replace("HYPERLINK " + item.Style.Link, "")).Replace("prowler-mention/","");
+                }
+                else
+                {
+                    writer.BeginTag("a", [
+                        new("href", item.Style.Link.Substring(1, item.Style.Link.Length - 1))
+                        ]);
+
+                    item.FullText = item.FullText.Replace("HYPERLINK " + item.Style.Link, "");
+                }
             }
 
             if (isLast)

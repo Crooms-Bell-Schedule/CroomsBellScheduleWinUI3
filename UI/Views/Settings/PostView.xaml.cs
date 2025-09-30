@@ -1,4 +1,5 @@
 ﻿using CroomsBellScheduleCS.Controls;
+using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -59,11 +60,6 @@ public sealed partial class PostView
             return;
         }
         LoginFailureText.Text = "";
-    }
-
-    private void PostContentBox_TextChanged(object sender, RoutedEventArgs e)
-    {
-        ValidateFields();
     }
 
     private void BoldButton_Click(object sender, RoutedEventArgs e)
@@ -159,5 +155,97 @@ public sealed partial class PostView
 
         flyoutPresenter.MaxWidth = 250;
         flyoutPresenter.Width = 250;
+    }
+    private bool _isUpdating = false;
+
+    private void PostContentBox_TextChanged(object sender, RoutedEventArgs e)
+    {
+        ValidateFields();
+
+        if (_isUpdating) return;
+        _isUpdating = true;
+
+        try
+        {
+            var box = (RichEditBox)sender;
+            var doc = box.Document;
+
+            // get full document text
+            doc.GetText(TextGetOptions.None, out string fullText);
+            if (fullText == null) fullText = string.Empty;
+
+            fullText = fullText.Substring(0, fullText.Length); // remove leading new line
+
+            var sel = doc.Selection;
+            int caretPos = sel.EndPosition; // caret location (position after last typed char)
+
+            // quick bounds
+            if (caretPos < 0) caretPos = 0;
+            if (caretPos > fullText.Length) caretPos = fullText.Length;
+
+            // find last '@' before (or at) the caret
+            int lastAt = fullText.LastIndexOf('@', Math.Max(0, caretPos - 1));
+            if (lastAt < 0) return; // no candidate
+
+            // find the end of the mention token (first whitespace after the '@' or end of text)
+            int tokenEnd = lastAt + 1;
+            while (tokenEnd < fullText.Length && !char.IsWhiteSpace(fullText[tokenEnd]))
+                tokenEnd++;
+
+            // If caret is before the token's first char, ignore
+            if (caretPos <= lastAt) return;
+
+            // Decide whether we're still typing the mention (caret within the token)
+            // or the mention is already finished (caret after the token)
+            bool finalized = caretPos > tokenEnd;
+            int mentionStart = lastAt;
+            int mentionEnd = finalized ? tokenEnd : caretPos; // end is exclusive
+            int mentionLength = mentionEnd - mentionStart;
+
+            if (mentionLength <= 1) return; // only '@' or empty username
+
+            // Save visible selection so we can restore it exactly after formatting
+            int savedSelStart = sel.StartPosition;
+            int savedSelEnd = sel.EndPosition;
+
+            // Get a non-visual range to format
+            var range = doc.GetRange(mentionStart, mentionEnd);
+
+            // If finalized, attempt to convert to an absolute URI and set Link.
+            // Use Uri.EscapeDataString to make a safe path segment.
+            if (finalized)
+            {
+                range.GetText(TextGetOptions.None, out string mentionText); // e.g. "@alice"
+                string username = mentionText.Trim().TrimStart('@');
+
+                if (!string.IsNullOrEmpty(username))
+                {
+                    string safe = Uri.EscapeDataString(username);
+                    string link = "prowler-mention/"+username;
+
+                    try
+                    {
+                        range.Link = "\""+ link+"\""; // may throw if value not acceptable
+                    }
+                    catch
+                    {
+                        // If the API rejects the link, just leave the styled text (no link).
+                        try { range.Link = ""; } catch { /* ignore */ }
+                    }
+                }
+            }
+            else
+            {
+                // not finalized yet: make sure there is no leftover Link on this partial token
+                try { range.Link = ""; } catch { /* ignore */ }
+            }
+
+            // Restore user's selection/caret exactly as it was
+            //doc.Selection.SetRange(savedSelStart, savedSelEnd);
+        }
+        finally
+        {
+            _isUpdating = false;
+        }
     }
 }

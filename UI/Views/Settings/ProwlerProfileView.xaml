@@ -23,41 +23,48 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Image x:Name="FlyoutBanner" Grid.Row="0" Height="200" Stretch="Fill" Margin="0"/>
+            <Image x:Name="FlyoutBanner" Grid.Row="0" Height="250" Stretch="Fill" Margin="0"/>
 
             <PersonPicture x:Name="FlyoutPicture" Width="64" Height="64" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Row="1" Padding="0" Margin="0, -50, 10, 0" />
 
             <StackPanel Grid.Row="2">
-                <TextBlock x:Name="FlyoutUsername" Text="User Account"  FontSize="22" Margin="0, 0, 0, 0" 
+                <TextBlock x:Name="FlyoutUsername" Text="User Account"  FontSize="28" Margin="0, 0, 0, 0" 
              Padding="12, 5, 10, 5" TextWrapping="Wrap"/>
             </StackPanel>
         </Grid>
 
 
-        <TextBlock>Recent posts</TextBlock>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-            <ListView x:Name="FeedViewer" Grid.Row="2"
-                  ScrollViewer.ZoomMode="Enabled"
-                  ScrollViewer.HorizontalScrollMode="Enabled"
-                  ScrollViewer.VerticalScrollMode="Enabled"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  ScrollViewer.VerticalScrollBarVisibility="Visible"
-                  HorizontalAlignment="Stretch"
-    xmlns:views="using:CroomsBellScheduleCS.UI.Views.Settings"
-                  SelectionMode="None" Visibility="Visible">
+            <TextBlock Grid.Row="0" FontSize="20"   Padding="12, 5, 10, 5" >Post history</TextBlock>
+
+            <ListView x:Name="FeedViewer" Grid.Row="1"
+               ScrollViewer.ZoomMode="Enabled"
+               ScrollViewer.HorizontalScrollMode="Enabled"
+               ScrollViewer.VerticalScrollMode="Enabled"
+               ScrollViewer.HorizontalScrollBarVisibility="Auto"
+               ScrollViewer.VerticalScrollBarVisibility="Visible"
+               HorizontalAlignment="Stretch"
+ xmlns:views="using:CroomsBellScheduleCS.UI.Views.Settings"
+               SelectionMode="None" Visibility="Visible">
 
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="views:FeedUIEntry">
                         <cui:ProwlerPost Date="{x:Bind Date}"
-                                         Author="{x:Bind Author}"
-                                         AuthorAndID="{x:Bind AuthorAndID}"
-                                         AuthorId="{x:Bind AuthorId}"
-                                         ContentData="{x:Bind ContentData}"
-                                         IsLoggedInUserAdmin="{x:Bind IsLoggedInUserAdmin}"
-                                         Id="{x:Bind Id}"/>
+                                      Author="{x:Bind Author}"
+                                      AuthorAndID="{x:Bind AuthorAndID}"
+                                      AuthorId="{x:Bind AuthorId}"
+                                      ContentData="{x:Bind ContentData}"
+                                      IsLoggedInUserAdmin="{x:Bind IsLoggedInUserAdmin}"
+                                      Id="{x:Bind Id}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+        </Grid>
         <ProgressRing x:Name="LoadingRing" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 </Page>

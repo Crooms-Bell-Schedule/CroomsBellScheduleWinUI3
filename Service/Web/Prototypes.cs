@@ -68,6 +68,7 @@ namespace CroomsBellScheduleCS.Service.Web
     public class ApiSimpleResponse
     {
         public string status { get; set; } = "";
+        public string? code { get; set; }
     }
     public class ApiResponse<T>
     {

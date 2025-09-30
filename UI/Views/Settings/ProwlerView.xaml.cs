@@ -277,18 +277,18 @@ public sealed partial class ProwlerView
                 feedResult = Entries.Count == 0 ? await Services.ApiClient.GetFeedFull() :
                      await Services.ApiClient.GetFeedAfter(Entries[0].Id);
 
-                if (feedResult.ErrorCode == "ERR_NO_SUCH_ID")
-                {
-                    RefreshBtn.IsEnabled = true;
-                    ProwlerSource.ForceResync();
-                    await Entries.RefreshAsync();
-                    return;
-                }
-
                 if (!feedResult.IsRateLimitReached)
                     break;
             }
             ProgressUI.Visibility = Visibility.Collapsed;
+        }
+
+        if (feedResult.ErrorCode == "ERR_NO_SUCH_ID")
+        {
+            RefreshBtn.IsEnabled = true;
+            ProwlerSource.ForceResync();
+            await Entries.RefreshAsync();
+            return;
         }
 
 

@@ -63,6 +63,12 @@ namespace CroomsBellScheduleCS.Service.Web
                 }
                 else
                 {
+                    if (!string.IsNullOrEmpty(resp.code))
+                    {
+                        result.ErrorCode = resp.code;
+                        return result;
+                    }
+
                     var typeInfo = SourceGenerationContext.Default.GetTypeInfo(typeof(ApiResponse<ErrorResponse>)) ?? throw new Exception("typeinfo not present: ApiResponse<ErrorResponse>");
                     var apiResp = (ApiResponse<ErrorResponse>?)JsonSerializer.Deserialize(responseText, typeInfo);
 
