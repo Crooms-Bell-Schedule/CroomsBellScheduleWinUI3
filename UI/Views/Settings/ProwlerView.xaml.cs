@@ -84,6 +84,7 @@ public sealed partial class ProwlerView
     {
         base.OnNavigatedTo(e);
         refreshTimer.Start();
+        MainInfoBar.IsOpen = MainView.Settings?.IsVerified == false;
     }
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
@@ -329,6 +330,8 @@ public sealed partial class ProwlerView
         }
 
         RefreshBtn.IsEnabled = true;
+
+        MainInfoBar.IsOpen = MainView.Settings?.IsVerified == false;
     }
     private void Refresh_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
@@ -415,13 +418,13 @@ public sealed partial class ProwlerView
         }
 
         ContentDialog dialog = new()
-        {
-            Title = "Create new post",
-            XamlRoot = XamlRoot,
-            PrimaryButtonText = "Post",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Primary
-        };
+            {
+                Title = "Create new post",
+                XamlRoot = XamlRoot,
+                PrimaryButtonText = "Post",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary
+            };
         dialog.PrimaryButtonClick += PostDialog_PrimaryButtonClick;
 
         dialog.RequestedTheme = SettingsManager.Settings.Theme;
@@ -554,6 +557,11 @@ public sealed partial class ProwlerView
     private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
     {
         MainView.Settings?.NavigateTo(typeof(ProwlerProfileView), _currentFlyoutUid);
+    }
+
+    private void BtnVerify_Click(object sender, RoutedEventArgs e)
+    {
+        MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://community.croomssched.tech/prowler-verification", true, true, false));
     }
 }
 public class ProwlerSource : IIncrementalSource<FeedUIEntry>

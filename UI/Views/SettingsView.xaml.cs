@@ -46,6 +46,7 @@ public sealed partial class SettingsView
         }
     }
     public bool IsAuthenticated { get; set; }
+    public bool IsVerified { get; set; }
     public string UserRole { get; set; } = "";
     public SettingsView()
     {
@@ -230,6 +231,7 @@ public sealed partial class SettingsView
     private void SetLoggedOutMode()
     {
         IsAuthenticated = false;
+        IsVerified = true;
         FlyoutPFPButton.IsEnabled = false;
         FlyoutChangePassword.Visibility = Visibility.Collapsed;
         FlyoutSignIn.Content = "Sign In";
@@ -247,6 +249,7 @@ public sealed partial class SettingsView
     private void SetLoggedInMode()
     {
         IsAuthenticated = true;
+        IsVerified = false;
         FlyoutPFPButton.IsEnabled = true;
         FlyoutChangeUsername.IsEnabled = true;
         FlyoutSignIn.Content = "Sign Out";
@@ -274,6 +277,21 @@ public sealed partial class SettingsView
         FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/pfp/{SettingsManager.Settings.UserID}.png"));
         FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/profile_banner/{SettingsManager.Settings.UserID}.png"));
         FlyoutUserName2.Text = FlyoutUserName.Text;
+
+
+        // check verification
+        var verificationResponse = await Services.ApiClient.CheckVerified();
+
+        if (verificationResponse.Value == null)
+        {
+            ShowInAppNotification("Unable to read Prowler verification information", "Login Failed", 0);
+            IsVerified = true;
+        }
+
+        else
+        {
+            IsVerified = verificationResponse.Value == true;
+        }
     }
 
     private void HideLoader()

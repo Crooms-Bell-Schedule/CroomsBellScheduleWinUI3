@@ -23,5 +23,18 @@ namespace CroomsBellScheduleCS.Service.Web
         public ErrorResponse? ErrorValue { get; set; }
         public Exception? Exception { get; set; }
         public bool IsRateLimitReached { get; set; }
+
+
+
+        public static Result<T> FromException(Exception ex)
+        {
+            return new()
+            {
+                OK = false,
+                Value = default,
+                ErrorCode = "E_APPERR",
+                Exception = ex
+            };
+        }
     }
 }

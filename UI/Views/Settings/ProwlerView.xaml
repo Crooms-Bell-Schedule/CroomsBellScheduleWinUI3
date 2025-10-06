@@ -67,7 +67,11 @@
 
             <ProgressBar x:Name="ProgressUI" IsIndeterminate="True" Grid.Row="0" VerticalAlignment="Bottom"></ProgressBar>
 
-            <InfoBar x:Name="MainInfoBar" Message="Prowler is currently locked. New posts cannot be created" Grid.Row="1" IsOpen="False" Severity="Error" IsClosable="False"/>
+            <InfoBar x:Name="MainInfoBar" Message="In order to post on Prowler, please verify your account" Grid.Row="1" IsOpen="True" Severity="Error" IsClosable="True">
+                <InfoBar.ActionButton>
+                    <Button x:Name="BtnVerify" Content="Verify" Click="BtnVerify_Click" HorizontalAlignment="Right"/>
+                </InfoBar.ActionButton>
+            </InfoBar>
 
             <ListView x:Name="FeedViewer" Grid.Row="2"
                   ScrollViewer.ZoomMode="Enabled"

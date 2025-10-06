@@ -271,6 +271,26 @@ namespace CroomsBellScheduleCS.Service.Web
             return DecodeResponse<CommandResponse>(responseText);
         }
 
+        public async Task<Result<bool?>> CheckVerified()
+        {
+            try
+            {
+                StringContent content = new("");
+                // TODO: may cause exception or wrong header to be sent!
+
+                AddAuthorization();
+                var response = await _client.PostAsync("https://api.croomssched.tech/feed/can-i-post", content);
+
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                return DecodeResponse<bool?>(responseText);
+            }
+            catch(Exception ex)
+            {
+                return Result<bool?>.FromException(ex);
+            }
+        }
+
         public async Task<Result> LogoutAsync()
         {
             AddAuthorization();
