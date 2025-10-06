@@ -334,8 +334,8 @@ public sealed partial class SettingsView
             }
 
             LoadingText.Text = "RefreshUserInfoAsync";
-            await RefreshUserInfoAsync();
             SetLoggedInMode();
+            await RefreshUserInfoAsync();
         }
         catch (Exception ex)
         {
