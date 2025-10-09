@@ -328,7 +328,18 @@ public sealed partial class FeedEntry
                 {
                     // format is the same, extend the previous item
 
+                    if (char.IsAscii(f.Style.Character))
                     previous.FullText += f.FullText;
+                    else
+                    {
+                        // probably unicode character
+                        previous.FullText += f.Style.Text;
+
+                        // skip past next byte
+                        i++;
+                        continue;
+                    }
+
 
                     last.Range = new Range(last.Range.Start, i);
                 }

@@ -27,7 +27,10 @@ namespace CroomsBellScheduleCS.Utils
             if (attributes != null)
                 foreach (var item in attributes)
                 {
-                    result.Append($"{item.Name}={item.Value}");
+                    if (!string.IsNullOrEmpty(item.Value))
+                        result.Append($"{item.Name}={item.Value}");
+                    else
+                        result.Append($"{item.Name}");
                 }
             result.Append(">");
             tags.Push(name);
