@@ -10,6 +10,19 @@
     mc:Ignorable="d">
 
     <Grid>
-        <MediaPlayerElement x:Name="player" AreTransportControlsEnabled="True"></MediaPlayerElement>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <InfoBar
+    IsOpen="True"
+    Severity="Error"
+            Grid.Row="0"
+    Title="End of Service notice"
+    Message="After server maintainance on October 19th, the Crooms Bell Schedule live stream will only be available for specical occasions and will not be operational 24/7. The live stream tab will be hidden when it is not active." />
+
+        <MediaPlayerElement x:Name="player" AreTransportControlsEnabled="True" Grid.Row="1"></MediaPlayerElement>
     </Grid>
 </Page>

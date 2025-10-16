@@ -16,7 +16,7 @@
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
-		<Version>4.4.5</Version>
+		<Version>4.4.6</Version>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>

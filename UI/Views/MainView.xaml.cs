@@ -91,8 +91,8 @@ public sealed partial class MainView
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsResizable = true;
-            presenter.IsAlwaysOnTop = true;
             presenter.SetBorderAndTitleBar(true, SettingsManager.Settings.IsLivestreamMode);
+            presenter.IsAlwaysOnTop = true;
             MainWindow.Instance.ExtendsContentIntoTitleBar = !SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.AppWindow.IsShownInSwitchers = SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.SetTitleBar(Content);
@@ -102,8 +102,6 @@ public sealed partial class MainView
             Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
 
             _prevDPI = XamlRoot.RasterizationScale;
-
-            SetLoadingText("Loading theme");
 
             SetTheme(SettingsManager.Settings.Theme);
             await SetTaskbarMode(SettingsManager.Settings.ShowInTaskbar);
@@ -131,11 +129,6 @@ public sealed partial class MainView
                     }
                 }
             };
-
-            // Set window to be always on top
-            _windowApp.SetPresenter(AppWindowPresenterKind.Overlapped);
-            if (presenter != null)
-                presenter.IsAlwaysOnTop = true;
 
             Services.NotificationManager.Init();
 

@@ -216,9 +216,10 @@ public sealed partial class FeedEntry
             {
                 if (item.Name == "src")
                 {
-                    blkMedia.Children.Add(new Microsoft.UI.Xaml.Controls.Image()
+                    blkMedia.Children.Add(new Image()
                     {
-                        Source = new BitmapImage(new(FixLink(item.DeEntitizeValue).ToString()))
+                        Source = new BitmapImage(new(FixLink(item.DeEntitizeValue).ToString())),
+                        MaxHeight = 200
                     });
 
                     return [];
