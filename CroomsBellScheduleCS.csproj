@@ -16,7 +16,7 @@
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
-		<Version>4.4.6</Version>
+		<Version>4.4.7</Version>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -62,10 +62,10 @@
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.Primitives" Version="8.2.250402" />
 		<PackageReference Include="CommunityToolkit.WinUI.Controls.SettingsControls" Version="8.2.250402" />
 		<PackageReference Include="CommunityToolkit.WinUI.Extensions" Version="8.2.250402" />
-		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.0" />
+		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.3.1" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250916003" />
-		<PackageReference Include="System.Text.Json" Version="9.0.9" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251003001" />
+		<PackageReference Include="System.Text.Json" Version="9.0.10" />
 		<PackageReference Include="Velopack" Version="0.0.1362-gfa48e3c" />
 	</ItemGroup>
 	<ItemGroup>

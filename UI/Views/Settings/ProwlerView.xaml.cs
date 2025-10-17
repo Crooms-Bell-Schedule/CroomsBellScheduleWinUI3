@@ -45,7 +45,6 @@ public sealed partial class ProwlerView
         "Tip: Don't forget your pencil like Anish",
         "Tip: Don't use the WinUI UI Framework made by Microsoft or you will have problems",
         "Tip: Use the account center to change your account's settings",
-        "Tip: View the Crooms Bell Schedule Live stream to view additional info",
         "Tip: Contact Mikhail if you have some kind of issue with the app",
         "36.4% of people prefer tea than coffee or air",
         "27.3% of people prefer a Chipmunk for lunch",

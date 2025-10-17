@@ -277,7 +277,7 @@ Click="FlyoutChangePFP_Click">
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8F2;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Live stream" x:Name="LiveStreamItem">
+                <NavigationViewItem Content="Live stream" x:Name="LiveStreamItem" Visibility="Collapsed">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE93E;" />
                     </NavigationViewItem.Icon>
