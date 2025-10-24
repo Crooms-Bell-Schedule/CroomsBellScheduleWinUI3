@@ -37,7 +37,7 @@
             </controls:SettingsCard>
 
             <controls:SettingsCard Header="Background"
-                                   Description="Choose a variety of backgrounds to give the Crooms Bell Schedule more personality (beta). Works best on dark mode."
+                                   Description="Choose a variety of backgrounds to give the Crooms Bell Schedule more personality. Works best on dark mode."
                                    Margin="0,7,0,0"
                                    HeaderIcon="{ui:FontIcon Glyph=&#xE790;}">
                 <Button Content="Select">
@@ -133,7 +133,7 @@
             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" Margin="4,15,0,0" />
 
             <StackPanel Margin="4,8,0,5">
-                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="App created by Mikhail Tyukin with some contributions from Suvan and Andrew. Crooms Bell Schedule backend was made by Andew Jennings. This application uses WinUI 3.0, C#, HtmlAgilityPack, System.Text.Json, Velopack and H.NotifyIcon.WinUI." TextWrapping="Wrap" />
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="App created by Mikhail Tyukin with some contributions from Suvan and Andrew. Crooms Bell Schedule website and backend was made by Andew Jennings. This application uses the following libraries:\r\nMicrosoft WinUI 3.0, HtmlAgilityPack, System.Text.Json, Velopack for update system and H.NotifyIcon.WinUI for tray icon." TextWrapping="Wrap" />
 
                 <controls:WrapPanel Orientation="Horizontal" HorizontalSpacing="5">
                     <HyperlinkButton Margin="0,4,0,0" Content="Changelog" Click="Changelog_Click" />

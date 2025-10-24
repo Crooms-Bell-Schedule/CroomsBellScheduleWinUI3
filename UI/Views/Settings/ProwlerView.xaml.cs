@@ -43,15 +43,15 @@ public sealed partial class ProwlerView
         "Tip: Light mode attracts bugs",
         "Tip: Use taskbar mode to free up space on your screen",
         "Tip: Use an adblocker such as ublock origin and use the youtube sponsorblock extension",
-        "Tip: Don't forget your pencil like Anish",
-        "Tip: Don't use the WinUI UI Framework made by Microsoft or you will have problems",
         "Tip: Use the account center to change your account's settings",
         "Tip: Contact Mikhail if you have some kind of issue with the app",
         "36.4% of people prefer tea than coffee or air",
         "27.3% of people prefer a Chipmunk for lunch",
-        "Tip: Don't play Genshin and Honkai Star Rail at the same time",
+        "Consider the following:",
         "Tip: You can change your profile picture and banner in the account menu",
-        "The Crooms Bell Schedule was created to track the bell schedule"
+        "The Crooms Bell Schedule was created to track the bell schedule",
+        "Tip: The Crooms Bell Schedule app improves over time",
+        "Have a feature or having an issue with the app? Contact Mikhail Tyukin or use the Report A Bug form"
     ];
     public ProwlerView()
     {
@@ -76,7 +76,7 @@ public sealed partial class ProwlerView
             }
             catch { }
         };
-        refreshTimer.Interval = 1000 * 40; // 1 minute = 40 seconds
+        refreshTimer.Interval = 1000 * 20; // 1 minute = 20 seconds
         LoadingTip.Text = Tips[new Random().Next(0, Tips.Length)];
     }
 
@@ -341,6 +341,14 @@ public sealed partial class ProwlerView
     private void Refresh_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         RefreshFeed();
+    }
+
+    private async void ClearCache_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        ProwlerSource.ForceResync();
+        ImageCache.Clear();
+        GC.Collect();
+        await Entries.RefreshAsync();
     }
 
     private async void DailyPoll_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

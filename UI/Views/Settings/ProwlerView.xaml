@@ -63,7 +63,11 @@
                 </AppBarButton.Icon>
             </AppBarButton>
             <AppBarButton x:Name="MAdvice" Grid.Row="0" Label="Mikhail's Advice" Click="MA_Click" Icon="PhoneBook"/>
-            <AppBarToggleButton x:Name="AutoScrollButton" Grid.Row="0" Label="Auto Scroll" Icon="AlignCenter"/>
+
+             <CommandBar.SecondaryCommands>
+                <AppBarToggleButton x:Name="AutoScrollButton" Label="Auto Scroll" Icon="AlignCenter"/>
+                <AppBarToggleButton x:Name="ClearCache" Label="Clear cache" Icon="Delete" Click="ClearCache_Click"/>
+            </CommandBar.SecondaryCommands>
         </CommandBar>
 
         <ProgressBar x:Name="ProgressUI" IsIndeterminate="True" Grid.Row="1" VerticalAlignment="Bottom"></ProgressBar>
