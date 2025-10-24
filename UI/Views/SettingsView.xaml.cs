@@ -325,7 +325,7 @@ public sealed partial class SettingsView
             }
             if (!tokenResponse.OK)
             {
-                ShowInAppNotification("Failed to connect to the server. Check your internet connection.", "Login Failed", 0);
+                ShowInAppNotification("Disconnected from the server. Check your internet connection and server status.", "Authentication with server failed", 0);
                 SetLoggedOutMode();
                 HideLoader();
                 return;

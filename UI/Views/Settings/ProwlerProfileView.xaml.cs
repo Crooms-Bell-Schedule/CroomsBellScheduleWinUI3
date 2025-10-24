@@ -25,7 +25,7 @@ public sealed partial class ProwlerProfileView
 
 
 
-        List<FeedUIEntry> entries = new List<FeedUIEntry>();
+        List<FeedUIEntry> entries = [];
         var uid = e.Parameter as string;
         if (uid == null)
         {
@@ -71,9 +71,9 @@ public sealed partial class ProwlerProfileView
                     Author = "Crooms Bell Schedule System",
                     AuthorId = "system",
                     ContentData = "Failed to retrieve profile information. This user may not exist.",
-                    Date = DateTime.Now.ToString(),
+                    Date = DateTime.Now,
                     Id = "system",
-                    IsLoggedInUserAdmin = false
+                    CanEdit = false
                 });
             }
 
@@ -95,8 +95,8 @@ public sealed partial class ProwlerProfileView
                 { Author = "Crooms Bell Schedule System",
                 AuthorId = "system",
                 ContentData = "This user has not posted anything.",
-                Date = DateTime.Now.ToString(),
-                Id = "system",IsLoggedInUserAdmin = false
+                Date = DateTime.Now,
+                Id = "system",CanEdit = false
                 });
             }
 

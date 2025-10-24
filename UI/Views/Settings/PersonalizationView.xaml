@@ -25,7 +25,8 @@
            
             <TextBlock Margin="0,2,0,0" Style="{ThemeResource SubtitleTextBlockStyle}" Text="Appearance" />
             <controls:SettingsCard Description="Change the base color scheme of the Crooms Bell Schedule App"
-                   Header="Choose your mode" Margin="0,7,0,0">
+                   Header="Choose your mode" Margin="0,7,0,0"
+                   HeaderIcon="{ui:FontIcon Glyph=&#xE793;}">
                 <ComboBox x:Name="ThemeCombo" SelectionChanged="ThemeCombo_SelectionChanged" CornerRadius="5">
                     <ComboBox.Items>
                         <ComboBoxItem Content="System"/>
@@ -37,26 +38,35 @@
 
             <controls:SettingsCard Header="Background"
                                    Description="Choose a variety of backgrounds to give the Crooms Bell Schedule more personality (beta). Works best on dark mode."
-                                   Margin="0,7,0,0">
-                <controls:WrapPanel x:Name="ThemesContainer"/>
+                                   Margin="0,7,0,0"
+                                   HeaderIcon="{ui:FontIcon Glyph=&#xE790;}">
+                <Button Content="Select">
+                    <Button.Flyout>
+                        <Flyout>
+                            <controls:WrapPanel x:Name="ThemesContainer"/>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
             </controls:SettingsCard>
 
             <controls:SettingsCard Description="Put the bell schedule in your Windows Taskbar. To exit from this mode, find the Crooms Bell Schedule Icon in the right area of your taskbar."
-                               Header="Show inside of taskbar" Margin="0,7,0,0" CornerRadius="5">
+                               Header="Show inside of taskbar" Margin="0,7,0,0" CornerRadius="5"
+                                   HeaderIcon="{ui:FontIcon Glyph=&#xEE64;}">
                 <ToggleSwitch x:Name="chkTaskbar" Header="" Toggled="chkTaskbar_Toggled"
                           ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Compatible with Windows 10 and 11." />
             </controls:SettingsCard>
 
 
             <controls:SettingsCard Description="Change font size. Setting is ignored in taskbar mode."
-                               Header="Font size" Margin="0,7,0,0" CornerRadius="5">
-                <Slider x:Name="sliderFont" Minimum="16" Maximum="48" Header="" ValueChanged="sliderFont_ValueChanged"
+                               Header="Font size" Margin="0,7,0,0" CornerRadius="5"
+                               HeaderIcon="{ui:FontIcon Glyph=&#xE8D2;}">
+                <Slider x:Name="sliderFont" Minimum="16" Maximum="512" Header="" ValueChanged="sliderFont_ValueChanged"
                           ToolTipService.ToolTip="Puts the bell schedule inside of the taskbar to avoid wasting space on your screen. Compatible with Windows 10 and 11." />
             </controls:SettingsCard>
 
 
             <controls:SettingsCard Description="Change how many digits are shown"
-       Header="Percentage" Margin="0,7,0,0" CornerRadius="5">
+       Header="Percentage" Margin="0,7,0,0" CornerRadius="5" HeaderIcon="{ui:FontIcon Glyph=&#xE94C;}">
                 <ComboBox x:Name="ComboPercentage" SelectedItem="2" SelectionChanged="ComboPercentage_SelectionChanged">
                     <ComboBox.Items>
                         <ComboBoxItem>Hide</ComboBoxItem>
@@ -95,21 +105,26 @@
             </TeachingTip>
 
             <TextBlock Margin="0,10,0,5" Style="{ThemeResource SubtitleTextBlockStyle}" Text="Behavior" />
-            <controls:SettingsCard Header="Start when Windows starts" CornerRadius="5" Description="Automatically open the Crooms Bell Schedule app when Windows starts." Margin="0,7,0,0">
+            <controls:SettingsCard Header="Start when Windows starts" CornerRadius="5" Description="Automatically open the Crooms Bell Schedule app when Windows starts." Margin="0,7,0,0"
+                                    HeaderIcon="{ui:FontIcon Glyph=&#xE7E8;}">
                 <ToggleSwitch x:Name="chkStartup" Toggled="chkStartup_Checked"></ToggleSwitch>
             </controls:SettingsCard>
 
-            <controls:SettingsCard Header="5-Minute notification" Description="Show 5 minutes remaining notification" Margin="0,7,0,0" CornerRadius="5">
+            <controls:SettingsCard Header="5-Minute notification" Description="Show 5 minutes remaining notification" Margin="0,7,0,0" CornerRadius="5"
+                                   HeaderIcon="{ui:FontIcon Glyph=&#xE7E7;}">
                 <ToggleSwitch x:Name="chk5MinNotif" Toggled="chk5MinNotif_Checked"></ToggleSwitch>
             </controls:SettingsCard>
-            <controls:SettingsCard Header="1-Minute notification" Description="Show 1 minute remaining notification" Margin="0,7,0,0" CornerRadius="5">
+            <controls:SettingsCard Header="1-Minute notification" Description="Show 1 minute remaining notification" Margin="0,7,0,0" CornerRadius="5"
+                                   HeaderIcon="{ui:FontIcon Glyph=&#xE7E7;}">
                 <ToggleSwitch x:Name="chk1MinNotif" Toggled="chk5MinNotif_Checked"></ToggleSwitch>
             </controls:SettingsCard>
-            <controls:SettingsCard Header="DVD Screensaver" CornerRadius="5" Description="Make the bell schedule window move around on the screen. Only works when taskbar mode is disabled. NOTE: This increases CPU usage and decreases battery life."  Margin="0,7,0,0">
+            <controls:SettingsCard Header="DVD Screensaver" CornerRadius="5" Description="Make the bell schedule window move around on the screen. Only works when taskbar mode is disabled. NOTE: This increases CPU usage and decreases battery life."  Margin="0,7,0,0"
+                                   HeaderIcon="{ui:FontIcon Glyph=&#xEA4F;}">
                 <ToggleSwitch x:Name="chkDvd" Toggled="chkDvd_Toggled"></ToggleSwitch>
             </controls:SettingsCard>
 
-            <controls:SettingsCard Header="App version" Description="Loading" x:Name="VersionCard" Margin="0,7,0,0" CornerRadius="5">
+            <controls:SettingsCard Header="App version" Description="Loading" x:Name="VersionCard" Margin="0,7,0,0" CornerRadius="5"
+                                   HeaderIcon="{ui:FontIcon Glyph=&#xED35;}">
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="ButtonCheckForUpdates" Click="ButtonCheckForUpdates_Click">Check for updates</Button>
                 </StackPanel>

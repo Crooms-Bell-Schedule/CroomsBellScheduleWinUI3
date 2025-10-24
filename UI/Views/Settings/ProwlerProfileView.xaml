@@ -59,7 +59,8 @@
                                       AuthorAndID="{x:Bind AuthorAndID}"
                                       AuthorId="{x:Bind AuthorId}"
                                       ContentData="{x:Bind ContentData}"
-                                      IsLoggedInUserAdmin="{x:Bind IsLoggedInUserAdmin}"
+                                      CanEdit="{x:Bind CanEdit}"
+                                      CanBan="{x:Bind CanBan}"
                                       Id="{x:Bind Id}"/>
                     </DataTemplate>
                 </ListView.ItemTemplate>

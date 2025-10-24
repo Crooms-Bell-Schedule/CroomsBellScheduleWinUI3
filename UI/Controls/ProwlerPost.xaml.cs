@@ -87,28 +87,42 @@ public sealed partial class ProwlerPost
               typeof(ProwlerPost),
               new PropertyMetadata("", null)
           );
-    public string Date
+
+    public DateTime Date
     {
-        get { return (string)GetValue(DateProperty); }
+        get { return (DateTime)GetValue(DateProperty); }
         set { SetValue(DateProperty, value); }
     }
 
     public static readonly DependencyProperty DateProperty
         = DependencyProperty.Register(
               nameof(DateProperty),
-              typeof(string),
+              typeof(DateTime),
               typeof(ProwlerPost),
-              new PropertyMetadata("", null)
+              new PropertyMetadata(DateTime.MinValue, DateChanged)
           );
-    public bool IsLoggedInUserAdmin
+    public bool CanEdit
     {
-        get { return (bool)GetValue(IsLoggedInUserAdminProperty); }
-        set { SetValue(IsLoggedInUserAdminProperty, value); }
+        get { return (bool)GetValue(CanEditProperty); }
+        set { SetValue(CanEditProperty, value); }
     }
 
-    public static readonly DependencyProperty IsLoggedInUserAdminProperty
+    public static readonly DependencyProperty CanEditProperty
         = DependencyProperty.Register(
-              nameof(IsLoggedInUserAdminProperty),
+              nameof(CanEditProperty),
+              typeof(bool),
+              typeof(ProwlerPost),
+              new PropertyMetadata(false, null)
+          );
+    public bool CanBan
+    {
+        get { return (bool)GetValue(CanBanProperty); }
+        set { SetValue(CanBanProperty, value); }
+    }
+
+    public static readonly DependencyProperty CanBanProperty
+        = DependencyProperty.Register(
+              nameof(CanBanProperty),
               typeof(bool),
               typeof(ProwlerPost),
               new PropertyMetadata(false, null)
@@ -117,6 +131,15 @@ public sealed partial class ProwlerPost
     public ProwlerPost()
     {
         InitializeComponent();
+    }
+
+    private static void DateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var content = d as ProwlerPost;
+        if (content != null)
+        {
+            content.DateLabel.Text = ProwlerView.AsTimeAgo((DateTime)e.NewValue);
+        }
     }
 
     private async static void AuthorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

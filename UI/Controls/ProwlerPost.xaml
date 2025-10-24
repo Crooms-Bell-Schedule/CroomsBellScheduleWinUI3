@@ -9,7 +9,7 @@
     xmlns:cui="using:CroomsBellScheduleCS.Controls"
     mc:Ignorable="d">
 
-    <Grid Padding="12" Margin="0,7,0,0" CornerRadius="10" MinHeight="25" Background="{ThemeResource CardBackgroundFillColorDefault}"
+    <Grid Padding="12" Margin="0,7,0,0" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorDefault}"
               PointerEntered="Grid_PointerEntered"
               PointerExited="Grid_PointerExited">
         <Grid.ColumnDefinitions>
@@ -39,7 +39,7 @@
             <Button BorderThickness="0" Padding="0" Background="Transparent" Tag="{x:Bind AuthorAndID, Mode=OneWay}" Click="HandleUserProfile_Click">
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{x:Bind Author, Mode=OneWay}" Margin="0, 0, 0, 0" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
             </Button>
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="{x:Bind Date, Mode=OneWay}" Margin="0, 0, 0, 8" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+            <TextBlock x:Name="DateLabel" Grid.Row="1" Grid.Column="0" Margin="0, 0, 0, 8" FontSize="15" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
 
             <Button x:Name="ProwlerItemMenu" Grid.Row="0" Grid.Column="1" MaxWidth="20" MaxHeight="20" 
 Margin="0" Padding="0" BorderThickness="0" Background="Transparent"
@@ -48,26 +48,26 @@ Visibility="Collapsed">
 
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem Text="Edit" Visibility="{x:Bind IsLoggedInUserAdmin, Mode=OneWay}" Tag="{x:Bind Id, Mode=OneWay}" Click="NotImpl_Click">
+                        <MenuFlyoutItem Text="Edit" Visibility="{x:Bind CanEdit, Mode=OneWay}" Tag="{x:Bind Id, Mode=OneWay}" Click="NotImpl_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE70F;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
 
-                        <MenuFlyoutItem Text="Delete" Visibility="{x:Bind IsLoggedInUserAdmin, Mode=OneWay}" Tag="{x:Bind Id, Mode=OneWay}" Click="DeletePost_Click">
+                        <MenuFlyoutItem Text="Delete" Visibility="{x:Bind CanEdit, Mode=OneWay}" Tag="{x:Bind Id, Mode=OneWay}" Click="DeletePost_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE74D;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
 
-                        <MenuFlyoutSeparator Visibility="{x:Bind IsLoggedInUserAdmin, Mode=OneWay}"/>
+                        <MenuFlyoutSeparator Visibility="{x:Bind CanEdit, Mode=OneWay}"/>
 
                         <MenuFlyoutItem Text="Report" Tag="{x:Bind Id, Mode=OneWay}" Click="Report_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE730;" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="Ban user" Visibility="{x:Bind IsLoggedInUserAdmin, Mode=OneWay}" Tag="{x:Bind AuthorId, Mode=OneWay}" Click="BanUser_Click">
+                        <MenuFlyoutItem Text="Ban user" Visibility="{x:Bind CanBan, Mode=OneWay}" Tag="{x:Bind AuthorId, Mode=OneWay}" Click="BanUser_Click">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE7BA;" />
                             </MenuFlyoutItem.Icon>

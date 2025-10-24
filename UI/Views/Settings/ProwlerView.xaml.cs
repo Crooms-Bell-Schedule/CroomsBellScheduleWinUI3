@@ -2,6 +2,7 @@
 using CommunityToolkit.WinUI.Collections;
 using CroomsBellScheduleCS.Service;
 using CroomsBellScheduleCS.Service.Web;
+using CroomsBellScheduleCS.UI.Windows;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -113,9 +114,7 @@ public sealed partial class ProwlerView
 
     public static string AsTimeAgo(DateTime dateTime)
     {
-        // TODO update when scrolled away. Custom control is needed
-        return $"{dateTime:MMM dd, yyyy hh:mm tt}";
-        /*TimeSpan timeSpan = DateTime.Now.Subtract(dateTime);
+        TimeSpan timeSpan = DateTime.Now.Subtract(dateTime);
 
         return timeSpan.TotalSeconds switch
         {
@@ -125,7 +124,7 @@ public sealed partial class ProwlerView
             {
                 <= 1 => "a minute ago",
                 < 60 => $"{timeSpan.Minutes} minutes ago",
-                _ => timeSpan.TotalHours switch
+                _ => (int)timeSpan.TotalHours switch
                 {
                     <= 1 => "an hour ago",
                     < 24 => $"{timeSpan.Hours} hours ago",
@@ -138,7 +137,7 @@ public sealed partial class ProwlerView
                     }
                 }
             }
-        };*/
+        };
     }
 
     public static string DetermineProfileAdditions(bool verified, string uid)
@@ -154,14 +153,17 @@ public sealed partial class ProwlerView
 
     public static FeedUIEntry ProcessEntry(FeedEntry entry)
     {
+        bool isAdminOrMod() => MainView.Settings?.UserRole == "admin" || MainView.Settings?.UserRole == "mod";
+
         return new FeedUIEntry()
         {
-            Date = AsTimeAgo(entry.create.ToLocalTime()),
+            Date = entry.create.ToLocalTime(),
             Author = $"{entry.createdBy}{DetermineProfileAdditions(entry.verified, entry.uid)}",
             ContentData = entry.data,
             Id = entry.id,
             AuthorId = entry.uid,
-            IsLoggedInUserAdmin = MainView.Settings?.UserRole == "admin" || MainView.Settings?.UserRole == "mod"
+            CanEdit = isAdminOrMod() || entry.uid == SettingsManager.Settings.UserID,
+            CanBan = isAdminOrMod()
         };
     }
 
@@ -296,7 +298,7 @@ public sealed partial class ProwlerView
         {
             RefreshBtn.IsEnabled = true;
 
-            MainView.Settings?.ShowInAppNotification(ApiClient.FormatResult(feedResult), "Failed to load feed", 20);
+            MainView.Settings?.ShowInAppNotification("Unable to refresh as you are disconnected from the server. Please try again later.", "Disconnected from server", 20);
             return;
         }
 
@@ -324,7 +326,11 @@ public sealed partial class ProwlerView
                     Entries.Insert(0, x);
                 }
 
+
                 // the list view will automatically update
+
+                if (AutoScrollButton.IsChecked == true)
+                    await FeedViewer.SmoothScrollIntoViewWithIndexAsync(0, itemPlacement: ScrollItemPlacement.Default, disableAnimation: false, scrollIfVisible: false, additionalHorizontalOffset: 0, additionalVerticalOffset: 0);
             }
         }
 
@@ -417,13 +423,13 @@ public sealed partial class ProwlerView
         }
 
         ContentDialog dialog = new()
-            {
-                Title = "Create new post",
-                XamlRoot = XamlRoot,
-                PrimaryButtonText = "Post",
-                CloseButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary
-            };
+        {
+            Title = "Create new post",
+            XamlRoot = XamlRoot,
+            PrimaryButtonText = "Post",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Primary
+        };
         dialog.PrimaryButtonClick += PostDialog_PrimaryButtonClick;
 
         dialog.RequestedTheme = SettingsManager.Settings.Theme;
@@ -615,11 +621,16 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
         {
             if (!await LoadAllFromServer())
             {
-                MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data [{pageIndex} to {pageIndex + pageIndex}]", "Error", 10);
+                if ((pageIndex + pageIndex) == pageIndex)
+                    MainView.Settings?.ShowInAppNotification($"Disconnected from server. Please try again.", "Network Error", 10);
+                else
+                            MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data [{pageIndex} to {pageIndex + pageIndex}]", "Error", 10);
                 return [];
             }
         }
 
+        Debug.WriteLine($"load index {pageIndex}*{pageSize}");
+        await Task.Delay(50);
         return (from p in Entries select p).Skip(pageIndex * pageSize).Take(pageSize);
 
         //int startIdx = pageIndex * pageSize;
@@ -657,10 +668,11 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
 public class FeedUIEntry
 {
     public required string Author { get; set; }
-    public required string Date { get; set; } = "";
+    public required DateTime Date { get; set; }
     public required string AuthorId { get; set; } = "";
     public required string Id { get; set; } = "";
     public required string ContentData { get; set; } = "";
     public string AuthorAndID { get => $"{Author}####{AuthorId}"; }
-    public bool IsLoggedInUserAdmin { get; set; }
+    public bool CanEdit { get; set; }
+    public bool CanBan { get; set; }
 }

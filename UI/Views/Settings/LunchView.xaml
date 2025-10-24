@@ -53,7 +53,7 @@
 
         <Grid x:Name="ErrorView" Visibility="Collapsed">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock x:Name="ErrorText" Foreground="Red" TextWrapping="WrapWholeWords">A error has occured while retrieving this page's data.</TextBlock>
+                <TextBlock x:Name="ErrorText" TextWrapping="WrapWholeWords">A error has occured while retrieving this page's data.</TextBlock>
                 <Button VerticalAlignment="Center" Click="Button_Click">Reload</Button>
             </StackPanel>
         </Grid>

@@ -23,7 +23,7 @@
                     <Setter Property="BorderThickness" Value="0"/>
                 </Style>
             </Flyout.FlyoutPresenterStyle>
-            
+
             <!-- The flyout's DataContext must be the Image Source
              of the image the flyout is attached to. -->
             <Grid MinWidth="315">
@@ -46,61 +46,61 @@
         </Flyout>
     </Page.Resources>
 
-    <Grid>
-        <Grid x:Name="FeedUI">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"></RowDefinition>
-                <RowDefinition Height="auto"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" Grid.Row="0">
-                <TextBlock VerticalAlignment="Center" FontSize="19">Prowler</TextBlock>
-                <AppBarButton Icon="Add" Grid.Row="0" Label="New" Click="AppBarButton_Click"/>
-                <AppBarButton x:Name="RefreshBtn" Icon="Refresh" Grid.Row="0" Label="Refresh" Click="Refresh_Click"/>
-                <AppBarButton x:Name="DailyPollBtn" Grid.Row="0" Label="Daily Poll" Click="DailyPoll_Click">
-                    <AppBarButton.Icon>
-                        <FontIcon Glyph="&#xE9D2;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton x:Name="MAdvice" Grid.Row="0" Label="Mikhail's Advice" Click="MA_Click" Icon="PhoneBook"/>
-            </StackPanel>
+    <Grid x:Name="FeedUI">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
 
-            <ProgressBar x:Name="ProgressUI" IsIndeterminate="True" Grid.Row="0" VerticalAlignment="Bottom"></ProgressBar>
+        <CommandBar Background="Transparent" DefaultLabelPosition="Right" HorizontalAlignment="Left">
+            <AppBarButton Icon="Add" Grid.Row="0" Label="New" Click="AppBarButton_Click"/>
+            <AppBarButton x:Name="RefreshBtn" Icon="Refresh" Grid.Row="0" Label="Refresh" Click="Refresh_Click"/>
+            <AppBarButton x:Name="DailyPollBtn" Grid.Row="0" Label="Daily Poll" Click="DailyPoll_Click">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE9D2;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton x:Name="MAdvice" Grid.Row="0" Label="Mikhail's Advice" Click="MA_Click" Icon="PhoneBook"/>
+            <AppBarToggleButton x:Name="AutoScrollButton" Grid.Row="0" Label="Auto Scroll" Icon="AlignCenter"/>
+        </CommandBar>
 
-            <InfoBar x:Name="MainInfoBar" Message="In order to post on Prowler, please verify your account" Grid.Row="1" IsOpen="True" Severity="Error" IsClosable="True">
-                <InfoBar.ActionButton>
-                    <Button x:Name="BtnVerify" Content="Verify" Click="BtnVerify_Click" HorizontalAlignment="Right"/>
-                </InfoBar.ActionButton>
-            </InfoBar>
+        <ProgressBar x:Name="ProgressUI" IsIndeterminate="True" Grid.Row="1" VerticalAlignment="Bottom"></ProgressBar>
 
-            <ListView x:Name="FeedViewer" Grid.Row="2"
+        <InfoBar x:Name="MainInfoBar" Message="In order to post on Prowler, please verify your account" Grid.Row="2" IsOpen="True" Severity="Error" IsClosable="True">
+            <InfoBar.ActionButton>
+                <Button x:Name="BtnVerify" Content="Verify" Click="BtnVerify_Click" HorizontalAlignment="Right"/>
+            </InfoBar.ActionButton>
+        </InfoBar>
+
+        <ListView x:Name="FeedViewer" Grid.Row="3"
                   ScrollViewer.ZoomMode="Enabled"
                   ScrollViewer.HorizontalScrollMode="Enabled"
                   ScrollViewer.VerticalScrollMode="Enabled"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
-                  HorizontalAlignment="Stretch"
                   SelectionMode="None" Visibility="Visible">
-               
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="views:FeedUIEntry">
-                        <cui:ProwlerPost Date="{x:Bind Date}"
+
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="views:FeedUIEntry">
+                    <cui:ProwlerPost Date="{x:Bind Date}"
                                          Author="{x:Bind Author}"
                                          AuthorAndID="{x:Bind AuthorAndID}"
                                          AuthorId="{x:Bind AuthorId}"
                                          ContentData="{x:Bind ContentData}"
-                                         IsLoggedInUserAdmin="{x:Bind IsLoggedInUserAdmin}"
+                                         CanEdit="{x:Bind CanEdit}"
+                                         CanBan="{x:Bind CanBan}"
                                          Id="{x:Bind Id}"/>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <Grid x:Name="LoadingScreen" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock FontSize="38" HorizontalAlignment="Center">Loading Prowler data...</TextBlock>
-                    <TextBlock x:Name="LoadingTip" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="28" FontWeight="Light"
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid x:Name="LoadingScreen" Grid.Row="3">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock FontSize="38" HorizontalAlignment="Center">Loading Prowler data...</TextBlock>
+                <TextBlock x:Name="LoadingTip" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="28" FontWeight="Light"
                                Margin="0,50,0,0" TextWrapping="WrapWholeWords">Tip: Light mode attracts bugs</TextBlock>
-                </StackPanel>
-            </Grid>
+            </StackPanel>
         </Grid>
     </Grid>
 </Page>
