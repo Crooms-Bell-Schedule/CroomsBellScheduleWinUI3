@@ -139,6 +139,8 @@ public sealed partial class ProwlerPost
         if (content != null)
         {
             content.DateLabel.Text = ProwlerView.AsTimeAgo((DateTime)e.NewValue);
+
+            ToolTipService.SetToolTip(content.DateLabel, ((DateTime)e.NewValue).ToString());
         }
     }
 

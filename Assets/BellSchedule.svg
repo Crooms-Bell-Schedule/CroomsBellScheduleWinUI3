@@ -1,64 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 52 52">
-  <!-- Generator: Adobe Illustrator 29.8.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 2)  -->
-  <defs>
-    <style>
-      .st0 {
-        fill: url(#linear-gradient1);
-        stroke: #7e858d;
-        stroke-width: 2px;
-      }
-
-      .st0, .st1 {
-        stroke-miterlimit: 10;
-      }
-
-      .st2 {
-        fill: #3ccbf4;
-      }
-
-      .st3 {
-        fill: #fffefe;
-      }
-
-      .st4 {
-        fill: #0862b1;
-      }
-
-      .st1 {
-        fill: none;
-        stroke: #45494d;
-      }
-
-      .st5 {
-        fill: url(#linear-gradient);
-      }
-    </style>
-    <linearGradient id="linear-gradient" x1="7.73" y1="29.84" x2="51.3" y2="29.84" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#0782d8"/>
-      <stop offset="1" stop-color="#3facff"/>
-    </linearGradient>
-    <linearGradient id="linear-gradient1" x1="1.44" y1="15" x2="28.65" y2="15" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#fffefe"/>
-      <stop offset="1" stop-color="#d3d1d1"/>
-    </linearGradient>
-  </defs>
-  <rect class="st5" x="7.73" y="8.35" width="43.57" height="42.99" rx="2.81" ry="2.81"/>
-  <rect class="st4" x="24.49" y="8.35" width="26.81" height="9.1" rx="1.6" ry="1.6"/>
-  <rect class="st2" x="41.42" y="5.83" width="3.55" height="8.48" rx="1.78" ry="1.78"/>
-  <rect class="st3" x="12.56" y="40.45" width="4.97" height="4.97"/>
-  <rect class="st3" x="22.19" y="40.45" width="4.97" height="4.97"/>
-  <rect class="st3" x="31.82" y="40.45" width="4.97" height="4.97"/>
-  <rect class="st3" x="12.56" y="32.04" width="4.97" height="4.97"/>
-  <rect class="st3" x="22.19" y="32.04" width="4.97" height="4.97"/>
-  <rect class="st3" x="31.82" y="32.04" width="4.97" height="4.97"/>
-  <rect class="st3" x="41.45" y="32.04" width="4.97" height="4.97"/>
-  <rect class="st3" x="41.45" y="23.63" width="4.97" height="4.97"/>
-  <rect class="st3" x="31.82" y="23.63" width="4.97" height="4.97"/>
-  <rect class="st3" x="22.19" y="23.63" width="4.97" height="4.97"/>
-  <rect class="st0" x="1.44" y="1.39" width="27.21" height="27.21" rx="13.61" ry="13.61"/>
-  <line class="st1" x1="7.73" y1="11.62" x2="15.26" y2="15.09"/>
-  <line class="st1" x1="15.05" y1="15.3" x2="21.33" y2="9.18"/>
-  <rect x="13.37" y="13.62" width="3.35" height="3.35" rx="1.68" ry="1.68"/>
-  <rect class="st4" x="48.73" y="14.45" width="2.57" height="3"/>
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Created using Krita: https://krita.org -->
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:krita="http://krita.org/namespaces/svg/krita"
+    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+    width="30.72pt"
+    height="30.72pt"
+    viewBox="0 0 30.72 30.72">
+	<defs>
+		<linearGradient id="gradient0" gradientUnits="objectBoundingBox" x1="0" y1="0.499883693882298" x2="1" y2="0.499883693882298" spreadMethod="pad">
+			<stop stop-color="#0782d8" offset="0" stop-opacity="1"/>
+			<stop stop-color="#3facff" offset="1" stop-opacity="1"/>
+		</linearGradient>
+		<linearGradient id="gradient1" gradientUnits="objectBoundingBox" x1="-5.55111512312578e-17" y1="0.500183755972069" x2="1" y2="0.500183755972069" spreadMethod="pad">
+			<stop stop-color="#fffefe" offset="0" stop-opacity="1"/>
+			<stop stop-color="#d3d1d1" offset="1" stop-opacity="1"/>
+		</linearGradient>
+	</defs>
+	<rect id="shape0" transform="matrix(0.580613718411548 0 0 0.580613718411548 4.58266028880863 5.04967148014437)" fill="url(#gradient0)" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" width="43.57" height="42.99" rx="2.81" ry="2.81"/>
+	<rect id="shape1" transform="matrix(0.580613718411548 0 0 0.580613718411548 14.3137462093862 5.04967148014437)" fill="#0862b1" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" width="26.81" height="9.1" rx="1.6" ry="1.6"/>
+	<rect id="shape2" transform="matrix(0.580613718411548 0 0 0.580613718411548 24.1435364620937 3.58652490974727)" fill="#3ccbf4" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" width="3.55" height="8.48" rx="1.775" ry="1.78"/>
+	<path id="shape3" transform="matrix(0.580613718411548 0 0 0.580613718411548 7.38702454873641 13.9214490974728)" fill="#fffefe" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" d="M0 16.82L4.97 16.82L4.97 21.79L1.77636e-15 21.79ZM9.63 16.82L14.6 16.82L14.6 21.79L9.63 21.79ZM19.26 16.82L24.23 16.82L24.23 21.79L19.26 21.79ZM0 8.41L4.97 8.41L4.97 13.38L1.77636e-15 13.38ZM9.63 8.41L14.6 8.41L14.6 13.38L9.63 13.38ZM19.26 8.41L24.23 8.41L24.23 13.38L19.26 13.38ZM28.89 8.41L33.86 8.41L33.86 13.38L28.89 13.38ZM28.89 0L33.86 0L33.86 4.97L28.89 4.97ZM19.26 0L24.23 0L24.23 4.97L19.26 4.97ZM9.63 0L14.6 0L14.6 4.97L9.63 4.97Z" sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccccccccccccccc"/>
+	<rect id="shape4" transform="matrix(0.580613718411548 0 0 0.580613718411548 0.930599999999993 1.0086)" fill="url(#gradient1)" stroke="#7e858d" stroke-width="2" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" width="27.21" height="27.21" rx="13.605" ry="13.605"/>
+	<path id="shape5" transform="matrix(0.580613718411548 0 0 0.580613718411548 4.58266028880863 5.53158086642596)" fill="none" stroke="#45494d" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="2" d="M0 2.44L7.53 5.91M7.32 6.12L13.6 0" sodipodi:nodetypes="cccc"/>
+	<rect id="shape6" transform="matrix(0.580613718411548 0 0 0.580613718411548 7.85732166064977 8.10950577617323)" fill="#000000" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" width="3.35" height="3.35" rx="1.675" ry="1.675"/>
+	<path id="shape7" transform="matrix(0.580613718411548 0 0 0.580613718411548 28.3878227436821 8.59141516245482)" fill="#0862b1" stroke-opacity="0" stroke="#000000" stroke-width="0" stroke-linecap="square" stroke-linejoin="bevel" d="M0 0L2.57 0L2.57 3L0 3Z" sodipodi:nodetypes="ccccc"/>
 </svg>

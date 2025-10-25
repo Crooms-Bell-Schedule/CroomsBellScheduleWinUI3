@@ -311,7 +311,7 @@ public sealed partial class SettingsView
                 return;
             }
 
-            LoadingText.Text = "ValidateSessionAsync";
+            LoadingText.Text = "Logging in";
 
             // check the token
             var tokenResponse = await Services.ApiClient.ValidateSessionAsync();
@@ -331,7 +331,7 @@ public sealed partial class SettingsView
                 return;
             }
 
-            LoadingText.Text = "RefreshUserInfoAsync";
+            LoadingText.Text = "Retrieving user info";
             SetLoggedInMode();
             await RefreshUserInfoAsync();
         }

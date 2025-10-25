@@ -45,7 +45,15 @@ namespace CroomsBellScheduleCS.Themes
                     PreviewResource = "BurnTheShips_bg.png",
                     BackgroundResource = "BurnTheShips_bg.png",
                     UseBlur = true
-                }
+                },
+             new Theme()
+                {
+                    ID = 5,
+                    Name = "COW",
+                    PreviewResource = "COW_preview.png",
+                    BackgroundResource = "COW_bg.png",
+                    UseBlur = false
+                },
             ];
 
         internal static void Apply(int id)

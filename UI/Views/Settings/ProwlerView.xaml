@@ -66,11 +66,24 @@
 
              <CommandBar.SecondaryCommands>
                 <AppBarToggleButton x:Name="AutoScrollButton" Label="Auto Scroll" Icon="AlignCenter"/>
-                <AppBarToggleButton x:Name="ClearCache" Label="Clear cache" Icon="Delete" Click="ClearCache_Click"/>
+                <AppBarButton x:Name="ClearCache" Label="Clear cache" Icon="Delete" Click="ClearCache_Click"/>
             </CommandBar.SecondaryCommands>
         </CommandBar>
 
-        <ProgressBar x:Name="ProgressUI" IsIndeterminate="True" Grid.Row="1" VerticalAlignment="Bottom"></ProgressBar>
+        <ProgressBar x:Name="ProgressUI" Value="50" Minimum="0" Maximum="100" Grid.Row="1" VerticalAlignment="Bottom">
+            <ProgressBar.Resources>
+
+
+                <Storyboard x:Name="ProgressBarAnimation">
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressUI" Storyboard.TargetProperty="Value"
+                                                   EnableDependentAnimation="True">
+                        <LinearDoubleKeyFrame Value="0" KeyTime="0:0:0"/>
+                        <LinearDoubleKeyFrame Value="55" KeyTime="0:0:2"/>
+                        <EasingDoubleKeyFrame Value="99" KeyTime="0:0:30"/>
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </ProgressBar.Resources>
+        </ProgressBar>
 
         <InfoBar x:Name="MainInfoBar" Message="In order to post on Prowler, please verify your account" Grid.Row="2" IsOpen="True" Severity="Error" IsClosable="True">
             <InfoBar.ActionButton>

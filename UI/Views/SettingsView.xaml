@@ -300,8 +300,24 @@ Click="FlyoutChangePFP_Click">
 
         <Grid x:Name="LoadingUI" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Width="96" Height="96" Grid.Column="0">
+                        <Image.Source>
+                            <SvgImageSource UriSource="ms-appx:///Assets/BellSchedule.svg" />
+                        </Image.Source>
+                    </Image>
+
+                    <TextBlock Grid.Column="1" VerticalAlignment="Center" FontSize="48" Margin="10,0,0,0">Crooms Bell Schedule</TextBlock>
+                </Grid>
+                
                 <ProgressRing x:Name="RingOfProgress" Height="48" Width="48"></ProgressRing>
-                <TextBlock x:Name="LoadingText">Checking announcements</TextBlock>
+                <TextBlock x:Name="LoadingText" HorizontalAlignment="Center" FontSize="20">Checking announcements</TextBlock>
             </StackPanel>
         </Grid>
     </Grid>

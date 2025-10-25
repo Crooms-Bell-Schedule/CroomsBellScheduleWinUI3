@@ -100,6 +100,8 @@ public sealed partial class ProwlerView
 
     private void EndLoading()
     {
+        if (ProgressBarAnimation.GetCurrentState() != Microsoft.UI.Xaml.Media.Animation.ClockState.Stopped)
+            ProgressBarAnimation.Stop();
         ProgressUI.Visibility = Visibility.Collapsed;
 
         LoadingScreen.Visibility = Visibility.Collapsed;
@@ -109,6 +111,8 @@ public sealed partial class ProwlerView
     private void StartLoading()
     {
         ProgressUI.Visibility = Visibility.Visible;
+        ProgressUI.IsIndeterminate = false;
+        ProgressBarAnimation.Begin();
     }
 
 
