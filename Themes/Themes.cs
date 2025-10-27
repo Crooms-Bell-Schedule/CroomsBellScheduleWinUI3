@@ -46,9 +46,36 @@ namespace CroomsBellScheduleCS.Themes
                     BackgroundResource = "BurnTheShips_bg.png",
                     UseBlur = true
                 },
-             new Theme()
+
+            new Theme()
                 {
                     ID = 5,
+                    Name = "Zenless Zone Zero",
+                    PreviewResource = "ZZZ_preview.png",
+                    BackgroundResource = "ZZZ_bg.png",
+                    UseBlur = false
+                },
+
+                new Theme()
+                {
+                    ID = 6,
+                    Name = "Evengelion",
+                    PreviewResource = "EVA_preview.png",
+                    BackgroundResource = "EVA_bg.png",
+                    UseBlur = false
+                },
+ new Theme()
+                {
+                    ID = 54,
+                    Name = "Bacon",
+                    PreviewResource = "Bacon_preview.png",
+                    BackgroundResource = "Bacon_bg.png",
+                    UseBlur = false
+                },
+
+            new Theme()
+                {
+                    ID = 55,
                     Name = "COW",
                     PreviewResource = "COW_preview.png",
                     BackgroundResource = "COW_bg.png",

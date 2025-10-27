@@ -39,11 +39,11 @@
             <controls:SettingsCard Header="Background"
                                    Description="Choose a variety of backgrounds to give the Crooms Bell Schedule more personality. Works best on dark mode."
                                    Margin="0,7,0,0"
-                                   HeaderIcon="{ui:FontIcon Glyph=&#xE790;}">
+                                   HeaderIcon="{ui:FontIcon Glyph=&#xEB9F;}">
                 <Button Content="Select">
                     <Button.Flyout>
                         <Flyout>
-                            <controls:WrapPanel x:Name="ThemesContainer"/>
+                            <controls:UniformGrid Columns="4" x:Name="ThemesContainer"/>
                         </Flyout>
                     </Button.Flyout>
                 </Button>
