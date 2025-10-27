@@ -17,6 +17,10 @@
             <Storyboard x:Name="ExitStoryboard">
                 <FadeOutThemeAnimation Storyboard.TargetName="LoadingUI" Completed="LoadingAnimation_Completed" />
             </Storyboard>
+
+            <Storyboard x:Name="EnterStoryboard">
+                <FadeInThemeAnimation Storyboard.TargetName="LoadingUI"/>
+            </Storyboard>
         </Grid.Resources>
 
         <!--<TitleBar x:Name="AppTitleBar" Subtitle="Preview"

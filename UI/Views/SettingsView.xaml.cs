@@ -230,6 +230,7 @@ public sealed partial class SettingsView
     {
         IsAuthenticated = false;
         IsVerified = true;
+        UserRole = "user";
         FlyoutPFPButton.IsEnabled = false;
         FlyoutChangePassword.Visibility = Visibility.Collapsed;
         FlyoutSignIn.Content = "Sign In";
@@ -292,7 +293,7 @@ public sealed partial class SettingsView
         }
     }
 
-    private void HideLoader()
+    public void HideLoader()
     {
         ExitStoryboard.Begin();
     }
@@ -566,8 +567,21 @@ public sealed partial class SettingsView
         }
     }
 
+    public void ShowLoader()
+    {
+        LoadingUI.Visibility = Visibility.Visible;
+        EnterStoryboard.Begin();
+    }
+
+    public void SetLoaderText(string txt)
+    {
+        LoadingText.Text = txt;
+    }
+
     private async void FlyoutLogout_Click(object sender, RoutedEventArgs e)
     {
+        ShowLoader();
+        LoadingText.Text = "Processing";
         if (!(await Services.ApiClient.LogoutAsync()).OK)
         {
             ContentDialog dlg = new()
@@ -583,6 +597,9 @@ public sealed partial class SettingsView
         else
         {
             SetLoggedOutMode();
+
+            await Task.Delay(2000);
+            HideLoader();
         }
     }
 

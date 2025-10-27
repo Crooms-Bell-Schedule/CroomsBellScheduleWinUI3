@@ -59,6 +59,9 @@ public sealed partial class WebView
 
     private async Task ProcessSSOAsync(Uri url)
     {
+        MainView.SettingsWindow?.SettingsView.SetLoaderText("Processing");
+        MainView.SettingsWindow?.SettingsView.ShowLoader();
+
         var query = HttpUtility.ParseQueryString(url.Query);
 
         string? id = query["ssoId"];
@@ -78,6 +81,7 @@ public sealed partial class WebView
 
             Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             TheWebView.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            MainView.SettingsWindow?.SettingsView.HideLoader();
             return;
         }
 
@@ -97,6 +101,7 @@ public sealed partial class WebView
 
             Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
             TheWebView.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+            MainView.SettingsWindow?.SettingsView.HideLoader();
             return;
         }
 
@@ -111,6 +116,9 @@ public sealed partial class WebView
 
             MainView.SettingsWindow.SettingsView.ClearHistory();
             MainView.SettingsWindow.SettingsView.NavigateTo(typeof(ProwlerView), "");
+
+            await Task.Delay(1000);
+            MainView.SettingsWindow?.SettingsView.HideLoader();
         }
     }
 

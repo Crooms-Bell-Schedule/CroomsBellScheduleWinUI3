@@ -568,6 +568,13 @@ public sealed partial class ProwlerView
 
     internal async Task ForceRefresh()
     {
+        ProwlerSource.ForceResync();
+        await Entries.RefreshAsync();
+    }
+
+    internal async Task RmPost(string id)
+    {
+        ProwlerSource.RmPost(id);
         await Entries.RefreshAsync();
     }
 
@@ -593,6 +600,17 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
     public void ForceResync()
     {
         Entries.Clear();
+    }
+    public void RmPost(string id)
+    {
+        var items = Entries.Where(i => id == i.Id);
+        if (items.Any())
+            Entries.Remove(items.First());
+        else
+        {
+            Debug.WriteLine("ProwlerSource: sync error");
+            ForceResync();
+        }
     }
 
     public async Task<bool> LoadAllFromServer()
@@ -636,7 +654,7 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
                 if ((pageIndex + pageIndex) == pageIndex)
                     MainView.Settings?.ShowInAppNotification($"Disconnected from server. Please try again.", "Network Error", 10);
                 else
-                            MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data [{pageIndex} to {pageIndex + pageIndex}]", "Error", 10);
+                    MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data [{pageIndex} to {pageIndex + pageIndex}]", "Error", 10);
                 return [];
             }
         }

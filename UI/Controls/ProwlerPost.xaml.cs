@@ -171,7 +171,7 @@ public sealed partial class ProwlerPost
         await new ContentDialog()
         {
             Title = "Not implemented",
-            Content = "This function will be added in a later update. Please use the admin panel to do this action.",
+            Content = "This function will be added in a later update. Please use the website to edit your post.",
             XamlRoot = XamlRoot,
             PrimaryButtonText = "OK",
             DefaultButton = ContentDialogButton.Primary
@@ -185,7 +185,11 @@ public sealed partial class ProwlerPost
             if ((await Services.ApiClient.DeletePost(pid)).OK)
             {
                 MainView.Settings?.ShowInAppNotification($"Deleted post.", "Success", 10);
-                await ProwlerView.Instance?.ForceRefresh();
+                var view = ProwlerView.Instance;
+                {
+                    if (view != null)
+                        await view.RmPost(pid);
+                }
             }
             else
             {
@@ -201,7 +205,10 @@ public sealed partial class ProwlerPost
             if ((await Services.ApiClient.BanUser(uid)).OK)
             {
                 MainView.Settings?.ShowInAppNotification($"Banned user.", "Success", 10);
-                await ProwlerView.Instance?.ForceRefresh();
+
+                var view = ProwlerView.Instance;
+                if (view != null)
+                    await view.ForceRefresh();
             }
             else
             {

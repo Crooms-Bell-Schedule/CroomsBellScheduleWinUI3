@@ -397,6 +397,14 @@ namespace CroomsBellScheduleCS.Service.Web
             {
                 return Result.Ok;
             }
+
+            response = await _client.DeleteAsync("https://api.croomssched.tech/feed/" + id);
+
+            if (response.StatusCode == HttpStatusCode.NoContent)
+            {
+                return Result.Ok;
+            }
+
             return new Result() { OK = false };
         }
         public async Task<Result> BanUser(string id)
