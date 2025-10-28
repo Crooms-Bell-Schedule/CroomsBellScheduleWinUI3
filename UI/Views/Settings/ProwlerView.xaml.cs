@@ -51,7 +51,8 @@ public sealed partial class ProwlerView
         "Tip: You can change your profile picture and banner in the account menu",
         "The Crooms Bell Schedule was created to track the bell schedule",
         "Tip: The Crooms Bell Schedule app improves over time",
-        "Have a feature or having an issue with the app? Contact Mikhail Tyukin or use the Report A Bug form"
+        "Have a feature or having an issue with the app? Contact Mikhail Tyukin or use the Report A Bug form",
+        "Tip: If you own a cat named Thumper, it has a chance of possibly exploding."
     ];
     public ProwlerView()
     {
