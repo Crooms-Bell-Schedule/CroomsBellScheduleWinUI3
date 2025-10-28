@@ -19,7 +19,7 @@ namespace CroomsBellScheduleCS.Themes
                     ID = 1,
                     Name = "Christmas",
                     PreviewResource = "Christmas_preview.png",
-                    BackgroundResource = "DrummerBoyChristmasWide.png",
+                    BackgroundResource = "Christmas_bg.png",
                     UseBlur = true
                 },
             new Theme()
@@ -50,18 +50,39 @@ namespace CroomsBellScheduleCS.Themes
             new Theme()
                 {
                     ID = 5,
+                    Name = "Clouds",
+                    PreviewResource = "Clouds_preview.jpg",
+                    BackgroundResource = "Clouds_bg.jpg",
+                    UseBlur = false
+                },
+
+            new Theme()
+                {
+                    ID = 6,
                     Name = "Zenless Zone Zero",
                     PreviewResource = "ZZZ_preview.png",
                     BackgroundResource = "ZZZ_bg.png",
-                    UseBlur = false
+                    UseBlur = false,
+                    DimDark = 180,
+                    DimLight = 0
                 },
 
                 new Theme()
                 {
-                    ID = 6,
-                    Name = "Evengelion",
+                    ID = 7,
+                    Name = "Neon Genesis Evangelion",
                     PreviewResource = "EVA_preview.png",
                     BackgroundResource = "EVA_bg.png",
+                    UseBlur = false,
+                    DimDark = 170,
+                    BrightnessLight=70
+                },
+            new Theme()
+                {
+                    ID = 8,
+                    Name = "Frieren: Beyond Journey's End",
+                    PreviewResource = "Frieren_preview.jpg",
+                    BackgroundResource = "Frieren_bg.jpg",
                     UseBlur = false
                 },
  new Theme()
@@ -79,7 +100,8 @@ namespace CroomsBellScheduleCS.Themes
                     Name = "COW",
                     PreviewResource = "COW_preview.png",
                     BackgroundResource = "COW_bg.png",
-                    UseBlur = false
+                    UseBlur = false,
+                    DimDark = 170
                 },
             ];
 

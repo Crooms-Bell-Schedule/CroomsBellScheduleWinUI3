@@ -40,6 +40,7 @@
     </TitleBar>-->
 
         <Grid x:Name="BackgroundGrid" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+        <Grid x:Name="BackgroundDimmer" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
 
         <Grid x:Name="AppTitleBar"
           Canvas.ZIndex="1"

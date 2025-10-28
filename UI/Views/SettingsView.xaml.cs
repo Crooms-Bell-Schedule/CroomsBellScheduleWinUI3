@@ -17,6 +17,7 @@ using System;
 using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
+using Windows.UI;
 
 namespace CroomsBellScheduleCS.UI.Views;
 
@@ -691,6 +692,25 @@ public sealed partial class SettingsView
                 Stretch = Stretch.UniformToFill
             };
         }
+
+        if (SettingsManager.UseDark)
+        BackgroundDimmer.Background = new SolidColorBrush(new Color()
+        {
+            A = theme.DimDark,
+
+            B = theme.BrightnessDark,
+            G = theme.BrightnessDark,
+            R = theme.BrightnessDark,
+        });
+        else
+            BackgroundDimmer.Background = new SolidColorBrush(new Color()
+            {
+                A = theme.DimLight,
+
+                B = theme.BrightnessLight,
+                G = theme.BrightnessLight,
+                R = theme.BrightnessLight,
+            });
 
         SetBlur(theme.UseBlur);
     }
