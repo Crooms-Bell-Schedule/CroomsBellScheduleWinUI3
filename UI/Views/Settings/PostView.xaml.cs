@@ -1,11 +1,18 @@
-﻿using CroomsBellScheduleCS.Controls;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Threading.Tasks;
+using CommunityToolkit.WinUI.Controls;
+using CroomsBellScheduleCS.Controls;
 using Microsoft.UI;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
-using System;
-using System.Reflection.Metadata;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
+using Windows.Storage.Streams;
 
 namespace CroomsBellScheduleCS.UI.Views.Settings;
 
@@ -39,7 +46,8 @@ public sealed partial class PostView
             LoginFailureText.Text = value;
         }
     }
-
+    public event EventHandler? OkayClick;
+    public event EventHandler? ExitClick;
     public PostView()
     {
         InitializeComponent();
@@ -56,7 +64,7 @@ public sealed partial class PostView
     {
         if (IsContentEmpty())
         {
-            LoginFailureText.Text = "Post content is required";
+            // LoginFailureText.Text = "Post content is required";
             return;
         }
         LoginFailureText.Text = "";
@@ -83,7 +91,7 @@ public sealed partial class PostView
         {
             PostContentBox.Document.Selection.ParagraphFormat = PostContentBox.Document.GetDefaultParagraphFormat();
             PostContentBox.Document.Selection.CharacterFormat = PostContentBox.Document.GetDefaultCharacterFormat();
-            
+
             // throws argumentexception for some reason
             PostContentBox.Document.Selection.Link = "";
         }
@@ -108,12 +116,12 @@ public sealed partial class PostView
             // Ensure there's selected text to apply the link to
             if (string.IsNullOrEmpty(PostContentBox.Document.Selection.Text))
                 PostContentBox.Document.Selection.SetText(TextSetOptions.None, "Inserted link");
-            PostContentBox.Document.Selection.Link = "\""+LinkFlyoutURL.Text+"\"";
+            PostContentBox.Document.Selection.Link = "\"" + LinkFlyoutURL.Text + "\"";
         }
         catch
         {
-    
-}
+
+        }
 
         InsertLink.Flyout.Hide();
     }
@@ -158,6 +166,8 @@ public sealed partial class PostView
     }
     private bool _isUpdating = false;
 
+    private bool _isInMention = false;
+
     private void PostContentBox_TextChanged(object sender, RoutedEventArgs e)
     {
         ValidateFields();
@@ -179,6 +189,15 @@ public sealed partial class PostView
             var sel = doc.Selection;
             int caretPos = sel.EndPosition; // caret location (position after last typed char)
 
+
+            if (caretPos > 0 && fullText.Length - 1 > caretPos && fullText[caretPos - 1] == '@')
+            {
+                _isInMention = true;
+                return;
+            }
+
+            if (!_isInMention) return;
+
             // quick bounds
             if (caretPos < 0) caretPos = 0;
             if (caretPos > fullText.Length) caretPos = fullText.Length;
@@ -189,7 +208,7 @@ public sealed partial class PostView
 
             // find the end of the mention token (first whitespace after the '@' or end of text)
             int tokenEnd = lastAt + 1;
-            while (tokenEnd < fullText.Length && !char.IsWhiteSpace(fullText[tokenEnd]))
+            while (tokenEnd < fullText.Length && fullText[tokenEnd] != ' ')
                 tokenEnd++;
 
             // If caret is before the token's first char, ignore
@@ -221,11 +240,11 @@ public sealed partial class PostView
                 if (!string.IsNullOrEmpty(username))
                 {
                     string safe = Uri.EscapeDataString(username);
-                    string link = "prowler-mention/"+username;
+                    string link = "prowler-mention/" + username;
 
                     try
                     {
-                        range.Link = "\""+ link+"\""; // may throw if value not acceptable
+                        range.Link = "\"" + link + "\""; // may throw if value not acceptable
                     }
                     catch
                     {
@@ -233,6 +252,10 @@ public sealed partial class PostView
                         try { range.Link = ""; } catch { /* ignore */ }
                     }
                 }
+
+
+
+                _isInMention = false;
             }
             else
             {
@@ -246,6 +269,85 @@ public sealed partial class PostView
         finally
         {
             _isUpdating = false;
+        }
+    }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        OkayClick?.Invoke(sender, new());
+    }
+
+    internal void Empty()
+    {
+        PostContentBox.TextDocument.SetText(TextSetOptions.None, "");
+    }
+
+    private void ExitButton_Click(object sender, RoutedEventArgs e)
+    {
+        ExitClick?.Invoke(sender, new());
+    }
+
+    private void PostContentBox_DragEnter(object sender, DragEventArgs e)
+    {
+        e.AcceptedOperation = DataPackageOperation.Copy;
+
+
+    }
+
+    private void PostContentBox_DragOver(object sender, DragEventArgs e)
+    {
+
+    }
+
+    private void PostContentBox_DragLeave(object sender, DragEventArgs e)
+    {
+
+    }
+
+    private void PostContentBox_DropCompleted(UIElement sender, DropCompletedEventArgs args)
+    {
+
+    }
+
+    private async void PostContentBox_Drop(object sender, DragEventArgs e)
+    {
+        if (e.DataView.AvailableFormats.Contains("FileName"))
+        {
+
+            var items = await e.DataView.GetStorageItemsAsync();
+
+
+
+            foreach (var item in items)
+            {
+
+                PostContentBox.Document.GetText(TextGetOptions.None, out string fullText);
+
+                ITextRange range;
+                if (fullText.Length == 0)
+                    range = PostContentBox.Document.GetRange(0, 0);
+                else
+                    range = PostContentBox.Document.GetRange(fullText.Length - 1, fullText.Length - 1);
+
+                // check if the file is an image
+
+                if (item.Path.EndsWith(".png") ||
+                    item.Path.EndsWith(".bmp") ||
+                    item.Path.EndsWith(".gif") ||
+                    item.Path.EndsWith(".webp") ||
+                    item.Path.EndsWith(".aif") ||
+                    item.Path.EndsWith(".tiff") ||
+                    item.Path.EndsWith(".jpg") ||
+                    item.Path.EndsWith(".jpeg"))
+                {
+                    using var fs = await FileRandomAccessStream.OpenAsync(item.Path, FileAccessMode.Read);
+                    range.InsertImage(100, 100, 0, VerticalCharacterAlignment.Top, "Uploaded image", fs);
+                }
+                else
+                {
+                    // todo video attachments, file attachments
+                }
+            }
         }
     }
 }

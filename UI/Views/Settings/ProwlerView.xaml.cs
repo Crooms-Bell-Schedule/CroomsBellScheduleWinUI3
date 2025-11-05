@@ -1,14 +1,4 @@
-﻿using CommunityToolkit.WinUI;
-using CommunityToolkit.WinUI.Collections;
-using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.Service.Web;
-using CroomsBellScheduleCS.UI.Windows;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Navigation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -16,15 +6,24 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
+using CommunityToolkit.WinUI;
+using CommunityToolkit.WinUI.Collections;
+using CroomsBellScheduleCS.Service;
+using CroomsBellScheduleCS.Service.Web;
+using CroomsBellScheduleCS.Utils;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Microsoft.UI.Xaml.Navigation;
 using Windows.Graphics.Imaging;
+using Windows.Networking.Connectivity;
 
 namespace CroomsBellScheduleCS.UI.Views.Settings;
 
 public sealed partial class ProwlerView
 {
     private readonly IncrementalLoadingCollection<ProwlerSource, FeedUIEntry> Entries;
-
-    private readonly System.Timers.Timer refreshTimer;
 
     private static bool _isLoaded = false;
     private static readonly Dictionary<string, Dictionary<string, ImageSource>> ImageCache = [];
@@ -37,6 +36,7 @@ public sealed partial class ProwlerView
     public Flyout UserFlyoutPub { get => (Flyout)Resources["UserFlyout"]; }
     internal static ProwlerView? Instance { get; set; }
     internal static ProwlerSource ProwlerSource { get; set; } = new();
+    private Timer _reconnectTimer;
 
     private static string[] Tips =
     [
@@ -61,37 +61,104 @@ public sealed partial class ProwlerView
         FeedViewer.ItemsSource = Entries;
         Instance = this;
 
-        refreshTimer = new();
-        refreshTimer.Elapsed += delegate (object? sender, ElapsedEventArgs e)
+        LoadingTip.Text = Tips[new Random().Next(0, Tips.Length)];
+
+        _reconnectTimer = new();
+        _reconnectTimer.Elapsed += _reconnectTimer_Elapsed;
+        _reconnectTimer.Interval = 5000;
+
+        Services.SocketClient.OnConnected += SocketClient_OnConnected;
+        Services.SocketClient.OnDisconnected += SocketClient_OnDisconnected;
+        Services.SocketClient.OnPostCreated += SocketClient_OnPostCreated;
+        Services.SocketClient.OnPostDeleted += SocketClient_OnPostDeleted;
+        Services.SocketClient.OnPostUpdated += SocketClient_OnPostUpdated;
+    }
+
+    private async void _reconnectTimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        await DispatcherQueue.EnqueueAsync(async () =>
         {
+            if (Services.SocketClient.IsConnected)
+            {
+                _reconnectTimer.Stop();
+                return;
+            }
+
+            var connect = Win32.CheckConnectivity();
+            NoInternetAccess.IsOpen = connect.Item1 == NetworkConnectivityLevel.InternetAccess;
+            DisconnectServer.IsOpen = !NoInternetAccess.IsOpen;
             try
             {
-                DispatcherQueue.TryEnqueue(() =>
-                {
-                    try
-                    {
-                        RefreshFeed();
-                    }
-                    catch { }
-                });
+                await Services.SocketClient.Connect();
             }
-            catch { }
-        };
-        refreshTimer.Interval = 1000 * 20; // 1 minute = 20 seconds
-        LoadingTip.Text = Tips[new Random().Next(0, Tips.Length)];
+            catch
+            {
+
+            }
+
+            if (Services.SocketClient.IsConnected) _reconnectTimer.Stop();
+        });
+    }
+
+    private void SocketClient_OnConnected(object? sender, EventArgs e)
+    {
+        DispatcherQueue.EnqueueAsync(() =>
+        {
+            DisconnectServer.IsOpen = false;
+            NoInternetAccess.IsOpen = false;
+        });
+    }
+
+    private async void SocketClient_OnPostUpdated(string id, string newContent)
+    {
+        ProwlerSource.ModPost(id, newContent);
+
+
+        // TODO: smooth refresh
+        await Entries.RefreshAsync();
+    }
+
+    private async void SocketClient_OnPostDeleted(string id)
+    {
+        ProwlerSource.RmPost(id);
+
+
+        // TODO: smooth refresh
+        await Entries.RefreshAsync();
+    }
+
+    private async void SocketClient_OnPostCreated(FeedEntry entry)
+    {
+        ProwlerSource.InsertEntry(ProcessEntry(entry));
+
+        // TODO: smooth refresh
+        await Entries.RefreshAsync();
+    }
+    private void SocketClient_OnDisconnected(object? sender, EventArgs e)
+    {
+        DisconnectServer.IsOpen = true;
+        _reconnectTimer.Start();
+    }
+
+    private void CheckDisconnected()
+    {
+        DisconnectServer.IsOpen = !Services.SocketClient.IsConnected;
+        if (!Services.SocketClient.IsConnected && !_reconnectTimer.Enabled)
+        {
+            _reconnectTimer.Start();
+        }
     }
 
     protected override void OnNavigatedTo(NavigationEventArgs e)
     {
         base.OnNavigatedTo(e);
-        refreshTimer.Start();
         MainInfoBar.IsOpen = MainView.Settings?.IsVerified == false;
+        CheckDisconnected();
     }
 
     protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
     {
         base.OnNavigatingFrom(e);
-        refreshTimer.Stop();
     }
 
     private void OnError(Exception exception)
@@ -218,7 +285,6 @@ public sealed partial class ProwlerView
 
         return null;
     }
-
     private async void Page_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         try
@@ -227,30 +293,16 @@ public sealed partial class ProwlerView
             _loadProfilePictures = true;
             if (!_isLoaded || fullReload)
             {
-                //var feedResult = await Services.ApiClient.GetFeedPart(0, 25);
-                //if (!feedResult.OK || feedResult.Value == null)
-                //{
-                //    ContentDialog dlg2 = new()
-                //    {
-                //        Title = "Failed to get feed",
-                //        XamlRoot = XamlRoot,
-                //        CloseButtonText = "OK"
-                //    };
-
-                //    LoginView content = new();
-                //    dlg2.Content = "Failed to reconnect to server. Check your internet connection, or the server may be under maintenance.";
-
-                //    await dlg2.ShowAsync();
-                //    Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-                //    return;
-                //}
-
-                //await InitPage(feedResult.Value);
-
                 _isLoaded = true;
             }
 
             // load feed
+            LoadingStatus.Text = "Connecting to server...";
+
+            await Services.SocketClient.Connect();
+
+            LoadingStatus.Text = "Loading data";
+            FeedViewer.Visibility = Visibility.Visible;
         }
         catch (Exception ex)
         {
@@ -268,92 +320,20 @@ public sealed partial class ProwlerView
         }
     }
 
-    private async void RefreshFeed()
-    {
-        RefreshBtn.IsEnabled = false;
-        Result<FeedEntry[]?> feedResult = Entries.Count == 0 ? await Services.ApiClient.GetFeedFull() :
-                     await Services.ApiClient.GetFeedAfter(Entries[0].Id);
-
-        // Retry if ratelimit reached
-        if (feedResult.IsRateLimitReached)
-        {
-            ProgressUI.Visibility = Visibility.Visible;
-            for (int i = 0; i < 15; i++)
-            {
-                await Task.Delay(1000);
-                feedResult = Entries.Count == 0 ? await Services.ApiClient.GetFeedFull() :
-                     await Services.ApiClient.GetFeedAfter(Entries[0].Id);
-
-                if (!feedResult.IsRateLimitReached)
-                    break;
-            }
-            ProgressUI.Visibility = Visibility.Collapsed;
-        }
-
-        if (feedResult.ErrorCode == "ERR_NO_SUCH_ID")
-        {
-            RefreshBtn.IsEnabled = true;
-            ProwlerSource.ForceResync();
-            await Entries.RefreshAsync();
-            return;
-        }
-
-
-        if (!feedResult.OK || feedResult.Value == null)
-        {
-            RefreshBtn.IsEnabled = true;
-
-            MainView.Settings?.ShowInAppNotification("Unable to refresh as you are disconnected from the server. Please try again later.", "Disconnected from server", 20);
-            return;
-        }
-
-        var val = feedResult.Value;
-
-        if (val.Length > 0 && Entries.Count > 0)
-        {
-            if (val[0].id != Entries[0].Id)
-            {
-                // figure out how many new entires were added
-                int added;
-                for (added = 0; added < val.Length; added++)
-                {
-                    if (val[added].id == Entries[0].Id)
-                    {
-                        break;
-                    }
-                }
-
-                // add the missing items to the observable collection in reverse order
-                for (int i = added - 1; i >= 0; i--)
-                {
-                    var x = ProcessEntry(val[i]);
-                    ProwlerSource.InsertEntry(x);
-                    Entries.Insert(0, x);
-                }
-
-
-                // the list view will automatically update
-
-                if (AutoScrollButton.IsChecked == true)
-                    await FeedViewer.SmoothScrollIntoViewWithIndexAsync(0, itemPlacement: ScrollItemPlacement.Default, disableAnimation: false, scrollIfVisible: false, additionalHorizontalOffset: 0, additionalVerticalOffset: 0);
-            }
-        }
-
-        RefreshBtn.IsEnabled = true;
-
-        MainInfoBar.IsOpen = MainView.Settings?.IsVerified == false;
-    }
-    private void Refresh_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
-    {
-        RefreshFeed();
-    }
-
     private async void ClearCache_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
+        FeedViewer.Visibility = Visibility.Collapsed;
+        LoadingScreen.Visibility = Visibility.Visible;
+        CheckDisconnected();
+
         ProwlerSource.ForceResync();
         ImageCache.Clear();
         GC.Collect();
         await Entries.RefreshAsync();
+
+
+        FeedViewer.Visibility = Visibility.Visible;
+        LoadingScreen.Visibility = Visibility.Collapsed;
     }
 
     private async void DailyPoll_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
@@ -420,37 +400,40 @@ public sealed partial class ProwlerView
     {
         MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://mikhail.croomssched.tech/advice", true, true, false));
     }
-    private async void AppBarButton_Click(object sender, RoutedEventArgs e)
+    private void AppBarButton_Click(object sender, RoutedEventArgs e)
     {
-        if (MainView.Settings?.IsAuthenticated == false)
-        {
-            await new ContentDialog()
-            {
-                Title = "Not logged in",
-                Content = "Please login using the User Account button in the titlebar to post things to Prowler.",
-                XamlRoot = XamlRoot,
-                PrimaryButtonText = "OK",
-                DefaultButton = ContentDialogButton.Primary
-            }.ShowAsync();
-            return;
-        }
+        if (Poster.Visibility == Visibility.Collapsed)
+            Poster.ShowingLoading = false;
+        Poster.Visibility = Visibility.Visible;
+        //if (MainView.Settings?.IsAuthenticated == false)
+        //{
+        //    await new ContentDialog()
+        //    {
+        //        Title = "Not logged in",
+        //        Content = "Please login using the User Account button in the titlebar to post things to Prowler.",
+        //        XamlRoot = XamlRoot,
+        //        PrimaryButtonText = "OK",
+        //        DefaultButton = ContentDialogButton.Primary
+        //    }.ShowAsync();
+        //    return;
+        //}
 
-        ContentDialog dialog = new()
-        {
-            Title = "Create new post",
-            XamlRoot = XamlRoot,
-            PrimaryButtonText = "Post",
-            CloseButtonText = "Cancel",
-            DefaultButton = ContentDialogButton.Primary
-        };
-        dialog.PrimaryButtonClick += PostDialog_PrimaryButtonClick;
+        //ContentDialog dialog = new()
+        //{
+        //    Title = "Create new post",
+        //    XamlRoot = XamlRoot,
+        //    PrimaryButtonText = "Post",
+        //    CloseButtonText = "Cancel",
+        //    DefaultButton = ContentDialogButton.Primary
+        //};
+        //dialog.PrimaryButtonClick += PostDialog_PrimaryButtonClick;
 
-        dialog.RequestedTheme = SettingsManager.Settings.Theme;
+        //dialog.RequestedTheme = SettingsManager.Settings.Theme;
 
-        PostView content = new();
-        dialog.Content = content;
+        //PostView content = new();
+        //dialog.Content = content;
 
-        await dialog.ShowAsync();
+        //await dialog.ShowAsync();
     }
 
     private async void PostDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -473,7 +456,6 @@ public sealed partial class ProwlerView
             if (result.OK)
             {
                 sender.Hide();
-                RefreshFeed();
             }
             else
             {
@@ -567,15 +549,8 @@ public sealed partial class ProwlerView
             FlyoutUserName2.Text = "@Button.Tag == null";
     }
 
-    internal async Task ForceRefresh()
-    {
-        ProwlerSource.ForceResync();
-        await Entries.RefreshAsync();
-    }
-
     internal async Task RmPost(string id)
     {
-        ProwlerSource.RmPost(id);
         await Entries.RefreshAsync();
     }
 
@@ -587,6 +562,42 @@ public sealed partial class ProwlerView
     private void BtnVerify_Click(object sender, RoutedEventArgs e)
     {
         MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://community.croomssched.tech/prowler-verification", true, true, false));
+    }
+
+    private async void Poster_OkayClick(object sender, EventArgs e)
+    {
+        // validate some things
+        if (Poster.IsContentEmpty())
+        {
+            return;
+        }
+
+        Poster.ShowingLoading = true;
+
+        try
+        {
+            var result = await Services.ApiClient.PostFeed(Poster.PostContent.TrimEnd(['\r', '\n']));
+            if (result.OK)
+            {
+                Poster.Visibility = Visibility.Collapsed;
+                Poster.Empty();
+            }
+            else
+            {
+                Poster.Error = ApiClient.FormatResult(result);
+                Poster.ShowingLoading = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            Poster.Error = ex.Message;
+            Poster.ShowingLoading = false;
+        }
+    }
+
+    private void Poster_ExitClick(object sender, EventArgs e)
+    {
+        Poster.Visibility = Visibility.Collapsed;
     }
 }
 public class ProwlerSource : IIncrementalSource<FeedUIEntry>
@@ -663,37 +674,23 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
         Debug.WriteLine($"load index {pageIndex}*{pageSize}");
         await Task.Delay(50);
         return (from p in Entries select p).Skip(pageIndex * pageSize).Take(pageSize);
+    }
 
-        //int startIdx = pageIndex * pageSize;
-        //Result<FeedEntry[]?> feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
+    internal void ModPost(string id, string newContent)
+    {
+        var items = Entries.Where(i => id == i.Id);
+        if (items.Any())
+        {
+            FeedUIEntry? entry = items.FirstOrDefault();
+            if (entry != null)
+            {
+                entry.ContentData = newContent;
+                return;
+            }
+        }
 
-        //// Retry if ratelimit reached
-        //if (feedResult.IsRateLimitReached)
-        //{
-        //    for (int i = 0; i < 10; i++)
-        //    {
-        //        await Task.Delay(2000, cancellationToken);
-        //        feedResult = await Services.ApiClient.GetFeedPart(startIdx, startIdx + pageSize, cancellationToken);
-
-        //        if (!feedResult.IsRateLimitReached)
-        //            break;
-        //    }
-        //}
-
-        //if (!feedResult.OK || feedResult.Value == null)
-        //{
-        //    MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data [{startIdx}-{startIdx + pageIndex}]", "Error", 10);
-        //    return [];
-        //}
-
-        //List<FeedUIEntry> result = [];
-
-        //foreach (var entry in feedResult.Value)
-        //{
-        //    result.Add(await FeedView.ProcessEntry(entry));
-        //}
-
-        //return result;
+        Debug.WriteLine("ProwlerSource: sync error in ModPost");
+        ForceResync();
     }
 }
 public class FeedUIEntry

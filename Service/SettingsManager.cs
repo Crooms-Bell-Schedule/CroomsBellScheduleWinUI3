@@ -113,8 +113,9 @@ public static class SettingsManager
         public string? UserID { get; set; }
 
         public bool Show5MinNotification { get; set; }
-
         public bool Show1MinNotification { get; set; }
+        public string? ApiBase { get; set; }
+        public string? MikhailHostingBase { get; set; }
 
         public Dictionary<int, string> PeriodNames { get; set; } = [];
         [DefaultValue((int)PercentageSetting.SigFig4)]

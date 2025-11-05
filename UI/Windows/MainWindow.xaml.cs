@@ -1,5 +1,6 @@
 using CroomsBellScheduleCS.Service;
 using CroomsBellScheduleCS.UI.Views;
+using CroomsBellScheduleCS.Utils;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
 using System;
@@ -144,10 +145,11 @@ public sealed partial class MainWindow
     private async void Current_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         // prevent spamming message boxes
+        e.Handled = true;
         if (ErrorCount < 3)
         {
             ErrorCount++;
-            await UIMessage.ShowMsgAsync(e.Exception.ToString(), "Unhandled runtime error");
+            await UIMessage.ShowMsgAsync(e.Exception.ToString(), "Crooms Bell Schedule App CRASH");
         }
     }
 }

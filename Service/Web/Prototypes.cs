@@ -1,9 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using CroomsBellScheduleCS.Utils;
+using HtmlAgilityPack;
+using static CroomsBellScheduleCS.Provider.APIProvider;
 
 namespace CroomsBellScheduleCS.Service.Web
 {
+    // HTTP API Schema
     public class AnnouncementData
     {
         public List<Announcement> announcements { get; set; } = [];
@@ -116,5 +122,51 @@ namespace CroomsBellScheduleCS.Service.Web
         public string name { get; set; } = "";
         public string id { get; set; } = "";
         public string link { get; set; } = "";
+    }
+
+    // Websocket Schema
+    public class FeedMessage
+    {
+        public string Message { get; set; } = null!;
+
+        public static string? GetMessageType(string data)
+        {
+            var obj = JsonSerializer.Deserialize(data, SourceGenerationContext.Default.FeedMessage);
+            if (obj == null) return null;
+
+            return obj.Message;
+        }
+
+        public static FeedMessage? Deserialize(string data)
+        {
+            string? msgType;
+            switch(msgType = GetMessageType(data))
+            {
+                case "DeletePost":
+                    return JsonSerializer.Deserialize(data, SourceGenerationContext.Default.DeletePostMessage);
+                case "UpdatePost":
+                    return JsonSerializer.Deserialize(data, SourceGenerationContext.Default.UpdatePostMessage);
+                case "NewPost":
+                    return JsonSerializer.Deserialize(data, SourceGenerationContext.Default.NewPostMessage);
+                default:
+                    Debug.WriteLine("unknown WebSocket message: " + msgType);
+                    return null;
+            }
+        }
+    }
+
+    public class DeletePostMessage : FeedMessage
+    {
+        public string ID { get; set; } = null!;
+    }
+    public class UpdatePostMessage : FeedMessage
+    {
+        public string ID { get; set; } = null!;
+        public string NewContent { get; set; } = null!;
+    }
+    public class NewPostMessage : FeedMessage
+    {
+        public string ID { get; set; } = null!;
+        public FeedEntry Data { get; set; } = null!;
     }
 }

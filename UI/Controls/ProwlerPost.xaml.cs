@@ -185,11 +185,6 @@ public sealed partial class ProwlerPost
             if ((await Services.ApiClient.DeletePost(pid)).OK)
             {
                 MainView.Settings?.ShowInAppNotification($"Deleted post.", "Success", 10);
-                var view = ProwlerView.Instance;
-                {
-                    if (view != null)
-                        await view.RmPost(pid);
-                }
             }
             else
             {
@@ -205,10 +200,6 @@ public sealed partial class ProwlerPost
             if ((await Services.ApiClient.BanUser(uid)).OK)
             {
                 MainView.Settings?.ShowInAppNotification($"Banned user.", "Success", 10);
-
-                var view = ProwlerView.Instance;
-                if (view != null)
-                    await view.ForceRefresh();
             }
             else
             {

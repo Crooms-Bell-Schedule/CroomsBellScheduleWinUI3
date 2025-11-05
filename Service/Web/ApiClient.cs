@@ -12,12 +12,20 @@ namespace CroomsBellScheduleCS.Service.Web
 {
     public class ApiClient
     {
+        public static string ApiBase = "https://api.croomssched.tech";
+        public static string MikhailHostingBase = "https://mikhail.croomssched.tech";
         private readonly HttpClient _client = new()
         {
             Timeout = TimeSpan.FromSeconds(10)
         };
-        private const string ApiBase = "https://api.croomssched.tech";
-        private const string MikhailHostingBase = "https://mikhail.croomssched.tech";
+
+        public ApiClient()
+        {
+            if (!string.IsNullOrEmpty(SettingsManager.Settings.ApiBase))
+                ApiBase = SettingsManager.Settings.ApiBase;
+            if (!string.IsNullOrEmpty(SettingsManager.Settings.MikhailHostingBase))
+                MikhailHostingBase = SettingsManager.Settings.MikhailHostingBase;
+        }
         #region Utils
         public static Result<T?> DecodeResponse<T>(string responseText)
         {
@@ -213,7 +221,7 @@ namespace CroomsBellScheduleCS.Service.Web
             StringContent content = new(JsonSerializer.Serialize(req, SourceGenerationContext.Default.LoginRequest));
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
-            var response = await _client.PostAsync("https://api.croomssched.tech/users/login/", content);
+            var response = await _client.PostAsync($"{ApiBase}/users/login/", content);
 
             var responseText = await response.Content.ReadAsStringAsync();
 
@@ -224,7 +232,7 @@ namespace CroomsBellScheduleCS.Service.Web
         {
             try
             {
-                var response = await _client.GetAsync("https://api.croomssched.tech/infofetch/daily-poll");
+                var response = await _client.GetAsync($"{ApiBase}/infofetch/daily-poll");
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
@@ -264,7 +272,7 @@ namespace CroomsBellScheduleCS.Service.Web
             // TODO: may cause exception or wrong header to be sent!
 
             AddAuthorization();
-            var response = await _client.PostAsync("https://api.croomssched.tech/users/validateSID/" + SettingsManager.Settings.UserID, content);
+            var response = await _client.PostAsync($"{ApiBase}/users/validateSID/" + SettingsManager.Settings.UserID, content);
 
             var responseText = await response.Content.ReadAsStringAsync();
 
@@ -279,7 +287,7 @@ namespace CroomsBellScheduleCS.Service.Web
                 // TODO: may cause exception or wrong header to be sent!
 
                 AddAuthorization();
-                var response = await _client.PostAsync("https://api.croomssched.tech/feed/can-i-post", content);
+                var response = await _client.PostAsync($"{ApiBase}/feed/can-i-post", content);
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
@@ -294,7 +302,7 @@ namespace CroomsBellScheduleCS.Service.Web
         public async Task<Result> LogoutAsync()
         {
             AddAuthorization();
-            var response = await _client.DeleteAsync("https://api.croomssched.tech/users/logout/" + SettingsManager.Settings.UserID);
+            var response = await _client.DeleteAsync($"{ApiBase}/users/logout/" + SettingsManager.Settings.UserID);
 
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
@@ -320,7 +328,7 @@ namespace CroomsBellScheduleCS.Service.Web
         }
         public async Task<Result<FeedEntry[]?>> GetFeedPart(int start, int end, CancellationToken cancel = default)
         {
-            return await DoGetRequestAsync<FeedEntry[]>($"https://api.croomssched.tech/feed/part/{start}/{end}", cancel);
+            return await DoGetRequestAsync<FeedEntry[]>($"{ApiBase}/feed/part/{start}/{end}", cancel);
         }
 
         public async Task<Result<FeedEntry?>> PostFeed(string postContent)
@@ -334,7 +342,7 @@ namespace CroomsBellScheduleCS.Service.Web
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
             AddAuthorization();
-            var response = await _client.PostAsync("https://api.croomssched.tech/feed", content);
+            var response = await _client.PostAsync($"{ApiBase}/feed", content);
 
             var responseText = await response.Content.ReadAsStringAsync();
 
@@ -349,7 +357,7 @@ namespace CroomsBellScheduleCS.Service.Web
 
             AddAuthorization();
 
-            var response = await _client.PatchAsync("https://api.croomssched.tech/users/changeUsername", content);
+            var response = await _client.PatchAsync($"{ApiBase}/users/changeUsername", content);
 
             var responseText = await response.Content.ReadAsStringAsync();
 
@@ -360,7 +368,7 @@ namespace CroomsBellScheduleCS.Service.Web
         {
             AddAuthorization();
 
-            var response = await _client.PostAsync("https://api.croomssched.tech/users/userDetails", null);
+            var response = await _client.PostAsync($"{ApiBase}/users/userDetails", null);
 
             var responseText = await response.Content.ReadAsStringAsync();
 
@@ -374,7 +382,7 @@ namespace CroomsBellScheduleCS.Service.Web
             StringContent content = new("{\"UID\": \"" + uid + "\"}");
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
 
-            var response = await _client.PostAsync("https://api.croomssched.tech/users/uidUserDetails", content);
+            var response = await _client.PostAsync($"{ApiBase}/users/uidUserDetails", content);
 
             var responseText = await response.Content.ReadAsStringAsync();
 
@@ -391,14 +399,14 @@ namespace CroomsBellScheduleCS.Service.Web
         public async Task<Result> DeletePost(string id)
         {
             AddAuthorization();
-            var response = await _client.DeleteAsync("https://api.croomssched.tech/admin/prowler/" + id);
+            var response = await _client.DeleteAsync($"{ApiBase}/admin/prowler/" + id);
 
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
                 return Result.Ok;
             }
 
-            response = await _client.DeleteAsync("https://api.croomssched.tech/feed/" + id);
+            response = await _client.DeleteAsync($"{ApiBase}/feed/" + id);
 
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
@@ -410,13 +418,61 @@ namespace CroomsBellScheduleCS.Service.Web
         public async Task<Result> BanUser(string id)
         {
             AddAuthorization();
-            var response = await _client.PostAsync("https://api.croomssched.tech/admin/ban/" + id, new StringContent(""));
+            var response = await _client.PostAsync($"{ApiBase}/admin/ban/" + id, new StringContent(""));
 
             if (response.StatusCode == HttpStatusCode.NoContent)
             {
                 return Result.Ok;
             }
             return new Result() { OK = false };
+        }
+
+        public async Task<Result<SetProfilePictureResult?>> CreateAttachment(byte[] c, string fileType)
+        {
+            try
+            {
+                var formContent = new MultipartFormDataContent();
+
+                var b = new ByteArrayContent(c);
+                b.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+                formContent.Add(b, "data", "data."+ fileType);
+
+                using var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"{ApiBase}/feed/attachment");
+
+                requestMessage.Headers.TryAddWithoutValidation("Authorization", $"\"{SettingsManager.Settings.SessionID}\"");
+                requestMessage.Content = formContent;
+
+                var response = await _client.SendAsync(requestMessage);
+                var responseText = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode != HttpStatusCode.OK && string.IsNullOrEmpty(responseText))
+                {
+                    return new() { OK = false, Exception = new Exception($"Server error: {response.StatusCode}") };
+                }
+
+                if (responseText.StartsWith("<"))
+                {
+                    return new() { OK = false, Exception = new Exception($"Server/client version mismatch. The API server version does not support attachments.") };
+                }
+
+                ApiSimpleResponse? simple = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.ApiSimpleResponse) ?? throw new Exception("failed to decode json");
+
+                if (simple.status == "OK")
+                {
+                    return new() { OK = true };
+
+                }
+                else
+                {
+                    SetProfilePictureResult? resp = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.SetProfilePictureResult) ?? throw new Exception("failed to decode erorr message");
+                    if (resp.data == null) throw new("error data is null");
+                    return new() { OK = false, ErrorValue = new ErrorResponse() { error = resp.data.error }, Value = resp };
+                }
+            }
+            catch (Exception ex)
+            {
+                return new() { Exception = ex, OK = false };
+            }
         }
 
         public async Task<Result<SetProfilePictureResult?>> SetProfileImage(byte[] c, PfpUploadView.UploadViewMode mode)
@@ -431,7 +487,7 @@ namespace CroomsBellScheduleCS.Service.Web
 
                 string modeApi = mode == PfpUploadView.UploadViewMode.ProfilePicture ? "setProfilePicture" : "setProfileBanner";
 
-                using var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"https://api.croomssched.tech/users/{modeApi}");
+                using var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"{ApiBase}/users/{modeApi}");
 
                 requestMessage.Headers.TryAddWithoutValidation("Authorization", $"\"{SettingsManager.Settings.SessionID}\"");
                 requestMessage.Content = formContent;
@@ -493,7 +549,7 @@ namespace CroomsBellScheduleCS.Service.Web
                 b.Headers.ContentType = new("application/json");
 
                 using var requestMessage =
-              new HttpRequestMessage(HttpMethod.Post, "https://api.croomssched.tech/sso/use/crooms-bell-app");
+              new HttpRequestMessage(HttpMethod.Post, $"{ApiBase}/sso/use/crooms-bell-app");
 
                 requestMessage.Headers.TryAddWithoutValidation("Authorization", $"\"{id}\"");
                 requestMessage.Content = b;

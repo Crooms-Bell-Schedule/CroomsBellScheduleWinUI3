@@ -3,6 +3,8 @@ using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
+using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
@@ -106,12 +108,15 @@ public sealed partial class UIMessage
             IsOpen = true
         };
 
+        Debug.WriteLine($"create UIMessage, message: {message}, title: {title}");
+
         msg.AppWindow.Show();
         Center(msg);
 
-        while (msg.IsOpen) await Task.Delay(10);
+        while (msg.IsOpen) await Task.Delay(100);
 
-        MainWindow.ViewInstance.CorrectLayer();
+        Debug.WriteLine("UIMessage closed");
+       MainWindow.ViewInstance.CorrectLayer();
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)

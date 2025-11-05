@@ -9,10 +9,21 @@
     mc:Ignorable="d">
 
     <Grid>
-        <StackPanel
+        <Grid
             x:Name="ContentArea">
 
-            <RelativePanel Margin="0,0,0,20" HorizontalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <RelativePanel Grid.Row="0" Grid.ColumnSpan="4" Margin="0,0,0,5" HorizontalAlignment="Stretch">
                 <RelativePanel.Resources>
                     <Style TargetType="Button">
                         <Setter Property="BorderThickness" Value="0" />
@@ -140,20 +151,35 @@ RelativePanel.RightOf="InsertLink" Click="ClearFormatting_Click">
                     </DropDownButton.Flyout>
                 </DropDownButton>
 
+                <Button x:Name="ExitButton" AutomationProperties.Name="Clear Formatting" ToolTipService.ToolTip="Clear formatting"
+RelativePanel.AlignRightWithPanel="True" Click="ExitButton_Click">
+                    <Button.Content>
+                        <FontIcon Glyph="&#xE711;"/>
+                    </Button.Content>
+                </Button>
+
                 <RichEditBox x:Name="PostContentBox" PlaceholderText="Enter post content"
                              TextChanged="PostContentBox_TextChanged" 
                              IsSpellCheckEnabled="True" AcceptsReturn="True" TextWrapping="Wrap"
-                             IsTextPredictionEnabled="True" Height="200" 
+                             IsTextPredictionEnabled="True" MaxHeight="200" 
                               AutomationProperties.Name="Custom editor"
                     RelativePanel.Below="BoldButton"
                     RelativePanel.AlignLeftWithPanel="True"
                     RelativePanel.AlignRightWithPanel="True"
+                             DragEnter="PostContentBox_DragEnter"
+                             DragOver="PostContentBox_DragOver"
+                             DragLeave="PostContentBox_DragLeave"
+                             DropCompleted="PostContentBox_DropCompleted"
+                             Drop="PostContentBox_Drop"
                     GotFocus="Editor_GotFocus"/>
             </RelativePanel>
-            
 
-            <TextBlock x:Name="LoginFailureText" Foreground="{ThemeResource SystemFillColorCriticalBrush}"></TextBlock>
-        </StackPanel>
+
+
+            <Button Click="Button_Click" HorizontalAlignment="Right" Grid.Column="3" Grid.Row="1">Submit</Button>
+                <TextBlock Grid.Row="1"  Grid.Column="0" x:Name="LoginFailureText" Foreground="{ThemeResource SystemFillColorCriticalBrush}"></TextBlock>
+         
+        </Grid>
         <StackPanel
     x:Name="Loader" Visibility="Collapsed">
             <ProgressRing x:Name="LoadingThing" VerticalAlignment="Center" HorizontalAlignment="Center"/>

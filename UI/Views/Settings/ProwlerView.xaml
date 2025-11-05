@@ -51,12 +51,12 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <CommandBar Background="Transparent" DefaultLabelPosition="Right" HorizontalAlignment="Left">
+        <CommandBar Background="Transparent" DefaultLabelPosition="Right" HorizontalAlignment="Left" Grid.Row="0">
             <AppBarButton Icon="Add" Grid.Row="0" Label="New" Click="AppBarButton_Click"/>
-            <AppBarButton x:Name="RefreshBtn" Icon="Refresh" Grid.Row="0" Label="Refresh" Click="Refresh_Click"/>
             <AppBarButton x:Name="DailyPollBtn" Grid.Row="0" Label="Daily Poll" Click="DailyPoll_Click">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE9D2;" />
@@ -85,19 +85,26 @@
             </ProgressBar.Resources>
         </ProgressBar>
 
-        <InfoBar x:Name="MainInfoBar" Message="In order to post on Prowler, please verify your account" Grid.Row="2" IsOpen="True" Severity="Error" IsClosable="True">
-            <InfoBar.ActionButton>
-                <Button x:Name="BtnVerify" Content="Verify" Click="BtnVerify_Click" HorizontalAlignment="Right"/>
-            </InfoBar.ActionButton>
-        </InfoBar>
+        <StackPanel Grid.Row="2">
+            <InfoBar x:Name="MainInfoBar" Message="In order to post on Prowler, please verify your account" IsOpen="True" Severity="Error" IsClosable="True">
+                <InfoBar.ActionButton>
+                    <Button x:Name="BtnVerify" Content="Verify" Click="BtnVerify_Click" HorizontalAlignment="Right"/>
+                </InfoBar.ActionButton>
+            </InfoBar>
 
-        <ListView x:Name="FeedViewer" Grid.Row="3"
+            <InfoBar x:Name="DisconnectServer" Message="Disconnected from server. Attempting to reconnect..." IsOpen="True" Severity="Warning" IsClosable="False"/>
+            <InfoBar x:Name="NoInternetAccess" Message="No internet access. Check your connection." IsOpen="False" Severity="Informational" IsClosable="False"/>
+        </StackPanel>
+
+        <views:PostView x:Name="Poster" Grid.Row="3" OkayClick="Poster_OkayClick" Visibility="Collapsed" ExitClick="Poster_ExitClick"></views:PostView>
+
+        <ListView x:Name="FeedViewer" Grid.Row="4"
                   ScrollViewer.ZoomMode="Enabled"
                   ScrollViewer.HorizontalScrollMode="Enabled"
                   ScrollViewer.VerticalScrollMode="Enabled"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Visible"
-                  SelectionMode="None" Visibility="Visible">
+                  SelectionMode="None" Visibility="Collapsed">
 
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="views:FeedUIEntry">
@@ -112,9 +119,9 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <Grid x:Name="LoadingScreen" Grid.Row="3">
+        <Grid x:Name="LoadingScreen" Grid.Row="4">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock FontSize="38" HorizontalAlignment="Center">Loading Prowler data...</TextBlock>
+                <TextBlock x:Name="LoadingStatus" FontSize="38" HorizontalAlignment="Center">Loading Prowler data...</TextBlock>
                 <TextBlock x:Name="LoadingTip" VerticalAlignment="Bottom" HorizontalAlignment="Center" FontSize="28" FontWeight="Light"
                                Margin="0,50,0,0" TextWrapping="WrapWholeWords">Tip: Light mode attracts bugs</TextBlock>
             </StackPanel>

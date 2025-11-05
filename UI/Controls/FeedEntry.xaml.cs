@@ -246,7 +246,14 @@ public sealed partial class FeedEntry
 
         foreach (var item in ch)
         {
-            rootElem.Inlines.Add(item);
+            try
+            {
+                rootElem.Inlines.Add(item);
+            }
+            catch
+            {
+
+            }
         }
 
         if (addLineBreak)
@@ -552,6 +559,7 @@ public sealed partial class FeedEntry
         public bool IsBold => Style.CharacterFormat.Bold == FormatEffect.On;
         public bool IsUnderline => Style.CharacterFormat.Underline != UnderlineType.None;
         public bool IsItalic => Style.CharacterFormat.Italic == FormatEffect.On;
+        
 
         public bool IsModifedStyling
         {
