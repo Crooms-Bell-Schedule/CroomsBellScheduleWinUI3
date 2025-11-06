@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Core.Web;
 using CroomsBellSchedule.Service;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -28,7 +28,7 @@ public sealed partial class ProwlerProfileView
         }
 
         LoadingRing.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
-        
+
         // load images
         FlyoutPicture.ProfilePicture = await ProwlerView.RetrieveImageByTypeAsync(uid);
         FlyoutBanner.Source = await ProwlerView.RetrieveImageByTypeAsync(uid, "profile_banner");
@@ -86,11 +86,13 @@ public sealed partial class ProwlerProfileView
             if (entries.Count == 0)
             {
                 entries.Add(new FeedUIEntry()
-                { Author = "Crooms Bell Schedule System",
-                AuthorId = "system",
-                ContentData = "This user has not posted anything.",
-                Date = DateTime.Now,
-                Id = "system",CanEdit = false
+                {
+                    Author = "Crooms Bell Schedule System",
+                    AuthorId = "system",
+                    ContentData = "This user has not posted anything.",
+                    Date = DateTime.Now,
+                    Id = "system",
+                    CanEdit = false
                 });
             }
 

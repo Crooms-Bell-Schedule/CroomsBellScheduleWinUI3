@@ -1,11 +1,10 @@
 ﻿using System;
-using Windows.Storage.Pickers;
-using Windows.Storage;
-using WinRT.Interop;
-using CroomsBellSchedule.UI.Windows;
 using CommunityToolkit.WinUI.Controls;
-using Microsoft.UI.Xaml.Controls;
-using static CroomsBellSchedule.Core.Service.Web.ApiClient;
+using CroomsBellSchedule.UI.Windows;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
+using static CroomsBellSchedule.Core.Web.ApiClient;
 
 namespace CroomsBellSchedule.UI.Views.Settings;
 

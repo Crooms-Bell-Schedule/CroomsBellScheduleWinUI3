@@ -1,6 +1,6 @@
 ﻿using System;
 using CommunityToolkit.WinUI;
-using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Core.Web;
 using CroomsBellSchedule.Service;
 using CroomsBellSchedule.UI.Views;
 using CroomsBellSchedule.UI.Views.Settings;

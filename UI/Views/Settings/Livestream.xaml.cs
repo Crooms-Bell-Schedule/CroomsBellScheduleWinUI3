@@ -1,8 +1,4 @@
 using System;
-using System.IO;
-using System.Net.Http;
-using System.Text;
-using ABI.Windows.Media.Playback;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Media.Core;
 

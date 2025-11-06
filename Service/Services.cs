@@ -1,4 +1,4 @@
-﻿using CroomsBellSchedule.Core.Service.Web;
+﻿using CroomsBellSchedule.Core.Web;
 
 namespace CroomsBellSchedule.Service
 {

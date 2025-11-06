@@ -53,7 +53,7 @@ public static partial class Win32
 
     [LibraryImport("User32.dll", EntryPoint = "GetWindowThreadProcessId")]
     public static partial int GetWindowThreadProcessId(IntPtr hWnd, out short processId);
-    [LibraryImport("user32.dll", EntryPoint = "AttachThreadInput", SetLastError =true)]
+    [LibraryImport("user32.dll", EntryPoint = "AttachThreadInput", SetLastError = true)]
     public static partial int AttachThreadInput(int attach, int attachTo, int shouldAttach);
     [LibraryImport("kernel32.dll", EntryPoint = "GetCurrentThreadId")]
     public static partial int GetCurrentThreadId();

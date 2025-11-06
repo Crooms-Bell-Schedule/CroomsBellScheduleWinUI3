@@ -2,8 +2,6 @@
 using System.Net;
 using System.Net.Sockets;
 using CroomsBellSchedule.Utils;
-using Microsoft.UI.Xaml;
-using Windows.Networking.Connectivity;
 
 namespace CroomsBellSchedule.Service
 {

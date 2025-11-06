@@ -1,11 +1,9 @@
-using CroomsBellSchedule.UI.Views;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
-using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
 using static CroomsBellSchedule.Utils.Win32;
@@ -56,7 +54,7 @@ public sealed partial class UIMessage
         presenter.IsModal = true;
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
-        
+
 
         ExtendsContentIntoTitleBar = true;
         SetTitleBar(AppTitleBar);
@@ -116,7 +114,7 @@ public sealed partial class UIMessage
         while (msg.IsOpen) await Task.Delay(100);
 
         Debug.WriteLine("UIMessage closed");
-       MainWindow.ViewInstance.CorrectLayer();
+        MainWindow.ViewInstance.CorrectLayer();
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)

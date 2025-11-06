@@ -1,5 +1,5 @@
 ﻿using System;
-using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Core.Web;
 using CroomsBellSchedule.Service;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;

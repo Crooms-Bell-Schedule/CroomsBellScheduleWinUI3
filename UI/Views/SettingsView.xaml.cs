@@ -3,9 +3,8 @@ using System;
 using System.IO;
 using System.Numerics;
 using System.Threading.Tasks;
-using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Core.Web;
 using CroomsBellSchedule.Service;
-using CroomsBellSchedule.Themes;
 using CroomsBellSchedule.UI.Views.Settings;
 using CroomsBellSchedule.UI.Windows;
 using Microsoft.Graphics.Canvas.Effects;
@@ -18,7 +17,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.UI;
-using static CroomsBellSchedule.Core.Service.Web.ApiClient;
+using static CroomsBellSchedule.Core.Web.ApiClient;
 using static CroomsBellSchedule.Service.SettingsManager;
 
 namespace CroomsBellSchedule.UI.Views;
@@ -678,7 +677,7 @@ public sealed partial class SettingsView
             var src = new BitmapImage();
             if (theme.HasSeperateLightDarkBgs)
             {
-                if (Themes.Themes.UseDark)
+                if (Themes.UseDark)
                     src.UriSource = new("ms-appx:///Assets/Theme/" + theme.BackgroundResource + "_dark.png");
                 else src.UriSource = new("ms-appx:///Assets/Theme/" + theme.BackgroundResource + "_light.png");
             }
@@ -695,15 +694,15 @@ public sealed partial class SettingsView
             };
         }
 
-        if (Themes.Themes.UseDark)
-        BackgroundDimmer.Background = new SolidColorBrush(new Color()
-        {
-            A = theme.DimDark,
+        if (Themes.UseDark)
+            BackgroundDimmer.Background = new SolidColorBrush(new Color()
+            {
+                A = theme.DimDark,
 
-            B = theme.BrightnessDark,
-            G = theme.BrightnessDark,
-            R = theme.BrightnessDark,
-        });
+                B = theme.BrightnessDark,
+                G = theme.BrightnessDark,
+                R = theme.BrightnessDark,
+            });
         else
             BackgroundDimmer.Background = new SolidColorBrush(new Color()
             {
@@ -719,6 +718,6 @@ public sealed partial class SettingsView
 
     private void Src_ImageFailed(object sender, ExceptionRoutedEventArgs e)
     {
-        
+
     }
 }

@@ -98,7 +98,7 @@ public sealed partial class MainView
 
             Debug.WriteLine("End MainWindow init");
 
-            Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
+            Themes.Apply(SettingsManager.Settings.ThemeIndex);
 
             _prevDPI = XamlRoot.RasterizationScale;
 
@@ -331,7 +331,7 @@ public sealed partial class MainView
         if (SettingsWindow != null && SettingsWindow.SettingsView != null)
             SettingsWindow.SettingsView.UpdateTheme();
         MainWindow.Instance.UpdateTheme(theme);
-        Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
+        Themes.Apply(SettingsManager.Settings.ThemeIndex);
     }
 
     #region Bell
@@ -773,7 +773,7 @@ public sealed partial class MainView
         {
             SettingsWindow = new();
             SettingsWindow.Closed += _settings_Closed;
-            Themes.Themes.Apply(SettingsManager.Settings.ThemeIndex);
+            Themes.Apply(SettingsManager.Settings.ThemeIndex);
         }
         SettingsWindow.Activate();
     }

@@ -1,12 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using System.Web;
-using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Core.Web;
 using CroomsBellSchedule.Service;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.ApplicationModel.DataTransfer;
-using static CroomsBellSchedule.Core.Service.Web.ApiClient;
+using static CroomsBellSchedule.Core.Web.ApiClient;
 
 namespace CroomsBellSchedule.UI.Views.Settings;
 

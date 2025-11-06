@@ -1,12 +1,8 @@
-using System;
 using CroomsBellSchedule.Service;
 using CroomsBellSchedule.UI.Views;
-using CroomsBellSchedule.Utils;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
-using Windows.UI.Popups;
 using WinRT;
-using WinRT.Interop;
 using static CroomsBellSchedule.Service.SettingsManager;
 
 namespace CroomsBellSchedule.UI.Windows;

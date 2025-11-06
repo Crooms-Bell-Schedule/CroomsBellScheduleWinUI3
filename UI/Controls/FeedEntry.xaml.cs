@@ -1,8 +1,9 @@
-﻿using CroomsBellSchedule.Core.Utils;
-using CroomsBellSchedule.Service;
-using CroomsBellSchedule.Themes;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
+using CroomsBellSchedule.Core.Utils;
+using CroomsBellSchedule.UI;
 using CroomsBellSchedule.UI.Views.Settings;
-using CroomsBellSchedule.Utils;
 using HtmlAgilityPack;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
@@ -10,9 +11,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System;
-using System.Collections.Generic;
-using System.Net;
 
 namespace CroomsBellSchedule.Controls;
 
@@ -346,7 +344,7 @@ public sealed partial class FeedEntry
                     // format is the same, extend the previous item
 
                     if (char.IsAscii(f.Style.Character))
-                    previous.FullText += f.FullText;
+                        previous.FullText += f.FullText;
                     else
                     {
                         // probably unicode character
@@ -479,7 +477,7 @@ public sealed partial class FeedEntry
                     // this is a mention
                     writer.BeginTag("a", [new("mention", "")]);
 
-                    item.FullText = (item.FullText.Replace("HYPERLINK " + item.Style.Link, "")).Replace("prowler-mention/","");
+                    item.FullText = (item.FullText.Replace("HYPERLINK " + item.Style.Link, "")).Replace("prowler-mention/", "");
                 }
                 else
                 {
@@ -568,7 +566,7 @@ public sealed partial class FeedEntry
         public bool IsBold => Style.CharacterFormat.Bold == FormatEffect.On;
         public bool IsUnderline => Style.CharacterFormat.Underline != UnderlineType.None;
         public bool IsItalic => Style.CharacterFormat.Italic == FormatEffect.On;
-        
+
 
         public bool IsModifedStyling
         {
@@ -584,13 +582,13 @@ public sealed partial class FeedEntry
                 // RichTextBox Foreground depends on the current color scheme.
 
                 // Check if using dark mode and foreground is white
-                if (Themes.Themes.UseDark && Style.CharacterFormat.ForegroundColor == Windows.UI.Color.FromArgb(255, 255, 255, 255))
+                if (Themes.UseDark && Style.CharacterFormat.ForegroundColor == Windows.UI.Color.FromArgb(255, 255, 255, 255))
                 {
                     return false;
                 }
 
                 // Check if using light mode and foreground is black
-                if (!Themes.Themes.UseDark && Style.CharacterFormat.ForegroundColor != Windows.UI.Color.FromArgb(255, 0, 0, 0))
+                if (!Themes.UseDark && Style.CharacterFormat.ForegroundColor != Windows.UI.Color.FromArgb(255, 0, 0, 0))
                 {
                     return false;
                 }

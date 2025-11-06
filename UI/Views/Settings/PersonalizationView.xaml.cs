@@ -1,12 +1,12 @@
-﻿using CroomsBellSchedule.Service;
+﻿using System;
+using System.Reflection;
+using CroomsBellSchedule.Service;
 using CroomsBellSchedule.UI.Windows;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
-using System;
-using System.Reflection;
 using static CroomsBellSchedule.Service.SettingsManager;
 
 namespace CroomsBellSchedule.UI.Views.Settings;
@@ -38,7 +38,7 @@ public sealed partial class PersonalizationView
         VersionCard.Description = $"{ver.Major}.{ver.Minor}.{ver.Build}";
 
         bool updating = true;
-        foreach (var item in Themes.Themes.ThemeList)
+        foreach (var item in Themes.ThemeList)
         {
             ToggleButton button = new()
             {
@@ -76,7 +76,7 @@ public sealed partial class PersonalizationView
 
                 SettingsManager.Settings.ThemeIndex = item.ID;
                 await SaveSettings();
-                Themes.Themes.Apply(item.ID);
+                Themes.Apply(item.ID);
             };
 
             button.Unchecked += delegate (object sender, RoutedEventArgs e)
