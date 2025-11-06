@@ -197,9 +197,9 @@ public sealed partial class SettingsView
             int importantAnncCount = 0;
             if (data.OK && data.Value != null)
             {
-                foreach (var item in data.Value.announcements)
+                foreach (var item in data.Value)
                 {
-                    if (item.important && !SettingsManager.Settings.ViewedAnnouncementIds.Contains(item.id))
+                    if (item.priority && !SettingsManager.Settings.ViewedAnnouncementIdsNew.Contains(item.id))
                     {
                         importantAnncCount++;
                     }

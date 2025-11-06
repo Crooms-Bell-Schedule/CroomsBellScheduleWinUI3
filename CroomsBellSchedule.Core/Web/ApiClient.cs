@@ -531,19 +531,19 @@ namespace CroomsBellSchedule.Core.Web
             }
         }
 
-        public async Task<Result<AnnouncementData?>> GetAnnouncements()
+        public async Task<Result<Announcement[]?>> GetAnnouncements()
         {
             try
             {
-                var response = await _client.GetAsync($"{MikhailHostingBase}/crfsapi/AppController/Announcements");
+                var response = await _client.GetAsync($"{ApiBase}/announcements/app");
 
                 var responseText = await response.Content.ReadAsStringAsync();
 
-                return new Result<AnnouncementData?>() { OK = true, Value = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.AnnouncementData) };
+                return DecodeResponse<Announcement[]>(responseText);
             }
             catch (Exception ex)
             {
-                return new Result<AnnouncementData?>() { OK = false, Exception = ex };
+                return new Result<Announcement[]?>() { OK = false, Exception = ex };
             }
         }
 

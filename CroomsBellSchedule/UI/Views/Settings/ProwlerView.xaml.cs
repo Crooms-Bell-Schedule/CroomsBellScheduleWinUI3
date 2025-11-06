@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Timers;
 using CommunityToolkit.WinUI;
@@ -37,6 +39,7 @@ public sealed partial class ProwlerView
     internal static ProwlerView? Instance { get; set; }
     internal static ProwlerSource ProwlerSource { get; set; } = new();
     private Timer _reconnectTimer;
+    private Timer _updateLabels;
 
     private static string[] Tips =
     [
@@ -66,12 +69,23 @@ public sealed partial class ProwlerView
         _reconnectTimer = new();
         _reconnectTimer.Elapsed += _reconnectTimer_Elapsed;
         _reconnectTimer.Interval = 5000;
+        _updateLabels = new();
+        _updateLabels.Interval = 1000 * 10;
+        _updateLabels.Elapsed += _updateLabels_Elapsed;
 
-        Services.SocketClient.OnConnected += SocketClient_OnConnected;
-        Services.SocketClient.OnDisconnected += SocketClient_OnDisconnected;
-        Services.SocketClient.OnPostCreated += SocketClient_OnPostCreated;
-        Services.SocketClient.OnPostDeleted += SocketClient_OnPostDeleted;
-        Services.SocketClient.OnPostUpdated += SocketClient_OnPostUpdated;
+        if (ProwlerSource.GetCount() == 0)
+        {
+            Services.SocketClient.OnConnected += SocketClient_OnConnected;
+            Services.SocketClient.OnDisconnected += SocketClient_OnDisconnected;
+            Services.SocketClient.OnPostCreated += SocketClient_OnPostCreated;
+            Services.SocketClient.OnPostDeleted += SocketClient_OnPostDeleted;
+            Services.SocketClient.OnPostUpdated += SocketClient_OnPostUpdated;
+        }
+    }
+
+    private void _updateLabels_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        
     }
 
     private async void _reconnectTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -129,10 +143,25 @@ public sealed partial class ProwlerView
 
     private async void SocketClient_OnPostCreated(FeedEntry entry)
     {
-        ProwlerSource.InsertEntry(ProcessEntry(entry));
+        var e = ProcessEntry(entry);
+        ProwlerSource.InsertEntry(e);
 
+         Entries.Insert(0, e);
+
+        try
+        {
+            if (AutoScrollButton.IsChecked == true)
+                await FeedViewer.SmoothScrollIntoViewWithIndexAsync(0, itemPlacement: ScrollItemPlacement.Default, disableAnimation: false, scrollIfVisible: false, additionalHorizontalOffset: 0, additionalVerticalOffset: 0);
+
+
+
+        }
+        catch
+        {
+
+        }
         // TODO: smooth refresh
-        await Entries.RefreshAsync();
+        //await Entries.RefreshAsync();
     }
     private void SocketClient_OnDisconnected(object? sender, EventArgs e)
     {
@@ -607,6 +636,27 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
     public void InsertEntry(FeedUIEntry entry)
     {
         Entries.Insert(0, entry);
+
+        //string res = "";
+
+        //foreach (var item in Entries)
+        //{
+        //    if (item.Date.Month == 11 && item.Date.Day == 6)
+        //    {
+        //        res += "{\n";
+        //        res += $"\"data\": \"{item.ContentData.Replace("\"", "\\" + "\"")}\",\n";
+        //        res += $"\"store\": \"public\",\n";
+        //        res += $"\"id\": \"{item.Id}\",\n";
+        //        res += $"\"create\": \"{item.Date.ToString("yyyy-MM-ddTHH:mm:ss.000Z", CultureInfo.InvariantCulture)}\",\n";
+        //        res += $"\"delete\": \"{item.Date.ToString("yyyy-MM-ddTHH:mm:ss.000Z", CultureInfo.InvariantCulture)}\",\n";
+        //        res += $"\"uid\": \"{item.AuthorId}\",\n";
+        //        res += $"\"createdBy\": \"{item.Author.Replace("✅", "")}\",\n";
+        //        var x = item.Author.Contains("✅") ? "true" : "false";
+        //        res += $"\"verified\": {x}\n";
+        //        res += "},\n";
+        //    }
+
+        //}
     }
 
     public void ForceResync()
@@ -691,6 +741,11 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
 
         Debug.WriteLine("ProwlerSource: sync error in ModPost");
         ForceResync();
+    }
+
+    internal int GetCount()
+    {
+        return Entries.Count;
     }
 }
 public class FeedUIEntry

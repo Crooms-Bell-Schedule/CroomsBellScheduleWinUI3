@@ -7,17 +7,20 @@ using System.Text.Json.Serialization;
 namespace CroomsBellSchedule.Core.Web
 {
     // HTTP API Schema
-    public class AnnouncementData
+    public class AnnouncementContent
     {
-        public List<Announcement> announcements { get; set; } = [];
+        public string title { get; set; } = null!;
+        public string message { get; set; } = null!;
     }
+
     public class Announcement
     {
-        public int id { get; set; }
-        public string date { get; set; } = "";
-        public string title { get; set; } = "";
-        public string content { get; set; } = "";
-        public bool important { get; set; }
+        public string id { get; set; } = null!;
+        public string expires { get; set; } = null!;
+        public AnnouncementContent data { get; set; } = null!;
+        public string created { get; set; } = null!;
+        public List<string> targets { get; set; } = [];
+        public bool priority { get; set; }
     }
     public class LoginRequest
     {

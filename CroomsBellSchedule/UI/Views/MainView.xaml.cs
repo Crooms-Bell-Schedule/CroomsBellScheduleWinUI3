@@ -46,6 +46,7 @@ public sealed partial class MainView
     private AppWindow? _windowApp;
     private bool _checkDPIUpdates = false;
     private double _prevDPI = 0;
+    private int _todayDay = 0;
     public BellScheduleReader? Reader { get => _reader; }
     public int LunchOffset { get => _lunchOffset; }
     public XamlUICommand SettingsCommand { get; set; } = new XamlUICommand();
@@ -56,6 +57,7 @@ public sealed partial class MainView
 
         SettingsCommand.ExecuteRequested += SettingsCommand_ExecuteRequested;
         QuitCommand.ExecuteRequested += QuitCommand_ExecuteRequested;
+        _todayDay = DateTime.Now.Day;
     }
 
     private void QuitCommand_ExecuteRequested(XamlUICommand sender, ExecuteRequestedEventArgs args)
@@ -197,6 +199,13 @@ public sealed partial class MainView
 
     private async void _updateChecker_Tick(object? sender, object e)
     {
+        // update lunch index if different day today.
+        if (_todayDay != DateTime.Now.Day)
+        {
+            SetLunch(DetermineLunchOffsetFromToday());
+            _todayDay = DateTime.Now.Day;
+        }
+
         if (SettingsWindow != null && SettingsWindow.SettingsView != null)
             await SettingsWindow.SettingsView.CheckAnnouncementsAsync();
     }

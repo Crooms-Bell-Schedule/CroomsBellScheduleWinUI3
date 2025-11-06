@@ -22,7 +22,7 @@ namespace CroomsBellSchedule.Core.Web
     [JsonSerializable(typeof(SubmitFeedRequest))]
     [JsonSerializable(typeof(ApiSimpleResponse))]
     [JsonSerializable(typeof(UsernameChangeRequest))]
-    [JsonSerializable(typeof(AnnouncementData))]
+    [JsonSerializable(typeof(ApiResponse<Announcement[]>))]
     [JsonSerializable(typeof(ApiResponse<Survey[]>))]
     [JsonSerializable(typeof(ApiResponse<SetProfilePictureResult>))]
     [JsonSerializable(typeof(ApiResponse<GetUserResult>))]

@@ -129,9 +129,18 @@ public sealed partial class ProwlerPost
         var content = d as ProwlerPost;
         if (content != null)
         {
-            content.DateLabel.Text = ProwlerView.AsTimeAgo((DateTime)e.NewValue);
+            var date = ((DateTime)e.NewValue);
 
-            ToolTipService.SetToolTip(content.DateLabel, ((DateTime)e.NewValue).ToString());
+            if (date.Month == DateTime.Now.Month && date.Day == DateTime.Now.Day && date.Year == DateTime.Now.Year)
+            {
+                content.DateLabel.Text = "Today at " + date.ToString("hh:mm tt");
+            }
+            else
+            {
+                content.DateLabel.Text = date.ToString();
+            }
+
+            //ToolTipService.SetToolTip(content.DateLabel, ((DateTime)e.NewValue).ToString());
         }
     }
 

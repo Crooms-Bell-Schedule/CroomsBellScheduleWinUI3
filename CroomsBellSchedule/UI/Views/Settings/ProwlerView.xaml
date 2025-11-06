@@ -10,7 +10,8 @@
     xmlns:views="using:CroomsBellSchedule.UI.Views.Settings"
     xmlns:cui="using:CroomsBellSchedule.Controls"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
-    mc:Ignorable="d" Loaded="Page_Loaded">
+    mc:Ignorable="d" Loaded="Page_Loaded"
+    NavigationCacheMode="Required">
 
     <Page.Resources>
         <Flyout x:Key="UserFlyout" Placement="BottomEdgeAlignedLeft">

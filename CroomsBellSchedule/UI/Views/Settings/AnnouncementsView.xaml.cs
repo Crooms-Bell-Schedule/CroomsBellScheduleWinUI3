@@ -1,4 +1,5 @@
-﻿using CroomsBellSchedule.Core.Web;
+﻿using System;
+using CroomsBellSchedule.Core.Web;
 using CroomsBellSchedule.Service;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -50,10 +51,9 @@ public sealed partial class AnnouncementsView
         }
     }
 
-    private void InitPage(AnnouncementData value)
+    private void InitPage(Announcement[] value)
     {
-        value.announcements.Reverse();
-        foreach (var item in value.announcements)
+        foreach (var item in value)
         {
             Expander ex = new Expander();
             ex.HorizontalContentAlignment = HorizontalAlignment.Stretch;
@@ -61,9 +61,9 @@ public sealed partial class AnnouncementsView
             InfoBadge badge = new InfoBadge();
             ex.Expanding += async delegate (Expander sender, ExpanderExpandingEventArgs e)
             {
-                if (item.important && !SettingsManager.Settings.ViewedAnnouncementIds.Contains(item.id))
+                if (item.priority && !SettingsManager.Settings.ViewedAnnouncementIdsNew.Contains(item.id))
                 {
-                    SettingsManager.Settings.ViewedAnnouncementIds.Add(item.id);
+                    SettingsManager.Settings.ViewedAnnouncementIdsNew.Add(item.id);
                     await SettingsManager.SaveSettings();
                     badge.Visibility = Visibility.Collapsed;
                     UnreadRemaining--;
@@ -72,10 +72,10 @@ public sealed partial class AnnouncementsView
             ex.Width = 400;
 
             ex.Content = new StackPanel();
-            ((StackPanel)ex.Content).Children.Add(new TextBlock() { Text = item.date });
-            ((StackPanel)ex.Content).Children.Add(new Controls.FeedEntry() { ContentData = item.content });
+            ((StackPanel)ex.Content).Children.Add(new TextBlock() { Text = DateTime.Parse(item.created).ToString() });
+            ((StackPanel)ex.Content).Children.Add(new Controls.FeedEntry() { ContentData = item.data.message });
 
-            if (item.important && !SettingsManager.Settings.ViewedAnnouncementIds.Contains(item.id))
+            if (item.priority && !SettingsManager.Settings.ViewedAnnouncementIdsNew.Contains(item.id))
             {
                 badge.Style = Application.Current.Resources["AttentionDotInfoBadgeStyle"] as Style;
                 badge.VerticalAlignment = VerticalAlignment.Center;
@@ -83,14 +83,14 @@ public sealed partial class AnnouncementsView
                 badge.Margin = new Thickness(-5, 0, 0, 0); // todo make the badge look better
 
                 Grid header = new();
-                header.Children.Add(new TextBlock() { Text = item.title });
+                header.Children.Add(new TextBlock() { Text = item.data.title });
                 header.Children.Add(badge);
                 ex.Header = header;
                 UnreadRemaining++;
             }
             else
             {
-                ex.Header = item.title;
+                ex.Header = item.data.title;
             }
 
             ContentBox.Children.Add(ex);
