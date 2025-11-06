@@ -1,4 +1,4 @@
-using CroomsBellScheduleCS.UI.Views;
+using CroomsBellSchedule.UI.Views;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -8,9 +8,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Graphics;
 using WinRT.Interop;
-using static CroomsBellScheduleCS.Utils.Win32;
+using static CroomsBellSchedule.Utils.Win32;
 
-namespace CroomsBellScheduleCS.UI.Windows;
+namespace CroomsBellSchedule.UI.Windows;
 
 public sealed partial class UIMessage
 {

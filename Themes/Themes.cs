@@ -1,8 +1,11 @@
-﻿using CroomsBellScheduleCS.UI.Views;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using CroomsBellSchedule.Service;
+using CroomsBellSchedule.UI.Views;
+using Microsoft.UI.Xaml;
+using static CroomsBellSchedule.Service.SettingsManager;
 
-namespace CroomsBellScheduleCS.Themes
+namespace CroomsBellSchedule.Themes
 {
     public static class Themes
     {
@@ -113,6 +116,19 @@ namespace CroomsBellScheduleCS.Themes
             if (theme == null) return;
 
             MainView.Settings.ApplyTheme(theme);
+        }
+
+
+
+        public static bool UseDark
+        {
+            get
+            {
+                if (Settings.Theme == CBSHColorScheme.Dark) return true;
+                else if (Settings.Theme == CBSHColorScheme.Light) return false;
+
+                return Application.Current.RequestedTheme == ApplicationTheme.Dark;
+            }
         }
     }
 }

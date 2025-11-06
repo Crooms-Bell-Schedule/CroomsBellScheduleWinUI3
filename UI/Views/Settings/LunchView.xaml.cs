@@ -1,12 +1,12 @@
-﻿using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.Service.Web;
+﻿using System;
+using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Service;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
-using System;
 
-namespace CroomsBellScheduleCS.UI.Views.Settings;
+namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class LunchView
 {

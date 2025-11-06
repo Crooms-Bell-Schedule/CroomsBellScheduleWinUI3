@@ -1,16 +1,10 @@
-using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.Service.Web;
-using CroomsBellScheduleCS.UI.Windows;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web;
-using Windows.ApplicationModel.DataTransfer;
+using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Service;
+using Microsoft.UI.Xaml.Navigation;
 
-namespace CroomsBellScheduleCS.UI.Views.Settings;
+namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class ProwlerProfileView
 {

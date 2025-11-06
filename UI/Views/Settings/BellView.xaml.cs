@@ -1,11 +1,11 @@
-﻿using CroomsBellScheduleCS.Provider;
-using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.UI.Windows;
+﻿using System;
+using CroomsBellSchedule.Core.Provider;
+using CroomsBellSchedule.Service;
+using CroomsBellSchedule.UI.Windows;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using System;
 
-namespace CroomsBellScheduleCS.UI.Views.Settings;
+namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class BellView
 {

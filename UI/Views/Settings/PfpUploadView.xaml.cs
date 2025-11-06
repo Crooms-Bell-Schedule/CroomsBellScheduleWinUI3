@@ -2,11 +2,12 @@
 using Windows.Storage.Pickers;
 using Windows.Storage;
 using WinRT.Interop;
-using CroomsBellScheduleCS.UI.Windows;
+using CroomsBellSchedule.UI.Windows;
 using CommunityToolkit.WinUI.Controls;
 using Microsoft.UI.Xaml.Controls;
+using static CroomsBellSchedule.Core.Service.Web.ApiClient;
 
-namespace CroomsBellScheduleCS.UI.Views.Settings;
+namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class PfpUploadView
 {
@@ -79,11 +80,5 @@ public sealed partial class PfpUploadView
         {
             ErrorText.Text = ex.Message;
         }
-    }
-
-    public enum UploadViewMode
-    {
-        ProfilePicture,
-        ProfileBanner
     }
 }

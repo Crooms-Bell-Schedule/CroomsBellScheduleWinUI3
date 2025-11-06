@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <Window
-    x:Class="CroomsBellScheduleCS.UI.Windows.SettingsWindow"
+    x:Class="CroomsBellSchedule.UI.Windows.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -10,7 +10,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:behaviors="using:CommunityToolkit.WinUI.Behaviors"
      xmlns:controls="using:CommunityToolkit.WinUI.Controls"
-    xmlns:local="using:CroomsBellScheduleCS.UI.Views"
+    xmlns:local="using:CroomsBellSchedule.UI.Views"
     mc:Ignorable="d"
     Title="Crooms Bell Schedule">
     <Window.SystemBackdrop>

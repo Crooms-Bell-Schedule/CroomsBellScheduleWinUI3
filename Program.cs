@@ -1,6 +1,6 @@
 ﻿using Velopack;
 
-namespace CroomsBellScheduleCS
+namespace CroomsBellSchedule
 {
     /// <summary>The Main entry of the application.</summary>
     /// Overrides the usual WinUI XAML entry point in order to be able to control

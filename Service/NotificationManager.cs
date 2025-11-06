@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Windows.AppNotifications;
 
-namespace CroomsBellScheduleCS.Service;
+namespace CroomsBellSchedule.Service;
 
 public class NotificationManager
 {

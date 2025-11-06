@@ -1,14 +1,14 @@
-using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.Service.Web;
-using CroomsBellScheduleCS.UI.Windows;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 using System;
 using System.Threading.Tasks;
 using System.Web;
+using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Service;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using Windows.ApplicationModel.DataTransfer;
+using static CroomsBellSchedule.Core.Service.Web.ApiClient;
 
-namespace CroomsBellScheduleCS.UI.Views.Settings;
+namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class WebView
 {
@@ -152,7 +152,7 @@ public sealed partial class WebView
             sender.GoBack();
 
             if (MainView.SettingsWindow != null && MainView.Settings != null)
-                await MainView.Settings.OpenPFPViewAsync(PfpUploadView.UploadViewMode.ProfilePicture);
+                await MainView.Settings.OpenPFPViewAsync(UploadViewMode.ProfilePicture);
         }
     }
 

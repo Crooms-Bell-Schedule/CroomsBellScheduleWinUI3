@@ -1,7 +1,15 @@
 ﻿//#define MIGRATION_CODE // uncomment to enable migration code from old bell schedule app (2.1.0 -> 2.9.9 -> 3.x)
-using CroomsBellScheduleCS.Provider;
-using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.UI.Windows;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using CroomsBellSchedule.Core.Provider;
+using CroomsBellSchedule.Service;
+using CroomsBellSchedule.UI.Windows;
 using H.NotifyIcon;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -10,22 +18,13 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI;
 using WinRT.Interop;
-using static CroomsBellScheduleCS.Utils.Win32;
+using static CroomsBellSchedule.Service.SettingsManager;
+using static CroomsBellSchedule.Utils.Win32;
 
-namespace CroomsBellScheduleCS.UI.Views;
+namespace CroomsBellSchedule.UI.Views;
 
 public sealed partial class MainView
 {
@@ -325,9 +324,9 @@ public sealed partial class MainView
         if (wasRunning && _timer != null) _timer.Start();
     }
 
-    public void SetTheme(ElementTheme theme)
+    public void SetTheme(CBSHColorScheme theme)
     {
-        if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
+        if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = (ElementTheme)(int)theme;
 
         if (SettingsWindow != null && SettingsWindow.SettingsView != null)
             SettingsWindow.SettingsView.UpdateTheme();

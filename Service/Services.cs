@@ -1,6 +1,6 @@
-﻿using CroomsBellScheduleCS.Service.Web;
+﻿using CroomsBellSchedule.Core.Service.Web;
 
-namespace CroomsBellScheduleCS.Service
+namespace CroomsBellSchedule.Service
 {
     public class Services
     {

@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using Windows.Networking.Connectivity;
 
-namespace CroomsBellScheduleCS.Utils;
+namespace CroomsBellSchedule.Utils;
 
 
 public static partial class Win32

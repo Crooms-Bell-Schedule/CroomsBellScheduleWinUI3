@@ -1,10 +1,11 @@
-﻿using CroomsBellScheduleCS.Utils;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using CroomsBellSchedule.Utils;
+using Microsoft.UI.Xaml;
 using Windows.Networking.Connectivity;
 
-namespace CroomsBellScheduleCS.Service
+namespace CroomsBellSchedule.Service
 {
     public class TimeService
     {

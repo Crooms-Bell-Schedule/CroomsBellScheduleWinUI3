@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using System.Timers;
 using CommunityToolkit.WinUI;
 using CommunityToolkit.WinUI.Collections;
-using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.Service.Web;
-using CroomsBellScheduleCS.Utils;
+using CroomsBellSchedule.Service;
+using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Utils;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
@@ -19,7 +19,7 @@ using Microsoft.UI.Xaml.Navigation;
 using Windows.Graphics.Imaging;
 using Windows.Networking.Connectivity;
 
-namespace CroomsBellScheduleCS.UI.Views.Settings;
+namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class ProwlerView
 {
@@ -85,7 +85,7 @@ public sealed partial class ProwlerView
             }
 
             var connect = Win32.CheckConnectivity();
-            NoInternetAccess.IsOpen = connect.Item1 == NetworkConnectivityLevel.InternetAccess;
+            NoInternetAccess.IsOpen = connect.Item1 != NetworkConnectivityLevel.InternetAccess;
             DisconnectServer.IsOpen = !NoInternetAccess.IsOpen;
             try
             {
@@ -308,7 +308,7 @@ public sealed partial class ProwlerView
         {
             ContentDialog dlg2 = new()
             {
-                Title = "Failed to get feed",
+                Title = "Server connection failed",
                 XamlRoot = XamlRoot,
                 CloseButtonText = "OK",
                 Content = "Application error: " + ex.Message
@@ -316,7 +316,7 @@ public sealed partial class ProwlerView
 
             await dlg2.ShowAsync();
 
-            MainView.Settings?.ShowInAppNotification("Failed to load feed", "Page initialization failed", 0);
+            MainView.Settings?.ShowInAppNotification("Failed to load data", "Page initialization failed", 0);
         }
     }
 

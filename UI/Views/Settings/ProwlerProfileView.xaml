@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <Page
-    x:Class="CroomsBellScheduleCS.UI.Views.Settings.ProwlerProfileView"
+    x:Class="CroomsBellSchedule.UI.Views.Settings.ProwlerProfileView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     
-    xmlns:cui="using:CroomsBellScheduleCS.Controls"
+    xmlns:cui="using:CroomsBellSchedule.Controls"
     mc:Ignorable="d">
 
     <Grid>
@@ -49,7 +49,7 @@
                ScrollViewer.HorizontalScrollBarVisibility="Auto"
                ScrollViewer.VerticalScrollBarVisibility="Visible"
                HorizontalAlignment="Stretch"
- xmlns:views="using:CroomsBellScheduleCS.UI.Views.Settings"
+ xmlns:views="using:CroomsBellSchedule.UI.Views.Settings"
                SelectionMode="None" Visibility="Visible">
 
                 <ListView.ItemTemplate>

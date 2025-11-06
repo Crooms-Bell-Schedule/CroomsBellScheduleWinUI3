@@ -1,9 +1,13 @@
 ﻿//#define MIGRATION_CODE // uncomment to enable migration code from old bell schedule app (2.1.0 -> 2.9.9 -> 3.x)
-using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.Service.Web;
-using CroomsBellScheduleCS.Themes;
-using CroomsBellScheduleCS.UI.Views.Settings;
-using CroomsBellScheduleCS.UI.Windows;
+using System;
+using System.IO;
+using System.Numerics;
+using System.Threading.Tasks;
+using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Service;
+using CroomsBellSchedule.Themes;
+using CroomsBellSchedule.UI.Views.Settings;
+using CroomsBellSchedule.UI.Windows;
 using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Windowing;
@@ -13,13 +17,11 @@ using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
-using System;
-using System.IO;
-using System.Numerics;
-using System.Threading.Tasks;
 using Windows.UI;
+using static CroomsBellSchedule.Core.Service.Web.ApiClient;
+using static CroomsBellSchedule.Service.SettingsManager;
 
-namespace CroomsBellScheduleCS.UI.Views;
+namespace CroomsBellSchedule.UI.Views;
 
 public sealed partial class SettingsView
 {
@@ -116,9 +118,9 @@ public sealed partial class SettingsView
     {
         AppWindow appWindow = GetAppWindow();
         var theme = SettingsManager.Settings.Theme;
-        appWindow.TitleBar.PreferredTheme = (theme == ElementTheme.Default ? TitleBarTheme.UseDefaultAppMode : (SettingsManager.Settings.Theme == ElementTheme.Light ? TitleBarTheme.Light : TitleBarTheme.Dark));
+        appWindow.TitleBar.PreferredTheme = (theme == CBSHColorScheme.Default ? TitleBarTheme.UseDefaultAppMode : (SettingsManager.Settings.Theme == CBSHColorScheme.Light ? TitleBarTheme.Light : TitleBarTheme.Dark));
 
-        RequestedTheme = theme;
+        RequestedTheme = (ElementTheme)(int)theme;
     }
 
     private void NavigationViewControl_DisplayModeChanged(NavigationView sender,
@@ -364,14 +366,14 @@ public sealed partial class SettingsView
         LoadingUI.Visibility = Visibility.Collapsed;
     }
 
-    internal async Task OpenPFPViewAsync(PfpUploadView.UploadViewMode mode)
+    internal async Task OpenPFPViewAsync(UploadViewMode mode)
     {
         var txt = new TextBox();
         var error = new TextBlock() { Text = "" };
         var content = new PfpUploadView();
         content.SetMode(mode);
 
-        string title = mode == PfpUploadView.UploadViewMode.ProfilePicture ? "Profile Picture" : "Profile Banner";
+        string title = mode == UploadViewMode.ProfilePicture ? "Profile Picture" : "Profile Banner";
 
         ContentDialog dlg = new()
         {
@@ -434,11 +436,11 @@ public sealed partial class SettingsView
     }
     private async void FlyoutChangePFP_Click(object sender, RoutedEventArgs e)
     {
-        await OpenPFPViewAsync(PfpUploadView.UploadViewMode.ProfilePicture);
+        await OpenPFPViewAsync(UploadViewMode.ProfilePicture);
     }
     private async void FlyoutBannerButton_Click(object sender, RoutedEventArgs e)
     {
-        await OpenPFPViewAsync(PfpUploadView.UploadViewMode.ProfileBanner);
+        await OpenPFPViewAsync(UploadViewMode.ProfileBanner);
     }
 
     private async void FlyoutChangeUsername_Click(object sender, RoutedEventArgs e)
@@ -676,7 +678,7 @@ public sealed partial class SettingsView
             var src = new BitmapImage();
             if (theme.HasSeperateLightDarkBgs)
             {
-                if (SettingsManager.UseDark)
+                if (Themes.Themes.UseDark)
                     src.UriSource = new("ms-appx:///Assets/Theme/" + theme.BackgroundResource + "_dark.png");
                 else src.UriSource = new("ms-appx:///Assets/Theme/" + theme.BackgroundResource + "_light.png");
             }
@@ -693,7 +695,7 @@ public sealed partial class SettingsView
             };
         }
 
-        if (SettingsManager.UseDark)
+        if (Themes.Themes.UseDark)
         BackgroundDimmer.Background = new SolidColorBrush(new Color()
         {
             A = theme.DimDark,

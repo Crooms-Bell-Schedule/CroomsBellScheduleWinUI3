@@ -3,7 +3,7 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
 		<WindowsSdkPackageVersion>10.0.26100.57</WindowsSdkPackageVersion>
-		<RootNamespace>CroomsBellScheduleCS</RootNamespace>
+		<RootNamespace>CroomsBellSchedule</RootNamespace>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x64</Platforms>
 		<RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
@@ -67,6 +67,9 @@
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251003001" />
 		<PackageReference Include="System.Text.Json" Version="9.0.10" />
 		<PackageReference Include="Velopack" Version="0.0.1298" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\CroomsBellSchedule.Core\CroomsBellSchedule.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <Content Update="Assets\BellSchedule.svg">

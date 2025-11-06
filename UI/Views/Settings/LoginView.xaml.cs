@@ -1,4 +1,4 @@
-﻿namespace CroomsBellScheduleCS.UI.Views.Settings;
+﻿namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class LoginView
 {

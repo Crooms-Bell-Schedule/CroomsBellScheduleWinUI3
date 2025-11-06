@@ -6,7 +6,7 @@ using ABI.Windows.Media.Playback;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Media.Core;
 
-namespace CroomsBellScheduleCS.UI.Views.Settings;
+namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class Livestream
 {

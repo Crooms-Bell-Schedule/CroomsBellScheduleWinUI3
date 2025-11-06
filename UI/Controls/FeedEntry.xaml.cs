@@ -1,6 +1,8 @@
-﻿using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.UI.Views.Settings;
-using CroomsBellScheduleCS.Utils;
+﻿using CroomsBellSchedule.Core.Utils;
+using CroomsBellSchedule.Service;
+using CroomsBellSchedule.Themes;
+using CroomsBellSchedule.UI.Views.Settings;
+using CroomsBellSchedule.Utils;
 using HtmlAgilityPack;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
@@ -12,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 
-namespace CroomsBellScheduleCS.Controls;
+namespace CroomsBellSchedule.Controls;
 
 public sealed partial class FeedEntry
 {
@@ -308,6 +310,13 @@ public sealed partial class FeedEntry
         return new(url);
     }
 
+    /*
+     *  public static string ToCssColor(this Color color)
+        {
+            return $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+        }
+    */
+
     internal static string CreateHtml(RichEditBox postContentBox)
     {
         // get the story length
@@ -575,13 +584,13 @@ public sealed partial class FeedEntry
                 // RichTextBox Foreground depends on the current color scheme.
 
                 // Check if using dark mode and foreground is white
-                if (SettingsManager.UseDark && Style.CharacterFormat.ForegroundColor == Windows.UI.Color.FromArgb(255, 255, 255, 255))
+                if (Themes.Themes.UseDark && Style.CharacterFormat.ForegroundColor == Windows.UI.Color.FromArgb(255, 255, 255, 255))
                 {
                     return false;
                 }
 
                 // Check if using light mode and foreground is black
-                if (!SettingsManager.UseDark && Style.CharacterFormat.ForegroundColor != Windows.UI.Color.FromArgb(255, 0, 0, 0))
+                if (!Themes.Themes.UseDark && Style.CharacterFormat.ForegroundColor != Windows.UI.Color.FromArgb(255, 0, 0, 0))
                 {
                     return false;
                 }

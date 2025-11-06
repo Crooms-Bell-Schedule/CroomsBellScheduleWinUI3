@@ -1,17 +1,11 @@
 ﻿using System;
-using Windows.Storage.Pickers;
-using Windows.Storage;
-using WinRT.Interop;
-using CroomsBellScheduleCS.UI.Windows;
-using CommunityToolkit.WinUI.Controls;
-using Microsoft.UI.Xaml.Controls;
 using System.Linq;
+using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Service;
 using Microsoft.UI.Xaml;
-using CroomsBellScheduleCS.Controls;
-using CroomsBellScheduleCS.Service.Web;
-using CroomsBellScheduleCS.Service;
+using Microsoft.UI.Xaml.Controls;
 
-namespace CroomsBellScheduleCS.UI.Views.Settings;
+namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class AnnouncementsView
 {

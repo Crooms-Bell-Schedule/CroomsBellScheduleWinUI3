@@ -1,14 +1,15 @@
-using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.UI.Views;
-using CroomsBellScheduleCS.Utils;
+using System;
+using CroomsBellSchedule.Service;
+using CroomsBellSchedule.UI.Views;
+using CroomsBellSchedule.Utils;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Xaml;
-using System;
 using Windows.UI.Popups;
 using WinRT;
 using WinRT.Interop;
+using static CroomsBellSchedule.Service.SettingsManager;
 
-namespace CroomsBellScheduleCS.UI.Windows;
+namespace CroomsBellSchedule.UI.Windows;
 
 public sealed partial class MainWindow
 {
@@ -119,9 +120,9 @@ public sealed partial class MainWindow
         m_configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
     }
 
-    internal void UpdateTheme(ElementTheme theme)
+    internal void UpdateTheme(CBSHColorScheme theme)
     {
-        if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = theme;
+        if (Content is FrameworkElement rootElement) rootElement.RequestedTheme = (ElementTheme)(int)theme;
 
         if (SettingsManager.Settings.ShowInTaskbar) return;
         try
@@ -129,9 +130,9 @@ public sealed partial class MainWindow
             if (m_configurationSource == null) return;
             switch (theme)
             {
-                case ElementTheme.Dark: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark; break;
-                case ElementTheme.Light: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light; break;
-                case ElementTheme.Default: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default; break;
+                case CBSHColorScheme.Dark: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark; break;
+                case CBSHColorScheme.Light: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light; break;
+                case CBSHColorScheme.Default: m_configurationSource.Theme = Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Default; break;
             }
         }
         catch

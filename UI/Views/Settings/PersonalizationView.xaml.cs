@@ -1,5 +1,5 @@
-﻿using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.UI.Windows;
+﻿using CroomsBellSchedule.Service;
+using CroomsBellSchedule.UI.Windows;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -7,9 +7,9 @@ using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
 using System;
 using System.Reflection;
-using static CroomsBellScheduleCS.Service.SettingsManager;
+using static CroomsBellSchedule.Service.SettingsManager;
 
-namespace CroomsBellScheduleCS.UI.Views.Settings;
+namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class PersonalizationView
 {
@@ -241,24 +241,24 @@ public sealed partial class PersonalizationView
         }
     }
 
-    private ElementTheme GetSelection()
+    private CBSHColorScheme GetSelection()
     {
         return ThemeCombo.SelectedIndex switch
         {
-            0 => ElementTheme.Default,
-            1 => ElementTheme.Light,
-            2 => ElementTheme.Dark,
-            _ => ElementTheme.Default,
+            0 => CBSHColorScheme.Default,
+            1 => CBSHColorScheme.Light,
+            2 => CBSHColorScheme.Dark,
+            _ => CBSHColorScheme.Default,
         };
     }
 
-    private void SetTheme(ElementTheme theme)
+    private void SetTheme(CBSHColorScheme theme)
     {
         switch (theme)
         {
-            case ElementTheme.Default: ThemeCombo.SelectedIndex = 0; break;
-            case ElementTheme.Light: ThemeCombo.SelectedIndex = 1; break;
-            case ElementTheme.Dark: ThemeCombo.SelectedIndex = 2; break;
+            case CBSHColorScheme.Default: ThemeCombo.SelectedIndex = 0; break;
+            case CBSHColorScheme.Light: ThemeCombo.SelectedIndex = 1; break;
+            case CBSHColorScheme.Dark: ThemeCombo.SelectedIndex = 2; break;
         }
     }
 

@@ -1,22 +1,13 @@
-﻿using CommunityToolkit.WinUI;
-using CroomsBellScheduleCS.Service;
-using CroomsBellScheduleCS.Service.Web;
-using CroomsBellScheduleCS.UI.Views;
-using CroomsBellScheduleCS.UI.Views.Settings;
-using CroomsBellScheduleCS.Utils;
-using HtmlAgilityPack;
-using Microsoft.UI.Text;
+﻿using System;
+using CommunityToolkit.WinUI;
+using CroomsBellSchedule.Core.Service.Web;
+using CroomsBellSchedule.Service;
+using CroomsBellSchedule.UI.Views;
+using CroomsBellSchedule.UI.Views.Settings;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Documents;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 
-namespace CroomsBellScheduleCS.Controls;
+namespace CroomsBellSchedule.Controls;
 
 public sealed partial class ProwlerPost
 {

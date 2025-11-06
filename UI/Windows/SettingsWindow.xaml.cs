@@ -1,8 +1,8 @@
-using CroomsBellScheduleCS.UI.Views;
+using CroomsBellSchedule.UI.Views;
 using Microsoft.UI.Windowing;
 using Windows.Graphics;
 
-namespace CroomsBellScheduleCS.UI.Windows;
+namespace CroomsBellSchedule.UI.Windows;
 
 public sealed partial class SettingsWindow
 {

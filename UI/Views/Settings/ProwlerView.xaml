@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Page
-    x:Class="CroomsBellScheduleCS.UI.Views.Settings.ProwlerView"
+    x:Class="CroomsBellSchedule.UI.Views.Settings.ProwlerView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="using:CroomsBellScheduleCS.Utils"
-    xmlns:views="using:CroomsBellScheduleCS.UI.Views.Settings"
-    xmlns:cui="using:CroomsBellScheduleCS.Controls"
+    xmlns:local="using:CroomsBellSchedule.Utils"
+    xmlns:views="using:CroomsBellSchedule.UI.Views.Settings"
+    xmlns:cui="using:CroomsBellSchedule.Controls"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
@@ -70,7 +70,7 @@
             </CommandBar.SecondaryCommands>
         </CommandBar>
 
-        <ProgressBar x:Name="ProgressUI" Value="50" Minimum="0" Maximum="100" Grid.Row="1" VerticalAlignment="Bottom">
+        <ProgressBar x:Name="ProgressUI" Value="50" Minimum="0" Maximum="100" Grid.Row="1" VerticalAlignment="Bottom" IsIndeterminate="True">
             <ProgressBar.Resources>
 
 

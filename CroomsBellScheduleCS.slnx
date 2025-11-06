@@ -2,8 +2,9 @@
   <Configurations>
     <Platform Name="x64" />
   </Configurations>
+  <Project Path="../CroomsBellSchedule.Core/CroomsBellSchedule.Core.csproj" Id="fd34acf0-d70e-406a-91b6-22c163399b74" />
   <Project Path="CroomsBellScheduleCS.csproj">
-    <Platform Solution="*|x64" Project="x64" />
+    <Platform Project="x64" />
     <Deploy />
   </Project>
 </Solution>
