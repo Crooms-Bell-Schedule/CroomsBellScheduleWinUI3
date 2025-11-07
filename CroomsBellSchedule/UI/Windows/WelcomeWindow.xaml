@@ -67,7 +67,7 @@
                     </Image>
 
                     <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="32" Margin="10,0,0,0">Crooms Bell Schedule</TextBlock>
-                    <TextBlock Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="16" Margin="10,0,0,0" Foreground="Gray">Update v5.0</TextBlock>
+                    <TextBlock Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="16" Margin="10,0,0,0" Foreground="Gray">Update v5</TextBlock>
                 </Grid>
 
                 <StackPanel HorizontalAlignment="Center">

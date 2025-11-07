@@ -105,5 +105,6 @@ public sealed partial class WelcomeWindow
     {
         SettingsManager.Settings.ShownFirstRunDialog = true;
         await SettingsManager.SaveSettings();
+        Close();
     }
 }
