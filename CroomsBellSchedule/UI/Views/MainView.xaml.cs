@@ -221,11 +221,12 @@ public sealed partial class MainView
         // The instance of MainWindow is cooked. Do not run close() as that crashes the application with an EngineExecutationException
         // TODO possible memory leak when explorer crashes
         Debug.WriteLine("explorer.exe crashed in taskbar mode probably... creating new window");
+        Thread.Sleep(5000);
+        Debug.WriteLine("creating it now");
 
         MainWindow.Instance = new();
         GC.Collect();
 
-        Thread.Sleep(2000);
 
         MainWindow.Instance.Activate();
 
