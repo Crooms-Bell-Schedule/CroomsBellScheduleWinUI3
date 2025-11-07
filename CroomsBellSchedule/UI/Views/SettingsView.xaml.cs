@@ -199,7 +199,8 @@ public sealed partial class SettingsView
             {
                 foreach (var item in data.Value)
                 {
-                    if (item.priority && !SettingsManager.Settings.ViewedAnnouncementIdsNew.Contains(item.id))
+                    bool expired = (item.expires != "false" && DateTime.TryParse(item.expires, out DateTime result) && DateTime.Now.Ticks > result.Ticks) ? true : false;
+                    if (item.priority && !SettingsManager.Settings.ViewedAnnouncementIdsNew.Contains(item.id) && !expired)
                     {
                         importantAnncCount++;
                     }

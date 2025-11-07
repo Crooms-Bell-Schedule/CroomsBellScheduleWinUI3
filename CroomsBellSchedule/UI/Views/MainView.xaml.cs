@@ -1,6 +1,7 @@
 ﻿//#define MIGRATION_CODE // uncomment to enable migration code from old bell schedule app (2.1.0 -> 2.9.9 -> 3.x)
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -34,12 +35,15 @@ public sealed partial class MainView
     private static Velopack.UpdateManager? _updateManager;
 
     private static IntPtr _oldWndProc;
+
+    private static IntPtr _oldWndProc2;
     private static WndProcDelegate? _newWndProcDelegate;
+    private static WndProcDelegate? _newWndProcDelegate2;
     private bool _isTransition;
     private int _lunchOffset;
     private BellScheduleReader? _reader;
-    private bool _shown1MinNotif;
-    private bool _shown5MinNotif;
+    private bool _shown1MinNotification;
+    private bool _shown5MinNotification;
     private DispatcherTimer? _timer;
     private DispatcherTimer _dvdTimer = new();
     private DispatcherTimer _updateChecker = new();
@@ -51,6 +55,15 @@ public sealed partial class MainView
     public int LunchOffset { get => _lunchOffset; }
     public XamlUICommand SettingsCommand { get; set; } = new XamlUICommand();
     public XamlUICommand QuitCommand { get; set; } = new XamlUICommand();
+    /// <summary>
+    /// 0: x - 5, y - 5
+    /// 1: x + 5, y - 5
+    /// 2: x - 5, y + 5
+    /// 3: x + 5, y + 5
+    /// </summary>
+    private int _dvdDirection = 0;
+    private readonly int _moveSpeed = 1;
+    private readonly Random _rng = new();
     public MainView()
     {
         InitializeComponent();
@@ -89,11 +102,11 @@ public sealed partial class MainView
 
             SetLoadingText("Initialize MainWindow");
             Debug.WriteLine("Initialize MainWindow...");
+            CorrectLayer();
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
             presenter.IsResizable = true;
             presenter.SetBorderAndTitleBar(true, SettingsManager.Settings.IsLivestreamMode);
-            presenter.IsAlwaysOnTop = true;
             MainWindow.Instance.ExtendsContentIntoTitleBar = !SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.AppWindow.IsShownInSwitchers = SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.SetTitleBar(Content);
@@ -110,6 +123,8 @@ public sealed partial class MainView
 
             _windowApp.SetIcon(@"Assets\croomsBellSchedule.ico");
 
+            XamlRoot.ContentIsland.FrameworkClosed += ContentIsland_Closed;
+            XamlRoot.ContentIslandEnvironment.StateChanged += ContentIslandEnvironment_StateChanged;
             // TODO: event gets fired when SetTaskbarMode() is called?
             XamlRoot.Changed += async (a, b) =>
             {
@@ -176,7 +191,7 @@ public sealed partial class MainView
             {
                 Interval = TimeSpan.FromHours(1)
             };
-            _updateChecker.Tick += _updateChecker_Tick;
+            _updateChecker.Tick += UpdateChecker_Tick;
             _updateChecker.Start();
         }
         catch (Exception ex)
@@ -185,7 +200,20 @@ public sealed partial class MainView
         }
     }
 
+    private void ContentIslandEnvironment_StateChanged(Microsoft.UI.Content.ContentIslandEnvironment sender, Microsoft.UI.Content.ContentEnvironmentStateChangedEventArgs args)
+    {
 
+    }
+
+    private void ContentIsland_StateChanged(Microsoft.UI.Content.ContentIsland sender, Microsoft.UI.Content.ContentIslandStateChangedEventArgs args)
+    {
+
+    }
+
+    private async void ContentIsland_Closed()
+    {
+        await SetTaskbarMode(false);
+    }
 
     internal void CorrectLayer()
     {
@@ -197,7 +225,7 @@ public sealed partial class MainView
             presenter.IsAlwaysOnTop = true;
     }
 
-    private async void _updateChecker_Tick(object? sender, object e)
+    private async void UpdateChecker_Tick(object? sender, object e)
     {
         // update lunch index if different day today.
         if (_todayDay != DateTime.Now.Day)
@@ -216,7 +244,7 @@ public sealed partial class MainView
 
         double left = _windowApp.Position.X;
         double top = _windowApp.Position.Y;
-        CalcNewPos(_windowApp.Size.Width, _windowApp.Size.Height, ref left, ref top);
+        CalculateNewDvdPosition(_windowApp.Size.Width, _windowApp.Size.Height, ref left, ref top);
 
         _windowApp.Move(new PointInt32((int)left, (int)top));
     }
@@ -350,7 +378,7 @@ public sealed partial class MainView
         if (duration.Hours == 0)
         {
             if (duration.Minutes == 4 && !_isTransition)
-                if (!_shown5MinNotif && !SettingsManager.Settings.Show5MinNotification)
+                if (!_shown5MinNotification && !SettingsManager.Settings.Show5MinNotification)
                 {
                     AppNotification toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")
@@ -365,11 +393,11 @@ public sealed partial class MainView
                         .BuildNotification();
 
                     AppNotificationManager.Default.Show(toast);
-                    _shown5MinNotif = true;
+                    _shown5MinNotification = true;
                 }
 
             if (duration.Minutes == 0 && !_isTransition)
-                if (!_shown1MinNotif && !SettingsManager.Settings.Show1MinNotification)
+                if (!_shown1MinNotification && !SettingsManager.Settings.Show1MinNotification)
                 {
                     AppNotification toast = new AppNotificationBuilder()
                         .AddText("Bell rings soon")
@@ -387,7 +415,7 @@ public sealed partial class MainView
 
                     AppNotificationManager.Default.Show(toast);
 
-                    _shown1MinNotif = true;
+                    _shown1MinNotification = true;
                 }
 
             if (duration.Minutes == 0) return $"00:{duration.Seconds:D2}";
@@ -451,7 +479,7 @@ public sealed partial class MainView
 
         TxtDuration.Text = scheduleName;
 
-        // update progress bar color. TODO change only if necessesary
+        // update progress bar color. TODO change only if necessary
         if (transitionDuration.TotalMinutes <= 1)
         {
             if (progressBarState != ClassTextState.RedFlash)
@@ -564,8 +592,8 @@ public sealed partial class MainView
                 matchFound = true;
                 ProgressBar.IsIndeterminate = false;
                 _isTransition = true;
-                _shown5MinNotif = false;
-                _shown1MinNotif = false;
+                _shown5MinNotification = false;
+                _shown1MinNotification = false;
                 if (nextClass != null)
                     UpdateClassText("Transition to " + nextClass.FriendlyName, data.ScheduleName, transitionRemain,
                         transitionLen);
@@ -641,7 +669,7 @@ public sealed partial class MainView
         {
             //MainWindow.Instance.RemoveMica();
             IntPtr trayHWnd;
-            IntPtr taskbarUIHWnd;
+            IntPtr taskbarUIHWnd = 0;
 
             int taskbarHeight = 0;
             int attempts = 0;
@@ -688,7 +716,20 @@ public sealed partial class MainView
 
             if (_windowApp != null)
             {
-                SetWindowPos(handle, 0, 0, 0, (int)(350 * _prevDPI), taskbarHeight + 8, 0);
+                if (SetWindowPos(handle, 0, 0, 0, (int)(350 * _prevDPI), taskbarHeight + 8, 0) == 0)
+                {
+                    Debug.WriteLine("Failed to set taskbar mode");
+                    return;
+                }
+            }
+            else return;
+
+            // subclass parent window to recieve WM_DESTROY to exit taskbar mode
+            if (taskbarUIHWnd != 0)
+            {
+                _newWndProcDelegate2 = WndProc2;
+                nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate2);
+                _oldWndProc2 = SetWindowLongPtrW(taskbarUIHWnd, GWLP_WNDPROC, pWndProc);
             }
 
             MainButton.Visibility = Visibility.Collapsed;
@@ -699,7 +740,11 @@ public sealed partial class MainView
         }
         else
         {
-            IntPtr old = SetParent(handle, 0);
+            nint old = SetParent(handle, 0);
+            if (old != 0)
+            {
+                SetWindowLongPtrW(old, GWLP_WNDPROC, _oldWndProc2);
+            }
             Background = new SolidColorBrush(new Color() { A = 255 });
             MainButton.Visibility = Visibility.Visible;
             UpdateFontSize();
@@ -752,7 +797,17 @@ public sealed partial class MainView
 
         return CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
     }
+    private IntPtr WndProc2(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
+    {
+        if (msg == 130)
+        {
+            // todo fix this
+            SetTaskbarMode(false).Wait();
+            return 0;
+        }
 
+        return CallWindowProcW(_oldWndProc2, hWnd, msg, wParam, lParam);
+    }
     private void Timer_Tick(object? sender, object e)
     {
         UpdateCurrentClass();
@@ -781,13 +836,13 @@ public sealed partial class MainView
         if (SettingsWindow == null)
         {
             SettingsWindow = new();
-            SettingsWindow.Closed += _settings_Closed;
+            SettingsWindow.Closed += Settings_Closed;
             Themes.Apply(SettingsManager.Settings.ThemeIndex);
         }
         SettingsWindow.Activate();
     }
 
-    private void _settings_Closed(object sender, WindowEventArgs args)
+    private void Settings_Closed(object sender, WindowEventArgs args)
     {
         args.Handled = true;
         SettingsWindow?.Hide();
@@ -804,7 +859,7 @@ public sealed partial class MainView
     private int DetermineLunchOffsetFromToday()
     {
         if (_reader == null) return 0;
-        if (_reader.GetUnfilteredClasses().Where(x => x.ScheduleName.ToLower().Contains("even")).Any())
+        if (_reader.GetUnfilteredClasses().Where(x => x.ScheduleName.Contains("even", StringComparison.CurrentCultureIgnoreCase)).Any())
             return SettingsManager.Settings.HomeroomLunch;
         else
             return SettingsManager.Settings.Period5Lunch;
@@ -878,15 +933,6 @@ public sealed partial class MainView
         _reader.UpdateStrings(strings, namesChanged);
     }
     #region DVD
-    /// <summary>
-    /// 0: x - 5, y - 5
-    /// 1: x + 5, y - 5
-    /// 2: x - 5, y + 5
-    /// 3: x + 5, y + 5
-    /// </summary>
-    private int _dvdDirection = 0;
-    private int _moveSpeed = 1;
-    private Random _rng = new();
     internal void UpdateDvd()
     {
         if (SettingsManager.Settings.EnableDvdScreensaver && !SettingsManager.Settings.ShowInTaskbar)
@@ -898,7 +944,7 @@ public sealed partial class MainView
             _dvdTimer.Stop();
         }
     }
-    private void CalcNewPos(double w, double h, ref double Left, ref double Top)
+    private void CalculateNewDvdPosition(double w, double h, ref double Left, ref double Top)
     {
         // check if direction needs to be updated
         if (_windowApp == null) return;

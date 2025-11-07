@@ -75,7 +75,9 @@ public sealed partial class AnnouncementsView
             ((StackPanel)ex.Content).Children.Add(new TextBlock() { Text = DateTime.Parse(item.created).ToString() });
             ((StackPanel)ex.Content).Children.Add(new Controls.FeedEntry() { ContentData = item.data.message });
 
-            if (item.priority && !SettingsManager.Settings.ViewedAnnouncementIdsNew.Contains(item.id))
+            bool expired = (item.expires != "false" && DateTime.TryParse(item.expires, out DateTime result) && DateTime.Now.Ticks > result.Ticks) ? true : false;
+
+            if (item.priority && !SettingsManager.Settings.ViewedAnnouncementIdsNew.Contains(item.id) && !expired)
             {
                 badge.Style = Application.Current.Resources["AttentionDotInfoBadgeStyle"] as Style;
                 badge.VerticalAlignment = VerticalAlignment.Center;
