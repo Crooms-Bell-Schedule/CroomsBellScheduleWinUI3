@@ -9,7 +9,7 @@
     xmlns:tb="using:H.NotifyIcon"
     mc:Ignorable="d" Loaded="UserControl_Loaded" Background="Blue">
 
-    <Grid x:Name="MainGrid">
+    <Grid x:Name="MainGrid" Margin="5, 5, 5, 2.5">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -35,8 +35,8 @@
             <FontIcon FontFamily="Segoe Fluent Icons" Glyph="&#xe700;" />
         </Button>
         
-        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" Text="Loading settings" FontSize="8"/>
-        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" Text="" FontSize="8">
+        <TextBlock x:Name="TxtDuration" Grid.Row="0" Grid.Column="0" Text="Loading settings" FontSize="16"/>
+        <TextBlock x:Name="TxtCurrentClass" Grid.Row="1" Grid.Column="0" Text="" FontSize="16">
             <TextBlock.Foreground>
                 <SolidColorBrush x:Name="CurrentClassForegroundBrush" Color="{ThemeResource TextFillColorPrimary}"/>
             </TextBlock.Foreground>
@@ -113,7 +113,7 @@ Storyboard.TargetProperty="Color">
 
 
         <TextBlock x:Name="TxtClassPercent" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
-               HorizontalAlignment="Right" Text="" FontSize="8"/>
+               HorizontalAlignment="Right" Text="" FontSize="16"/>
 
         <ProgressBar x:Name="ProgressBar" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" IsIndeterminate="True">
             <ProgressBar.Foreground>

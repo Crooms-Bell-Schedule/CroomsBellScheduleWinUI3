@@ -16,11 +16,11 @@ public sealed partial class BellView
     }
     private void UpdateClasses()
     {
-        BellScheduleReader? reader = MainWindow.ViewInstance.Reader;
+        BellScheduleReader? reader = MainView.Reader;
         if (reader == null) return;
 
         string response = "";
-        foreach (var item in reader.GetFilteredClasses(MainWindow.ViewInstance.LunchOffset))
+        foreach (var item in reader.GetFilteredClasses(MainView.LunchOffset))
         {
             if (item != null)
             {
@@ -32,7 +32,7 @@ public sealed partial class BellView
     }
     private void Page_Loaded(object sender, RoutedEventArgs e)
     {
-        BellScheduleReader? reader = MainWindow.ViewInstance.Reader;
+        BellScheduleReader? reader = MainView.Reader;
         if (reader == null) return;
 
         UpdateClasses();

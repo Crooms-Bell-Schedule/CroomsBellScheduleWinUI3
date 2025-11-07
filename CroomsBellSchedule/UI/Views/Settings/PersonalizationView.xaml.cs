@@ -206,7 +206,7 @@ public sealed partial class PersonalizationView
         await SaveSettings();
     }
 
-    private bool GetStartup()
+    internal static bool GetStartup()
     {
         RegistryKey? rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 

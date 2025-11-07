@@ -1,20 +1,22 @@
 ﻿//#define MIGRATION_CODE // uncomment to enable migration code from old bell schedule app (2.1.0 -> 2.9.9 -> 3.x)
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using CroomsBellSchedule.Core.Provider;
 using CroomsBellSchedule.Service;
+using CroomsBellSchedule.UI.Views.Settings;
 using CroomsBellSchedule.UI.Windows;
 using H.NotifyIcon;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
@@ -35,24 +37,21 @@ public sealed partial class MainView
     private static Velopack.UpdateManager? _updateManager;
 
     private static IntPtr _oldWndProc;
-
-    private static IntPtr _oldWndProc2;
     private static WndProcDelegate? _newWndProcDelegate;
-    private static WndProcDelegate? _newWndProcDelegate2;
     private bool _isTransition;
-    private int _lunchOffset;
-    private BellScheduleReader? _reader;
+    private static int _lunchOffset;
+    private static BellScheduleReader? _reader;
     private bool _shown1MinNotification;
     private bool _shown5MinNotification;
-    private DispatcherTimer? _timer;
-    private DispatcherTimer _dvdTimer = new();
-    private DispatcherTimer _updateChecker = new();
+    private static DispatcherTimer? _timer = null!;
+    private static DispatcherTimer _dvdTimer = null!;
+    private static DispatcherTimer _updateChecker = null!;
     private AppWindow? _windowApp;
     private bool _checkDPIUpdates = false;
     private double _prevDPI = 0;
     private int _todayDay = 0;
-    public BellScheduleReader? Reader { get => _reader; }
-    public int LunchOffset { get => _lunchOffset; }
+    public static BellScheduleReader? Reader { get => _reader; }
+    public static int LunchOffset { get => _lunchOffset; }
     public XamlUICommand SettingsCommand { get; set; } = new XamlUICommand();
     public XamlUICommand QuitCommand { get; set; } = new XamlUICommand();
     /// <summary>
@@ -64,6 +63,7 @@ public sealed partial class MainView
     private int _dvdDirection = 0;
     private readonly int _moveSpeed = 1;
     private readonly Random _rng = new();
+    public static bool HasInitialized = false;
     public MainView()
     {
         InitializeComponent();
@@ -123,8 +123,6 @@ public sealed partial class MainView
 
             _windowApp.SetIcon(@"Assets\croomsBellSchedule.ico");
 
-            XamlRoot.ContentIsland.FrameworkClosed += ContentIsland_Closed;
-            XamlRoot.ContentIslandEnvironment.StateChanged += ContentIslandEnvironment_StateChanged;
             // TODO: event gets fired when SetTaskbarMode() is called?
             XamlRoot.Changed += async (a, b) =>
             {
@@ -146,7 +144,8 @@ public sealed partial class MainView
                 }
             };
 
-            Services.NotificationManager.Init();
+            if (!HasInitialized)
+                Services.NotificationManager.Init();
 
             // Workaround a bug when window maximizes when you double click.
             if (OperatingSystem.IsWindows())
@@ -157,21 +156,28 @@ public sealed partial class MainView
                 _oldWndProc = SetWindowLongPtrW(handle, GWLP_WNDPROC, pWndProc);
             }
 
-            SetLoadingText("Syncing time...");
-            try { TimeService.Sync(); }
-            catch { } // does not really matter if this fails
+            if (!HasInitialized)
+            {
+                SetLoadingText("Syncing time...");
+                try { TimeService.Sync(); }
+                catch { } // does not really matter if this fails
+            }
         }
         catch (Exception ex)
         {
             await UIMessage.ShowMsgAsync($"Failed to load application:{Environment.NewLine}{ex}", "Failed to initialize application");
         }
 
-        await RunUpdateCheck();
+        if (!HasInitialized)
+            await RunUpdateCheck();
 
 
         try
         {
-            await UpdateScheduleSource();
+            if (!HasInitialized)
+            {
+                await UpdateScheduleSource();
+            }
 
             _timer = new()
             {
@@ -193,20 +199,35 @@ public sealed partial class MainView
             };
             _updateChecker.Tick += UpdateChecker_Tick;
             _updateChecker.Start();
+
+            if (!HasInitialized && !SettingsManager.Settings.ShownFirstRunDialog && !SettingsManager.Settings.ShowInTaskbar && !PersonalizationView.GetStartup())
+            {
+                WelcomeWindow window = new();
+                window.Activate();
+            }
         }
         catch (Exception ex)
         {
             await UIMessage.ShowMsgAsync($"Error:{Environment.NewLine}{ex}", "Failed to initialize schedule");
         }
+
+        HasInitialized = true;
     }
 
-    private void ContentIslandEnvironment_StateChanged(Microsoft.UI.Content.ContentIslandEnvironment sender, Microsoft.UI.Content.ContentEnvironmentStateChangedEventArgs args)
+    private void ContentIsland_FrameworkClosed()
     {
+        // main window has probably been destroyed, create a new one
 
-    }
+        // The instance of MainWindow is cooked. Do not run close() as that crashes the application with an EngineExecutationException
+        // TODO possible memory leak when explorer crashes
+        Debug.WriteLine("explorer.exe crashed in taskbar mode probably... creating new window");
 
-    private void ContentIsland_StateChanged(Microsoft.UI.Content.ContentIsland sender, Microsoft.UI.Content.ContentIslandStateChangedEventArgs args)
-    {
+        MainWindow.Instance = new();
+        GC.Collect();
+
+        Thread.Sleep(2000);
+
+        MainWindow.Instance.Activate();
 
     }
 
@@ -541,54 +562,49 @@ public sealed partial class MainView
 
     public async void UpdateCurrentClass()
     {
-        if (_reader == null)
-        {
-            _reader = await _provider.GetTodayActivity();
-            return;
-        }
-
         try
         {
             _reader = await _provider.GetTodayActivity();
         }
         catch
         {
-
+            // shouldn't happen
+            return;
         }
+
         UpdateStrings();
         List<BellScheduleEntry> classes = _reader.GetFilteredClasses(_lunchOffset);
 
         bool matchFound = false;
 
+        // check if explorer.exe crashed and the window was destroyed
+        if (SettingsManager.Settings.ShowInTaskbar && XamlRoot.ContentIsland == null)
+        {
+            _timer?.Stop();
+            _dvdTimer?.Stop();
+            _updateChecker?.Stop();
+            ContentIsland_FrameworkClosed();
+            return;
+        }
 
-        BellScheduleEntry? nextClass;
         for (int i = 0; i < classes.Count; i++)
         {
             BellScheduleEntry data = classes[i];
 
-            nextClass = classes.Count - 1 == i ? null : classes[i + 1];
+            BellScheduleEntry? nextClass = classes.Count - 1 == i ? null : classes[i + 1];
 
             DateTime current = TimeService.Now;
 
             DateTime start = new(current.Year, current.Month, current.Day, data.StartHour, data.StartMin, 0);
             DateTime end = new(current.Year, current.Month, current.Day, data.EndHour, data.EndMin, 0);
+            DateTime transitionEnd = nextClass != null ? new DateTime(current.Year, current.Month, current.Day, nextClass.StartHour,
+                    nextClass.StartMin, 0) : end.AddMinutes(5); // how long transition is in total
 
-            TimeSpan totalDuration = end - start;
-
-            TimeSpan duration = end - current;
-
-            DateTime transitionStart = end; // when transition starts
-            DateTime transitionEnd = transitionStart.AddMinutes(5); // how long transition is in total
-
-            if (nextClass != null)
-                transitionEnd = new DateTime(current.Year, current.Month, current.Day, nextClass.StartHour,
-                    nextClass.StartMin, 0);
-            TimeSpan transitionRemain = transitionEnd - current; // how much time left in transition
-            TimeSpan transitionLen = transitionEnd - transitionStart;
-
-
-            if (current >= transitionStart && current <= transitionEnd)
+            if (current >= end && current <= transitionEnd)
             {
+                TimeSpan transitionLen = transitionEnd - end;
+                TimeSpan transitionRemain = transitionEnd - current; // how much time left in transition
+
                 matchFound = true;
                 ProgressBar.IsIndeterminate = false;
                 _isTransition = true;
@@ -608,7 +624,7 @@ public sealed partial class MainView
                 ProgressBar.IsIndeterminate = false;
                 _isTransition = false;
 
-                UpdateClassText(data.FriendlyName, data.ScheduleName, duration, totalDuration);
+                UpdateClassText(data.FriendlyName, data.ScheduleName, end - current, end - start);
                 break;
             }
         }
@@ -669,7 +685,7 @@ public sealed partial class MainView
         {
             //MainWindow.Instance.RemoveMica();
             IntPtr trayHWnd;
-            IntPtr taskbarUIHWnd = 0;
+            IntPtr taskbarUIHWnd;
 
             int taskbarHeight = 0;
             int attempts = 0;
@@ -724,14 +740,6 @@ public sealed partial class MainView
             }
             else return;
 
-            // subclass parent window to recieve WM_DESTROY to exit taskbar mode
-            if (taskbarUIHWnd != 0)
-            {
-                _newWndProcDelegate2 = WndProc2;
-                nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate2);
-                _oldWndProc2 = SetWindowLongPtrW(taskbarUIHWnd, GWLP_WNDPROC, pWndProc);
-            }
-
             MainButton.Visibility = Visibility.Collapsed;
             TxtDuration.FontSize = 14;
             TxtCurrentClass.FontSize = 14;
@@ -740,11 +748,7 @@ public sealed partial class MainView
         }
         else
         {
-            nint old = SetParent(handle, 0);
-            if (old != 0)
-            {
-                SetWindowLongPtrW(old, GWLP_WNDPROC, _oldWndProc2);
-            }
+            SetParent(handle, 0);
             Background = new SolidColorBrush(new Color() { A = 255 });
             MainButton.Visibility = Visibility.Visible;
             UpdateFontSize();
@@ -797,17 +801,7 @@ public sealed partial class MainView
 
         return CallWindowProcW(_oldWndProc, hWnd, msg, wParam, lParam);
     }
-    private IntPtr WndProc2(IntPtr hWnd, uint msg, UIntPtr wParam, IntPtr lParam)
-    {
-        if (msg == 130)
-        {
-            // todo fix this
-            SetTaskbarMode(false).Wait();
-            return 0;
-        }
 
-        return CallWindowProcW(_oldWndProc2, hWnd, msg, wParam, lParam);
-    }
     private void Timer_Tick(object? sender, object e)
     {
         UpdateCurrentClass();
