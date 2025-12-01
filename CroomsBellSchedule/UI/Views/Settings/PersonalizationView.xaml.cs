@@ -290,7 +290,7 @@ public sealed partial class PersonalizationView
 
     private void Changelog_Click(object sender, RoutedEventArgs e)
     {
-        MainView.Settings?.ShowAnnouncementsAsync();
+        MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://github.com/Crooms-Bell-Schedule/CroomsBellScheduleWinUI3/blob/master/CHANGELOG.md", true, true, false));
     }
 
     private void GoToSchedule_Click(object sender, RoutedEventArgs e)
