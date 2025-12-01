@@ -144,12 +144,9 @@ namespace CroomsBellSchedule.Core.Web
             }
             return "Unspecified error";
         }
-        private static string SHA512(string input)
+        private static string DoSHA512(string input)
         {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(input);
-
-            SHA512 shaM = new SHA512Managed();
-            var hashedInputBytes = shaM.ComputeHash(bytes);
+            var hashedInputBytes = SHA512.HashData(System.Text.Encoding.UTF8.GetBytes(input));
 
             // Convert to text
             // StringBuilder Capacity is 128, because 512 bits / 8 bits in byte * 2 symbols for byte 
@@ -218,7 +215,7 @@ namespace CroomsBellSchedule.Core.Web
 
         private async Task<Result<LoginResponse?>> RunLoginAsync(LoginRequest req)
         {
-            req.password = SHA512(req.password).ToLower();
+            req.password = DoSHA512(req.password).ToLower();
 
             StringContent content = new(JsonSerializer.Serialize(req, SourceGenerationContext.Default.LoginRequest));
             content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
