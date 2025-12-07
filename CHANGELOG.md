@@ -1,4 +1,14 @@
 # Changelog
+## 5.0.1 (12/6/2025)
+New features:
+ - Added the ability to change Homeroom name
+ - Show the livestream tab if it is currently active
+
+
+Other:
+ - Upgraded to .NET 10
+
+
 ## 5.0.0 (11/7/2025)
 
 Bug fixes:
