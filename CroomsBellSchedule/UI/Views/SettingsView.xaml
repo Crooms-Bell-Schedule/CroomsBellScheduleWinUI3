@@ -282,7 +282,12 @@ Click="FlyoutChangePFP_Click">
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8F2;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Content="Live stream" x:Name="LiveStreamItem" Visibility="Collapsed">
+                <NavigationViewItem Content="Calendar" x:Name="TodoListItem">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE787;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Live stream" x:Name="LiveStreamItem" Visibility="Visible">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE93E;" />
                     </NavigationViewItem.Icon>

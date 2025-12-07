@@ -37,7 +37,7 @@ public sealed partial class BellView
 
         UpdateClasses();
 
-        for (int i = 1; i < 8; i++)
+        for (int i = 1; i < 9; i++)
         {
             StackPanel panel = new() { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 8, 0, 0) };
 
@@ -46,6 +46,11 @@ public sealed partial class BellView
                 Text = $"Period {i}: ",
                 VerticalAlignment = VerticalAlignment.Center
             };
+
+            if (i == 8)
+            {
+                time.Text = "Homeroom: ";
+            }
 
             TextBox box = new TextBox() { Text = SettingsManager.Settings.PeriodNames[i], Margin = new Thickness(10, 0, 0, 0), Width = 300, MaxWidth = 300, Tag = i };
             box.TextChanged += async delegate (object sender, TextChangedEventArgs e)

@@ -257,7 +257,7 @@ namespace CroomsBellSchedule.Core.Web
         {
             try
             {
-                await _client.GetAsync(MikhailHostingBase + "/crfsapi/TelemetryController/Startup");
+                await _client.GetAsync(MikhailHostingBase + "/apiv2/telemetry/Startup");
             }
             catch
             {
@@ -577,6 +577,31 @@ namespace CroomsBellSchedule.Core.Web
         public async Task<Result<bool>> ReportPostAsync(string? id, string reason)
         {
             return await DoPostRequestAsync<bool>($"{ApiBase}/feed/report/{id}/{reason}");
+        }
+
+        public async Task<bool> LivestreamExists()
+        {
+            try
+            {
+                var response = await _client.GetAsync($"{MikhailHostingBase}/apiv2/app/GetLiveStreamData");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseText = await response.Content.ReadAsStringAsync();
+                    LivestreamAvailabilityResponse? data = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.LivestreamAvailabilityResponse);
+
+                    if (data != null)
+                    {
+                        return data.exists;
+                    }
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

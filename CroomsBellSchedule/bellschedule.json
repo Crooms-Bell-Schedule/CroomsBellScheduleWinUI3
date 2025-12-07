@@ -243,7 +243,7 @@
     },
     {
       "day": "Saturday",
-      "scheduleName": "none"
+      "scheduleName": "evenblock"
     },
     {
       "day": "Sunday",
@@ -252,23 +252,7 @@
   ],
   "overrides": [
     {
-      "date": "5-1-2025",
-      "scheduleName": "modThu51"
-    },
-    {
-      "date": "5-2-2025",
-      "scheduleName": "modFri52"
-    },
-    {
-      "date": "5-5-2025",
-      "scheduleName": "modMon55"
-    },
-    {
-      "date": "8-12-2025",
-      "scheduleName": "activity"
-    },
-    {
-      "date": "9-26-2025",
+      "date": "12-12-2025",
       "scheduleName": "activity"
     }
   ]

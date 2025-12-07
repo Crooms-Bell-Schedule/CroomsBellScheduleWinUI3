@@ -257,7 +257,10 @@ public sealed partial class MainView
         }
 
         if (SettingsWindow != null && SettingsWindow.SettingsView != null)
+        {
             await SettingsWindow.SettingsView.CheckAnnouncementsAsync();
+            await SettingsWindow.SettingsView.CheckLivestreamAsync();
+        }
     }
 
     private void DvdTimer_Tick(object? sender, object e)
@@ -917,12 +920,20 @@ public sealed partial class MainView
             { "106", "End" }
         };
 
-        for (int i = 1; i < 8; i++) strings.Add(i.ToString(), SettingsManager.Settings.PeriodNames[i]);
+        for (int i = 1; i < 9; i++) strings.Add(i.ToString(), SettingsManager.Settings.PeriodNames[i]);
 
         // Local
         foreach (var item in SettingsManager.Settings.PeriodNames)
         {
-            strings.Add("Period " + item.Key, item.Value);
+            if (item.Key == 8)
+            {
+                strings.Add("Homeroom", item.Value);
+                strings["103"] = item.Value;
+            }
+            else
+            {
+                strings.Add("Period " + item.Key, item.Value);
+            }
         }
 
         _reader.UpdateStrings(strings, namesChanged);

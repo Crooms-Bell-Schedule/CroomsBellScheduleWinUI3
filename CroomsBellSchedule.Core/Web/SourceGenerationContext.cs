@@ -28,11 +28,13 @@ namespace CroomsBellSchedule.Core.Web
     [JsonSerializable(typeof(ApiResponse<GetUserResult>))]
     [JsonSerializable(typeof(ApiResponse<bool>))]
     [JsonSerializable(typeof(ApiResponse<bool?>))]
+    [JsonSerializable(typeof(LivestreamAvailabilityResponse))]
 
     [JsonSerializable(typeof(FeedMessage))]
     [JsonSerializable(typeof(DeletePostMessage))]
     [JsonSerializable(typeof(UpdatePostMessage))]
     [JsonSerializable(typeof(NewPostMessage))]
+
     internal partial class SourceGenerationContext : JsonSerializerContext
     {
     }

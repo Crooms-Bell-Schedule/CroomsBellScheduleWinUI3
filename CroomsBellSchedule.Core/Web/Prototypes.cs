@@ -123,6 +123,10 @@ namespace CroomsBellSchedule.Core.Web
         public string id { get; set; } = "";
         public string link { get; set; } = "";
     }
+    public class LivestreamAvailabilityResponse
+    {
+        public bool exists { get; set; }
+    }
 
     // Websocket Schema
     public class FeedMessage

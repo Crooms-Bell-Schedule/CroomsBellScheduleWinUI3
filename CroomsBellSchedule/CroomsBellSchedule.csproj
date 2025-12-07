@@ -28,6 +28,7 @@
 		<None Remove="Styles\Thickness.xaml" />
 		<None Remove="UI\Views\Settings\AnnouncementsView.xaml" />
 		<None Remove="UI\Views\Settings\BellView.xaml" />
+		<None Remove="UI\Views\Settings\TodoListView.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -89,6 +90,9 @@
 	  <None Update="bellschedule.json">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
+	  <Page Update="UI\Views\Settings\TodoListView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </Page>
 	</ItemGroup>
 	<ItemGroup>
 		<Page Update="Styles\Thickness.xaml">

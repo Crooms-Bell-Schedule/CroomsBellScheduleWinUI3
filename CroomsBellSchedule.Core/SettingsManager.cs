@@ -56,6 +56,11 @@ public static class SettingsManager
             for (int i = 1; i < 8; i++) _settings.PeriodNames.Add(i, "Period " + i);
         }
 
+        if (!_settings.PeriodNames.ContainsKey(8))
+        {
+            _settings.PeriodNames.Add(8, "Homeroom");
+        }
+
         if (string.IsNullOrEmpty(_settings.PreviousVersion))
         {
             var ver = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0, 0);

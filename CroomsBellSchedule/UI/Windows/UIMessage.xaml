@@ -46,7 +46,7 @@
              Margin="15,0,0,0" Grid.Column="1"/>
         </Grid>
 
-        <ScrollView Grid.Row="1" HorizontalScrollMode="Enabled" VerticalScrollMode="Disabled">
+        <ScrollView Grid.Row="1" HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled">
             <TextBlock x:Name="TextContent" IsTextSelectionEnabled="True" TextWrapping="WrapWholeWords"/>
         </ScrollView>
         <Button Click="Button_Click" Padding="30,10,30,10" Style="{StaticResource AccentButtonStyle}" Grid.Row="2" HorizontalAlignment="Right">OK</Button>

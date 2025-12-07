@@ -152,6 +152,8 @@ public sealed partial class SettingsView
             NavigationFrame.NavigateToType(typeof(LunchView), null, navOptions);
         else if (args.InvokedItemContainer == LiveStreamItem)
             NavigationFrame.NavigateToType(typeof(Livestream), null, navOptions);
+        else if (args.InvokedItemContainer == TodoListItem)
+            NavigationFrame.NavigateToType(typeof(TodoListView), null, navOptions);
     }
 
     private void NavigationFrame_Navigated(object sender, NavigationEventArgs e)
@@ -166,6 +168,8 @@ public sealed partial class SettingsView
             NavigationViewControl.SelectedItem = LunchMenuItem;
         else if (e.SourcePageType == typeof(Livestream))
             NavigationViewControl.SelectedItem = LiveStreamItem;
+        else if (e.SourcePageType == typeof(TodoListView))
+            NavigationViewControl.SelectedItem = TodoListItem;
 
 
         //if (NavigationFrame.BackStack.Any() && NavigationFrame.BackStack.Count > 1)
@@ -210,6 +214,11 @@ public sealed partial class SettingsView
             }
         }
         catch { }
+    }
+
+    public async Task CheckLivestreamAsync()
+    {
+        LiveStreamItem.Visibility = await Services.ApiClient.LivestreamExists() ? Visibility.Visible : Visibility.Collapsed;
     }
 
     internal void ShowInAppNotification(string message, string? title, int durationSeconds)
@@ -306,6 +315,8 @@ public sealed partial class SettingsView
         try
         {
             await CheckAnnouncementsAsync();
+            await CheckLivestreamAsync();
+
 
             if (string.IsNullOrEmpty(SettingsManager.Settings.SessionID) || string.IsNullOrEmpty(SettingsManager.Settings.UserID))
             {
