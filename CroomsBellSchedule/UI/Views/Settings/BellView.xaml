@@ -16,7 +16,7 @@
     IsIconVisible="True"
     IsClosable="False"
     Title="Note"
-    Message="The offline bell schedule source will be used if the server is inaccessible or under maintenance." Margin="0,8,0,8"/>
+    Message="An offline copy of the bell schedule will be used if the server is inaccessible. It may not be accurate with bell schedule changes. You can change the bell schedule source and school below." Margin="0,8,0,8"/>
 
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="0,8,0,0" Text="Source: "/>

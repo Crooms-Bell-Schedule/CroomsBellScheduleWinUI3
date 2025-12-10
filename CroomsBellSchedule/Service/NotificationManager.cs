@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using CroomsBellSchedule.UI.Windows;
 using Microsoft.Windows.AppNotifications;
 
 namespace CroomsBellSchedule.Service;
@@ -31,10 +33,35 @@ public class NotificationManager
         // be launched to handle the notification.
         AppNotificationManager notificationManager = AppNotificationManager.Default;
 
-        //notificationManager.NotificationInvoked += OnNotificationInvoked;
+        notificationManager.NotificationInvoked += OnNotificationInvoked;
 
         notificationManager.Register();
         m_isRegistered = true;
+    }
+
+    private void HandleCancelClass()
+    {
+        try
+        {
+            // TODO: Figure out how to implement and finish this
+            throw new UnauthorizedAccessException();
+        }
+        catch(Exception ex)
+        {
+            MainWindow.Instance.DispatcherQueue.TryEnqueue(async () =>
+             await UIMessage.ShowMsgAsync(ex.ToString(), "Error"));
+        }
+    }
+
+    private void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
+    {
+       if (args.Arguments.ContainsKey("buttonId"))
+        {
+            if (args.Arguments["buttonId"] == "doCancelClassProc")
+            {
+                HandleCancelClass();
+            }
+        }
     }
 
     public void Unregister()
@@ -44,10 +71,5 @@ public class NotificationManager
             AppNotificationManager.Default.Unregister();
             m_isRegistered = false;
         }
-    }
-
-    public void ProcessLaunchActivationArgs(AppNotificationActivatedEventArgs notificationActivatedEventArgs)
-    {
-        // Complete in Step 5
     }
 }

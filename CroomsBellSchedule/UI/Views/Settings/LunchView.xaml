@@ -40,7 +40,7 @@
                                    Grid.ColumnSpan="5"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
-                                   MaxWidth="200" MaxHeight="150"/>
+                                   MaxWidth="200" MaxHeight="150" Margin="30,0,0,0"/>
 
                 <TextBlock x:Name="quickBitsTitle" Grid.Row="6" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,15,0,0"></TextBlock>
                 <TextBlock x:Name="quickBits" Grid.Row="7" Grid.ColumnSpan="15"></TextBlock>

@@ -133,11 +133,14 @@
             <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" Margin="4,15,0,0" />
 
             <StackPanel Margin="4,8,0,5">
-                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="App created by Mikhail Tyukin with some contributions from Suvan and Andrew. Crooms Bell Schedule website and backend was made by Andew Jennings. This application uses the following libraries:\r\nMicrosoft WinUI 3.0, HtmlAgilityPack, System.Text.Json, Velopack for update system and H.NotifyIcon.WinUI for tray icon." TextWrapping="Wrap" />
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" TextWrapping="Wrap">
+                    App created by Mikhail Tyukin with some contributions from Suvan and Andrew. Crooms Bell Schedule website and backend was made by Andew Jennings. This application uses the following libraries:
+                    <LineBreak/>Microsoft WinUI 3.0, HtmlAgilityPack, System.Text.Json, Velopack for update system and H.NotifyIcon.WinUI for tray icon.
+                </TextBlock>
 
                 <controls:WrapPanel Orientation="Horizontal" HorizontalSpacing="5">
                     <HyperlinkButton Margin="0,4,0,0" Content="Changelog" Click="Changelog_Click" />
-                    <HyperlinkButton Margin="0,4,0,0" Content="Source code" NavigateUri="https://github.com/thealmighyderpybird/CroomsBellScheduleWinUI3" />
+                    <HyperlinkButton Margin="0,4,0,0" Content="Source code" NavigateUri="https://github.com/Crooms-Bell-Schedule/CroomsBellScheduleWinUI3" />
                 </controls:WrapPanel>
             </StackPanel>
         </StackPanel>

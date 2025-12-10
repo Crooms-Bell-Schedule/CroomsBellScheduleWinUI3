@@ -398,7 +398,7 @@ public sealed partial class MainView
 
     #region Bell
 
-    private string FormatTimespan(TimeSpan duration, double progress = 12)
+    private string FormatTimespan(string className, TimeSpan duration, double progress = 12)
     {
         if (duration.Hours == 0)
         {
@@ -406,16 +406,19 @@ public sealed partial class MainView
                 if (!_shown5MinNotification && !SettingsManager.Settings.Show5MinNotification)
                 {
                     AppNotification toast = new AppNotificationBuilder()
-                        .AddText("Bell rings soon")
+                        .AddText($"{className} ends soon")
                         .AddText("The bell rings in less than 5 minutes")
                         .AddProgressBar(
                             new AppNotificationProgressBar
                             {
-                                Status = "Progress",
+                                Status = "Percentage completed",
                                 Value = progress / 100
                             }
                         )
                         .BuildNotification();
+
+                    toast.ExpiresOnReboot = true;
+                    toast.Expiration = DateTime.Now.AddSeconds(15);
 
                     AppNotificationManager.Default.Show(toast);
                     _shown5MinNotification = true;
@@ -424,21 +427,35 @@ public sealed partial class MainView
             if (duration.Minutes == 0 && !_isTransition)
                 if (!_shown1MinNotification && !SettingsManager.Settings.Show1MinNotification)
                 {
-                    AppNotification toast = new AppNotificationBuilder()
-                        .AddText("Bell rings soon")
+                    AppNotificationBuilder toast = new AppNotificationBuilder()
+                        .AddText($"{className} ends soon")
                         .AddText("The bell rings in less than 1 minute")
-                        //.AddButton(new AppNotificationButton
-                        // { InputId = "doCancelClassProc", Content = "Cancel class" })
                         .AddProgressBar(
                             new AppNotificationProgressBar
                             {
-                                Status = "Class completion",
-                                Value = progress / 100
+                                Status = "Percentage completed",
+                                Value = progress / 100,
                             }
-                        )
-                        .BuildNotification();
+                        );
 
-                    AppNotificationManager.Default.Show(toast);
+                    if (_rng.Next(0, 16) == 6)
+                    {
+                    toast = toast.AddButton(new AppNotificationButton
+                    {
+                        InputId = "doCancelClassProc",
+                        Content = "Cancel class",
+                        ButtonStyle = AppNotificationButtonStyle.Critical,
+                        ToolTip = "Cancels the current class by using the power of the bell schedule",
+                        Arguments = new Dictionary<string, string>() { {"buttonId", "doCancelClassProc" } }
+                    });
+                    }
+
+                    var notif = toast.BuildNotification();
+
+                    notif.ExpiresOnReboot = true;
+                    notif.Expiration = DateTime.Now.AddSeconds(15);
+
+                    AppNotificationManager.Default.Show(notif);
 
                     _shown1MinNotification = true;
                 }
@@ -483,7 +500,7 @@ public sealed partial class MainView
 
         // Update text
 
-        TxtCurrentClass.Text = $"{currentClass} - {FormatTimespan(transitionDuration, percent)}";
+        TxtCurrentClass.Text = $"{currentClass} - {FormatTimespan(currentClass, transitionDuration, percent)}";
         switch (SettingsManager.Settings.PercentageSetting)
         {
             case SettingsManager.PercentageSetting.Hide:
