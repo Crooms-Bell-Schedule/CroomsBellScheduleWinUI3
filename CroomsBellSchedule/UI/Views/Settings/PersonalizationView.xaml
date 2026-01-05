@@ -130,12 +130,38 @@
                 </StackPanel>
             </controls:SettingsCard>
 
-            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="About" Margin="4,15,0,0" />
+            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Credits / About" Margin="4,15,0,0" />
 
             <StackPanel Margin="4,8,0,5">
-                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" TextWrapping="Wrap">
-                    App created by Mikhail Tyukin with some contributions from Suvan and Andrew. Crooms Bell Schedule website and backend was made by Andew Jennings. This application uses the following libraries:
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <PersonPicture Grid.Row="0" Grid.Column="0" Height="48" ProfilePicture="/Assets/Settings/mikhail.png" Margin="0,10,0,0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" FontSize="16" Text="Mikhail Tyukin" VerticalAlignment="Center" FontWeight="Bold" Margin="10,10,0,0"/>
+                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Creator of the new Crooms Bell Schedule Application/MikhailHosting" VerticalAlignment="Center" Margin="15,10,0,0"/>
+
+                    <PersonPicture Grid.Row="1" Grid.Column="0" Height="48" ProfilePicture="/Assets/Settings/andrew.png" Margin="0,10,0,0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" FontSize="16" Text="Andrew Jennings" VerticalAlignment="Center" FontWeight="Bold" Margin="10,10,0,0"/>
+                    <TextBlock Grid.Row="1" Grid.Column="2" Text="Creator of the Crooms Bell Schedule website and backend." VerticalAlignment="Center" Margin="15,10,0,0"/>
+
+                    <PersonPicture Grid.Row="2" Grid.Column="0" Height="48" ProfilePicture="/Assets/Settings/suvan.png" Margin="0,10,0,0"/>
+                    <TextBlock Grid.Row="2" Grid.Column="1" FontSize="16" Text="Suvan Mangamuri" VerticalAlignment="Center" FontWeight="Bold" Margin="10,10,0,0"/>
+                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Helped out with UI design in the CBSH app and some other things." VerticalAlignment="Center" Margin="15,10,0,0"/>
+                </Grid>
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" TextWrapping="Wrap" Padding="0,15,0,0">
+                    This application uses the following libraries:
                     <LineBreak/>Microsoft WinUI 3.0, HtmlAgilityPack, System.Text.Json, Velopack for update system and H.NotifyIcon.WinUI for tray icon.
+                    <LineBreak/>This application is licensed under the GNU GPL v3 License.
                 </TextBlock>
 
                 <controls:WrapPanel Orientation="Horizontal" HorizontalSpacing="5">

@@ -314,7 +314,10 @@ public sealed partial class SettingsView
     {
         try
         {
+            LoadingText.Text = "Connecting to Crooms Bell Schedule Services";
+            await Task.Delay(2000);
             await CheckAnnouncementsAsync();
+            LoadingText.Text = "Connecting to MikhailHosting Services";
             await CheckLivestreamAsync();
 
 
@@ -354,7 +357,7 @@ public sealed partial class SettingsView
         {
             ContentDialog dlg = new()
             {
-                Title = "Error",
+                Title = "Unable to connect to Crooms Bell Schedule Services",
                 XamlRoot = Content.XamlRoot,
                 PrimaryButtonText = "OK",
                 DefaultButton = ContentDialogButton.Primary,

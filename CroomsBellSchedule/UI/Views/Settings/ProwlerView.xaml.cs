@@ -55,7 +55,10 @@ public sealed partial class ProwlerView
         "The Crooms Bell Schedule was created to track the bell schedule",
         "Tip: The Crooms Bell Schedule app improves over time",
         "Have a feature or having an issue with the app? Contact Mikhail Tyukin or use the Report A Bug form",
-        "Tip: If you own a cat named Thumper, it has a chance of possibly exploding."
+        "Tip: If you own a cat named Thumper, it has a chance of possibly exploding.",
+        "Tip: You can change your class names",
+        "Tip: Customize your app theme!",
+        "Fun fact: Many new and interesting features are being worked on"
     ];
     public ProwlerView()
     {
@@ -326,7 +329,7 @@ public sealed partial class ProwlerView
             }
 
             // load feed
-            LoadingStatus.Text = "Connecting to server...";
+            LoadingStatus.Text = "Connecting to Crooms Bell Schedule Services...";
 
             await Services.SocketClient.Connect();
 

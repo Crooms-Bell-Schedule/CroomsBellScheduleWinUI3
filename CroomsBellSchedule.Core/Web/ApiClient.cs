@@ -16,7 +16,7 @@ namespace CroomsBellSchedule.Core.Web
         public static string MikhailHostingBase = "https://mikhail.croomssched.tech";
         private readonly HttpClient _client = new()
         {
-            Timeout = TimeSpan.FromSeconds(10)
+            Timeout = TimeSpan.FromSeconds(20)
         };
 
         public ApiClient()
