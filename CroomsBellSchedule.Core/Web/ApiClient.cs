@@ -462,7 +462,9 @@ namespace CroomsBellSchedule.Core.Web
 
                 if (simple.status == "OK")
                 {
-                    return new() { OK = true };
+                    SetProfilePictureResult? resp = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.SetProfilePictureResult) ?? throw new Exception("failed to decode erorr message");
+                    if (resp.data == null) throw new("file data is null");
+                    return new() { OK = true, Value = resp };
 
                 }
                 else

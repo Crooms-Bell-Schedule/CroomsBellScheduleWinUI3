@@ -1,23 +1,28 @@
-﻿using System;
-using System.Linq;
-using CroomsBellSchedule.Controls;
+﻿using CroomsBellSchedule.Controls;
 using Microsoft.UI.Text;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using WinRT.Interop;
 
 namespace CroomsBellSchedule.UI.Views.Settings;
 
 public sealed partial class PostView
 {
+    public List<string> FilePaths = [];
+    public List<string> UploadedPaths = [];
     public string PostContent
     {
         get
         {
-            return FeedEntry.CreateHtml(PostContentBox);
+            return FeedEntry.CreateHtml(PostContentBox, UploadedPaths.ToArray());
         }
     }
 
@@ -311,8 +316,6 @@ public sealed partial class PostView
 
             var items = await e.DataView.GetStorageItemsAsync();
 
-
-
             foreach (var item in items)
             {
 
@@ -337,12 +340,51 @@ public sealed partial class PostView
                 {
                     using var fs = await FileRandomAccessStream.OpenAsync(item.Path, FileAccessMode.Read);
                     range.InsertImage(100, 100, 0, VerticalCharacterAlignment.Top, "Uploaded image", fs);
+
+                    FilePaths.Add(item.Path);
                 }
                 else
                 {
                     // todo video attachments, file attachments
                 }
             }
+        }
+    }
+
+    private async void AttachImage_Click(object sender, RoutedEventArgs e)
+    {
+
+        var picker = new FileOpenPicker();
+        picker.ViewMode = PickerViewMode.Thumbnail;
+        picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+        picker.FileTypeFilter.Add(".jpg");
+        picker.FileTypeFilter.Add(".jpeg");
+        picker.FileTypeFilter.Add(".png");
+        picker.FileTypeFilter.Add(".webp");
+        picker.FileTypeFilter.Add(".avif");
+        picker.FileTypeFilter.Add(".bmp");
+
+        nint windowHandle = WindowNative.GetWindowHandle(MainView.SettingsWindow);
+        InitializeWithWindow.Initialize(picker, windowHandle);
+
+        StorageFile file = await picker.PickSingleFileAsync();
+        if (file != null)
+        {
+            FilePaths.Add(file.Path);
+
+
+            PostContentBox.Document.GetText(TextGetOptions.None, out string fullText);
+
+            ITextRange range;
+            if (fullText.Length == 0)
+                range = PostContentBox.Document.GetRange(0, 0);
+            else
+                range = PostContentBox.Document.GetRange(fullText.Length - 1, fullText.Length - 1);
+
+
+            using var fs = await FileRandomAccessStream.OpenAsync(file.Path, FileAccessMode.Read);
+            range.InsertImage(100, 100, 0, VerticalCharacterAlignment.Top, "Uploaded image", fs);
+
         }
     }
 }

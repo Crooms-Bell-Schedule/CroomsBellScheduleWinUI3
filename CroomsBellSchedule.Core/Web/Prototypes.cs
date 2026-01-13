@@ -104,6 +104,7 @@ namespace CroomsBellSchedule.Core.Web
     public class SetProfilePictureResultError
     {
         public string error { get; set; } = "";
+        public string? file { get; set; } = "";
     }
 
     public class SetProfilePictureResult

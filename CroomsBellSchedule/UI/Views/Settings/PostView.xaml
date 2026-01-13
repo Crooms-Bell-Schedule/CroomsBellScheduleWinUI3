@@ -78,7 +78,7 @@ RelativePanel.RightOf="InsertLink" Click="ClearFormatting_Click">
                 <DropDownButton x:Name="fontColorButton" AutomationProperties.Name="Font color"
                                 BorderThickness="0" ToolTipService.ToolTip="Font color"
                                 Background="Transparent"
-                                RelativePanel.RightOf="NumberedList"
+                                RelativePanel.RightOf="ClearFormatting"
                                 Visibility="Collapsed">
                     <SymbolIcon Symbol="FontColor"/>
                     <DropDownButton.Flyout>
@@ -151,7 +151,14 @@ RelativePanel.RightOf="InsertLink" Click="ClearFormatting_Click">
                     </DropDownButton.Flyout>
                 </DropDownButton>
 
-                <Button x:Name="ExitButton" AutomationProperties.Name="Clear Formatting" ToolTipService.ToolTip="Clear formatting"
+                <Button x:Name="attachImage" AutomationProperties.Name="Image Attachment" ToolTipService.ToolTip="Attach Image"
+RelativePanel.RightOf="ClearFormatting" Click="AttachImage_Click">
+                    <Button.Content>
+                        <FontIcon Glyph="&#xE723;"/>
+                    </Button.Content>
+                </Button>
+
+                <Button x:Name="ExitButton" AutomationProperties.Name="Close" ToolTipService.ToolTip="Close"
 RelativePanel.AlignRightWithPanel="True" Click="ExitButton_Click">
                     <Button.Content>
                         <FontIcon Glyph="&#xE711;"/>

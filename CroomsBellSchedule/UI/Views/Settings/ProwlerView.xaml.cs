@@ -88,7 +88,7 @@ public sealed partial class ProwlerView
 
     private void _updateLabels_Elapsed(object? sender, ElapsedEventArgs e)
     {
-        
+
     }
 
     private async void _reconnectTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -149,7 +149,7 @@ public sealed partial class ProwlerView
         var e = ProcessEntry(entry);
         ProwlerSource.InsertEntry(e);
 
-         Entries.Insert(0, e);
+        Entries.Insert(0, e);
 
         try
         {
@@ -468,39 +468,6 @@ public sealed partial class ProwlerView
         //await dialog.ShowAsync();
     }
 
-    private async void PostDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-    {
-        args.Cancel = true;
-        var content = sender.Content as PostView;
-        if (content == null) return;
-
-        // validate some things
-        if (content.IsContentEmpty())
-        {
-            return;
-        }
-
-        content.ShowingLoading = true;
-
-        try
-        {
-            var result = await Services.ApiClient.PostFeed(content.PostContent.TrimEnd(['\r', '\n']));
-            if (result.OK)
-            {
-                sender.Hide();
-            }
-            else
-            {
-                content.Error = ApiClient.FormatResult(result);
-                content.ShowingLoading = false;
-            }
-        }
-        catch (Exception ex)
-        {
-            content.Error = ex.Message;
-            content.ShowingLoading = false;
-        }
-    }
     private async void ImageBrush_ImageFailed(object sender, Microsoft.UI.Xaml.ExceptionRoutedEventArgs e)
     {
         if (ShownImageError) return;
@@ -606,6 +573,22 @@ public sealed partial class ProwlerView
 
         Poster.ShowingLoading = true;
 
+        Poster.UploadedPaths.Clear();
+        foreach (var entry in Poster.FilePaths)
+        {
+            if (!File.Exists(entry)) continue;
+            var result = await Services.ApiClient.CreateAttachment(File.ReadAllBytes(entry), Path.GetExtension(entry));
+
+            if (!result.OK || result.Value == null)
+            {
+                Poster.Error = "Error while uploading " + ApiClient.FormatResult(result);
+                Poster.ShowingLoading = false;
+                return;
+            }
+
+            Poster.UploadedPaths.Add(result.Value.data.file);
+        }
+
         try
         {
             var result = await Services.ApiClient.PostFeed(Poster.PostContent.TrimEnd(['\r', '\n']));
@@ -613,6 +596,8 @@ public sealed partial class ProwlerView
             {
                 Poster.Visibility = Visibility.Collapsed;
                 Poster.Empty();
+                Poster.UploadedPaths.Clear();
+                Poster.FilePaths.Clear();
             }
             else
             {

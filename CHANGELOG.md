@@ -1,10 +1,10 @@
 # Changelog
-## 5.0.4 (TBD)
+## 5.0.4 (1/13/2026)
  - Added ability to add custom background
- - Added new theme option
+ - Added new anime theme option
  - Improved Prowler preformance significantly
  - Improved DPI scaling
- - Improved preformance
+ - Added ability to insert/upload images in Prowler
 
 ## 5.0.2 / 5.0.3 (1/5/2026)
  - Fixed prowler failing to loading (loading speed however will be improved in a future update as well as a server update)

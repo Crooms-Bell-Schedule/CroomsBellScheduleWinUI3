@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using CroomsBellSchedule.Core.Utils;
+using CroomsBellSchedule.Service;
 using CroomsBellSchedule.UI;
 using CroomsBellSchedule.UI.Views.Settings;
 using HtmlAgilityPack;
@@ -315,7 +316,7 @@ public sealed partial class FeedEntry
         }
     */
 
-    internal static string CreateHtml(RichEditBox postContentBox)
+    internal static string CreateHtml(RichEditBox postContentBox, string[] paths)
     {
         // get the story length
         ITextRange documentRange = postContentBox.Document.GetRange(0, TextConstants.MaxUnitCount);
@@ -524,9 +525,15 @@ public sealed partial class FeedEntry
         if (listStarted)
             writer.EndTag(currentList);
 
+        foreach (var item in paths)
+        {
+            writer.BeginTag("img", [new HtmlAttrib("src", item)]);
+            writer.EndTag("img");
+        }
+
         result = writer.GetHTML();
 
-        return result;
+        return result.Replace("\uFFFC", "");
     }
 
     private static bool CmpFormatParagraph(ITextParagraphFormat a, ITextParagraphFormat b)
