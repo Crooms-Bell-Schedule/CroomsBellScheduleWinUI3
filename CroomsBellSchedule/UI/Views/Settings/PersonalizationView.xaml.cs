@@ -55,7 +55,8 @@ public sealed partial class PersonalizationView
                 {
                     Source = new BitmapImage(new Uri($"ms-appx:///Assets/Theme/" + item.PreviewResource)),
                     Height = 40,
-                    Width = 40
+                    Width = 40,
+                    Stretch = Microsoft.UI.Xaml.Media.Stretch.UniformToFill
                 };
             }
 
@@ -88,6 +89,63 @@ public sealed partial class PersonalizationView
 
             // set the theme option to the one in the settings
             if (SettingsManager.Settings.ThemeIndex == item.ID)
+            {
+                updating = true;
+                button.IsChecked = true;
+                updating = false;
+            }
+
+
+            ThemesContainer.Children.Add(button);
+        }
+
+        {
+            ToggleButton button = new()
+            {
+                Padding = new(2),
+                Margin = new Thickness(5, 0, 5, 0)
+            };
+
+            ToolTip tip = new() { Content = "Custom theme" };
+            ToolTipService.SetToolTip(button, tip);
+
+
+            button.Content = new SymbolIcon()
+            {
+                Symbol = Symbol.Add,
+                Height = 40,
+                Width = 40
+            };
+
+            button.Checked += async delegate (object sender, RoutedEventArgs e)
+            {
+                // deselect other options
+                if (updating) return;
+
+                updating = true;
+                foreach (var control in ThemesContainer.Children)
+                {
+                    if (control is ToggleButton toggle && control != (ToggleButton)sender)
+                    {
+                        toggle.IsChecked = false;
+                    }
+                }
+                updating = false;
+
+                SettingsManager.Settings.ThemeIndex = 999;
+
+                // TODO open dlg
+            };
+
+            button.Unchecked += delegate (object sender, RoutedEventArgs e)
+            {
+                // do not allow it to be unchecked if data is not being updated
+                if (updating) return;
+                ((ToggleButton)sender).IsChecked = true;
+            };
+
+            // set the theme option to the one in the settings
+            if (SettingsManager.Settings.ThemeIndex == 999)
             {
                 updating = true;
                 button.IsChecked = true;

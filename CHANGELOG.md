@@ -1,4 +1,11 @@
 # Changelog
+## 5.0.4 (TBD)
+ - Added ability to add custom background
+ - Added new theme option
+ - Improved Prowler preformance significantly
+ - Improved DPI scaling
+ - Improved preformance
+
 ## 5.0.2 / 5.0.3 (1/5/2026)
  - Fixed prowler failing to loading (loading speed however will be improved in a future update as well as a server update)
  - Improved notifications (improved look, and they disappear from action center so that you don't have to clear it out)

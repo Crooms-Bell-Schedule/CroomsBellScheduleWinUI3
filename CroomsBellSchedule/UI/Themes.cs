@@ -109,7 +109,23 @@ namespace CroomsBellSchedule.UI
                     BackgroundResource = "Frieren_bg.jpg",
                     UseBlur = false
                 },
- new Theme()
+            new Theme()
+                {
+                    ID = 9,
+                    Name = "Re:Zero",
+                    PreviewResource = "rezr_bg.png",
+                    BackgroundResource = "rezr_bg.png",
+                    UseBlur = false
+                },
+                new Theme()
+                {
+                    ID = 10,
+                    Name = "Reze From Chainsaw man",
+                    PreviewResource = "reze_bg.png",
+                    BackgroundResource = "reze_bg.png",
+                    UseBlur = false
+                },
+            new Theme()
                 {
                     ID = 54,
                     Name = "Bacon",
@@ -125,7 +141,17 @@ namespace CroomsBellSchedule.UI
                     PreviewResource = "COW_preview.png",
                     BackgroundResource = "COW_bg.png",
                     UseBlur = false,
-                    DimDark = 170
+                    DimDark = 139
+                },
+
+              new Theme()
+                {
+                    ID = 999,
+                    Name = "Custom Import",
+                    PreviewResource = "COW_preview.png",
+                    BackgroundResource = "COW_bg.png",
+                    UseBlur = false,
+                    DimDark = 139
                 },
             ];
 

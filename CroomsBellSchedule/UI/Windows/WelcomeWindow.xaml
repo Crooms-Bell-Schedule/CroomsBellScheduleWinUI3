@@ -16,7 +16,7 @@
         <MicaBackdrop />
     </Window.SystemBackdrop>
 
-    <Grid Margin="5">
+    <Grid Margin="5" Loaded="Grid_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>

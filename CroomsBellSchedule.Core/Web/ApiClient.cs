@@ -313,9 +313,9 @@ namespace CroomsBellSchedule.Core.Web
             return new Result() { OK = false };
         }
 
-        public async Task<Result<FeedEntry[]?>> GetFeedFull()
+        public async Task<Result<FeedEntry[]?>> GetFeedFull(int limit)
         {
-            return await DoGetRequestAsync<FeedEntry[]>(ApiBase + "/feed");
+            return await DoGetRequestAsync<FeedEntry[]>(ApiBase + "/feed?limit=" + limit);
         }
         public async Task<Result<FeedEntry[]?>> GetFeedFullUser(string id)
         {
@@ -324,6 +324,10 @@ namespace CroomsBellSchedule.Core.Web
         public async Task<Result<FeedEntry[]?>> GetFeedAfter(string id)
         {
             return await DoGetRequestAsync<FeedEntry[]>($"{ApiBase}/feed/after/{id}");
+        }
+        public async Task<Result<FeedEntry[]?>> GetFeedBefore(string id, int limit)
+        {
+            return await DoGetRequestAsync<FeedEntry[]>($"{ApiBase}/feed/before/{id}?limit=" + limit);
         }
         public async Task<Result<FeedEntry[]?>> GetFeedPart(int start, int end, CancellationToken cancel = default)
         {

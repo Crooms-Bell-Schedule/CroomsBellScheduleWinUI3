@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CroomsBellSchedule.Service;
+using CroomsBellSchedule.Utils;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -14,25 +15,25 @@ namespace CroomsBellSchedule.UI.Windows;
 
 public sealed partial class WelcomeWindow
 {
+    private OverlappedPresenter presenter;
     public WelcomeWindow()
     {
         InitializeComponent();
 
-        AppWindow.Resize(new SizeInt32(500, 400));
+        
 
         AppWindow.SetIcon("Assets\\croomsBellSchedule.ico");
 
         ExtendsContentIntoTitleBar = true;
         AppWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Standard;
 
-        OverlappedPresenter presenter = OverlappedPresenter.CreateForDialog();
-        presenter.PreferredMinimumWidth = presenter.PreferredMaximumWidth = 500;
-        presenter.PreferredMinimumHeight = presenter.PreferredMaximumHeight = 400;
+        presenter = OverlappedPresenter.CreateForDialog();
         SetOwnership(AppWindow, MainWindow.Instance);
         presenter.IsModal = true;
         presenter.IsMaximizable = false;
         presenter.IsMinimizable = false;
         presenter.IsAlwaysOnTop = true;
+        
 
 
         ExtendsContentIntoTitleBar = true;
@@ -106,5 +107,22 @@ public sealed partial class WelcomeWindow
         SettingsManager.Settings.ShownFirstRunDialog = true;
         await SettingsManager.SaveSettings();
         Close();
+    }
+    private void UpdateDpi()
+    {
+        int w = (int)(500 * Content.XamlRoot.RasterizationScale);
+        int h = (int)(400 * Content.XamlRoot.RasterizationScale);
+        AppWindow.Resize(new SizeInt32(w, h));
+
+        presenter.PreferredMinimumWidth = presenter.PreferredMaximumWidth = w;
+        presenter.PreferredMinimumHeight = presenter.PreferredMaximumHeight = h;
+    }
+    private void Grid_Loaded(object sender, RoutedEventArgs e)
+    {
+        UpdateDpi();
+        Content.XamlRoot.Changed += async (a, b) =>
+        {
+            UpdateDpi();
+        };
     }
 }

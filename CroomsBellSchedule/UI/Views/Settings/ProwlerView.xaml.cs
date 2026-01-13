@@ -680,13 +680,13 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
 
     public async Task<bool> LoadAllFromServer()
     {
-        Result<FeedEntry[]?> feedResult = await Services.ApiClient.GetFeedFull();
+        Result<FeedEntry[]?> feedResult = await Services.ApiClient.GetFeedFull(50);
         if (feedResult.IsRateLimitReached)
         {
             for (int i = 0; i < 10; i++)
             {
                 await Task.Delay(1000);
-                feedResult = await Services.ApiClient.GetFeedFull();
+                feedResult = await Services.ApiClient.GetFeedFull(50);
 
                 if (!feedResult.IsRateLimitReached)
                     break;
@@ -700,6 +700,37 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
         }
 
         Entries.Clear();
+
+
+        foreach (var entry in feedResult.Value)
+        {
+            Entries.Add(ProwlerView.ProcessEntry(entry));
+        }
+
+        return true;
+    }
+
+    public async Task<bool> LoadBefore(string id)
+    {
+        Result<FeedEntry[]?> feedResult = await Services.ApiClient.GetFeedBefore(id, 50);
+        if (feedResult.IsRateLimitReached)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                await Task.Delay(1000);
+                feedResult = await Services.ApiClient.GetFeedBefore(id, 50);
+
+                if (!feedResult.IsRateLimitReached)
+                    break;
+            }
+        }
+
+        if (!feedResult.OK || feedResult.Value == null)
+        {
+            MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data (before {id})", "Error", 10);
+            return false;
+        }
+
 
 
         foreach (var entry in feedResult.Value)
@@ -725,8 +756,28 @@ public class ProwlerSource : IIncrementalSource<FeedUIEntry>
         }
 
         Debug.WriteLine($"load index {pageIndex}*{pageSize}");
-        await Task.Delay(50);
-        return (from p in Entries select p).Skip(pageIndex * pageSize).Take(pageSize);
+
+
+        if (Entries.Count < pageIndex * pageSize + pageSize)
+        {
+            if (!await LoadBefore(Entries[Entries.Count - 1].Id))
+            {
+                if ((pageIndex + pageIndex) == pageIndex)
+                    MainView.Settings?.ShowInAppNotification($"Disconnected from server. Please try again.", "Network Error", 10);
+                else
+                    MainView.Settings?.ShowInAppNotification($"Failed to load Prowler data [{pageIndex} to {pageIndex + pageIndex}]", "Error", 10);
+                return [];
+            }
+        }
+
+        if (Entries.Count >= pageIndex * pageSize + pageSize)
+        {
+            await Task.Delay(50);
+            return (from p in Entries select p).Skip(pageIndex * pageSize).Take(pageSize);
+        }
+
+        MainView.Settings?.ShowInAppNotification($"This shouldnt happen", "ProwlerSource Error", 10);
+        return [];
     }
 
     internal void ModPost(string id, string newContent)

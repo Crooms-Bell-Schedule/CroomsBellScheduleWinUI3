@@ -65,7 +65,12 @@
                    Style="{StaticResource CaptionTextBlockStyle}" Text="Crooms Bell Schedule"
                    Margin="15,0,0,0" Grid.Column="1"/>
             <StackPanel Grid.Column="3" HorizontalAlignment="Right" Orientation="Horizontal" Margin="0, 0, 5, 0">
-                <Button Height="33" Visibility="Visible" Margin="5,0,5,0" Click="Annc_Click">
+                <Button Height="33" Visibility="Visible" Margin="5,0,5,0" Click="Annc_Click" Background="{ThemeResource SmokeFillColorDefaultBrush}">
+                    <Button.Resources>
+                            <SolidColorBrush
+                x:Key="ButtonBackgroundPointerOver"
+                Color="{ThemeResource SolidBackgroundFillColorBaseAltBrush}" />
+                    </Button.Resources>
                     <StackPanel Orientation="Horizontal">
                         <FontIcon Glyph="&#xE789;" Margin="0,0,10,0" />
                         <TextBlock>Announcements</TextBlock>
@@ -73,7 +78,12 @@
                         <InfoBadge x:Name="AnncBadge" HorizontalAlignment="Right" VerticalAlignment="Top" Style="{StaticResource AttentionDotInfoBadgeStyle}" Value="0" Margin="5,0,0,0" Visibility="Collapsed"/>
                     </StackPanel>
                 </Button>
-                <Button Height="33" Visibility="Visible" Padding="5,0,0,0">
+                <Button Height="33" Visibility="Visible" Padding="5,0,0,0" Background="{ThemeResource SmokeFillColorDefaultBrush}">
+                    <Button.Resources>
+                        <SolidColorBrush
+x:Key="ButtonBackgroundPointerOver"
+Color="{ThemeResource SolidBackgroundFillColorBaseAltBrush}" />
+                    </Button.Resources>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto"/>
