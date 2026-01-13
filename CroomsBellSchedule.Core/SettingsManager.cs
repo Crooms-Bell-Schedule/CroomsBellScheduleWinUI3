@@ -116,6 +116,7 @@ public static class SettingsManager
         public string? ApiBase { get; set; }
         public string? MikhailHostingBase { get; set; }
         public bool ShownFirstRunDialog { get; set; }
+        public string? CustomBackgroundPath { get; set; }
 
         public Dictionary<int, string> PeriodNames { get; set; } = [];
         [DefaultValue((int)PercentageSetting.SigFig4)]

@@ -698,7 +698,10 @@ public sealed partial class SettingsView
             }
             else
             {
-                src.UriSource = new("ms-appx:///Assets/Theme/" + theme.BackgroundResource);
+                if (theme.BackgroundResource.Contains(":\\"))
+                    src.UriSource = new("file:///" + theme.BackgroundResource);
+                else
+                    src.UriSource = new("ms-appx:///Assets/Theme/" + theme.BackgroundResource);
             }
 
             src.ImageFailed += Src_ImageFailed;

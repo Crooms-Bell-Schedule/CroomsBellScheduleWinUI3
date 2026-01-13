@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using CroomsBellSchedule.UI.Views;
 using Microsoft.UI.Xaml;
@@ -117,14 +118,14 @@ namespace CroomsBellSchedule.UI
                     BackgroundResource = "rezr_bg.png",
                     UseBlur = false
                 },
-                new Theme()
+                /*new Theme()
                 {
                     ID = 10,
                     Name = "Reze From Chainsaw man",
                     PreviewResource = "reze_bg.png",
                     BackgroundResource = "reze_bg.png",
                     UseBlur = false
-                },
+                },*/ // TODO find image
             new Theme()
                 {
                     ID = 54,
@@ -147,9 +148,9 @@ namespace CroomsBellSchedule.UI
               new Theme()
                 {
                     ID = 999,
-                    Name = "Custom Import",
-                    PreviewResource = "COW_preview.png",
-                    BackgroundResource = "COW_bg.png",
+                    Name = "Custom",
+                    PreviewResource = "",
+                    BackgroundResource = "",
                     UseBlur = false,
                     DimDark = 139
                 },
@@ -161,6 +162,18 @@ namespace CroomsBellSchedule.UI
 
             var theme = ThemeList.Where(x => x.ID == id).FirstOrDefault();
             if (theme == null) return;
+
+            if (theme.ID == 999)
+            {
+                if (File.Exists(Settings.CustomBackgroundPath))
+                {
+                    theme.BackgroundResource = Settings.CustomBackgroundPath;
+                }
+                else
+                {
+                    theme.BackgroundResource = "default.png";
+                }
+            }
 
             MainView.Settings.ApplyTheme(theme);
         }

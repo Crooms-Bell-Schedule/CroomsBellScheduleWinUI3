@@ -1,12 +1,16 @@
-﻿using System;
-using System.Reflection;
-using CroomsBellSchedule.Service;
+﻿using CroomsBellSchedule.Service;
 using CroomsBellSchedule.UI.Windows;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
+using System;
+using System.IO;
+using System.Reflection;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using WinRT.Interop;
 using static CroomsBellSchedule.Service.SettingsManager;
 
 namespace CroomsBellSchedule.UI.Views.Settings;
@@ -38,6 +42,8 @@ public sealed partial class PersonalizationView
         VersionCard.Description = $"{ver.Major}.{ver.Minor}.{ver.Build}";
 
         bool updating = true;
+        ToggleButton? customThemeButton = null;
+
         foreach (var item in Themes.ThemeList)
         {
             ToggleButton button = new()
@@ -46,14 +52,33 @@ public sealed partial class PersonalizationView
                 Margin = new Thickness(5, 0, 5, 0)
             };
 
+            // Check if this is the slot for the custom theme
+            if (item.ID == 999)
+            {
+                customThemeButton = button;
+                if (!string.IsNullOrEmpty(SettingsManager.Settings.CustomBackgroundPath) &&
+                    File.Exists(SettingsManager.Settings.CustomBackgroundPath))
+                {
+                    item.BackgroundResource = SettingsManager.Settings.CustomBackgroundPath;
+                    item.PreviewResource = SettingsManager.Settings.CustomBackgroundPath;
+                    // TODO: more customization
+                }
+                else
+                {
+                    button.Visibility = Visibility.Collapsed;
+                }
+            }
+
             ToolTip tip = new() { Content = item.Name };
             ToolTipService.SetToolTip(button, tip);
 
             if (!string.IsNullOrEmpty(item.PreviewResource))
             {
+                Uri uri = item.PreviewResource.Contains(":\\") ? new("file:///" + item.PreviewResource) 
+                    : new Uri($"ms-appx:///Assets/Theme/" + item.PreviewResource);
                 button.Content = new Image()
                 {
-                    Source = new BitmapImage(new Uri($"ms-appx:///Assets/Theme/" + item.PreviewResource)),
+                    Source = new BitmapImage(uri),
                     Height = 40,
                     Width = 40,
                     Stretch = Microsoft.UI.Xaml.Media.Stretch.UniformToFill
@@ -99,6 +124,7 @@ public sealed partial class PersonalizationView
             ThemesContainer.Children.Add(button);
         }
 
+        // Add button
         {
             ToggleButton button = new()
             {
@@ -106,7 +132,7 @@ public sealed partial class PersonalizationView
                 Margin = new Thickness(5, 0, 5, 0)
             };
 
-            ToolTip tip = new() { Content = "Custom theme" };
+            ToolTip tip = new() { Content = "Add custom theme" };
             ToolTipService.SetToolTip(button, tip);
 
 
@@ -123,18 +149,58 @@ public sealed partial class PersonalizationView
                 if (updating) return;
 
                 updating = true;
+                ToggleButton? oldChecked = null;
                 foreach (var control in ThemesContainer.Children)
                 {
                     if (control is ToggleButton toggle && control != (ToggleButton)sender)
                     {
+                        if (toggle.IsChecked == true)
+                            oldChecked = toggle;
                         toggle.IsChecked = false;
                     }
                 }
                 updating = false;
 
-                SettingsManager.Settings.ThemeIndex = 999;
+                var picker = new FileOpenPicker();
+                picker.ViewMode = PickerViewMode.Thumbnail;
+                picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+                picker.FileTypeFilter.Add(".jpg");
+                picker.FileTypeFilter.Add(".jpeg");
+                picker.FileTypeFilter.Add(".png");
+                picker.FileTypeFilter.Add(".webp");
+                picker.FileTypeFilter.Add(".avif");
+                picker.FileTypeFilter.Add(".bmp");
 
-                // TODO open dlg
+                nint windowHandle = WindowNative.GetWindowHandle(MainView.SettingsWindow);
+                InitializeWithWindow.Initialize(picker, windowHandle);
+
+                StorageFile file = await picker.PickSingleFileAsync();
+                if (file != null)
+                {
+                    SettingsManager.Settings.CustomBackgroundPath = file.Path;
+                    SettingsManager.Settings.ThemeIndex = 999;
+                    await SaveSettings();
+
+                    updating = true;
+                    ((ToggleButton)sender).IsChecked = false;
+
+                    // update custom theme preview
+                    if (customThemeButton != null && customThemeButton.Content is Image img)
+                    {
+                        img.Source = new BitmapImage(new("file:///" + file.Path));
+                        customThemeButton.IsChecked = true;
+                        customThemeButton.Visibility = Visibility.Visible;
+                    }
+                    updating = false;
+                    Themes.Apply(999);
+                }
+                else
+                {
+                    updating = true;
+                    ((ToggleButton)sender).IsChecked = false;
+                    oldChecked?.IsChecked = true;
+                    updating = false;
+                }
             };
 
             button.Unchecked += delegate (object sender, RoutedEventArgs e)
@@ -143,14 +209,6 @@ public sealed partial class PersonalizationView
                 if (updating) return;
                 ((ToggleButton)sender).IsChecked = true;
             };
-
-            // set the theme option to the one in the settings
-            if (SettingsManager.Settings.ThemeIndex == 999)
-            {
-                updating = true;
-                button.IsChecked = true;
-                updating = false;
-            }
 
 
             ThemesContainer.Children.Add(button);
