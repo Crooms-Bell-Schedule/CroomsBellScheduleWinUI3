@@ -138,6 +138,8 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
 
                     <Grid.ColumnDefinitions>
@@ -157,6 +159,14 @@
                     <PersonPicture Grid.Row="2" Grid.Column="0" Height="48" ProfilePicture="/Assets/Settings/suvan.png" Margin="0,10,0,0"/>
                     <TextBlock Grid.Row="2" Grid.Column="1" FontSize="16" Text="Suvan Mangamuri" VerticalAlignment="Center" FontWeight="Bold" Margin="10,10,0,0"/>
                     <TextBlock Grid.Row="2" Grid.Column="2" Text="Helped out with UI design in the CBSH app and some other things." VerticalAlignment="Center" Margin="15,10,0,0"/>
+
+                    <PersonPicture Grid.Row="3" Grid.Column="0" Height="48" ProfilePicture="/Assets/Settings/anish.png" Margin="0,10,0,0"/>
+                    <TextBlock Grid.Row="3" Grid.Column="1" FontSize="16" Text="Anish Miryala" VerticalAlignment="Center" FontWeight="Bold" Margin="10,10,0,0"/>
+                    <TextBlock Grid.Row="3" Grid.Column="2" Text="Discord Certified Moderator as well as a wonderful Prowler moderator." VerticalAlignment="Center" Margin="15,10,0,0"/>
+
+                    <PersonPicture Grid.Row="4" Grid.Column="0" Height="48" ProfilePicture="/Assets/Settings/zane.png" Margin="0,10,0,0"/>
+                    <TextBlock Grid.Row="4" Grid.Column="1" FontSize="16" Text="Zane DeReamer" VerticalAlignment="Center" FontWeight="Bold" Margin="10,10,0,0"/>
+                    <TextBlock Grid.Row="4" Grid.Column="2" Text="Nothing?" VerticalAlignment="Center" Margin="15,10,0,0"/>
                 </Grid>
                 <TextBlock Style="{ThemeResource BodyTextBlockStyle}" TextWrapping="Wrap" Padding="0,15,0,0">
                     This application uses the following libraries:
