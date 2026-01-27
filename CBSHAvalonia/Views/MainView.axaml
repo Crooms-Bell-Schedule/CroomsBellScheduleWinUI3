@@ -5,5 +5,9 @@
              xmlns:vm="clr-namespace:CBSHAvalonia.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CBSHAvalonia.Views.MainView">
-  <TextBlock Text="Initializing the initialization.... Please wait a momenmtn" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<Grid>
+		<TextBlock Text="Initializing the initialization.... Please wait a momenmtn" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+		<Button>Loading the loader</Button>
+		<ProgressBar IsIndeterminate="True"></ProgressBar>
+	</Grid>
 </UserControl>
