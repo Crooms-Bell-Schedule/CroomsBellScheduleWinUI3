@@ -2,7 +2,10 @@
   <Configurations>
     <Platform Name="x64" />
   </Configurations>
-  <Project Path="CBSHAvalonia/CBSHAvalonia.csproj" />
+  <Project Path="CBSApp.Android/CBSApp.Android.csproj" />
+  <Project Path="CBSApp.Browser/CBSApp.Browser.csproj" />
+  <Project Path="CBSApp.Desktop/CBSApp.Desktop.csproj" />
+  <Project Path="CBSApp/CBSApp.csproj" />
   <Project Path="CroomsBellSchedule.Core/CroomsBellSchedule.Core.csproj" Id="fd34acf0-d70e-406a-91b6-22c163399b74" />
   <Project Path="CroomsBellSchedule/CroomsBellSchedule.csproj">
     <Platform Project="x64" />
