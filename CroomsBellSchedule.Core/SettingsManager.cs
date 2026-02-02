@@ -84,7 +84,7 @@ public static class SettingsManager
     public enum PreferredUpdateChannel
     {
         Stable,
-        Beta,
+        //Beta,
         PrivateBeta
     }
 

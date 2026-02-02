@@ -296,8 +296,7 @@ public sealed partial class MainView
                 $"https://mikhail.croomssched.tech/updateapiv3/{SettingsManager.Settings.PrivateBetaKey}/" :
                 $"https://mikhail.croomssched.tech/updateapiv2/", new Velopack.UpdateOptions()
                 {
-                    AllowVersionDowngrade = true,
-                    ExplicitChannel = channel
+                    AllowVersionDowngrade = true
                 });
 
 #if MIGRATION_CODE

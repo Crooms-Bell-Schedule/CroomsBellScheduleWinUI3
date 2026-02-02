@@ -123,12 +123,11 @@
                 <ToggleSwitch x:Name="chkDvd" Toggled="chkDvd_Toggled"></ToggleSwitch>
             </controls:SettingsCard>
 
-            <controls:SettingsCard Header="Crooms Bell Schedule Insider Program" CornerRadius="5" Description="Changes the type of updates that you get. Stable - Updates that are confirmed to work well. Beta - Updates which are not really tested but released more frequently. Private Beta - Upcoming application rewrite. Requires access code from Mikhail Tyukin. Warning: access code cannot be changed without deleting the application."  Margin="0,7,0,0"
+            <controls:SettingsCard Header="Crooms Bell Schedule Insider Program" CornerRadius="5" Description="Changes the type of updates that you get. Stable - Updates that are confirmed to work well. Beta - Updates which are not really tested but released more frequently (Currently unavailable). Private Beta - Upcoming application rewrite. Requires access code from Mikhail Tyukin. Warning: access code cannot be changed without deleting the application."  Margin="0,7,0,0"
                             HeaderIcon="{ui:FontIcon Glyph=&#xEA4F;}">
                 <ComboBox x:Name="chkInsider" SelectionChanged="chkInsider_SelectionChanged">
                     <ComboBox.Items>
                         <ComboBoxItem Content="Stable (default)"/>
-                        <ComboBoxItem Content="Beta"/>
                         <ComboBoxItem Content="Private Beta"/>
                     </ComboBox.Items>
                 </ComboBox>
