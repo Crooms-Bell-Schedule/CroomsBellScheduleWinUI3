@@ -174,4 +174,14 @@ namespace CroomsBellSchedule.Core.Web
         public string ID { get; set; } = null!;
         public FeedEntry Data { get; set; } = null!;
     }
+    public record PrivateBetaRequest
+    {
+        public string? AccessCode { get; set; }
+    }
+
+    public record PrivateBetaResponse
+    {
+        public bool valid { get; set; }
+        public string data { get; set; } = "";
+    }
 }

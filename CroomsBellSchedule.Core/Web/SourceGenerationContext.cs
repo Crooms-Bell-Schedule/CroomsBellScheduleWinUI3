@@ -10,6 +10,8 @@ namespace CroomsBellSchedule.Core.Web
     [JsonSerializable(typeof(SettingsRoot))]
     [JsonSerializable(typeof(LocalBellRoot))]
     [JsonSerializable(typeof(LoginRequest))]
+    [JsonSerializable(typeof(PrivateBetaRequest))]
+    [JsonSerializable(typeof(PrivateBetaResponse))]
     [JsonSerializable(typeof(ApiResponse<ErrorResponse>))]
     [JsonSerializable(typeof(ApiResponse<LoginResponse>))]
     [JsonSerializable(typeof(ApiResponse<CommandResponse>))]

@@ -291,7 +291,14 @@ public sealed partial class MainView
 
             string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]) ?? AppDomain.CurrentDomain.BaseDirectory;
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            _updateManager = new($"https://mikhail.croomssched.tech/updateapiv2/");
+            string? channel = SettingsManager.Settings.UpdateChannel == PreferredUpdateChannel.Stable ? null : SettingsManager.Settings.UpdateChannel.ToString().ToLower();
+            _updateManager = new(SettingsManager.Settings.UpdateChannel == PreferredUpdateChannel.PrivateBeta && SettingsManager.Settings.PrivateBetaKey != null ?
+                $"https://mikhail.croomssched.tech/updateapiv3/{SettingsManager.Settings.PrivateBetaKey}/" :
+                $"https://mikhail.croomssched.tech/updateapiv2/", new Velopack.UpdateOptions()
+                {
+                    AllowVersionDowngrade = true,
+                    ExplicitChannel = channel
+                });
 
 #if MIGRATION_CODE
             string updateExe = Path.Combine(executablePath, "..", "Update.exe");

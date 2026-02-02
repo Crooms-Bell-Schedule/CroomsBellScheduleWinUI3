@@ -581,8 +581,9 @@ public sealed partial class ProwlerView
 
             if (!result.OK || result.Value == null)
             {
-                Poster.Error = "Error while uploading " + ApiClient.FormatResult(result);
+                Poster.Error = "Error while uploading " + ApiClient.FormatResult(result) + ". Press send to post without that file";
                 Poster.ShowingLoading = false;
+                Poster.FilePaths.Remove(entry);
                 return;
             }
 

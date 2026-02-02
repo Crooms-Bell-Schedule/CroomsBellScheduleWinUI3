@@ -3,6 +3,7 @@ using CroomsBellSchedule.UI.Windows;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.Win32;
 using System;
@@ -34,6 +35,7 @@ public sealed partial class PersonalizationView
         chk1MinNotif.IsOn = !SettingsManager.Settings.Show1MinNotification;
         chk5MinNotif.IsOn = !SettingsManager.Settings.Show5MinNotification;
         chkDvd.IsOn = SettingsManager.Settings.EnableDvdScreensaver;
+        chkInsider.SelectedIndex = (int)SettingsManager.Settings.UpdateChannel;
         chkStartup.IsOn = GetStartup();
         UpdateCheckState();
 
@@ -422,5 +424,52 @@ public sealed partial class PersonalizationView
         await SaveSettings();
 
         MainWindow.ViewInstance.UpdateFontSize();
+    }
+
+    private async void chkInsider_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_initialized) return;
+
+        if (chkInsider.SelectedIndex == 2 && string.IsNullOrEmpty(SettingsManager.Settings.PrivateBetaKey))
+        {
+            var txt = new TextBox();
+            txt.PlaceholderText = "Enter it here";
+            ContentDialog dlg = new()
+            {
+                Title = "Enter access code. Cannot be changed after successful submission.",
+                Content = txt,
+                XamlRoot = XamlRoot,
+                PrimaryButtonText = "Submit",
+                SecondaryButtonText = "Cancel"
+            };
+
+            if (await dlg.ShowAsync() == ContentDialogResult.Primary)
+            {
+                var result = await Services.ApiClient.AuthenticatePrivateBeta(txt.Text);
+                if (result == null)
+                {
+                    dlg = new ContentDialog()
+                    {
+                        Title = "Error",
+                        XamlRoot = XamlRoot,
+                        Content = "Trespass warning: Unauthorized use or access is strictly prohibited. All activity is monitored. Violators will be prosecuted to the fullest extent of the law. The Crooms Bell Schedule will continue to monitor for unauthorized access.\n\nOtherwise, check the product key.",
+                        PrimaryButtonText = "Close",
+                        Foreground = new SolidColorBrush(new global::Windows.UI.Color() { R = 255, B = 10, G = 10, A = 255 })
+                    };
+                    await dlg.ShowAsync();
+                    chkInsider.SelectedIndex = (int)SettingsManager.Settings.UpdateChannel;
+                    return;
+                }
+                else
+                {
+                    SettingsManager.Settings.PrivateBetaKey = result;
+                }
+            }
+        }
+
+        SettingsManager.Settings.UpdateChannel = (PreferredUpdateChannel)chkInsider.SelectedIndex;
+        await SettingsManager.SaveSettings();
+
+        MainView.Settings?.ShowInAppNotification("Success. Click \"Check for updates\" to install the new update(s)", "Update Channel", 10000);
     }
 }

@@ -585,6 +585,34 @@ namespace CroomsBellSchedule.Core.Web
             return await DoPostRequestAsync<bool>($"{ApiBase}/feed/report/{id}/{reason}");
         }
 
+        public async Task<string?> AuthenticatePrivateBeta(string accessCode)
+        {
+            var data = new PrivateBetaRequest() { AccessCode = accessCode };
+            var reqString = JsonSerializer.Serialize(data, SourceGenerationContext.Default.PrivateBetaRequest);
+
+            try
+            {
+                var s = new StringContent(reqString);
+                s.Headers.ContentType = new("application/json");
+
+                var response = await _client.PostAsync($"{MikhailHostingBase}/apiv2/app/AuthenticatePrivateBeta", s);
+
+                if (!response.IsSuccessStatusCode) return null;
+
+                var responseText = await response.Content.ReadAsStringAsync();
+                PrivateBetaResponse? responseJson = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.PrivateBetaResponse);
+                if (responseJson == null) return null;
+                if (!responseJson.valid) return null;
+                if (string.IsNullOrEmpty(responseJson.data)) return null;
+
+                return responseJson.data;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public async Task<bool> LivestreamExists()
         {
             try

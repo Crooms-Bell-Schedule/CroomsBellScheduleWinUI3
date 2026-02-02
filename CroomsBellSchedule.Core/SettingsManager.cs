@@ -81,6 +81,13 @@ public static class SettingsManager
         Dark
     }
 
+    public enum PreferredUpdateChannel
+    {
+        Stable,
+        Beta,
+        PrivateBeta
+    }
+
     public class SettingsRoot
     {
         public bool ShowInTaskbar { get; set; }
@@ -117,6 +124,10 @@ public static class SettingsManager
         public string? MikhailHostingBase { get; set; }
         public bool ShownFirstRunDialog { get; set; }
         public string? CustomBackgroundPath { get; set; }
+        public string? PrivateBetaKey { get; set; }
+        [DefaultValue((int)PreferredUpdateChannel.Stable)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public PreferredUpdateChannel UpdateChannel { get; set; }
 
         public Dictionary<int, string> PeriodNames { get; set; } = [];
         [DefaultValue((int)PercentageSetting.SigFig4)]
