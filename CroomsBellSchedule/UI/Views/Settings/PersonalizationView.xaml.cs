@@ -35,6 +35,7 @@ public sealed partial class PersonalizationView
         chk1MinNotif.IsOn = !SettingsManager.Settings.Show1MinNotification;
         chk5MinNotif.IsOn = !SettingsManager.Settings.Show5MinNotification;
         chkDvd.IsOn = SettingsManager.Settings.EnableDvdScreensaver;
+        if ((int)SettingsManager.Settings.UpdateChannel == 2) SettingsManager.Settings.UpdateChannel = 0;
         chkInsider.SelectedIndex = (int)SettingsManager.Settings.UpdateChannel;
         if (chkInsider.SelectedIndex == 1 && string.IsNullOrEmpty(SettingsManager.Settings.PrivateBetaKey))
             chkInsider.SelectedIndex = 0;
@@ -467,6 +468,11 @@ public sealed partial class PersonalizationView
                 {
                     SettingsManager.Settings.PrivateBetaKey = result;
                 }
+            }
+            else
+            {
+                MainView.Settings?.ShowInAppNotification("Server authentication failed!", "Update Channel", 10000);
+                return;
             }
         }
 
