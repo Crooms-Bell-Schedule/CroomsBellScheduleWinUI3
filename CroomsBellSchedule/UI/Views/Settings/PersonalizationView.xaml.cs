@@ -36,7 +36,10 @@ public sealed partial class PersonalizationView
         chk5MinNotif.IsOn = !SettingsManager.Settings.Show5MinNotification;
         chkDvd.IsOn = SettingsManager.Settings.EnableDvdScreensaver;
         chkInsider.SelectedIndex = (int)SettingsManager.Settings.UpdateChannel;
-        chkStartup.IsOn = GetStartup();
+        if (chkInsider.SelectedIndex == 1 && string.IsNullOrEmpty(SettingsManager.Settings.PrivateBetaKey))
+            chkInsider.SelectedIndex = 0;
+
+            chkStartup.IsOn = GetStartup();
         UpdateCheckState();
 
         // show version
@@ -430,7 +433,7 @@ public sealed partial class PersonalizationView
     {
         if (!_initialized) return;
 
-        if (chkInsider.SelectedIndex == 2 && string.IsNullOrEmpty(SettingsManager.Settings.PrivateBetaKey))
+        if (chkInsider.SelectedIndex == 1 && string.IsNullOrEmpty(SettingsManager.Settings.PrivateBetaKey))
         {
             var txt = new TextBox();
             txt.PlaceholderText = "Enter it here";

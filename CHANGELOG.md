@@ -1,5 +1,9 @@
 # Changelog
-## 5.0.5 (2/2/2026)
+## 5.0.7 (2/3/2026)
+ - Fixed an issue where private beta cannot be joined properly
+ - Updated Windows App SDK version to 1.8.260101001 from 1.8.251106002
+
+## 5.0.5 / 5.0.6 (2/2/2026)
  - Credit more people in About section
  - Added the ability to switch to beta versions / private beta
  - Improved prowler image uploading so that you shouldn't restart the entire app anymore if image doesn't upload
