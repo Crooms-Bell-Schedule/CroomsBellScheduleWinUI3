@@ -444,7 +444,8 @@ public sealed partial class PersonalizationView
                 Content = txt,
                 XamlRoot = XamlRoot,
                 PrimaryButtonText = "Submit",
-                SecondaryButtonText = "Cancel"
+                SecondaryButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary
             };
 
             if (await dlg.ShowAsync() == ContentDialogResult.Primary)
@@ -461,7 +462,8 @@ public sealed partial class PersonalizationView
                         Foreground = new SolidColorBrush(new global::Windows.UI.Color() { R = 255, B = 10, G = 10, A = 255 })
                     };
                     await dlg.ShowAsync();
-                    chkInsider.SelectedIndex = (int)SettingsManager.Settings.UpdateChannel;
+                    chkInsider.SelectedIndex = 0;
+                    MainView.Settings?.ShowInAppNotification("Server authentication failed!", "Update Channel", 10000);
                     return;
                 }
                 else
@@ -471,7 +473,7 @@ public sealed partial class PersonalizationView
             }
             else
             {
-                MainView.Settings?.ShowInAppNotification("Server authentication failed!", "Update Channel", 10000);
+                chkInsider.SelectedIndex = 0;
                 return;
             }
         }
