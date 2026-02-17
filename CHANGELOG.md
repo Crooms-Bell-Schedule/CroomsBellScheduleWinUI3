@@ -1,4 +1,11 @@
 # Changelog
+
+## 5.0.10 (2/12/2026)
+ - Fixed a bug where if you are using windowed mode, app may disappear if you click show desktop in the bottom right of your taskbar
+ - Fixed a bug where if you are using windowed mode and put the window on the taskbar, it may not be in front of the taskbar if you click on the taskbar
+ - Added a feature that shows maintenance warnings from the server in the settings window
+ - Updated Windows App SDK version
+
 ## 5.0.7 (2/3/2026)
  - Fixed an issue where private beta cannot be joined properly
  - Updated Windows App SDK version to 1.8.260101001 from 1.8.251106002

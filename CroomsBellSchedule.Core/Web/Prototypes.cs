@@ -128,6 +128,12 @@ namespace CroomsBellSchedule.Core.Web
     {
         public bool exists { get; set; }
     }
+    public class GetMaintenanceBannerResponse
+    {
+        public bool exists { get; set; }
+        public string title { get; set; } = "";
+        public string message { get; set; } = "";
+    }
 
     // Websocket Schema
     public class FeedMessage

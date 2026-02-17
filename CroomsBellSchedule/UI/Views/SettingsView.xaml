@@ -305,8 +305,17 @@ Click="FlyoutChangePFP_Click">
             </NavigationView.MenuItems>
 
             <Grid>
-                <Frame x:Name="NavigationFrame" Margin="{StaticResource NavigationViewPageContentMargin}"
-                   Navigated="NavigationFrame_Navigated" Loaded="NavigationFrame_Loaded" />
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <InfoBar x:Name="MaintenanceBanner" Severity="Warning" Title="Loading..." Message="Loading..." IsClosable="True" Grid.Row="0"/>
+
+                    <Frame x:Name="NavigationFrame" Margin="{StaticResource NavigationViewPageContentMargin}"
+   Navigated="NavigationFrame_Navigated" Loaded="NavigationFrame_Loaded" Grid.Row="1" />
+                </Grid>
 
                 <InfoBar VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10" Background="{ThemeResource SolidBackgroundFillColorSecondaryBrush}">
                     <interactivity:Interaction.Behaviors>

@@ -111,6 +111,10 @@ public sealed partial class UIMessage
         msg.AppWindow.Show();
         Center(msg);
 
+        IntPtr hWnd = WindowNative.GetWindowHandle(msg);
+        ShowWindow(hWnd, (int)ShowWindowCommands.ShowNormal);
+        SetForegroundWindow(hWnd);
+
         while (msg.IsOpen) await Task.Delay(100);
 
         Debug.WriteLine("UIMessage closed");

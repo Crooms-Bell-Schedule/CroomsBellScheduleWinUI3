@@ -220,6 +220,18 @@ public sealed partial class SettingsView
     {
         LiveStreamItem.Visibility = await Services.ApiClient.LivestreamExists() ? Visibility.Visible : Visibility.Collapsed;
     }
+    public async Task UpdateBanner()
+    {
+        var bannerInfo = await Services.ApiClient.GetMaintenanceBanner();
+        if (bannerInfo == null) return;
+
+        MaintenanceBanner.IsOpen = bannerInfo.exists;
+        if (bannerInfo.exists)
+        {
+            MaintenanceBanner.Title = bannerInfo.title;
+            MaintenanceBanner.Message= bannerInfo.message;
+        }
+    }
 
     internal void ShowInAppNotification(string message, string? title, int durationSeconds)
     {
@@ -317,9 +329,10 @@ public sealed partial class SettingsView
             LoadingText.Text = "Connecting to Crooms Bell Schedule Services";
             await Task.Delay(2000);
             await CheckAnnouncementsAsync();
+
             LoadingText.Text = "Connecting to MikhailHosting Services";
             await CheckLivestreamAsync();
-
+            await UpdateBanner();
 
             if (string.IsNullOrEmpty(SettingsManager.Settings.SessionID) || string.IsNullOrEmpty(SettingsManager.Settings.UserID))
             {
@@ -560,7 +573,7 @@ public sealed partial class SettingsView
             UserFlyout.Hide();
             if (OperatingSystem.IsWindows())
             {
-                NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomssched.tech/auth/sso-callback?clientId=crooms-bell-app", false, false, true));
+                NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomssched.tech/auth/sso-callback?clientId=crooms-bell-app&redirectUrl=https://mikhail.croomssched.tech/sso-redirect", false, false, true));
             }
             else
             {

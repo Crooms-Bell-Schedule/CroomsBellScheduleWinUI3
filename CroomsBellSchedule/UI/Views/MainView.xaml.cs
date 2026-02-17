@@ -1,13 +1,4 @@
 ﻿//#define MIGRATION_CODE // uncomment to enable migration code from old bell schedule app (2.1.0 -> 2.9.9 -> 3.x)
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 using CroomsBellSchedule.Core.Provider;
 using CroomsBellSchedule.Service;
 using CroomsBellSchedule.UI.Views.Settings;
@@ -21,6 +12,15 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.Windows.AppNotifications;
 using Microsoft.Windows.AppNotifications.Builder;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI;
 using WinRT.Interop;
@@ -44,6 +44,7 @@ public sealed partial class MainView
     private bool _shown1MinNotification;
     private bool _shown5MinNotification;
     private static DispatcherTimer? _timer = null!;
+    private static DispatcherTimer? _longTimer = null!;
     private static DispatcherTimer _dvdTimer = null!;
     private static DispatcherTimer _updateChecker = null!;
     private AppWindow? _windowApp;
@@ -186,6 +187,13 @@ public sealed partial class MainView
             _timer.Tick += Timer_Tick;
             _timer.Start();
 
+            _longTimer = new()
+            {
+                Interval = TimeSpan.FromMilliseconds(5000)
+            };
+            _longTimer.Tick += LongTimer_Tick;
+            _longTimer.Start();
+
             _dvdTimer = new()
             {
                 Interval = TimeSpan.FromMilliseconds(1)
@@ -245,6 +253,10 @@ public sealed partial class MainView
         _windowApp.SetPresenter(AppWindowPresenterKind.Overlapped);
         if (_windowApp.Presenter != null && _windowApp.Presenter is OverlappedPresenter presenter)
             presenter.IsAlwaysOnTop = true;
+
+        IntPtr hWnd = WindowNative.GetWindowHandle(MainWindow.Instance);
+        ShowWindow(hWnd, (int)ShowWindowCommands.ShowNormal);
+       // SetForegroundWindow(hWnd);
     }
 
     private async void UpdateChecker_Tick(object? sender, object e)
@@ -260,6 +272,7 @@ public sealed partial class MainView
         {
             await SettingsWindow.SettingsView.CheckAnnouncementsAsync();
             await SettingsWindow.SettingsView.CheckLivestreamAsync();
+            await SettingsWindow.SettingsView.UpdateBanner();
         }
     }
 
@@ -832,6 +845,13 @@ public sealed partial class MainView
     private void Timer_Tick(object? sender, object e)
     {
         UpdateCurrentClass();
+    }
+    private void LongTimer_Tick(object? sender, object e)
+    {
+        if (SettingsManager.Settings.ShowInTaskbar) return;
+
+        // TODO: Hack
+        CorrectLayer();
     }
 
     #endregion

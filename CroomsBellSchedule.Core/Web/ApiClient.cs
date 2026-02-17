@@ -637,5 +637,30 @@ namespace CroomsBellSchedule.Core.Web
                 return false;
             }
         }
+
+        public async Task<GetMaintenanceBannerResponse?> GetMaintenanceBanner()
+        {
+            try
+            {
+                var response = await _client.GetAsync($"{MikhailHostingBase}/apiv2/app/GetMaintenanceInfo");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseText = await response.Content.ReadAsStringAsync();
+                    GetMaintenanceBannerResponse? data = JsonSerializer.Deserialize(responseText, SourceGenerationContext.Default.GetMaintenanceBannerResponse);
+
+                    if (data != null)
+                    {
+                        return data;
+                    }
+                }
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }

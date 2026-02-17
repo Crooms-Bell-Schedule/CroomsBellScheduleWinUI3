@@ -31,6 +31,7 @@ namespace CroomsBellSchedule.Core.Web
     [JsonSerializable(typeof(ApiResponse<bool>))]
     [JsonSerializable(typeof(ApiResponse<bool?>))]
     [JsonSerializable(typeof(LivestreamAvailabilityResponse))]
+    [JsonSerializable(typeof(GetMaintenanceBannerResponse))]
 
     [JsonSerializable(typeof(FeedMessage))]
     [JsonSerializable(typeof(DeletePostMessage))]
