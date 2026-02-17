@@ -15,6 +15,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -181,10 +182,11 @@ RelativePanel.AlignRightWithPanel="True" Click="ExitButton_Click">
                     GotFocus="Editor_GotFocus"/>
             </RelativePanel>
 
-
+             
+            <StackPanel x:Name="itemImages" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Vertical"/>
 
             <Button Click="Button_Click" HorizontalAlignment="Right" Grid.Column="3" Grid.Row="1">Submit</Button>
-                <TextBlock Grid.Row="1"  Grid.Column="0" x:Name="LoginFailureText" Foreground="{ThemeResource SystemFillColorCriticalBrush}"></TextBlock>
+                <TextBlock Grid.Row="2"  Grid.Column="0" x:Name="LoginFailureText" Foreground="{ThemeResource SystemFillColorCriticalBrush}"></TextBlock>
          
         </Grid>
         <StackPanel

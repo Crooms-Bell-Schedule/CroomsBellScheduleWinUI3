@@ -290,8 +290,6 @@ public sealed partial class PostView
     private void PostContentBox_DragEnter(object sender, DragEventArgs e)
     {
         e.AcceptedOperation = DataPackageOperation.Copy;
-
-
     }
 
     private void PostContentBox_DragOver(object sender, DragEventArgs e)
@@ -327,28 +325,37 @@ public sealed partial class PostView
                 else
                     range = PostContentBox.Document.GetRange(fullText.Length - 1, fullText.Length - 1);
 
-                // check if the file is an image
 
-                if (item.Path.EndsWith(".png") ||
-                    item.Path.EndsWith(".bmp") ||
-                    item.Path.EndsWith(".gif") ||
-                    item.Path.EndsWith(".webp") ||
-                    item.Path.EndsWith(".aif") ||
-                    item.Path.EndsWith(".tiff") ||
-                    item.Path.EndsWith(".jpg") ||
-                    item.Path.EndsWith(".jpeg"))
-                {
-                    using var fs = await FileRandomAccessStream.OpenAsync(item.Path, FileAccessMode.Read);
-                    range.InsertImage(100, 100, 0, VerticalCharacterAlignment.Top, "Uploaded image", fs);
-
-                    FilePaths.Add(item.Path);
-                }
-                else
-                {
-                    // todo video attachments, file attachments
-                }
+                InsertImage(item.Path);
             }
         }
+    }
+
+    private void InsertImage(string filePath)
+    {
+        FilePaths.Add(filePath);
+
+        StackPanel container = new() { Orientation = Orientation.Horizontal, Margin = new Thickness(5), Tag = filePath};
+
+        container.Children.Add(new TextBlock()
+        {
+            Text = System.IO.Path.GetFileName(filePath),
+            VerticalAlignment = VerticalAlignment.Center,
+            Padding = new Thickness(5)
+        });
+
+        Button remove = new()
+        {
+            Content = "X"
+        };
+        remove.Click += (s, e) =>
+        {
+            FilePaths.Remove(filePath);
+            itemImages.Children.Remove(container);
+        };
+        container.Children.Add(remove);
+
+        itemImages.Children.Add(container);
     }
 
     private async void AttachImage_Click(object sender, RoutedEventArgs e)
@@ -370,9 +377,7 @@ public sealed partial class PostView
         StorageFile file = await picker.PickSingleFileAsync();
         if (file != null)
         {
-            FilePaths.Add(file.Path);
-
-
+            InsertImage(file.Path);
             PostContentBox.Document.GetText(TextGetOptions.None, out string fullText);
 
             ITextRange range;
@@ -382,9 +387,30 @@ public sealed partial class PostView
                 range = PostContentBox.Document.GetRange(fullText.Length - 1, fullText.Length - 1);
 
 
-            using var fs = await FileRandomAccessStream.OpenAsync(file.Path, FileAccessMode.Read);
-            range.InsertImage(100, 100, 0, VerticalCharacterAlignment.Top, "Uploaded image", fs);
+           // using var fs = await FileRandomAccessStream.OpenAsync(file.Path, FileAccessMode.Read);
+         //  range.InsertImage(100, 100, 0, VerticalCharacterAlignment.Top, "Uploaded image", fs);
 
         }
+    }
+
+    internal void RemoveFile(string entry)
+    {
+        FilePaths.Remove(entry);
+
+        StackPanel? panel = null;
+        foreach (var item in itemImages.Children)
+        {
+            if (item is StackPanel pnl && pnl.Tag is string tg)
+            {
+                if (tg == entry)
+                {
+                    panel = pnl;
+                    break;
+                }
+            }
+        }
+        
+        if (panel != null)
+            itemImages.Children.Remove(panel);
     }
 }

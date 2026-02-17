@@ -450,7 +450,7 @@ public sealed partial class PersonalizationView
 
             if (await dlg.ShowAsync() == ContentDialogResult.Primary)
             {
-                var result = await Services.ApiClient.AuthenticatePrivateBeta(txt.Text);
+                var result = await Services.MHApiClient.AuthenticatePrivateBeta(txt.Text);
                 if (result == null)
                 {
                     dlg = new ContentDialog()

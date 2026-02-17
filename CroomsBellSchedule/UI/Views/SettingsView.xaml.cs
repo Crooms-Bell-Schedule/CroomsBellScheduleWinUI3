@@ -218,11 +218,11 @@ public sealed partial class SettingsView
 
     public async Task CheckLivestreamAsync()
     {
-        LiveStreamItem.Visibility = await Services.ApiClient.LivestreamExists() ? Visibility.Visible : Visibility.Collapsed;
+        LiveStreamItem.Visibility = await Services.MHApiClient.LivestreamExists() ? Visibility.Visible : Visibility.Collapsed;
     }
     public async Task UpdateBanner()
     {
-        var bannerInfo = await Services.ApiClient.GetMaintenanceBanner();
+        var bannerInfo = await Services.MHApiClient.GetMaintenanceBanner();
         if (bannerInfo == null) return;
 
         MaintenanceBanner.IsOpen = bannerInfo.exists;
