@@ -124,8 +124,8 @@ public sealed partial class WebView
 
     private async void TheWebView_NavigationStarting(Microsoft.UI.Xaml.Controls.WebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NavigationStartingEventArgs args)
     {
-        TheWebView.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-        Loader.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+      //  TheWebView.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+      //  Loader.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
         if (args.Uri.StartsWith("https://mikhail.croomssched.tech/sso-redirect"))
         {
@@ -173,8 +173,8 @@ public sealed partial class WebView
 
             await dialog.ShowAsync();
 
-            Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-            TheWebView.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
+          //  Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+           // TheWebView.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
             return;
         }
 
@@ -189,6 +189,9 @@ public sealed partial class WebView
         // register various event handlers
         TheWebView.CoreWebView2.HistoryChanged += CoreWebView2_HistoryChanged;
         TheWebView.CoreWebView2.NewWindowRequested += CoreWebView2_NewWindowRequested;
+
+          Loader.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+         TheWebView.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
     }
 
     private void CoreWebView2_NewWindowRequested(Microsoft.Web.WebView2.Core.CoreWebView2 sender, Microsoft.Web.WebView2.Core.CoreWebView2NewWindowRequestedEventArgs args)
