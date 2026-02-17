@@ -437,8 +437,12 @@ namespace CroomsBellSchedule.Core.Web
                 var formContent = new MultipartFormDataContent();
 
                 var b = new ByteArrayContent(c);
-                b.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
-                formContent.Add(b, "data", "data." + fileType);
+                MimeTypes.TryGetMimeType(fileType, out string? mime);
+                if (mime == null)
+                    mime = "application/octet-stream";
+                b.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(mime);
+
+                formContent.Add(b, "data", "data" + fileType);
 
                 using var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"{ApiBase}/feed/attachment");
 

@@ -280,6 +280,9 @@ public sealed partial class PostView
     internal void Empty()
     {
         PostContentBox.TextDocument.SetText(TextSetOptions.None, "");
+        UploadedPaths.Clear();
+        FilePaths.Clear();
+        itemImages.Children.Clear();
     }
 
     private void ExitButton_Click(object sender, RoutedEventArgs e)
@@ -346,7 +349,7 @@ public sealed partial class PostView
 
         Button remove = new()
         {
-            Content = "X"
+            Content = "Remove"
         };
         remove.Click += (s, e) =>
         {
@@ -370,6 +373,10 @@ public sealed partial class PostView
         picker.FileTypeFilter.Add(".webp");
         picker.FileTypeFilter.Add(".avif");
         picker.FileTypeFilter.Add(".bmp");
+        picker.FileTypeFilter.Add(".tiff");
+        picker.FileTypeFilter.Add(".gif");
+        picker.FileTypeFilter.Add(".mp4");
+        picker.FileTypeFilter.Add(".mkv");
 
         nint windowHandle = WindowNative.GetWindowHandle(MainView.SettingsWindow);
         InitializeWithWindow.Initialize(picker, windowHandle);
@@ -385,11 +392,6 @@ public sealed partial class PostView
                 range = PostContentBox.Document.GetRange(0, 0);
             else
                 range = PostContentBox.Document.GetRange(fullText.Length - 1, fullText.Length - 1);
-
-
-           // using var fs = await FileRandomAccessStream.OpenAsync(file.Path, FileAccessMode.Read);
-         //  range.InsertImage(100, 100, 0, VerticalCharacterAlignment.Top, "Uploaded image", fs);
-
         }
     }
 
@@ -412,5 +414,10 @@ public sealed partial class PostView
         
         if (panel != null)
             itemImages.Children.Remove(panel);
+    }
+
+    internal void ClearUploads()
+    {
+        throw new NotImplementedException();
     }
 }

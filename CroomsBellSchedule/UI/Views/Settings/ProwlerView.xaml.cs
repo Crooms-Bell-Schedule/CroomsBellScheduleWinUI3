@@ -581,13 +581,13 @@ public sealed partial class ProwlerView
 
             if (!result.OK || result.Value == null)
             {
-                Poster.Error = "Error while uploading " + ApiClient.FormatResult(result) + ". Press send to post without that file";
                 Poster.ShowingLoading = false;
-                Poster.RemoveFile(entry);
+                Poster.Error = "Error while uploading " + ApiClient.FormatResult(result);
                 return;
             }
 
-            Poster.UploadedPaths.Add(result.Value.data.file);
+            if (result.Value.data != null)
+                Poster.UploadedPaths.Add(result.Value.data.file);
         }
 
         try
@@ -597,8 +597,7 @@ public sealed partial class ProwlerView
             {
                 Poster.Visibility = Visibility.Collapsed;
                 Poster.Empty();
-                Poster.UploadedPaths.Clear();
-                Poster.FilePaths.Clear();
+                Poster.ShowingLoading = false;
             }
             else
             {

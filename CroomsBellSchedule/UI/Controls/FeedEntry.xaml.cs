@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using CroomsBellSchedule.Core.Utils;
+﻿using CroomsBellSchedule.Core.Utils;
 using CroomsBellSchedule.Service;
 using CroomsBellSchedule.UI;
 using CroomsBellSchedule.UI.Views.Settings;
@@ -12,6 +9,10 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using Windows.Media.Core;
 
 namespace CroomsBellSchedule.Controls;
 
@@ -212,6 +213,50 @@ public sealed partial class FeedEntry
         else if (node.Name == "img")
         {
             rootElem = new Span();
+
+            foreach (var item in node.Attributes)
+            {
+                if (item.Name == "src")
+                {
+                    blkMedia.Children.Add(new Image()
+                    {
+                        Source = new BitmapImage(new(FixLink(item.DeEntitizeValue).ToString())),
+                        MaxHeight = 200
+                    });
+
+                    return [];
+                }
+            }
+        }
+        else if (node.Name == "video")
+        {
+            rootElem = new Span();
+
+            var children = node.ChildNodes;
+
+            foreach (var item in children)
+            {
+                if (item.Name == "source")
+                {
+                    var attribs = item.Attributes;
+
+                    var src = attribs["src"];
+                    if (src != null)
+                    {
+                        var player = new MediaPlayerElement()
+                        {
+                            AreTransportControlsEnabled = true,
+                            Width = 400,
+                            Height = 300,
+                        };
+                        blkMedia.Children.Add(player);
+
+                        player.Source = MediaSource.CreateFromUri(new Uri(src.DeEntitizeValue));
+                        player.MediaPlayer.IsMuted = true;
+                        return [];
+                    }
+                }
+            }
 
             foreach (var item in node.Attributes)
             {
@@ -527,8 +572,20 @@ public sealed partial class FeedEntry
 
         foreach (var item in paths)
         {
-            writer.BeginTag("img", [new HtmlAttrib("src", item)]);
-            writer.EndTag("img");
+            // TODO improve this
+            if (item.EndsWith(".mp4") || item.EndsWith(".mkv"))
+            {
+                writer.BeginTag("video", [new HtmlAttrib("controls", "")]);
+                writer.BeginTag("source", [new HtmlAttrib("type", item.EndsWith(".mp4") ? "video/mp4" : "video/x-matroska"),
+                    new HtmlAttrib("src", item)]);
+                writer.EndTag("source");
+                writer.EndTag("video");
+            }
+            else
+            {
+                writer.BeginTag("img", [new HtmlAttrib("src", item)]);
+                writer.EndTag("img");
+            }
         }
 
         result = writer.GetHTML();

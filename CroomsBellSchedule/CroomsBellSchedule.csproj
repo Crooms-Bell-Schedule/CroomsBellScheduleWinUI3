@@ -16,7 +16,7 @@
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
-		<Version>5.1.0</Version>
+		<Version>5.1.1</Version>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -66,6 +66,7 @@
 		<PackageReference Include="H.NotifyIcon.WinUI" Version="2.4.1" />
 		<PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
+		<PackageReference Include="MimeTypeMapOfficial" Version="1.0.17" />
 		<PackageReference Include="Velopack" Version="0.0.1298" />
 	</ItemGroup>
 	<ItemGroup>

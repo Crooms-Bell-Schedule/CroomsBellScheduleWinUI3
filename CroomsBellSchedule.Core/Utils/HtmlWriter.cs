@@ -26,9 +26,9 @@ namespace CroomsBellSchedule.Core.Utils
                 foreach (var item in attributes)
                 {
                     if (!string.IsNullOrEmpty(item.Value))
-                        result.Append($"{item.Name}={item.Value}");
+                        result.Append($"{item.Name}={item.Value} ");
                     else
-                        result.Append($"{item.Name}");
+                        result.Append($"{item.Name} ");
                 }
             result.Append(">");
             tags.Push(name);

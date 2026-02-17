@@ -8,9 +8,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <StackPanel>
-
-        <TextBlock x:Name="blk" TextWrapping="Wrap" IsTextSelectionEnabled="True"/>
-        <StackPanel x:Name="blkMedia"/>
-    </StackPanel>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" x:Name="blk" TextWrapping="Wrap" IsTextSelectionEnabled="True"/>
+        <Grid Grid.Row="1" x:Name="blkMedia" HorizontalAlignment="Left" MaxHeight="400"/>
+    </Grid>
 </UserControl>

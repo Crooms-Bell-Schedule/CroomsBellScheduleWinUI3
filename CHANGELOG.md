@@ -1,6 +1,11 @@
 # Changelog
 
-## 5.0.10 (2/12/2026)
+## 5.1.1 (2/17/2026)
+ - Finished Prowler image/gif uploading. Improved the interface for viewing attached files and fixed some bugs
+ - Change calendar page text
+ - Added work in progress video support in Prowler
+
+## 5.1.0 (2/12/2026)
  - Fixed a bug where if you are using windowed mode, app may disappear if you click show desktop in the bottom right of your taskbar
  - Fixed a bug where if you are using windowed mode and put the window on the taskbar, it may not be in front of the taskbar if you click on the taskbar
  - Added a feature that shows maintenance warnings from the server in the settings window
