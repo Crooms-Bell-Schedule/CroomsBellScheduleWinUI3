@@ -306,8 +306,8 @@ public sealed partial class MainView
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             string? channel = SettingsManager.Settings.UpdateChannel == PreferredUpdateChannel.Stable ? null : SettingsManager.Settings.UpdateChannel.ToString().ToLower();
             _updateManager = new(SettingsManager.Settings.UpdateChannel == PreferredUpdateChannel.PrivateBeta && SettingsManager.Settings.PrivateBetaKey != null ?
-                $"https://mikhail.croomssched.tech/updateapiv3/{SettingsManager.Settings.PrivateBetaKey}/" :
-                $"https://mikhail.croomssched.tech/updateapiv2/", new Velopack.UpdateOptions()
+                $"https://mikhail.croomsbellschedule.com/updateapiv3/{SettingsManager.Settings.PrivateBetaKey}/" :
+                $"https://mikhail.croomsbellschedule.com/updateapiv2/", new Velopack.UpdateOptions()
                 {
                     AllowVersionDowngrade = true
                 });
@@ -349,7 +349,7 @@ public sealed partial class MainView
                 {
                     using (var client = new HttpClient())
                     {
-                        using (var s = await client.GetStreamAsync("https://update.croomssched.tech/update.exe"))
+                        using (var s = await client.GetStreamAsync("https://update.croomsbellschedule.com/update.exe"))
                         {
                             using (var fs = new FileStream(updateExe, FileMode.OpenOrCreate, FileAccess.ReadWrite))
                             {

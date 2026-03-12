@@ -127,7 +127,7 @@ public sealed partial class WebView
       //  TheWebView.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
       //  Loader.Visibility = Microsoft.UI.Xaml.Visibility.Visible;
 
-        if (args.Uri.StartsWith("https://mikhail.croomssched.tech/sso-redirect"))
+        if (args.Uri.StartsWith("https://mikhail.croomsbellschedule.com/sso-redirect"))
         {
             _sso = true;
             LoadingText.Text = "Authenticating, please wait";
@@ -147,7 +147,7 @@ public sealed partial class WebView
 
     private async void CoreWebView2_HistoryChanged(Microsoft.Web.WebView2.Core.CoreWebView2 sender, object args)
     {
-        if (sender.Source == "https://account.croomssched.tech/account-center/profile-picture")
+        if (sender.Source == "https://account.croomsbellschedule.com/account-center/profile-picture")
         {
             sender.GoBack();
 

@@ -12,8 +12,8 @@ namespace CroomsBellSchedule.Core.Web
 {
     public class ApiClient
     {
-        public static string ApiBase = "https://api.croomssched.tech";
-        public static string MikhailHostingBase = "https://mikhail.croomssched.tech";
+        public static string ApiBase = "https://api.croomsbellschedule.com";
+        public static string MikhailHostingBase = "https://mikhail.croomsbellschedule.com";
         private readonly HttpClient _client = new()
         {
             Timeout = TimeSpan.FromSeconds(20)

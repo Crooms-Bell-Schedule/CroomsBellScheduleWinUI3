@@ -28,7 +28,7 @@
             <AutoSuggestBox Margin="0,0,0,10" x:Name="UsernameBox" Grid.Row="0" Grid.Column="1" PlaceholderText="Enter username" TextChanged="UsernameBox_TextChanged"></AutoSuggestBox>
             <TextBlock Margin="0,0,5,10" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Password:</TextBlock>
             <PasswordBox x:Name="PasswordBox" Margin="0,0,0,10" Grid.Row="1" Grid.Column="1" PlaceholderText="Enter password" PasswordChanged="PasswordBox_PasswordChanged"></PasswordBox>
-            <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.ColumnSpan="3" >By signing in, you agree to the <Hyperlink NavigateUri="https://croomssched.tech/terms">Terms of Service</Hyperlink>.<LineBreak></LineBreak>No account? <Hyperlink NavigateUri="https://admin.croomssched.tech/dashboard/create-account">Create one</Hyperlink></TextBlock>
+            <TextBlock TextWrapping="Wrap" Grid.Row="2" Grid.ColumnSpan="3" >By signing in, you agree to the <Hyperlink NavigateUri="https://croomsbellschedule.com/terms">Terms of Service</Hyperlink>.<LineBreak></LineBreak>No account? <Hyperlink NavigateUri="https://admin.croomsbellschedule.com/dashboard/create-account">Create one</Hyperlink></TextBlock>
             <TextBlock x:Name="LoginFailureText" Grid.Row="3" Grid.ColumnSpan="3" Foreground="{ThemeResource SystemFillColorCriticalBrush}"></TextBlock>
         </Grid>
         <StackPanel

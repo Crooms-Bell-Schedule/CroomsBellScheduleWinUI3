@@ -21,7 +21,7 @@ public sealed partial class Livestream
         base.OnNavigatedTo(e);
 
         player.AutoPlay = true;
-        player.Source = MediaSource.CreateFromUri(new Uri("https://mikhail.croomssched.tech/bell_live/data.m3u8"));
+        player.Source = MediaSource.CreateFromUri(new Uri("https://mikhail.croomsbellschedule.com/bell_live/data.m3u8"));
         player.MediaPlayer.RealTimePlayback = true;
         player.MediaPlayer.IsMuted = true;
     }

@@ -16,7 +16,7 @@
 		<EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<AssemblyName>Crooms Bell Schedule</AssemblyName>
-		<Version>5.1.1</Version>
+		<Version>5.1.2</Version>
 		<DefineConstants>DISABLE_XAML_GENERATED_MAIN</DefineConstants>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
@@ -127,6 +127,6 @@
 		<ApplicationIcon>Assets\croomsBellSchedule.ico</ApplicationIcon>
 		<Title>Crooms Bell Schedule</Title>
 		<Description>The Crooms Bell Schedule app.</Description>
-		<PackageProjectUrl>https://croomssched.tech/</PackageProjectUrl>
+		<PackageProjectUrl>https://croomsbellschedule.com/</PackageProjectUrl>
 	</PropertyGroup>
 </Project>

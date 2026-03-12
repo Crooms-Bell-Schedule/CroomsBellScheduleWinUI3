@@ -12,7 +12,7 @@ namespace CroomsBellSchedule.Core.Web
 {
     public class MikhailHostingClient
     {
-        public static string MikhailHostingBase = "https://mikhail.croomssched.tech";
+        public static string MikhailHostingBase = "https://mikhail.croomsbellschedule.com";
         private readonly HttpClient _client = new()
         {
             Timeout = TimeSpan.FromSeconds(20)

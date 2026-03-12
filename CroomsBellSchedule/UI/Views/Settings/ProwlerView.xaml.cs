@@ -273,7 +273,7 @@ public sealed partial class ProwlerView
 
     public static async Task<ImageSource?> RetrieveImageByTypeAsync(string uid, string type = "pfp")
     {
-        string path = $"https://mikhail.croomssched.tech/apiv2/fs/{type}/{uid}.png";
+        string path = $"https://mikhail.croomsbellschedule.com/apiv2/fs/{type}/{uid}.png";
 
         ImageCache.TryAdd(type, []);
 
@@ -430,7 +430,7 @@ public sealed partial class ProwlerView
 
     private void MA_Click(object sender, RoutedEventArgs e)
     {
-        MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://mikhail.croomssched.tech/advice", true, true, false));
+        MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://mikhail.croomsbellschedule.com/advice", true, true, false));
     }
     private void AppBarButton_Click(object sender, RoutedEventArgs e)
     {
@@ -560,7 +560,7 @@ public sealed partial class ProwlerView
 
     private void BtnVerify_Click(object sender, RoutedEventArgs e)
     {
-        MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://community.croomssched.tech/prowler-verification", true, true, false));
+        MainView.Settings?.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://community.croomsbellschedule.com/prowler-verification", true, true, false));
     }
 
     private async void Poster_OkayClick(object sender, EventArgs e)

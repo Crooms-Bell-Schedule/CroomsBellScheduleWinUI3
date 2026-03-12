@@ -136,6 +136,6 @@ public sealed partial class LunchView
     private void Button_Click_1(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
     {
         if (MainView.Settings != null)
-            MainView.Settings.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://api.croomssched.tech/survey/", true, true, false));
+            MainView.Settings.NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://api.croomsbellschedule.com/survey/", true, true, false));
     }
 }

@@ -265,8 +265,8 @@ public sealed partial class SettingsView
         FlyoutUserName.Text = "User Account";
         FlyoutUserName2.Text = "User Account";
         FlyoutPFP.ProfilePicture = null;
-        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/pfp/default.png")); ;
-        FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/profile_banner/default.png"));
+        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomsbellschedule.com/apiv2/fs/pfp/default.png")); ;
+        FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomsbellschedule.com/apiv2/fs/profile_banner/default.png"));
         FlyoutBannerButton.IsEnabled = false;
     }
     private void SetLoggedInMode()
@@ -296,9 +296,9 @@ public sealed partial class SettingsView
             FlyoutUserName.Text = $"Unknown";
 
 
-        FlyoutPFP.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/pfp/{SettingsManager.Settings.UserID}.png"));
-        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/pfp/{SettingsManager.Settings.UserID}.png"));
-        FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomssched.tech/apiv2/fs/profile_banner/{SettingsManager.Settings.UserID}.png"));
+        FlyoutPFP.ProfilePicture = new BitmapImage(new($"https://mikhail.croomsbellschedule.com/apiv2/fs/pfp/{SettingsManager.Settings.UserID}.png"));
+        FlyoutPFP2.ProfilePicture = new BitmapImage(new($"https://mikhail.croomsbellschedule.com/apiv2/fs/pfp/{SettingsManager.Settings.UserID}.png"));
+        FlyoutBanner.Source = new BitmapImage(new($"https://mikhail.croomsbellschedule.com/apiv2/fs/profile_banner/{SettingsManager.Settings.UserID}.png"));
         FlyoutUserName2.Text = FlyoutUserName.Text;
 
 
@@ -525,7 +525,7 @@ public sealed partial class SettingsView
         }
 
 
-        NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomssched.tech/account-center", false, true, false));
+        NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomsbellschedule.com/account-center", false, true, false));
     }
 
     internal async Task SetLoggedIn()
@@ -573,7 +573,7 @@ public sealed partial class SettingsView
             UserFlyout.Hide();
             if (OperatingSystem.IsWindows())
             {
-                NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomssched.tech/auth/sso-callback?clientId=crooms-bell-app&redirectUrl=https://mikhail.croomssched.tech/sso-redirect", false, false, true));
+                NavigateTo(typeof(WebView), new WebViewNavigationArgs("https://account.croomsbellschedule.com/auth/sso-callback?clientId=crooms-bell-app&redirectUrl=https://mikhail.croomsbellschedule.com/sso-redirect", false, false, true));
             }
             else
             {

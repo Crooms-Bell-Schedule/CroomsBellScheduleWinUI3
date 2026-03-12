@@ -36,7 +36,7 @@
         </Grid>
         
          <controls:WebView2 x:Name="TheWebView"  Grid.Row="1" Grid.ColumnSpan="2"
-        Source="https://mikhail.croomssched.tech/advice" HorizontalAlignment="Stretch" 
+        Source="https://mikhail.croomsbellschedule.com/advice" HorizontalAlignment="Stretch" 
         VerticalAlignment="Stretch" Margin="0,5,0,0" Visibility="Collapsed"/>
 
         <StackPanel x:Name="Loader" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Grid.ColumnSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center">
