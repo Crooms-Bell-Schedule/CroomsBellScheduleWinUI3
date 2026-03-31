@@ -128,6 +128,32 @@ namespace CroomsBellSchedule.UI
                 },*/ // TODO find image
             new Theme()
                 {
+                    ID = 11,
+                    Name = "Digital Circus",
+                    PreviewResource = "tadc_preview.png",
+                    BackgroundResource = "tadc_bg.png",
+                    UseBlur = false
+                },
+              new Theme()
+                {
+                    ID = 12,
+                    Name = "Akihabara",
+                    PreviewResource = "jp1_bg.jpg",
+                    BackgroundResource = "jp1_bg.jpg",
+                    BrightnessDark = 70,
+                    UseBlur = false
+                },
+              new Theme()
+                {
+                    ID = 13,
+                    Name = "Osaka",
+                    PreviewResource = "jp2_bg.jpg",
+                    BackgroundResource = "jp2_bg.jpg",
+                    BrightnessDark = 70,
+                    UseBlur = false
+                },
+            new Theme()
+                {
                     ID = 54,
                     Name = "Bacon",
                     PreviewResource = "Bacon_preview.png",

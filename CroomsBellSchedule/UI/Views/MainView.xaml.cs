@@ -417,6 +417,18 @@ public sealed partial class MainView
 
     #region Bell
 
+    private string SelectBanner()
+    {
+        string[] files = new string[]
+        {
+            "a1.png",
+            "a2.png",
+            "a3.png",
+            "a4.png"
+        };
+        return files[_rng.Next(0, files.Length - 1)];
+    }
+
     private string FormatTimespan(string className, TimeSpan duration, double progress = 12)
     {
         if (duration.Hours == 0)
@@ -424,7 +436,7 @@ public sealed partial class MainView
             if (duration.Minutes == 4 && !_isTransition)
                 if (!_shown5MinNotification && !SettingsManager.Settings.Show5MinNotification)
                 {
-                    AppNotification toast = new AppNotificationBuilder()
+                    AppNotificationBuilder toast = new AppNotificationBuilder()
                         .AddText($"{className} ends soon")
                         .AddText("The bell rings in less than 5 minutes")
                         .AddProgressBar(
@@ -434,12 +446,19 @@ public sealed partial class MainView
                                 Value = progress / 100
                             }
                         )
-                        .BuildNotification();
+                        .SetHeroImage(new Uri("ms-appx:///Assets/" + SelectBanner()));
 
-                    toast.ExpiresOnReboot = true;
-                    toast.Expiration = DateTime.Now.AddSeconds(15);
+                    if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
+                    {
+                        toast = toast.SetHeroImage(new Uri("ms-appx:///Assets/" + SelectBanner()));
+                    }
 
-                    AppNotificationManager.Default.Show(toast);
+                    AppNotification not = toast.BuildNotification();
+
+                    not.ExpiresOnReboot = true;
+                    not.Expiration = DateTime.Now.AddSeconds(15);
+
+                    AppNotificationManager.Default.Show(not);
                     _shown5MinNotification = true;
                 }
 
@@ -456,6 +475,11 @@ public sealed partial class MainView
                                 Value = progress / 100,
                             }
                         );
+
+                    if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
+                    {
+                        toast = toast.SetHeroImage(new Uri("ms-appx:///Assets/" + SelectBanner()));
+                    }
 
                     if (_rng.Next(0, 16) == 6)
                     {
@@ -519,7 +543,11 @@ public sealed partial class MainView
 
         // Update text
 
-        TxtCurrentClass.Text = $"{currentClass} - {FormatTimespan(currentClass, transitionDuration, percent)}";
+        try
+        {
+            TxtCurrentClass.Text = $"{currentClass} - {FormatTimespan(currentClass, transitionDuration, percent)}";
+        }
+        catch { }
         switch (SettingsManager.Settings.PercentageSetting)
         {
             case SettingsManager.PercentageSetting.Hide:
