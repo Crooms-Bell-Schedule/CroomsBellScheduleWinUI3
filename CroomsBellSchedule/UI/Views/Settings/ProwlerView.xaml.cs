@@ -586,7 +586,7 @@ public sealed partial class ProwlerView
                 return;
             }
 
-            if (result.Value.data != null && result.Value.data.file != null)
+            if (result.Value.data != null)
                 Poster.UploadedPaths.Add(result.Value.data.file);
         }
 
