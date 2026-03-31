@@ -106,8 +106,8 @@ public sealed partial class MainView
             CorrectLayer();
             presenter.IsMaximizable = false;
             presenter.IsMinimizable = false;
-            presenter.IsResizable = true;
-            presenter.SetBorderAndTitleBar(true, SettingsManager.Settings.IsLivestreamMode);
+            presenter.IsResizable = false;
+            presenter.SetBorderAndTitleBar(SettingsManager.Settings.IsLivestreamMode, SettingsManager.Settings.IsLivestreamMode);
             MainWindow.Instance.ExtendsContentIntoTitleBar = !SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.AppWindow.IsShownInSwitchers = SettingsManager.Settings.IsLivestreamMode;
             MainWindow.Instance.SetTitleBar(Content);
@@ -721,10 +721,10 @@ public sealed partial class MainView
             _windowApp = appWindow;
         if (_windowApp == null) return; // What?
 
+        SetWindowCornerRadius(handle, DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_DONOTROUND);
+
         if (showInTaskbar)
         {
-            //MainWindow.Instance.RemoveMica();
-            IntPtr trayHWnd;
             IntPtr taskbarUIHWnd;
 
             int taskbarHeight = 0;
@@ -739,21 +739,13 @@ public sealed partial class MainView
                     return;
                 }
 
-                trayHWnd = FindWindowW("Shell_TrayWnd", null);
-                taskbarUIHWnd =
-                    FindWindowExW(trayHWnd, 0, "Windows.UI.Composition.DesktopWindowContentBridge", null);
-
-                // Check if Windows 10
-                if (taskbarUIHWnd == 0 && Environment.OSVersion.Version.Build < 22000)
-                {
-                    taskbarUIHWnd = trayHWnd;
-                }
+                taskbarUIHWnd = FindWindowW("Shell_TrayWnd", null);
 
                 RECT rc = new();
                 GetClientRect(taskbarUIHWnd, ref rc);
                 taskbarHeight = rc.bottom - rc.top;
 
-                if (taskbarHeight == 0)
+                if (taskbarUIHWnd == 0 || taskbarHeight == 0)
                 {
                     attempts++;
                     await Task.Delay(200);

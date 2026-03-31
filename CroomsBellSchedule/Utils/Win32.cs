@@ -98,4 +98,37 @@ public static partial class Win32
 
         return (profile.GetNetworkConnectivityLevel(), profile.GetConnectionCost().NetworkCostType);
     }
+
+    public static void SetWindowCornerRadius(IntPtr hwnd, DWM_WINDOW_CORNER_PREFERENCE cornerPreference)
+    {
+        try
+        {
+            var attribute = DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE;
+            var preference = (uint)cornerPreference;
+            DwmSetWindowAttribute(hwnd, attribute, ref preference, sizeof(uint));
+        }
+        catch
+        {
+
+        }
+    }
+
+    [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+    public static extern int DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE dwAttribute, ref uint pvAttribute, uint cbAttribute);
+
+    [Flags]
+    public enum DWMWINDOWATTRIBUTE : uint
+    {
+        DWMWA_WINDOW_CORNER_PREFERENCE = 33,
+        DWMWA_BORDER_COLOR,
+        DWMWA_VISIBLE_FRAME_BORDER_THICKNESS
+    }
+
+    public enum DWM_WINDOW_CORNER_PREFERENCE
+    {
+        DWMWCP_DEFAULT = 0,
+        DWMWCP_DONOTROUND = 1,
+        DWMWCP_ROUND = 2,
+        DWMWCP_ROUNDSMALL = 3
+    }
 }
