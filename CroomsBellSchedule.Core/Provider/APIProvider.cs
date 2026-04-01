@@ -1,94 +1,86 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CroomsBellSchedule.Core.Web;
+using System;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using CroomsBellSchedule.Core.Web;
 
 namespace CroomsBellSchedule.Core.Provider;
 
 public class APIProvider : IBellScheduleProvider
 {
     private readonly HttpClient _client = new();
-
     public async Task<BellScheduleReader> GetTodayActivity()
     {
-        // fetch data from server
-        HttpResponseMessage dataBody = await _client.GetAsync("https://api.croomsbellschedule.com/today");
+        HttpResponseMessage dataBody = await _client.GetAsync("https://mikhail.croomssched.tech/apiv2/bell/get");
         if (!dataBody.IsSuccessStatusCode)
             throw new Exception("Failed to get today's schedule: " + dataBody.StatusCode);
 
         string? dataResp = await dataBody.Content.ReadAsStringAsync() ??
                            throw new Exception("The server response is empty");
 
-        Root parsed = JsonSerializer.Deserialize(dataResp, SourceGenerationContext.Default.Root) ?? throw new Exception("server response is malformed");
+        var data = JsonSerializer.Deserialize(dataResp, SourceGenerationContext.Default.LocalBellRoot);
 
-        // convert response to the better format
-        BellSchedule bellSchedule = new();
+        if (data == null) throw new Exception("Invalid or missing JSON");
 
-        Dictionary<int, string> properNames = new()
+        // Find bell schedule name for current day
+        var bellScheduleName = data.defaultWeekMap.Where(x => x.day == DateTime.Now.DayOfWeek.ToString()).FirstOrDefault() ?? throw new Exception("Day of week does not exist in data");
+
+        // Check if current day is overridden
+        var currentData = $"{DateTime.Now.Month}-{DateTime.Now.Day}-{DateTime.Now.Year}";
+        foreach (var item in data.overrides)
         {
-            { 0, "Nothing" },
-            { 100, "Morning" },
-            { 101, "Welcome" },
-            { 102, "Lunch" },
-            { 8, "Homeroom" },
-            { 104, "Dismissal" },
-            { 105, "After school" },
-            { 106, "End" },
-            { 107, "Break" },
-            { 110, "PSAT/SAT" },
-            { 111, "Session 1"},
-            { 112, "Session 2" },
-            { 113, "Session 3" },
-            { 114, "Session 4" },
-            { 116, "Test" },
-            { 115, "Field Day" }
-        };
-
-        char lunch = 'A';
-        foreach (List<List<int>> schedule in parsed.data.schedule)
-        {
-            foreach (List<int> grouping in schedule)
+            if (item.date == currentData)
             {
-                int startHour = grouping[0];
-                int startMin = grouping[1];
-                int typeStr = grouping[2];
-                int endHour = grouping[3];
-                int endMin = grouping[4];
-
-                bellSchedule.Classes.Add(new BellScheduleEntry
-                {
-                    StartString = ConvertTime(startHour, startMin),
-                    EndString = ConvertTime(endHour, endMin),
-                    Name = properNames.ContainsKey(typeStr) ? properNames[typeStr] : typeStr.ToString(),
-                    ScheduleName = parsed.data.msg,
-                    LunchIndex = lunch == 'B' ? 1 : 0
-                });
+                bellScheduleName.scheduleName = item.scheduleName;
+                break;
             }
-
-            lunch++;
         }
 
-        return new BellScheduleReader(bellSchedule, []);
-    }
 
-    private static string ConvertTime(int hour, int min)
-    {
-        return $"{hour}:{min:d2}";
-    }
+        // Parse schedule object
+        FullBellSchedule schedules = new();
+        foreach (var item in data.schedules)
+        {
+            var sched = new BellSchedule();
+            sched.InternalName = item.name;
+            sched.Name = item.properName;
 
-    public class Data
-    {
-        public string id { get; set; } = "";
-        public string msg { get; set; } = "";
-        public List<List<List<int>>> schedule { get; set; } = [];
-    }
+            foreach (var item2 in item.data)
+            {
+                var item3 = item2.Value ?? throw new Exception("data value missing in json");
 
-    public class Root
-    {
-        public string status { get; set; } = "OK";
-        public DateTime responseTime { get; set; }
-        public Data data { get; set; } = new();
+                var start = item3[0];
+                var end = item3[1];
+
+                string str = item2.Key;
+                int lunchOffset = 0;
+                if (str.EndsWith(" A"))
+                {
+                    str = str.Substring(0, str.Length - 2);
+                }
+                else if (str.EndsWith(" B"))
+                {
+                    lunchOffset = 1;
+                    str = str.Substring(0, str.Length - 2);
+                }
+                else
+                {
+                    lunchOffset = 99;
+                }
+
+
+                sched.Classes.Add(new BellScheduleEntry() { Name = str, StartString = start.ToString(), EndString = end.ToString(), LunchIndex = lunchOffset, ScheduleName = item.properName });
+            }
+
+            schedules.Schedules.Add(sched);
+        }
+
+        // Get the schedule by its name
+        if (bellScheduleName == null) throw new Exception("No schedule for today");
+        var schedule = schedules.Schedules.Where(x => x.InternalName == bellScheduleName.scheduleName).FirstOrDefault() ?? throw new Exception("Unable to lookup schedule");
+
+        return new BellScheduleReader(schedule, []);
     }
 }

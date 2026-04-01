@@ -424,9 +424,10 @@ public sealed partial class MainView
             "a1.png",
             "a2.png",
             "a3.png",
-            "a4.png"
+            "a4.png",
+            "Theme/COW_bg.png"
         };
-        return files[_rng.Next(0, files.Length - 1)];
+        return files[_rng.Next(0, files.Length)];
     }
 
     private string FormatTimespan(string className, TimeSpan duration, double progress = 12)
@@ -445,12 +446,12 @@ public sealed partial class MainView
                                 Status = "Percentage completed",
                                 Value = progress / 100
                             }
-                        )
-                        .SetHeroImage(new Uri("ms-appx:///Assets/" + SelectBanner()));
+                        );
 
                     if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
                     {
-                        toast = toast.SetHeroImage(new Uri("ms-appx:///Assets/" + SelectBanner()));
+                        var i = new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", SelectBanner()));
+                        toast = toast.SetHeroImage(i, "Notification image");
                     }
 
                     AppNotification not = toast.BuildNotification();
@@ -478,7 +479,8 @@ public sealed partial class MainView
 
                     if (DateTime.Now.Month == 4 && DateTime.Now.Day == 1)
                     {
-                        toast = toast.SetHeroImage(new Uri("ms-appx:///Assets/" + SelectBanner()));
+                        var i = new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", SelectBanner()));
+                        toast = toast.SetHeroImage(i, "Notification image");
                     }
 
                     if (_rng.Next(0, 16) == 6)

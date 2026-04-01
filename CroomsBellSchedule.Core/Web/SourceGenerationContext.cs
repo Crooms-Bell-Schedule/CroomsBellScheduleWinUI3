@@ -6,7 +6,6 @@ using static CroomsBellSchedule.Service.SettingsManager;
 namespace CroomsBellSchedule.Core.Web
 {
     [JsonSourceGenerationOptions(WriteIndented = true)]
-    [JsonSerializable(typeof(Root))]
     [JsonSerializable(typeof(SettingsRoot))]
     [JsonSerializable(typeof(LocalBellRoot))]
     [JsonSerializable(typeof(LoginRequest))]
