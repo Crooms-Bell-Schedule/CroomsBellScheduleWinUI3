@@ -1,4 +1,24 @@
 # Changelog
+## 6.0.0 (4/17/2026)
+- Significantly improved taskbar mode (you can now drag the timer around and interact with it)
+- Redesigned all user interfaces
+- The application can now run on Linux, Android, and web platforms
+- Improved the reliability of the application
+- Switched to Avalonia framework from WinUI which is very buggy and slow
+- Added events view
+- All settings are on one page now
+
+
+The following features have been removed permanently:
+- Prowler, profile picture and profile banners
+- Survey view / create
+- DVD screensaver mode
+
+
+The following features have been removed due to time constraints, but will be added in a future update:
+- Themes
+- Account sign in
+
 ## 5.0.7 (2/3/2026)
  - Fixed an issue where private beta cannot be joined properly
  - Updated Windows App SDK version to 1.8.260101001 from 1.8.251106002
