@@ -1,0 +1,284 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="450"
+             x:Class="CBSApp.Views.DashboardView"
+			 xmlns:ctls="using:CBSApp.Controls"
+			 xmlns:crds="using:CBSApp.Cards"
+			 		 xmlns:views="using:CBSApp.Views"
+			 xmlns:ui="using:FluentAvalonia.UI.Controls"
+			 Loaded="Dashboard_Loaded"
+			 SizeChanged="DashboardView_SizeChanged">
+
+	<UserControl.Styles>
+		<Style Selector=".doneloading">
+			<Style Selector="^ Grid#Loader">
+				<Setter Property="RenderTransform" Value="scale(500)"/>
+				<Setter Property="Opacity" Value="0"/>
+			</Style>
+
+			<Style Selector="^ Grid#Loader[Opacity=0]">
+				<Setter Property="IsVisible" Value="False"/>
+			</Style>
+		</Style>
+
+	</UserControl.Styles>
+
+	<Grid>
+
+		<Image Source="/Assets/lakeeola.jpg" Stretch="UniformToFill" Effect="blur(10)" Opacity=".75"></Image>
+
+		<Grid x:Name="MainContainer">
+			<Grid.Styles>
+				<Style Selector="Grid#MainContainer">
+					<Setter Property="RenderTransform" Value="scale(0.1)"/>
+				</Style>
+				<Style Selector="Grid#MainContainer.doneloading">
+					<Setter Property="RenderTransform" Value="scale(1)"/>
+				</Style>
+			</Grid.Styles>
+
+			<Grid.Transitions>
+				<Transitions>
+					<TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3"/>
+				</Transitions>
+			</Grid.Transitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="auto"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
+
+
+			<TabControl x:Name="TabController"
+						Grid.Row="0" HorizontalAlignment="Center"
+						SelectionChanged="TabControl_SelectionChanged">
+				<TabItem Header="Home"/>
+				<TabItem Header="Settings"/>
+				<!--<TabItem>
+					<TabItem.Header>
+						<Button
+								Background="{DynamicResource TabItemHeaderBackgroundUnselected}"
+								Foreground="{DynamicResource TabItemHeaderForegroundUnselected}"
+								Margin="0"
+								Padding="0">
+
+							<TextBlock Padding="0" TextAlignment="Center">Account</TextBlock>
+
+							<Button.Flyout>
+								<Flyout>
+									<Grid MinWidth="315">
+										<Grid.RowDefinitions>
+											<RowDefinition Height="Auto"/>
+											<RowDefinition Height="Auto"/>
+											<RowDefinition Height="Auto"/>
+										</Grid.RowDefinitions>
+
+										<Image x:Name="FlyoutBanner"
+											   	Grid.Row="0"
+												Grid.Column="0"
+												Grid.ColumnSpan="3"
+												Height="175"
+												Stretch="UniformToFill"/>
+										<Image x:Name="PfpFlyout" Grid.Row="1" Margin="0, -50, 10, 0"  Width="64" Height="64" VerticalAlignment="Top" HorizontalAlignment="Left" Source="/Assets/croomsBellSchedule.ico">
+											<Image.Clip>
+												<EllipseGeometry Rect="0,0,64,64"/>
+											</Image.Clip>
+										</Image>
+
+
+										<StackPanel Grid.Row="2">
+											<TextBlock x:Name="FlyoutUserName2" Text="User Account"  Padding="12, 5, 10, 5"
+													   FontSize="22" Margin="5, 0, 0, 0"/>
+											<StackPanel Orientation="Horizontal" Margin="10,5,0,10">
+												<HyperlinkButton x:Name="FlyoutSignIn" Content="Sign In" Click="FlyoutLogin_Click"/>
+												<HyperlinkButton x:Name="FlyoutChangePassword" Content="Manage account" IsVisible="False" Click="FlyoutChangePassword_Click"/>
+											</StackPanel>
+										</StackPanel>
+									</Grid>
+								</Flyout>
+							</Button.Flyout>
+						</Button>
+					</TabItem.Header>
+				</TabItem>-->
+			</TabControl>
+
+			<ScrollViewer x:Name="Scroller" Grid.Row="1">
+
+				<LayoutTransformControl x:Name="Scaler">
+
+					<Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+						<WrapPanel Orientation="Horizontal"
+              
+		   HorizontalAlignment="Stretch" x:Name="WidgetRoot" Name="PART_WidgetRoot"
+								   IsVisible="True">
+
+
+							<crds:TimerCard x:Name="TimerCard"
+											Grid.Column="0"
+											MinWidth="360"/>
+
+							<crds:CalendarCard x:Name="CalendarCard"
+										Grid.Column="1"
+										Grid.Row="1"/>
+
+
+							<crds:LunchCard x:Name="LunchCard"
+											Grid.Column="0"
+											Grid.Row="1" MinWidth="360"/>
+
+							<crds:WeatherCard x:Name="weatherCard"
+											  Grid.Column="1"
+											  Grid.Row="1" MinWidth="490" IsVisible="False"/>
+						</WrapPanel>
+
+						<Grid x:Name="SettingsTabContent" IsVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+							<StackPanel>
+								<TextBlock FontSize="28" FontWeight="Bold" Margin="10"
+										Foreground="{DynamicResource CBS_Background_SettingsTitle}">Appearance</TextBlock>
+								<ctls:SettingsCard Header="Choose your mode"
+												   Description="Change the base color scheme of the Crooms Bell Schedule App">
+									
+									<ComboBox x:Name="ComboThemeMode"
+										      Margin="10"
+											  HorizontalAlignment="Right"
+											  VerticalAlignment="Center"
+											  SelectedIndex="0"
+											  SelectionChanged="ThemeColor_SelectionChanged">
+										<ComboBox.Items>
+											<ComboBoxItem Content="Auto"/>
+											<ComboBoxItem Content="Light"/>
+											<ComboBoxItem Content="Dark"/>
+										</ComboBox.Items>
+									</ComboBox>
+								</ctls:SettingsCard>
+
+								<ctls:SettingsCard Header="Background"
+												   Description="Choose a variety of backgrounds to give the Crooms Bell Schedule more personality. Works best on dark mode."
+												  
+												   
+												   IsVisible="False">
+									<Button  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10">Select</Button>
+								</ctls:SettingsCard>
+
+								<ctls:SettingsCard Header="Show timer as a window instead of inside taskbar"
+												   Description="Shows the timer in a window instead of inside of your taskbar">
+									<ToggleSwitch x:Name="TaskbarModeToggle" IsCheckedChanged="ToggleSwitch_Checked_2" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+								</ctls:SettingsCard>
+
+								<ctls:SettingsCard Header="Timer Opacity" IsVisible="False">
+									<Slider Width="150" x:Name="TimerOpacity" ValueChanged="TimerOpacity_ValueChanged" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+								</ctls:SettingsCard>
+
+								<ctls:SettingsCard Header="Timer Font Size">
+									<Slider Width="200" x:Name="TimerFontSize" ValueChanged="TimerFontSize_ValueChanged" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center"
+											
+											Minimum="16"
+											Maximum="400"/>
+								</ctls:SettingsCard>
+
+								<ctls:SettingsCard Header="Percentage Display">
+									<ComboBox x:Name="ComboPercentage" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center" SelectedIndex="2" SelectionChanged="ComboPercentage_SelectionChanged">
+										<ComboBox.Items>
+											<ComboBoxItem>Hide</ComboBoxItem>
+											<ComboBoxItem>2 digit places (59%)</ComboBoxItem>
+											<ComboBoxItem>3 digit places (59.3%)</ComboBoxItem>
+											<ComboBoxItem>4 digit places (59.32%) (default)</ComboBoxItem>
+										</ComboBox.Items>
+									</ComboBox>
+								</ctls:SettingsCard>
+
+
+
+								<TextBlock FontSize="28" FontWeight="Bold" Margin="10"
+										   Foreground="{DynamicResource CBS_Background_SettingsTitle}">Bell Schedule</TextBlock>
+								<ctls:SettingsCard Header="5th period lunch" Description="Lunch used on Monday, Tuesday, Thursday, Friday, Activity schedule">
+									<StackPanel Orientation="Horizontal">
+										<ToggleButton x:Name="p5LunchA" Margin="5" IsCheckedChanged="p5LunchA_Checked">A</ToggleButton>
+										<ToggleButton x:Name="p5LunchB" Margin="5" IsCheckedChanged="p5LunchB_Checked">B</ToggleButton>
+									</StackPanel>
+								</ctls:SettingsCard>
+								<ctls:SettingsCard Header="Homeroom lunch" Description="Lunch used on Wednesday">
+									<StackPanel Orientation="Horizontal">
+										<ToggleButton x:Name="pHLunchA" Margin="5" IsCheckedChanged="pHLunchA_Checked">A</ToggleButton>
+										<ToggleButton x:Name="pHLunchB" Margin="5" IsCheckedChanged="pHLunchB_Checked">B</ToggleButton>
+									</StackPanel>
+								</ctls:SettingsCard>
+
+								<ctls:SettingsCard Header="Class Names" Description="Customize your class names">
+									<Button Margin="10" Click="ClassNamesChange_Click">
+										Change
+										<Button.Flyout>
+											<Flyout>
+												<crds:ClassNameChangeCard/>
+											</Flyout>
+										</Button.Flyout>
+									</Button>
+								</ctls:SettingsCard>
+
+								<TextBlock FontSize="28" FontWeight="Bold" Margin="10"
+										   Foreground="{DynamicResource CBS_Background_SettingsTitle}">Behavior</TextBlock>
+
+
+								<ctls:SettingsCard x:Name="StartupCard" Header="Start on system start">
+									<ToggleSwitch x:Name="ChkStartup" Margin="10" IsCheckedChanged="StartWithWindows_Click"/>
+								</ctls:SettingsCard>
+
+
+								<ctls:SettingsCard Header="Show notification when 5 minutes remaining">
+									<ToggleSwitch x:Name="chk1MinNotif" Margin="10" IsCheckedChanged="Notif1Min_Checked"/>
+								</ctls:SettingsCard>
+
+								<ctls:SettingsCard Header="Show notification when 1 minute remaining">
+									<ToggleSwitch x:Name="chk5MinNotif" Margin="10" IsCheckedChanged="Notif1Min_Checked"/>
+								</ctls:SettingsCard>
+
+
+								<ctls:SettingsCard Header="Crooms Bell Schedule Insider Program"
+												   IsVisible="False">
+									<ComboBox x:Name="cmbUpdateChannel" SelectionChanged="ComboBox_SelectionChanged"  HorizontalAlignment="Right" VerticalAlignment="Center" Margin="10">
+										<ComboBox.Items>
+											<ComboBoxItem Content="Release Version"/>
+											<ComboBoxItem Content="Private Beta"/>
+										</ComboBox.Items>
+									</ComboBox>
+								</ctls:SettingsCard>
+
+
+								<ctls:SettingsCard x:Name="UpdateCard" Header="App Version">
+									<Button x:Name="CheckForUpdates" Content="Check for updates" Click="Button_Click_1" Margin="10"></Button>
+								</ctls:SettingsCard>
+
+
+								<TextBlock FontSize="28" FontWeight="Bold" Margin="10"
+										   Foreground="{DynamicResource CBS_Background_SettingsTitle}">Credits</TextBlock>
+								<TextBlock Margin="10">This application was created by Mikhail Tyukin. Server backend developer: Andrew Jennings / Mikhail Tyukin</TextBlock>
+								<TextBlock Margin="10">For bug reports, please email Mikhail Tyukin via the school email (search my name)</TextBlock>
+							</StackPanel>
+						</Grid>
+
+						<Grid x:Name="CalendarTab" IsVisible="False">
+							<TextBox FontSize="32" HorizontalAlignment="Center" VerticalAlignment="Center">Today is a day</TextBox>
+						</Grid>
+					</Grid>
+				</LayoutTransformControl>
+
+
+			</ScrollViewer>
+		</Grid>
+
+
+		<ctls:SplashScreen x:Name="Loader"/>
+		<!--<TextBlock Foreground="Red"
+					   HorizontalAlignment="Right"
+					   VerticalAlignment="Bottom"
+					   Grid.RowSpan="5"
+					   Grid.ColumnSpan="5"
+					   TextAlignment="Right"
+					   Margin="5" FontSize="16">
+			Private Beta Notice:<LineBreak/>This application is under active development.<LineBreak/>Do not share any screenshots.
+		</TextBlock>-->
+	</Grid>
+</UserControl>

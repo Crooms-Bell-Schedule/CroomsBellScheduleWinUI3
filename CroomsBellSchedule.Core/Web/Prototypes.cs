@@ -128,12 +128,6 @@ namespace CroomsBellSchedule.Core.Web
     {
         public bool exists { get; set; }
     }
-    public class GetMaintenanceBannerResponse
-    {
-        public bool exists { get; set; }
-        public string title { get; set; } = "";
-        public string message { get; set; } = "";
-    }
 
     // Websocket Schema
     public class FeedMessage
@@ -189,5 +183,26 @@ namespace CroomsBellSchedule.Core.Web
     {
         public bool valid { get; set; }
         public string data { get; set; } = "";
+    }
+
+    public record MikhailHostingEventsRespose
+    {
+        public bool ok { get; set; }
+        public List<MikhailHostingEvent> events { get; set; } = [];
+    }
+
+    public record MikhailHostingEvent
+    {
+        public string name { get; set; } = "";
+        /// <summary>
+        /// Can be either dateRange or dateSingleDay currently
+        /// </summary>
+        public string dateType { get; set; } = "";
+
+        public string date { get; set; } = "";
+        /// <summary>
+        /// type of event, can be noSchool, none
+        /// </summary>
+        public string eventType { get; set; } = "";
     }
 }

@@ -1,0 +1,47 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CBSApp.FirstRun"
+        Title="First Run - Crooms Bell Schedule"
+		Topmost="True"
+		CanMaximize="False"
+		CanMinimize="False"
+		Width="500"
+		Height="400"
+		WindowStartupLocation="CenterScreen"
+		>
+	<Grid RowDefinitions="*,auto">
+		<ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto" Grid.Row="0">
+			<StackPanel>
+				<Grid Margin="0,0,0,15" HorizontalAlignment="Center">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="auto"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+
+					<Svg
+						x:Name="BellScheduleLogo"
+						Path="/Assets/BellSchedule.svg"
+				 Width="72" Height="72" HorizontalAlignment="Center"
+						Grid.Column="0"/>
+
+					<TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Stretch" FontSize="32" Margin="10,0,0,0">Crooms Bell Schedule</TextBlock>
+					<TextBlock Grid.Column="1" VerticalAlignment="Bottom" HorizontalAlignment="Left" FontSize="16" Margin="10,0,0,0" Foreground="Gray">Update v6</TextBlock>
+				</Grid>
+
+				<StackPanel HorizontalAlignment="Center">
+					<TextBlock Padding="0,0,0,15">
+						Thank you for downloading the Crooms Bell Schedule app!<LineBreak/>Here are some basic settings:
+					</TextBlock>
+					<StackPanel>
+						<ToggleSwitch x:Name="chkStartup" Content="Start when Windows starts" IsCheckedChanged="ToggleSwitch_IsCheckedChanged"/>
+						<TextBlock>These settings can be changed at any time in the More menu.</TextBlock>
+					</StackPanel>
+				</StackPanel>
+			</StackPanel>
+		</ScrollViewer>
+		<Button Click="Button_Click_1" Padding="30,10,30,10" Classes="accent" Grid.Row="1" HorizontalAlignment="Right" Margin="10">Save</Button>
+	</Grid>
+</Window>

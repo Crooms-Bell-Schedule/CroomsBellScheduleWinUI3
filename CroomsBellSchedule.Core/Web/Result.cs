@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Sockets;
 
 namespace CroomsBellSchedule.Core.Web
 {
@@ -10,6 +11,26 @@ namespace CroomsBellSchedule.Core.Web
         public bool IsRateLimitReached { get; set; }
 
         public static readonly Result Ok = new() { OK = true };
+
+        public override string ToString()
+        {
+            if (OK)
+                return "Server returned OK";
+            if (IsRateLimitReached)
+                return "Too many requests, try again later";
+            if (Exception != null)
+            {
+                if (Exception is SocketException)
+                {
+                    return "Network error, check your connection";
+                }
+                else
+                {
+                    return Exception.Message;
+                }
+            }
+            return "Unspecified error";
+        }
     }
     public class Result<T>
     {
@@ -31,6 +52,28 @@ namespace CroomsBellSchedule.Core.Web
                 ErrorCode = "E_APPERR",
                 Exception = ex
             };
+        }
+
+        public override string ToString()
+        {
+            if (OK)
+                return "Server returned OK";
+            if (IsRateLimitReached)
+                return "Too many requests, try again later";
+            if (ErrorValue != null)
+                return ErrorValue.error.Contains("permissions") ? "Your login information has expired or is incorrect. Please login again." : ErrorValue.error;
+            if (Exception != null)
+            {
+                if (Exception is SocketException)
+                {
+                    return "Network error, check your connection";
+                }
+                else
+                {
+                    return Exception.Message;
+                }
+            }
+            return "Unspecified error";
         }
     }
 }

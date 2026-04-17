@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:controls="using:CBSApp.Controls"
+             x:Class="CBSApp.Cards.LunchCard"
+			 >
+
+	<Grid
+		Margin="10">
+		<Border Background="{DynamicResource CBSCardBG}"
+		CornerRadius="15"
+		BorderThickness="1"
+			ClipToBounds="True">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="auto"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+
+				<controls:BackdropBlurControl Grid.RowSpan="4"/>
+				<TextBlock Grid.Row="0" Text="Lunch Menu" FontSize="24" Margin="0,5,0,5" HorizontalAlignment="Center"/>
+
+				<ScrollViewer Margin="10" Grid.Row="1"  Width="305" VerticalScrollBarVisibility="Auto">
+
+
+					<Grid x:Name="LunchGrid">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="auto"/>
+							<RowDefinition Height="auto"/>
+							<RowDefinition Height="auto"/>
+							<RowDefinition Height="auto"/>
+							<RowDefinition Height="auto"/>
+							<RowDefinition Height="auto"/>
+						</Grid.RowDefinitions>
+
+						<Button Grid.Row="1" Classes="accent" Content="Monday" Width="90" HorizontalContentAlignment="Center" Margin="0,5,0,5"/>
+						<TextBlock Grid.Row="1" Grid.Column="1" Text="Boneless Wings with Mashed Potatoes and a Dinner Roll"
+								   TextWrapping="Wrap" VerticalAlignment="Center" Padding="5"/>
+
+						<Button Grid.Row="2" Content="Tuesday" Width="90" HorizontalContentAlignment="Center" Margin="0,5,0,5"/>
+						<TextBlock Grid.Row="2" Grid.Column="1" Text="Boneless Wings with Mashed Potatoes and a Dinner Roll"
+								   TextWrapping="Wrap" VerticalAlignment="Center" Padding="5"/>
+
+						<Button Grid.Row="3" Content="Wenesday" Width="90" HorizontalContentAlignment="Center" Margin="0,5,0,5"/>
+						<TextBlock Grid.Row="3" Grid.Column="3" Text="Boneless Wings with Mashed Potatoes and a Dinner Roll"
+								   TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Padding="5"/>
+
+
+						<Button Grid.Row="4" Content="Thursday" Width="90" HorizontalContentAlignment="Center" Margin="0,5,0,5"/>
+						<TextBlock Grid.Row="4" Grid.Column="3" Text="Boneless Wings with Mashed Potatoes and a Dinner Roll"
+								   TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Padding="5"/>
+
+						<Button Grid.Row="5" Content="Friday" Width="90" HorizontalContentAlignment="Center" Margin="0,5,0,5"/>
+						<TextBlock Grid.Row="5" Grid.Column="3" Text="Boneless Wings with Mashed Potatoes and a Dinner Roll"
+								   TextWrapping="WrapWithOverflow" VerticalAlignment="Center" Padding="5"/>
+					</Grid>
+				</ScrollViewer>
+			</Grid>
+		</Border>
+	</Grid>
+</UserControl>

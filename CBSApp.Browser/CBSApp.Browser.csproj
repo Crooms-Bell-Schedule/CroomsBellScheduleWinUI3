@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WebAssembly">
+  <PropertyGroup>
+    <TargetFramework>net10.0-browser</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+	  <DebuggerSupport>true</DebuggerSupport>
+	  <WasmBuildNative>true</WasmBuildNative>
+	  <WasmDebugLevel>5</WasmDebugLevel>
+	  <PublishTrimmed>false</PublishTrimmed>
+	  <!--TODO: Fix-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Browser" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CBSApp\CBSApp.csproj" />
+  </ItemGroup>
+</Project>

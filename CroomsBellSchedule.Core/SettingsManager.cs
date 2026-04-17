@@ -89,7 +89,7 @@ public static class SettingsManager
 
     public class SettingsRoot
     {
-        public bool ShowInTaskbar { get; set; }
+        public bool ShowWindowed { get; set; }
         public bool ShownTaskbarTip { get; set; }
         public bool EnableDvdScreensaver { get; set; }
         public bool IsLivestreamMode { get; set; }
@@ -137,6 +137,10 @@ public static class SettingsManager
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public double FontSize { get; set; } = 16;
         public string PreviousVersion { get; set; } = "";
+        public int TaskbarModeXCord { get; set; }
+        [DefaultValue(1.0)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public double Opacity { get; set; } = 1.0;
     }
     public enum PercentageSetting
     {

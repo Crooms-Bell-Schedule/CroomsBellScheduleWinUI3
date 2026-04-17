@@ -1,0 +1,45 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:CBSApp.Controls"
+			 mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="450"
+             x:Class="CBSApp.Cards.CalendarCard">
+	<Border Background="{DynamicResource CBSCardBG}"
+			Margin="15"
+			CornerRadius="15"
+			BorderThickness="0"
+			MinWidth="305"
+			ClipToBounds="True">
+		<Grid Margin="15">
+			<controls:BackdropBlurControl/>
+			<WrapPanel Orientation="Horizontal" ZIndex="10" HorizontalAlignment="Center">
+				<Calendar x:Name="eventsCalendar" IsVisible="True"
+						  Margin="0,0,5,0"
+						  SelectionMode="None"
+						  VerticalAlignment="Center">
+				</Calendar>
+
+				<Grid VerticalAlignment="Center" HorizontalAlignment="Center"
+				 >
+					<Grid.RowDefinitions>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+						<RowDefinition Height="auto"/>
+					</Grid.RowDefinitions>
+
+					<TextBlock Grid.Row="0" FontSize="26" HorizontalAlignment="Center">Today</TextBlock>
+					<WrapPanel Grid.Row="1" x:Name="todayItems" Orientation="Vertical">
+						<TextBlock Text="Normal"/>
+					</WrapPanel>
+
+					<TextBlock Grid.Row="2" FontSize="26" HorizontalAlignment="Center">Upcoming</TextBlock>
+					<WrapPanel Grid.Row="3" x:Name="upcomingItems" Orientation="Vertical">
+						<TextBlock Text="Spring Break - March 13th"/>
+					</WrapPanel>
+				</Grid>
+			</WrapPanel>
+		</Grid>
+	</Border>
+</UserControl>

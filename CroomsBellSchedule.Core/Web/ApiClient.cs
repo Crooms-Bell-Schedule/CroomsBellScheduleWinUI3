@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CroomsBellSchedule.Service;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
@@ -6,14 +7,12 @@ using System.Security.Cryptography;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using CroomsBellSchedule.Service;
 
 namespace CroomsBellSchedule.Core.Web
 {
     public class ApiClient
     {
-        public static string ApiBase = "https://api.croomsbellschedule.com";
-        public static string MikhailHostingBase = "https://mikhail.croomsbellschedule.com";
+        public static string ApiBase = "https://api.croomssched.tech";
         private readonly HttpClient _client = new()
         {
             Timeout = TimeSpan.FromSeconds(20)
@@ -23,8 +22,6 @@ namespace CroomsBellSchedule.Core.Web
         {
             if (!string.IsNullOrEmpty(SettingsManager.Settings.ApiBase))
                 ApiBase = SettingsManager.Settings.ApiBase;
-            if (!string.IsNullOrEmpty(SettingsManager.Settings.MikhailHostingBase))
-                MikhailHostingBase = SettingsManager.Settings.MikhailHostingBase;
         }
         #region Utils
         public static Result<T?> DecodeResponse<T>(string responseText)
@@ -102,48 +99,7 @@ namespace CroomsBellSchedule.Core.Web
 
             return result;
         }
-        public static string FormatResult<T>(Result<T> result)
-        {
-            if (result.OK)
-                return "Server returned OK";
-            if (result.IsRateLimitReached)
-                return "Too many requests, try again later";
-            if (result.ErrorValue != null)
-                return result.ErrorValue.error.Contains("permissions") ? "Your login information has expired or is incorrect. Please login again." : result.ErrorValue.error;
-            if (result.Exception != null)
-            {
-                if (result.Exception is SocketException)
-                {
-                    return "Network error, check your connection";
-                }
-                else
-                {
-                    return result.Exception.Message;
-                }
-            }
-            return "Unspecified error";
-        }
-        public static string FormatResult(Result result)
-        {
-            if (result.OK)
-                return "Server returned OK";
-            if (result.IsRateLimitReached)
-                return "Too many requests, try again later";
-            if (result.Message != null)
-                return result.Message;
-            if (result.Exception != null)
-            {
-                if (result.Exception is SocketException)
-                {
-                    return "Network error, check your connection";
-                }
-                else
-                {
-                    return result.Exception.Message;
-                }
-            }
-            return "Unspecified error";
-        }
+
         private static string DoSHA512(string input)
         {
             var hashedInputBytes = SHA512.HashData(System.Text.Encoding.UTF8.GetBytes(input));
@@ -251,18 +207,6 @@ namespace CroomsBellSchedule.Core.Web
         public async Task<Result<LunchEntry[]?>> GetLunchData()
         {
             return await DoGetRequestAsync<LunchEntry[]>(ApiBase + "/infofetch/lunch");
-        }
-
-        public async Task AppStartup()
-        {
-            try
-            {
-                await _client.GetAsync(MikhailHostingBase + "/apiv2/telemetry/Startup");
-            }
-            catch
-            {
-
-            }
         }
 
         public async Task<Result<CommandResponse?>> ValidateSessionAsync()
@@ -437,12 +381,8 @@ namespace CroomsBellSchedule.Core.Web
                 var formContent = new MultipartFormDataContent();
 
                 var b = new ByteArrayContent(c);
-                MimeTypes.TryGetMimeType(fileType, out string? mime);
-                if (mime == null)
-                    mime = "application/octet-stream";
-                b.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(mime);
-
-                formContent.Add(b, "data", "data" + fileType);
+                b.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+                formContent.Add(b, "data", "data." + fileType);
 
                 using var requestMessage = new HttpRequestMessage(HttpMethod.Put, $"{ApiBase}/feed/attachment");
 

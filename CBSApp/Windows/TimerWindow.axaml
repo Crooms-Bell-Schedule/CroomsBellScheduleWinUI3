@@ -1,0 +1,71 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CBSApp.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:CBSApp.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CBSApp.Windows.TimerWindow"
+        Icon="/Assets/croomsBellSchedule.ico"
+		ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Title="Crooms Bell Schedule Shell"
+		Topmost="True"
+		WindowDecorations="BorderOnly"
+		PointerMoved="Window_PointerMoved"
+		PointerPressed="Window_PointerPressed"
+		PointerReleased="Window_PointerReleased"
+		PointerEntered="Window_PointerEntered_1"
+		PointerExited="Window_PointerExited_2"
+		Loaded="Window_Loaded">
+	<Grid>
+		<controls:TimerControl x:Name="Timer"/>
+
+		<StackPanel x:Name="Overlay"
+					Orientation="Horizontal"
+					ZIndex="999" VerticalAlignment="Top"
+					HorizontalAlignment="Center" Margin="0,3,0,0"
+					Opacity="0">
+			<Button x:Name="OverviewBtn"
+					Click="OverviewBtn_Click"
+					Background="#575757"
+					Foreground="White"
+					Classes="overlayBtn">More</Button>
+			<Button x:Name="QuitBtn" Click="QuitBtn_Click"
+					Background="#575757"
+					Foreground="White"
+					Classes="overlayBtn">Quit</Button>
+		</StackPanel>
+	</Grid>
+
+	<Window.Styles>
+		<Style Selector="Button.overlayBtn:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+			<Setter Property="Background" Value="#B6B6B6" />
+			<Setter Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
+			<Setter Property="TextBlock.Foreground" Value="Black" />
+		</Style>
+	</Window.Styles>
+
+	<Window.Resources>
+		<Animation x:Key="ShowOverlay"
+                   x:SetterTargetType="Grid"
+                   Duration="0:0:0.1" FillMode="Forward">
+			<KeyFrame Cue="0%">
+				<Setter Property="Opacity" Value="0.0"/>
+			</KeyFrame>
+			<KeyFrame Cue="100%">
+				<Setter Property="Opacity" Value="1.0"/>
+			</KeyFrame>
+		</Animation>
+		<Animation x:Key="HideOverlay"
+		   x:SetterTargetType="Grid"
+		   Duration="0:0:0.1" FillMode="Forward">
+			<KeyFrame Cue="0%">
+				<Setter Property="Opacity" Value="1.0"/>
+			</KeyFrame>
+			<KeyFrame Cue="100%">
+				<Setter Property="Opacity" Value="0.0"/>
+			</KeyFrame>
+		</Animation>
+	</Window.Resources>
+</Window>
