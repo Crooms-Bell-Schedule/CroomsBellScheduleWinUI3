@@ -1,6 +1,6 @@
 @echo off
 echo packaging...
-set APP_VERSION=6.0.0
+set APP_VERSION=6.0.1
 
 dotnet publish CBSApp.Desktop/CBSApp.Desktop.csproj /p:PublishProfile=CBSApp.Desktop/Properties/PublishProfiles/Profile-WinX64.pubxml
 dotnet publish CBSApp.Desktop/CBSApp.Desktop.csproj /p:PublishProfile=CBSApp.Desktop/Properties/PublishProfiles/Profile-Linux-X64.pubxml

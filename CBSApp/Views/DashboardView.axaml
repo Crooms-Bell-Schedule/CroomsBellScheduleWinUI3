@@ -27,7 +27,7 @@
 
 	<Grid>
 
-		<Image Source="/Assets/lakeeola.jpg" Stretch="UniformToFill" Effect="blur(10)" Opacity=".75"></Image>
+		<Image Source="/Assets/bg.jpg" Stretch="UniformToFill" Effect="blur(10)" Opacity=".75"></Image>
 
 		<Grid x:Name="MainContainer">
 			<Grid.Styles>

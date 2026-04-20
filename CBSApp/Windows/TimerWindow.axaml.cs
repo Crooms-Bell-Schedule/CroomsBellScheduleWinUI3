@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Platform;
 using Avalonia.Threading;
+using static Avalonia.VisualTree.VisualExtensions;
 using CBSApp.Service;
 using CBSApp.Views;
 using CroomsBellSchedule.Service;
@@ -96,10 +97,12 @@ public partial class TimerWindow : Window
         await SetTaskbarMode(!Settings.ShowWindowed);
 
         Timer.LoadSettings(true);
-        Timer.SetPlatform(GetTopLevel(this)?.PlatformImpl?.TryGetFeature<IPlatformSettings>());
+        Timer.SetPlatform(this.VisualRoot?.GetPlatformSettings());
         
         SetOpacity(Settings.Opacity);
         await RunUpdateCheck();
+        await Services.MKClient.AppStartup();
+        DashboardView.FixStartup();
         await Timer.LoadScheduleAsync();
         Timer.StartTimer();
 
@@ -144,8 +147,6 @@ public partial class TimerWindow : Window
 
             Timer.SetLoadingText("Checking for updates");
             Timer.SetProgressBarIndeterminate(true);
-
-            await Services.MKClient.AppStartup();
 
             string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]) ?? AppDomain.CurrentDomain.BaseDirectory;
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;

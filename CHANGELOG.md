@@ -1,4 +1,9 @@
 # Changelog
+## 6.0.1 (4/20/2026)
+- Fixed an issue where progress color might not be updated correctly, also improved flashing animation
+- Changed settings background
+- Fixed an issue where start on startup does not start.
+
 ## 6.0.0 (4/17/2026)
 - Significantly improved taskbar mode (you can now drag the timer around and interact with it)
 - Redesigned all user interfaces

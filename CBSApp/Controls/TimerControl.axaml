@@ -41,13 +41,13 @@
 				   Easing="LinearEasing"
 				   FillMode="Both">
 			<KeyFrame KeyTime="0:0:0">
-				<Setter Property="Foreground" Value="{Binding Accent}"/>
+				<Setter Property="Foreground" Value="{DynamicResource CBSProgressBG}"/>
 			</KeyFrame>
 			<KeyFrame KeyTime="0:0:1">
 				<Setter Property="Foreground" Value="Red"/>
 			</KeyFrame>
 			<KeyFrame KeyTime="0:0:2">
-				<Setter Property="Foreground" Value="{Binding Accent}"/>
+				<Setter Property="Foreground" Value="{DynamicResource CBSProgressBG}"/>
 			</KeyFrame>
 		</Animation>
 

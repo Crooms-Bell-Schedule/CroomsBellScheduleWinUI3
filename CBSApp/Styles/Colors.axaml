@@ -14,11 +14,15 @@
 			<ResourceDictionary.ThemeDictionaries>
 				<ResourceDictionary x:Key='Light'>
 					<SolidColorBrush x:Key='CBSCardBG'>#dddddd</SolidColorBrush>
-					<SolidColorBrush x:Key='CBSCoreBG'>#eee</SolidColorBrush>
+					<SolidColorBrush x:Key='CBSCoreBG'>#fff</SolidColorBrush>
+
+					<SolidColorBrush x:Key='CBSProgressBG'>#eee</SolidColorBrush>
 				</ResourceDictionary>
 				<ResourceDictionary x:Key='Dark'>
 					<SolidColorBrush x:Key='CBSCardBG'>#9E222222</SolidColorBrush>
 					<SolidColorBrush x:Key='CBSCoreBG'>#111</SolidColorBrush>
+					
+					<SolidColorBrush x:Key='CBSProgressBG'>#000</SolidColorBrush>
 				</ResourceDictionary>
 			</ResourceDictionary.ThemeDictionaries>
 		</ResourceDictionary>

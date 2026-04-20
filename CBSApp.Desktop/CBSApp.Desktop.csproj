@@ -1,29 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
     One for Windows with net8.0-windows TFM, one for MacOS with net8.0-macos and one with net8.0 TFM for Linux.-->
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <ApplicationIcon>croomsBellSchedule.ico</ApplicationIcon>
-    <AssemblyTitle>Crooms Bell Schedule Desktop App</AssemblyTitle>
-    <Copyright>© Copyright MikhailSoftware 2024-2026</Copyright>
-    <Product>Crooms Bell Schedule</Product>
-	  <UseMonoRuntime>false</UseMonoRuntime>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<ApplicationIcon>croomsBellSchedule.ico</ApplicationIcon>
+		<AssemblyTitle>Crooms Bell Schedule Desktop App</AssemblyTitle>
+		<Copyright>© Copyright MikhailSoftware 2024-2026</Copyright>
+		<Product>Crooms Bell Schedule</Product>
+		<UseMonoRuntime>false</UseMonoRuntime>
+	</PropertyGroup>
+	<ItemGroup>
+		<Content Include="croomsBellSchedule.ico" />
+	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+	</ItemGroup>
 
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="croomsBellSchedule.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\CBSApp\CBSApp.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CBSApp\CBSApp.csproj" />
+	</ItemGroup>
 </Project>

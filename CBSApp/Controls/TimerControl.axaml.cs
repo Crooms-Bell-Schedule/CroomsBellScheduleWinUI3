@@ -9,6 +9,7 @@ using CBSApp.Service;
 using CBSApp.Windows;
 using CroomsBellSchedule.Core.Provider;
 using CroomsBellSchedule.Service;
+using Svg;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -43,6 +44,7 @@ public partial class TimerControl : UserControl
     private CancellationTokenSource? _redFlashCancel;
     private CancellationTokenSource? _redCancel;
     private CancellationTokenSource? _yellowCancel;
+    private CancellationTokenSource? _normalCancel;
 
     public SolidColorBrush? Accent { get; set; }
     public bool IsRunning { get => _timer == null ? false : _timer.IsEnabled; }
@@ -305,120 +307,69 @@ public partial class TimerControl : UserControl
         ClassName.Text = $"{currentClass} - {FormatTimespan(currentClass, transitionDuration, percent)}";
         SetPercent(percent);
 
+        ClassTextState newState;
 
-        // update progress bar color. TODO change only if necessary
-        if (transitionDuration.TotalMinutes <= 1)
+        if (transitionDuration.TotalMinutes <= 1 ||
+     (transitionDuration.TotalMinutes <= 2 && _isTransition))
         {
-            if (progressBarState != ClassTextState.RedFlash)
-            {
-                progressBarState = ClassTextState.RedFlash;
-
-                if (_redFlashCancel == null) _redFlashCancel = new();
-                else
-                {
-                    _redFlashCancel.Cancel();
-                    _redFlashCancel = new();
-                }
-
-                _redFlash.RunAsync(ProgressBar, _redFlashCancel.Token);
-            }
-            return;
+            newState = ClassTextState.RedFlash;
         }
-        else if (transitionDuration.TotalMinutes <= 2 && _isTransition)
+        else if (transitionDuration.TotalMinutes <= 5)
         {
-            if (progressBarState != ClassTextState.RedFlash)
-            {
-                progressBarState = ClassTextState.RedFlash;
-
-                if (_redFlashCancel == null) _redFlashCancel = new();
-                else
-                {
-                    _redFlashCancel.Cancel();
-                    _redFlashCancel = new();
-                }
-
-                _redFlash.RunAsync(ProgressBar, _redFlashCancel.Token);
-            }
-            return;
-        }
-        else
-        {
-            if (progressBarState == ClassTextState.RedFlash)
-            {
-                _redFlashCancel?.Cancel();
-                progressBarState = ClassTextState.Undefined;
-            }
-        }
-
-        if (transitionDuration.TotalMinutes <= 5)
-        {
-            if (progressBarState != ClassTextState.Red)
-            {
-                progressBarState = ClassTextState.Red;
-
-                if (_redCancel == null) _redCancel = new();
-                else
-                {
-                    _redCancel.Cancel();
-                    _redCancel = new();
-                }
-
-                _toRed.RunAsync(ProgressBar, _redCancel.Token);
-            }
+            newState = ClassTextState.Red;
         }
         else if (transitionDuration.TotalMinutes <= 10)
         {
-            if (_redCancel != null)
-            {
-                _redCancel.Cancel();
-                _redCancel = null;
-            }
-            if (_redFlashCancel != null)
-            {
-                _redFlashCancel.Cancel();
-                _redFlashCancel = null;
-            }
-
-
-            if (progressBarState != ClassTextState.Yellow)
-            {
-                progressBarState = ClassTextState.Yellow;
-
-                if (_yellowCancel == null) _yellowCancel = new();
-                else
-                {
-                    _yellowCancel.Cancel();
-                    _yellowCancel = new();
-                }
-
-                _toYellow.RunAsync(ProgressBar, _yellowCancel.Token);
-            }
+            newState = ClassTextState.Yellow;
         }
         else
         {
-            if (progressBarState != ClassTextState.Normal)
-            {
-                progressBarState = ClassTextState.Normal;
-
-                if (_redFlashCancel != null)
-                {
-                    _redFlashCancel.Cancel();
-                    _redFlashCancel = null;
-                }
-                if (_redCancel != null)
-                {
-                    _redCancel.Cancel();
-                    _redCancel = null;
-                }
-                if (_yellowCancel != null)
-                {
-                    _yellowCancel.Cancel();
-                    _yellowCancel = null;
-                }
-
-                _toNormal.RunAsync(ProgressBar);
-            }
+            newState = ClassTextState.Normal;
         }
+
+        if (newState == progressBarState)
+            return;
+
+        progressBarState = newState;
+        CancelAllAnimations();
+
+        switch (newState)
+        {
+            case ClassTextState.RedFlash:
+                _redFlashCancel = new CancellationTokenSource();
+                _ = _redFlash.RunAsync(ProgressBar, _redFlashCancel.Token);
+                break;
+
+            case ClassTextState.Red:
+                _redCancel = new CancellationTokenSource();
+                _ = _toRed.RunAsync(ProgressBar, _redCancel.Token);
+                break;
+
+            case ClassTextState.Yellow:
+                _yellowCancel = new CancellationTokenSource();
+                _ = _toYellow.RunAsync(ProgressBar, _yellowCancel.Token);
+                break;
+
+            case ClassTextState.Normal:
+                _normalCancel = new CancellationTokenSource();
+                _ = _toNormal.RunAsync(ProgressBar, _normalCancel.Token);
+                break;
+        }
+    }
+
+    private void CancelAllAnimations()
+    {
+        _redFlashCancel?.Cancel();
+        _redFlashCancel = null;
+
+        _redCancel?.Cancel();
+        _redCancel = null;
+
+        _yellowCancel?.Cancel();
+        _yellowCancel = null;
+
+        _normalCancel?.Cancel();
+        _yellowCancel = null;
     }
 
     public void SetPercent(double percent)

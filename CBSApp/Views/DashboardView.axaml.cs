@@ -294,6 +294,24 @@ public partial class DashboardView : UserControl
     {
         
     }
+
+    internal static void FixStartup()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        RegistryKey? rk = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+        try
+        {
+            if (rk != null && Environment.ProcessPath != null)
+            {
+                if (rk.GetValue("Crooms Bell Schedule App") != null)
+                {
+                    rk.SetValue("Crooms Bell Schedule App", Environment.ProcessPath);
+                }
+            }
+        }
+        catch { }
+    }
     internal static void SetStartup(bool val)
     {
         if (!OperatingSystem.IsWindows()) return;
