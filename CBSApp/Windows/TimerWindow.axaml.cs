@@ -4,7 +4,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Platform;
 using Avalonia.Threading;
-using static Avalonia.VisualTree.VisualExtensions;
 using CBSApp.Service;
 using CBSApp.Views;
 using CroomsBellSchedule.Service;
@@ -15,8 +14,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.PortableExecutable;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Velopack;
+using static Avalonia.VisualTree.VisualExtensions;
 using static CroomsBellSchedule.Service.SettingsManager;
 using static CroomsBellSchedule.Utils.Win32;
 
@@ -46,6 +48,39 @@ public partial class TimerWindow : Window
         Services.TimerWindow = this;
     }
 
+    private static IntPtr _oldWndProc;
+    private static WndProcDelegate? _newWndProcDelegate;
+    private void SubclassWindow()
+    {
+        if (!OperatingSystem.IsWindows()) return;
+        var handle = TryGetPlatformHandle();
+        if (handle == null) return;
+        if (handle != null)
+        {
+            // The raw IntPtr handle
+            IntPtr nativeHandle = handle.Handle;
+            _newWndProcDelegate = WndProc;
+            nint pWndProc = Marshal.GetFunctionPointerForDelegate(_newWndProcDelegate);
+            _oldWndProc = SetWindowLongPtrW(nativeHandle, GWLP_WNDPROC, pWndProc);
+        }
+    }
+
+    private nint WndProc(nint hwnd, uint msg, nuint wParam, nint lParam)
+    {
+        Debugger.Log(5,null, "0x" + msg.ToString("X")+"\n");
+        if (msg == 0x82)
+        {
+            // WM_NCDESTROY
+            if (!SettingsManager.Settings.ShowWindowed)
+            {
+                // the whole thing was deleted, create a new window and destroy this one
+                // as explorer exploded and broke as any good microsoft software
+                TimerWindow tm = new();
+                tm.Show();
+            }
+        }   
+        return CallWindowProcW(_oldWndProc, hwnd, msg, wParam, lParam);
+    }
     private void Window_PointerMoved(object? sender, Avalonia.Input.PointerEventArgs e)
     {
         if (!_mouseDownForWindowMoving) return;
@@ -95,6 +130,7 @@ public partial class TimerWindow : Window
         }
 
         await SetTaskbarMode(!Settings.ShowWindowed);
+        SubclassWindow();
 
         Timer.LoadSettings(true);
         Timer.SetPlatform(this.VisualRoot?.GetPlatformSettings());
@@ -257,17 +293,6 @@ public partial class TimerWindow : Window
                         await SetTaskbarMode(false);
                         return;
                     }
-
-                    int id = GetCurrentThreadId();
-                    int attachId = GetWindowThreadProcessId(taskbarUIHWnd, out int _);
-
-                    if (attachId != id)
-                    {
-                        var res = AttachThreadInput(attachId, id, 1);
-                        OutputDebugStringW(res.ToString());
-                        OutputDebugStringW(new Win32Exception().Message);
-                    }
-
                     Position = new PixelPoint(Settings.TaskbarModeXCord, 0);
                 }
                 else
@@ -277,15 +302,11 @@ public partial class TimerWindow : Window
                     SetOpacity(Settings.Opacity);
                     Timer.FontSize = 17;
                     WindowDecorations = WindowDecorations.BorderOnly;
-                    int id = GetCurrentThreadId();
-                    AttachThreadInput(0, id, 0);
-
-                    //Timer.SetProgressBarHeight(8);
                 }
             }
             else
             {
-                // not supported on other platforms yet
+                // not supported on other platforms
                 _taskbarMode = false;
                 _movable = true;
             }
@@ -357,5 +378,10 @@ public partial class TimerWindow : Window
     {
         if (_taskbarMode) return;
         Opacity = opacity;
+    }
+
+    private void Window_Deactivated(object? sender, System.EventArgs e)
+    {
+        Window_PointerExited_2(sender, null!);
     }
 }

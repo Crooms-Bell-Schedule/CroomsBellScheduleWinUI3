@@ -27,7 +27,7 @@
 
 	<Grid>
 
-		<Image Source="/Assets/bg.jpg" Stretch="UniformToFill" Effect="blur(10)" Opacity=".75"></Image>
+		<Image Source="/Assets/Clouds_bg.jpg" Stretch="UniformToFill" Effect="blur(5)" Opacity=".75"></Image>
 
 		<Grid x:Name="MainContainer">
 			<Grid.Styles>
@@ -254,7 +254,8 @@
 
 								<TextBlock FontSize="28" FontWeight="Bold" Margin="10"
 										   Foreground="{DynamicResource CBS_Background_SettingsTitle}">Credits</TextBlock>
-								<TextBlock Margin="10">This application was created by Mikhail Tyukin. Server backend developer: Andrew Jennings / Mikhail Tyukin</TextBlock>
+								<TextBlock Margin="10">This application was created by Mikhail Tyukin. Server backend developer: Andrew Jennings / Mikhail Tyukin. Suvan Mangamuri: various contributions. Zane DeReamer: Nothing?</TextBlock>
+								<TextBlock Margin="10">Thank you to all bug reporters and testers</TextBlock>
 								<TextBlock Margin="10">For bug reports, please email Mikhail Tyukin via the school email (search my name)</TextBlock>
 							</StackPanel>
 						</Grid>
@@ -271,14 +272,14 @@
 
 
 		<ctls:SplashScreen x:Name="Loader"/>
-		<!--<TextBlock Foreground="Red"
+		<TextBlock Foreground="Red"
 					   HorizontalAlignment="Right"
 					   VerticalAlignment="Bottom"
 					   Grid.RowSpan="5"
 					   Grid.ColumnSpan="5"
 					   TextAlignment="Right"
 					   Margin="5" FontSize="16">
-			Private Beta Notice:<LineBreak/>This application is under active development.<LineBreak/>Do not share any screenshots.
-		</TextBlock>-->
+			Notice:<LineBreak/>This application will no longer be supported after 5/27/2026.<LineBreak/>Thank you for using Crooms Bell Schedule app!
+		</TextBlock>
 	</Grid>
 </UserControl>

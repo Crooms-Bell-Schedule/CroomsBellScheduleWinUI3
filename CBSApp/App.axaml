@@ -21,7 +21,7 @@
 		<TrayIcons>
 			<TrayIcon
 					Icon="/Assets/croomsBellSchedule.ico"
-					  ToolTipText="Crooms Field End App">
+					  ToolTipText="Crooms Bell Schedule">
 				<TrayIcon.Menu>
 					<NativeMenu>
 						<NativeMenuItem Header="Dashboard / settings" Click="Settings_Click"/>

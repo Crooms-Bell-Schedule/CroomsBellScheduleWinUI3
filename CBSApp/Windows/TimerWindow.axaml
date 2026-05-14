@@ -9,7 +9,7 @@
         Icon="/Assets/croomsBellSchedule.ico"
 		ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1"
-        Title="Crooms Bell Schedule Shell"
+        Title="Crooms Bell Schedule Timer"
 		Topmost="True"
 		WindowDecorations="BorderOnly"
 		PointerMoved="Window_PointerMoved"
@@ -17,6 +17,7 @@
 		PointerReleased="Window_PointerReleased"
 		PointerEntered="Window_PointerEntered_1"
 		PointerExited="Window_PointerExited_2"
+		Deactivated="Window_Deactivated"
 		Loaded="Window_Loaded">
 	<Grid>
 		<controls:TimerControl x:Name="Timer"/>

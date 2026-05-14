@@ -30,12 +30,12 @@
 					</Grid.RowDefinitions>
 
 					<TextBlock Grid.Row="0" FontSize="26" HorizontalAlignment="Center">Today</TextBlock>
-					<WrapPanel Grid.Row="1" x:Name="todayItems" Orientation="Vertical">
+					<WrapPanel Grid.Row="1" x:Name="todayItems" Orientation="Vertical" HorizontalAlignment="Center">
 						<TextBlock Text="Normal"/>
 					</WrapPanel>
 
 					<TextBlock Grid.Row="2" FontSize="26" HorizontalAlignment="Center">Upcoming</TextBlock>
-					<WrapPanel Grid.Row="3" x:Name="upcomingItems" Orientation="Vertical">
+					<WrapPanel Grid.Row="3" x:Name="upcomingItems" Orientation="Vertical" HorizontalAlignment="Center">
 						<TextBlock Text="Spring Break - March 13th"/>
 					</WrapPanel>
 				</Grid>
