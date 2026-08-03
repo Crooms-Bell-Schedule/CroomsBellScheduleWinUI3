@@ -272,14 +272,5 @@
 
 
 		<ctls:SplashScreen x:Name="Loader"/>
-		<TextBlock Foreground="Red"
-					   HorizontalAlignment="Right"
-					   VerticalAlignment="Bottom"
-					   Grid.RowSpan="5"
-					   Grid.ColumnSpan="5"
-					   TextAlignment="Right"
-					   Margin="5" FontSize="16">
-			Notice:<LineBreak/>This application will no longer be supported after 5/27/2026.<LineBreak/>Thank you for using Crooms Bell Schedule app!
-		</TextBlock>
 	</Grid>
 </UserControl>

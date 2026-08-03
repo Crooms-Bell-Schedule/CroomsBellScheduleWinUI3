@@ -13,7 +13,7 @@ public class APIProvider : IBellScheduleProvider
     private readonly HttpClient _client = new();
     public async Task<BellScheduleReader> GetTodayActivity()
     {
-        HttpResponseMessage dataBody = await _client.GetAsync("https://mikhail.croomssched.tech/apiv2/bell/get");
+        HttpResponseMessage dataBody = await _client.GetAsync("https://mikhail.croomsbellschedule.com/apiv2/bell/get");
         if (!dataBody.IsSuccessStatusCode)
             throw new Exception("Failed to get today's schedule: " + dataBody.StatusCode);
 

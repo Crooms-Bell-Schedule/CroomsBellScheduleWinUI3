@@ -36,7 +36,7 @@ public partial class TimerWindow : Window
     private int _todayDay = 0;
     private bool _overlayShowing = false;
     private bool _overlayAnimInProgress = false;
-
+    private bool _closing = false;
     private static DispatcherTimer _updateChecker = null!;
     public TimerWindow()
     {
@@ -46,6 +46,12 @@ public partial class TimerWindow : Window
         _hideOverlay = (Animation)(this.Resources["HideOverlay"] ?? throw new InvalidDataException());
 
         Services.TimerWindow = this;
+        Closing += TimerWindow_Closing;
+    }
+
+    private void TimerWindow_Closing(object? sender, WindowClosingEventArgs e)
+    {
+        _closing = true;
     }
 
     private static IntPtr _oldWndProc;
@@ -67,11 +73,10 @@ public partial class TimerWindow : Window
 
     private nint WndProc(nint hwnd, uint msg, nuint wParam, nint lParam)
     {
-        Debugger.Log(5,null, "0x" + msg.ToString("X")+"\n");
         if (msg == 0x82)
         {
             // WM_NCDESTROY
-            if (!SettingsManager.Settings.ShowWindowed)
+            if (!SettingsManager.Settings.ShowWindowed && !_closing)
             {
                 // the whole thing was deleted, create a new window and destroy this one
                 // as explorer exploded and broke as any good microsoft software
@@ -187,7 +192,7 @@ public partial class TimerWindow : Window
             string executablePath = Path.GetDirectoryName(Environment.GetCommandLineArgs()[0]) ?? AppDomain.CurrentDomain.BaseDirectory;
             var currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             _updateManager = new(
-                $"https://mikhail.croomssched.tech/updateapiv2/", new UpdateOptions()
+                $"https://mikhail.croomsbellschedule.com/updateapiv2/", new UpdateOptions()
                 {
                     AllowVersionDowngrade = true
                 });

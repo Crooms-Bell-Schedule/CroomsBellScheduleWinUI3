@@ -1,4 +1,17 @@
 # Changelog
+## 6.2.1 (5/22/2026)
+- Fixed an issue where the application may prevent Windows from shutting down
+
+## 6.2.0 (5/14/2026)
+- Fixed a issue where the timer could disappear
+- Fixed an issue where the tray icon mentioned Endfield while this application is not endfield
+- Changed dashboard background to be a sunset to symbolize the end of the school year and the application
+- Removed unecessary library
+
+## 6.1.0 (4/20/2026)
+- Fixed missing progress ring control when opening settings
+- Improved mobile application preformance
+
 ## 6.0.1 (4/20/2026)
 - Fixed an issue where progress color might not be updated correctly, also improved flashing animation
 - Changed settings background
